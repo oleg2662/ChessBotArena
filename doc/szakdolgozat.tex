@@ -3,6 +3,9 @@
 % -------------------------------------------------------------------------------------------------------------
 
 \documentclass[twoside, a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{arabtex}
+\usepackage[magyar]{babel}
 \usepackage{bookman}
 \usepackage{thesis-style}
 \usepackage{cite}
@@ -13,7 +16,6 @@
 \usepackage{listings}% http://ctan.org/pkg/listings
 \renewcommand{\lstlistingname}{Kódrészlet}% 
 \renewcommand{\lstlistlistingname}{Kódrészletek listája}
-
 \newtheorem{definition}{Definíció}
 
 
@@ -67,8 +69,8 @@
 % --- ÖSSZEFOGLALÁS -------------------------------------------------------------------------------------------
 % -------------------------------------------------------------------------------------------------------------
 
-\part{Összefoglalás}
-\section{Bevezető}
+\part{Bevezető}
+\section{A dolgozatról}
 \subsection{A dolgozat célja}
 A dolgozat célja a mesterséges intelligencia kurzuson bemutatott \textbf{„kétszemélyes, teljes információjú, véges és determinisztikus, zéró összegű, játékok”} algoritmusainak bemutatása a gyakorlatban, illetve az érdeklődőbb hallgatók bevonása egy olyan játékba, melyen keresztül elmélyíthetik tudásukat ezen algoritmusokból.
 
@@ -76,87 +78,40 @@ E célból a (normál) sakkot vesszük alapul, mely elég bonyolult ahhoz, hogy 
 
 A dolgozat "mellékterméke" egy olyan \textit{API interface}, melyhez kapcsolódva nem csak mesterséges intelligenciát megvalósító programok, hanem "sima", emberi játékosok által is használható kliens is írható, így a téma iránt nem érdeklődők is kipróbálhatják magukat például egy mobilalkalmazás vagy egy asztali Windows / Linux alapú kliens megírásában.
 
-\subsection{A sakk néhány különlegessége}
-A sakk szabályait nem részleteznénk, ismertnek tételezzük fel, illetve az interneten könnyen hozzáférhető, mint például a \url{http://www.sakk.hu/help/sakk_szabalyok.html} ~\cite{chessrulessakkhu} oldalon. Néhány fontos dolog azért megjegyzendő, amely befolyással lehet (lesz is!) a megvalósításra.
+\subsection{A sakk története}
+A játék neve a perzsa „shāh” szóból ered, amely uralkodót jelent.\footnote{A "sakk-matt" kifejezés pedig a perzsa „Shāh Māt" kifejezésből származik, amelynek jelentése: "a királyt lerohanták” vagy "védtelen”, "legyőzött”.\cite{ChessMateHu}\cite{ChessMateEn}} Története a legendák világába nyúlik vissza. Egy ismert mese szerint egy brahmin találta ki a sakkot. Jutalmul a rádzsától első hallásra jelentéktelennek tűnő fizetséget kért, mindössze annyi búzaszemet, amennyi a sakktábla kockáira a következő szabály szerint képletesen rátehető: az első kockára egy, a másodikra kettő, a harmadikra négy, vagyis az előzőnek mindig duplája. Hamar kiderült, hogy ennyi búza nem terem a Földön, sőt az emberiség egész történelme alatt nem termelt ennyit.
 
-Egy volt munkahelyemen dekoráció gyanánt ki volt rakva egy sakktábla bábukkal. Ezt az emberek elkezdték használni: kinyomtattak egy papírt, egyik oldalára azt, hogy "fehér jön" a másik oldalára pedig azt, hogy "fekete jön". Ha valakinek volt kedve és ideje, odamehetett, elgondolkodhatott a lépésen, majd miután lépett, megfordította a papírt és várták, hogy valaki lépjen.
+Az első ismert változata valószínűleg Indiában alakult ki. A maihoz képest egyszerűbb volt, de ugyanakkora táblán és ugyanazokkal a bábukkal játszották, a lépések viszont különböztek. 
 
-Ez így elég egyszerűnek tünik. Ahhoz, hogy kiszámoljunk egy következő lépést, csak rá kell néznünk a táblára és arra, hogy ki következik, és kész? Az esetek többségében igen, de ha az előző lépések listája teljesen ismeretlen, akkor azért néhány problémába ütközünk, amikor megpróbáljuk kiszámolni a lehetséges lépéseket. A triviális lépésektől eltekintve problémába ütközhetünk, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa az amatőrök által (és eddig általam sem) ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csak a következő!) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg az ellenfél bábuja. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg.
+Indiából először Perzsiába jutott el. Amikor az arabok elfoglalták Perzsiát, a muszlim világ átvette és ennek következményeként el is terjesztette a játékot Dél-Európában. A sakk mai formáját körülbelül a XV.-ik században érte el.
 
-Másik érdekes (és versenyeken alkalmazott) szabály az, hogy ha többször fordul elő ugyanaz az állapot, akkor a játék döntetlennel ér véget.
+Keleti terjedése már kissé bizonytalan: először Kínába majd Japánba jutott el és közben sokkal nagyobb változásokon ment keresztül.
+\textit{Egy kevésbé elfogadott elmélet szerint eredetileg Kínából származik és terjedt el.}\cite{HistoryOfChessHu}\cite{HistoryOfChessEn}
 
-Ezekből a példákból látszik, hogy nem elég a tábla aktuális állapotának ismerete, ahhoz kell még extra információ is például a bábukról (elmozdult? en passant üthető?) ami mondjuk egy a bábukra tett jelöléssel megoldható lenne, viszont a legutóbb emlegetett problémára nem megoldás: ahhoz kell az előző lépések listája is.
+\subsection{A sakk érdekesebb szabályai}
+A sakk szabályait nem részleteznénk, ismertnek tételezzük fel, illetve az interneten könnyen hozzáférhető, mint például a \url{http://www.sakk.hu/help/sakk_szabalyok.html} ~\cite{chessrulessakkhu} oldalon. Néhány fontos dolog azért megjegyzendő, amely kissé megbonyolítja a sakk szabályait.
 
-Ennek egyébként egy érdekes hatása lesz majd az alkalmazott reprezentációra: ha a lehetséges lépések kiszámításához elég lenne "ránézni" a táblára, akkor a játékot reprezentáló gráfunk nem lesz fa, hiszen egy bizonyos állapotba több úton is eljuthatunk. Ha azonban belevesszük egy játékállás reprezentációjához a parti addigi történelmét is, akkor az állások egyediek lesznek és a gráfunk fa-szerű lesz. (Ez mondjuk nem feltétele annak, hogy a dolgozat által ismertetett algoritmusok működjenek, mivel az ő szempontjukból készülhet más reprezentáció is, ami viszont már fa lesz. De ezekről majd később...)
+\textit{Egy volt munkahelyemen dekoráció gyanánt ki volt rakva egy sakktábla bábukkal. Ezt az emberek elkezdték használni: kinyomtattak egy papírt, egyik oldalára azt, hogy "fehér jön" a másik oldalára pedig azt, hogy "fekete jön". Ha valakinek volt kedve és ideje, odamehetett, elgondolkodhatott a lépésen, majd miután lépett, megfordította a papírt és várták, hogy valaki lépjen.}
 
-\subsection{A probléma komplexitása}
-A sakk reprezentációja tehát már nagyjából látható. Fogalmazzuk meg a problémát: szeretnénk egy olyan programot, amely legyőzi a másik játékost, ami ekvivalens azzal, hogy minden egyes lépésnél a legoptimálisabb lépést választja. Mivel az előzőekben láttuk, hogy ez valószínűleg egy fa bejárása lesz, ezért nem is kell nagyon tovább gondolkodni: megkeressük a fa összes olyan levelét, ahol nyerünk (vagy legalább döntetlent hozunk ki) és megkeressük azt az optimális irányt, amerre haladva ha az ellenfél is a számára legjobb lépést lépi, a nyereségünk maximális lesz.
+A kérdés az: a meccs "történetének" ismerete nélkül vajon csak a tábla ismeretével kiszámítható-e az összes lehetséges lépés? Ha valaki odalép ehhez a táblához, meg tudja-e mondani az összes lehetséges lépést?
 
-Tekintsük egy sakkjátszmát: egy átlagos meccs 35-40 fordulós~\cite{averageLengthOfChessGame}\cite{averageLengthOfChessGame2}\cite{chessStatistics}, az átlagos lehetséges lépések száma egy adott állapotból 20\cite{shannonnumber}. Shannon adott egy alsó-korlátot a lehetséges játékok számára, amely $10^{120}$. \footnote{Összehasonlításképp: a világegyetemben levő atomok számát $10^{80}$ darabra teszik, a világegyetem pedig körülbelül $4.32 \times 10^{17}$ másodperce keletkezett, ami kevesebb, mint $10^{18}$-on, ami még így is sok nagyságrenddel kevesebb, mint a lehetséges játékok száma.} Ebből látható, hogy \textit{brute-force} technikával, a jelenlegi technikai háttérrel nem érdemes hozzákezdeni.
+A válasz: \textbf{nem}. Vannak különleges lépések, amelyhez legalább valamilyen jelzés kell a bábukra (pl. \textit{en passant} üthető, vagy sáncolásnál: a király vagy a bástya mozgott-e már a játék folyamán), illetve döntetlent felajánlani is csak bizonyos esetekben lehet.
 
+\subsection{A Török}
+A Török Kempelen Farkas álatal 1769-ben alkotott legendás sakkozógép volt, melyet arra épített, hogy elkápráztassa vele Mária Teréziát. A gép sakkpartikat játszott és nyert.
 
+Végigtúrázta Európát és Észak-Amerikát míg 1854-ben Philadelphiában egy tűzben meg nem semmisült. 
 
+A gép titka nem egy zseniális korát meghaladó mechanikus mesterséges intelligencia volt, hanem egy benne elrejtőző emberi kezelő. Ez a gyanú többször is felvetődött, de Kempelen a játszmák előtt felnyitva a gépet mutatta be, hogy nincs senki a gépben. Valójában az eléggé apró termetű kezelő el tudott bújni, amíg elöl illetve hátul is kinyitották a szerkezetet, hogy belenézhessenek.
 
-\section{Az algoritmus}
-Látható, hogy a probléma elég bonyolult és ezért megoldani nem lehet, csak közelíteni. A továbbiakban az algoritmus általánosan fogalmazzuk meg és formalizáljuk, de a sakkon keresztüli példálon mutatjuk be.
-
-\subsection{Egy általános táblás játék}
-Egy két- (vagy akár több-)személyes, táblás, körökre-osztott játékot meghatározzák a szabályai és a különböző (érvényes) állapotai. A szabályok határozzák meg, hogy mik az érvényes állapotok azáltal, hogy leszűkítik a lehetséges lépéseket olyanokra, amelyek csak érvényes állapotokat eredményeznek.
-
-Ezután már adódik az ötlet: egy játékot reprezentálhatunk egy \textbf{\textit{cimkézett}, irányított gráffal}, ahol a csomópontok a lehetséges állapotok, az élek pedig az átmenetek.
-
-\subsection{A probléma, mint útkeresési algoritmus}
-Általánosan fogalmazva: a sakk nem más, mint egy körökre osztott két személyes táblás játék. A bevezetőben említett játéktól most kicsit elvonatkoztatva megpróbáljuk megfogalmazni a problémát: egy táblás játék diszkrét lépésekből áll. Kezdetben van egy kezdőállapot, amely meghatározza a lehetséges lépések halmazát, amely lehet egy véges vagy végtelen halmaz. Ezek közül kiválasztva egyet a következő állapotba jutunk, amely megintcsak meghatározza a következő lehetséges lépések halmazát, és így tovább. 
-
-Ezt a legkönnyebben egy \textbf{általános irányított gráfként} képzelhetjük el, ahol a csomópontok a játék lehetséges állapotait tartalmazzák, a köztük levő élek pedig a lépéseket.
-
-Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen előfordulhat, hogy más utakon is eljuthatunk ugyanazon csúcsba, tehát nagy valószínűség szerint nem fa. Ezt a problémát megszüntethetjük többféle módon, például: 
-
-\begin{itemize}
-	\item \textbf{Csomópont duplázással} \\
-	Ilyenkor az történik, hogy ha egy állapotba több úton is eljuthatunk, akkor ezeket a csúcsokat többszörözzük. \\
-	(Lásd.: \ref{fig:game-graph-transformation} ábra.)
-
-	\item \textbf{Ügyes reprezentációval} \\
-	Ilyenkor azt tesszük, hogy elgondolkodunk: attól, hogy ugyanabba a csomópontba jutunk több úton, az nem jelenti-e esetleg azt, hogy a más úton elért csúcs már inkább egy másik csúcs. Sakkos példánál maradva: ezt úgy érhetjük el, hogy egy állapot reprezentációjába bevesszük az odavezető utakat. Például előállhat egy hasonló állapot, ha mi is és az ellenfél is előrelép majd vissza ugyanazzal a bábuval.
-\end{itemize}
+A gépet végül 1857-ben leplezte le nyíltan a The Chess Monthly című amerikai sakklap.\cite{MechanicalTurkHu}\cite{MechanicalTurkEn}
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\textwidth]{img/game-graph-transformation.png}
-	\caption{Általános irányított gráfból irányított fa konstruálása}
-	\label{fig:game-graph-transformation}
+	\includegraphics[width=1.0\textwidth]{img/the_turk}
+	\caption{Kempelen Farkas - A Török}
+	\label{fig:the_turk}
 \end{figure}
-
-\subsection{A Minimax-algoritmus}
-\lipsum[1]
-
-\subsection{Az alfa-béta algoritmus}
-\lipsum[2]
-
-
-
-
-
-
-
-
-
-
-% -------------------------------------------------------------------------------------------------------------
-% --- FELHASZNÁLÓI DOKUMENTÁCIÓ -------------------------------------------------------------------------------
-% -------------------------------------------------------------------------------------------------------------
-\newpage
-\part{Felhasználói Dokumentáció}
-
-\lipsum{2}
-
-
-
-
-
-
-
 
 
 
@@ -173,58 +128,245 @@ Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen
 \newpage
 \part{Fejlesztői Dokumentáció}
 
-
-
-\section{Bevezető}
-A programcsomag három fő részből áll:
+A programcsomag három fontos területtet fed le:
 \begin{itemize}
-	\item \textbf{Szerver}
-	\begin{itemize}
 	
-		\item Felhasználói adminisztrációs feladatok:
-		\begin{itemize}
-			\item Felhasználó hitelesítése.
-			\item Felhasználó hitelesítése / nyomonkövetése.
-		\end{itemize}
+	\item \textbf{A játék reprezentációja}
+	\begin{itemize}
+		\item Definiálja a reprezentációhoz szükséges interface-eket
+		\item Implementálja a sakk reprezentációját és mechanikáját.
+	\end{itemize}
 
-		\item Játékkal kacsolatos adminisztáció:
+	\item \textbf{Algoritmusok}
+	\begin{itemize}
+		\item Definiál egy interface-t
+		\item Algoritmusok általános implementációi
 		\begin{itemize}
+			\item Minimax
+			\item Alfa-béta
+			\item Egyéb egyszerűbb példák (random, mohó)
+		\end{itemize}
+	\end{itemize}
+
+	\item \textbf{Infrastruktúra}
+	\begin{itemize}
+		
+		\item \textbf{Szerver}
+		\begin{itemize}
+			\item Felhasználó hitelesítése / nyomonkövetése.
 			\item Ellenőrzi a kliensektől jövő lépések érvényességét.
 			\item Közvetíti a kliensek felé a partik alakulását.
 			\item Tabella kezelése.
-		\end{itemize}		
-		
-	\end{itemize}
-
-	\item \textbf{Kliens (humán vagy MI kliens)}
-	\begin{itemize}
+		\end{itemize}
 	
-		\item Felhasználói adminisztrációs feladatok:
+		\item \textbf{Kliens (humán vagy MI kliens)}
 		\begin{itemize}
 			\item Felhasználó beléptetése, nyomonkövetése.
-		\end{itemize}
-
-		\item Játékkal kapcsolatos adminisztráció:
-		\begin{itemize}
 			\item Közvetíti a felhasználó felé a partik alakulását.
 			\item A játékos döntéseit közvetíti a szerver felé.
 		\end{itemize}
-		
 	\end{itemize}
-	
-	\item \textbf{Segédkönyvtárak} \\
-	\begin{itemize}
-		\item \textbf{Algoritmusok} \\
-		Tartalmazzák a leimplementált és újrafelhasználható algoritmusokat, úgymint a \textbf{Minimax} és az \textbf{Alfa-béta} algoritmusok, illetve definiálnak egy interfészt ezekhez.
-
-		\item \textbf{Sakk} \\
-		Tartalmazza a sakk egy reprezentációját és az lépéseket generáló kódot. Ez lesz az, ami mindenhol felhasználható: kliensekben legenerálja a lehetséges lépéseket, szerveren validál.
-	\end{itemize}
-	
 \end{itemize}
 
+\section{A játék reprezentációja}
+\subsection{Elemzés}
+Érdekes kérdés a reprezentáció. A bevezetőben láthattuk, hogy a következő lehetséges lépések megállapításához nem elég a "táblát látni", kell hozzá még néhány többletinformáció. Ilyen információ például a megfelelő bábuk cimkézése illetve ezt helyettesítve (vagy ezzel együtt alkalmazva) a játszma addigi lépéseinek nyilvántartása.
 
-\subsection{Architektúra}
+A triviális lépésektől eltekintve problémába merülhet fel, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa a kevésbé ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csakis a következő) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg előre. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg.
+
+Másik érdekes (és versenyeken alkalmazott) szabály az, hogy ha többször fordul elő ugyanaz az állapot, akkor a játékosok felajánlhatnak döntetlent a másiknak. Ehhez viszont ismerni kell az előző lépéseket, a táblára "simán csak ránézve" ezt a szabályt nem lehet alkalmazni.
+
+Ezekből a példákból látszik, hogy nem elég a tábla aktuális állapotának ismerete, ahhoz kell még extra információ is például a bábukról (elmozdult? en passant üthető?) ami mondjuk egy a bábukra tett jelöléssel megoldható lenne, viszont a legutóbb emlegetett problémára nem megoldás: ahhoz kell az előző lépések listája is.
+
+Ennek egyébként egy érdekes hatása lesz majd az alkalmazott reprezentációra: ha a lehetséges lépések kiszámításához elég lenne "ránézni" a táblára, akkor a játékot reprezentáló gráfunk nem lesz fa, hiszen egy bizonyos állapotba több úton is eljuthatunk. Ha azonban belevesszük egy játékállás reprezentációjához a parti addigi történelmét is, akkor az állások egyediek lesznek és a gráfunk fa-szerű lesz. (Ez mondjuk nem feltétele annak, hogy a dolgozat által ismertetett algoritmusok működjenek, mivel az ő szempontjukból készülhet más reprezentáció is, ami viszont már fa lesz. De ezekről majd később...)
+
+\subsubsection{Egy általános táblás játék reprezentációja}
+
+Egy körökreosztott általános táblás játék a következő elemekből áll:
+
+\begin{itemize}
+	\item \textbf{Reprezentáció} (avagy modell) \\
+	A játékállás reprezentációja sokrétű lehet, tudni kell a játékosok listáját és a következő lépésre jogosult játékos. A további reprezentáció (tábla, vagy esetleg az asztalon levő kártyák) mind változhat.
+	
+	A későbbi implementációs döntéseket figyelembe véve érdekes elgondolkodni azon, hogy a reprezentációt (a táblát, az asztalon levő kártyákat) bárki piszkálhatja, azonban ez esetben felborul a parti érvényessége: azon kívül, hogy valaki csalhat, megtörténhet az is, hogy olyan állapotba kerül a játék, amely egyébként nem lenne lehetséges. Ezért jó ötlet egy "bíró" vagy "krupié" közbeiktatása, aki figyel erre, tudja az összes szabályt és csak ő nyúlhat a játéktérhez.
+	
+	\item \textbf{Szabályok} (avagy játékmechanika) \\
+	A szabályok határozzák meg, hogy milyen helyzetben mik a lehetséges lépések. Az ezt kiszolgáló osztály legyen a játékmester, aki hozzányúlhat a reprezentációhoz, így biztosítva, hogy a játék mindig a szabályoknak megfelelően megy.
+\end{itemize}
+
+A fenti felosztásból adódhat a \ref{fig:boardGameAbstractClassDiagram}. ábrán ismertetett osztálydiagram. A \texttt{GameRepresentation} osztály maga a modell. Teljesen "buta", nincs beleépítve logika, csak tárolja a tábla vagy asztal aktuális állapotát és valamilyen módon lehetőséget biztosít a módosítására. Nem szabad semmilyen játék alapelveit beleépíteni, hiszen például egy sakktáblán is lehet többfajta sakkot játszani, amelyek szabályai különbözőek.
+
+A \texttt{Game} osztály a "játékmester", ő az, aki a szabályok szerint módosítja a reprezentációt. Rajta keresztül kell validálni és végrehajtatni a lépéseket, illetve tőle lehet lekérdezni az aktuális meccs állását illetve egyéb fontosabb tulajdonságait.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/boardGameAbstractClassDiagram.png}
+	\caption{Egy általános táblás, körökre osztott játék absztrakt reprezentációja}
+	\label{fig:boardGameAbstractClassDiagram}
+\end{figure}
+
+
+\subsubsection{Sakk reprezentáció}
+
+A sakk is két fő részből áll: reprezentáció és játékmechanika. Ezeket a \texttt{ChessBoard} és a \texttt{ChessGame} osztályok valósítják meg. (Lásd: \ref{fig:chessClassDiagram}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/chessClassDiagram.png}
+	\caption{Sakkot reprezentáló osztálydiagram}
+	\label{fig:chessClassDiagram}
+\end{figure}
+
+A \texttt{ChessBoard} osztály önmagában csak reprezentál, minden \textit{property} írható és olvasható. Tartalmazza a játékosok listáját (fehér, fekete), a soronkövetkező játékost, az eddig megtett lépések listáját, illetve a tábla aktuális állapotát.
+
+A \texttt{ChessGame} osztály felelős a játék kezeléséért, betartja a szabályokat, segít a lehetséges lépések kigenerálásában, validációjában és végrehajtásában. Fontos, hogy a teljes szeparáltság miatt a \texttt{ChessGame} osztálynak kizárólag egy számára átadott \texttt{ChessBoard} osztályból tudnia kell a lehetséges lépéseket, a parti állását, stb.
+
+Felmerülhet, hogy miért nincs egyben ez a két osztály. Ennek több oka van:
+
+\begin{itemize}
+	\item \textbf{Egy felelősség alapelve} \textit{(Single responsibility principle)}\cite{SingleResponsibilityHu}~\cite{SingleResponsibilityEn}~\cite{SOLID}~ \\
+	Ha egy osztály lenne, az túl bonyolulttá tenné ezt az osztályt: több felelősséget rakna rá és így megsértené a \textit{single responsibility} elvét.
+	\item \textbf{Könnyebb felhasználhatóság} \\
+	Az előzőekben ismertetett algoritmusoknak külön érdekes csak a reprezentáció, hiszen ebből tudnak "állást számolni". Így az aktuális állás osztályozásához nem kell egy mindent tudó objektum, elég csak a reprezentációt átadni a megfelelő kiértékelő függvénynek.
+	\item \textbf{Jövőbeli továbbfejleszthetőség} \\
+	Sokféle sakkjáték ismeretes, így csak a \texttt{ChessGame} osztály kicserélésével egy másik játékot tudunk készíteni. (Például francia sakk.)
+	\item \textbf{Tesztelhetőség} \\
+	Ha tiszták és minél egyszerűbbek a különböző részei a játékreprezentációnak, annál könnyebb fókuszált \textit{unit-teszteket} írni ezekre.
+\end{itemize}
+
+\subsection{Tervezés}
+asdf
+
+\subsection{Megvalósítás}
+qwer
+
+\subsection{Tesztelés}
+
+asdasdf
+
+
+
+
+
+
+
+
+
+
+
+\section{Algoritmusok}
+\subsection{Elemzés}
+\subsubsection{A probléma komplexitása}
+A sakk reprezentációja tehát már nagyjából látható. Fogalmazzuk meg a problémát: szeretnénk egy olyan programot, amely legyőzi a másik játékost, ami ekvivalens azzal, hogy minden egyes lépésnél a legoptimálisabb lépést választja. Mivel az előzőekben láttuk, hogy ez valószínűleg egy fa bejárása lesz, ezért nem is kell nagyon tovább gondolkodni: megkeressük a fa összes olyan levelét, ahol nyerünk (vagy legalább döntetlent hozunk ki) és megkeressük azt az optimális irányt, amerre haladva ha az ellenfél is a számára legjobb lépést lépi, a nyereségünk maximális lesz.
+
+Tekintsük egy sakkjátszmát: egy átlagos meccs 35-40 fordulós~\cite{averageLengthOfChessGame}\cite{averageLengthOfChessGame2}\cite{chessStatistics}, az átlagos lehetséges lépések száma egy adott állapotból 20\cite{shannonnumber}. Shannon adott egy alsó-korlátot a lehetséges játékok számára, amely $10^{120}$. \footnote{Összehasonlításképp: a világegyetemben levő atomok számát $10^{80}$ darabra teszik, a világegyetem pedig körülbelül $4.32 \times 10^{17}$ másodperce keletkezett, ami kevesebb, mint $10^{18}$-on, ami még így is sok nagyságrenddel kevesebb, mint a lehetséges játékok száma.} Ebből látható, hogy \textit{brute-force} technikával, a jelenlegi technikai háttérrel nem érdemes hozzákezdeni.
+
+Látható, hogy a probléma elég bonyolult és ezért megoldani nem lehet, csak közelíteni. A továbbiakban az algoritmus általánosan fogalmazzuk meg és formalizáljuk, de a sakkon keresztüli példálon mutatjuk be.
+
+\subsubsection{Egy általános táblás játék}
+Egy két- (vagy akár több-)személyes, táblás, körökre-osztott játékot meghatározzák a szabályai és a különböző (érvényes) állapotai. A szabályok határozzák meg, hogy mik az érvényes állapotok azáltal, hogy leszűkítik a lehetséges lépéseket olyanokra, amelyek csak érvényes állapotokat eredményeznek.
+
+Ezután már adódik az ötlet: egy játékot reprezentálhatunk egy \textbf{\textit{cimkézett}, irányított gráffal}, ahol a csomópontok a lehetséges állapotok, az élek pedig az átmenetek.
+
+\subsubsection{A probléma, mint útkeresési algoritmus}
+Általánosan fogalmazva: a sakk nem más, mint egy körökre osztott két személyes táblás játék. A bevezetőben említett játéktól most kicsit elvonatkoztatva megpróbáljuk megfogalmazni a problémát: egy táblás játék diszkrét lépésekből áll. Kezdetben van egy kezdőállapot, amely meghatározza a lehetséges lépések halmazát, amely lehet egy véges vagy végtelen halmaz. Ezek közül kiválasztva egyet a következő állapotba jutunk, amely megintcsak meghatározza a következő lehetséges lépések halmazát, és így tovább. 
+
+Ezt a legkönnyebben egy \textbf{általános irányított gráfként} képzelhetjük el, ahol a csomópontok a játék lehetséges állapotait tartalmazzák, a köztük levő élek pedig a lépéseket.
+
+Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen előfordulhat, hogy más utakon is eljuthatunk ugyanazon csúcsba, tehát nagy valószínűség szerint nem fa. Ezt a problémát megszüntethetjük többféle módon, például: 
+
+\begin{itemize}
+	\item \textbf{Csomópont duplázással} \\
+	Ilyenkor az történik, hogy ha egy állapotba több úton is eljuthatunk, akkor ezeket a csúcsokat többszörözzük. \\
+	(Lásd.: \ref{fig:game-graph-transformation} ábra.)
+	
+	\item \textbf{Ügyes reprezentációval} \\
+	Ilyenkor azt tesszük, hogy elgondolkodunk: attól, hogy ugyanabba a csomópontba jutunk több úton, az nem jelenti-e esetleg azt, hogy a más úton elért csúcs már inkább egy másik csúcs. Sakkos példánál maradva: ezt úgy érhetjük el, hogy egy állapot reprezentációjába bevesszük az odavezető utakat. Például előállhat egy hasonló állapot, ha mi is és az ellenfél is előrelép majd vissza ugyanazzal a bábuval.
+\end{itemize}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/game-graph-transformation.png}
+	\caption{Általános irányított gráfból irányított fa konstruálása}
+	\label{fig:game-graph-transformation}
+\end{figure}
+
+\subsubsection{A Minimax-algoritmus}
+\lipsum[1]
+
+\subsubsection{Az alfa-béta algoritmus}
+\lipsum[2]
+
+\subsection{Tervezés}
+\subsubsection{Általános megfogalmazás}
+Az M.I. algoritmusnak "nem kell sokat tudnia": csak annyit várunk el tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása.
+
+Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
+	\caption{Absztrakt algoritmus interface és függőségei}
+	\label{fig:algorithmAbstractDiagram}
+\end{figure}
+
+A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
+
+\begin{itemize}
+	\item \textbf{Lépés-generátor} \\
+	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell beadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. (Másik felhasználási mód a saját generátorhoz: az is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése létezhet tehát nem kigenerálható, viszont egy bejövő lépésről eldönthető, hogy az érvényes-e. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.)
+	
+	\item \textbf{Kiértékelő} \\
+	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos számára. Fontos, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de el lehessen dönteni, hogy a visszaadott értékek közül melyik kisebb/nagyobb/egyenlő. Röviden fogalmazva: az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusának értékeinek halmazának legalább \textbf{részben-rendezett} halmaznak kell lennie.
+\end{itemize}
+
+\subsubsection{A Minimax algoritmus}
+A Minimax-algoritmus 
+Ennek megfelelően implementálható a Minimax algoritmus:
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/minimaxAbstractDiagram.png}
+	\caption{MinimaxAlgorithm osztály}
+	\label{fig:minimaxAbstractDiagram}
+\end{figure}
+
+
+
+
+
+
+\subsection{Megvalósítás}
+qwer
+
+\subsection{Tesztelés}
+
+asdasdf
+
+
+
+\section{Infrastruktúra}
+\subsection{Elemzés}
+asdf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Architektúra}
 Az architektúra alapja egy sima szerver-kliens kapcsolat: (\ref{fig:highLevelArchitecture} ábra.)
 
 \begin{figure}[htbp]
@@ -236,10 +378,10 @@ Az architektúra alapja egy sima szerver-kliens kapcsolat: (\ref{fig:highLevelAr
 
 A szerver egy \textbf{RESTful} szolgáltatást nyújt a kliensek felé.
 
-\subsection{RESTful szolgáltatás}
+\subsubsection{RESTful szolgáltatás}
 Néhány szó a REST-ről, hivatkozással...
 
-\subsection{Kommunikáció a szerver és a kliensek között}
+\subsubsection{Kommunikáció a szerver és a kliensek között}
 A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
 
 \begin{figure}[htbp]
@@ -250,11 +392,11 @@ A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP 
 \end{figure}
 
 
-\section{Szerver}
+\subsubsection{Szerver}
 A szerver feladata a bejövő kérések kiszolgálása. Ő felel a felhasználók beléptetéséért, nyomonkövetéséért és a játékok kezeléséért. A legtöbb funkció kívülről egy nyílt API-n keresztül elérhető, kivétel a felhasználói regisztráció és adminisztráció,
 A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és felhasználói adatmódosítás elérhető, illetve innen lehet elérni különböző a játékkal kapcsolatos anyagokat is, mint például az API dokumentáció.
 
-\subsection{Szerver oldali UI}
+\subsubsection{Szerver oldali UI}
 Minimalista design, csak az előbb említet funkciókat kiszolgáló UI-t tartalmazza (\ref{fig:serverUiMainScreen}. ábra):
 
 \begin{figure}[htbp]
@@ -274,7 +416,7 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 \end{figure}
 
 
-\subsection{Publikus API}
+\subsubsection{Publikus API}
 A szerver a következő publikus szolgáltatásokat nyújtja:
 
 % == Szerver - felhasználói fiókok =======================================================================================
@@ -417,7 +559,7 @@ A szerver ellenőrzi, majd végrehajtja és lementi a lépést, erről visszaiga
 \end{longtable} 
 
 \vbox{
-\subsection{Dokumentáció}
+\subsubsection{Dokumentáció}
 Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
 
 A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
@@ -452,9 +594,9 @@ public class HealthController : Controller
 
 A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.}
 
-\section{A Kliens}
+\subsubsection{A Kliens}
 
-\subsection{Felhasználó és játékos}
+\subsubsection{Felhasználó és játékos}
 
 Mivel az MI és a játékkliens csak annyiban tér el, hogy ki hozza meg a döntést egy játszmában, ezért a dolgozat további részében fontos lesz a \textbf{„felhasználó”} és a \textbf{„játékos”} megkülönböztetése.
 
@@ -466,7 +608,7 @@ Játékos alatt azt értjük, aki "játszik", azaz meghozza a döntéseket. Ez b
 Felhasználó alatt a továbbiakban mindig az emberi \textit{játékost} értjük.
 \end{definition}
 
-\subsection{Alapfunkciók}
+\subsubsection{Alapfunkciók}
 A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 
 % == Kliens - indulás ===================================================================================================
@@ -811,7 +953,7 @@ A játékkliens képernyői közötti átmenetekért lásd \ref{fig:ClientScreen
 
 
 
-\subsection{Játékkliens UI terve}
+\subsubsection{Játékkliens UI terve}
 A játékkliens képernyőinek terveit lásd: \ref{fig:gameClientScreens} ábra.
 \begin{figure}[htbp]
 	\centering
@@ -820,100 +962,59 @@ A játékkliens képernyőinek terveit lásd: \ref{fig:gameClientScreens} ábra.
 	\label{fig:gameClientScreens}
 \end{figure}
 
+\subsection{Tervezés}
+asdf
+
+\subsection{Megvalósítás}
+qwer
+
+\subsection{Tesztelés}
+
+asdasdf
+
+
+
 \section{Segédkönyvtárak}
 
-\subsection{Modell}
-
-\subsubsection{Egy általános táblás játék reprezentációja}
-
-Egy körökreosztott általános táblás játék a következő elemekből áll:
-
-\begin{itemize}
-	\item \textbf{Reprezentáció} (avagy modell) \\
-	A játékállás reprezentációja sokrétű lehet, tudni kell a játékosok listáját és a következő lépésre jogosult játékos. A további reprezentáció (tábla, vagy esetleg az asztalon levő kártyák) mind változhat.
-
-	A későbbi implementációs döntéseket figyelembe véve érdekes elgondolkodni azon, hogy a reprezentációt (a táblát, az asztalon levő kártyákat) bárki piszkálhatja, azonban ez esetben felborul a parti érvényessége: azon kívül, hogy valaki csalhat, megtörténhet az is, hogy olyan állapotba kerül a játék, amely egyébként nem lenne lehetséges. Ezért jó ötlet egy "bíró" vagy "krupié" közbeiktatása, aki figyel erre, tudja az összes szabályt és csak ő nyúlhat a játéktérhez.
-	
-	\item \textbf{Szabályok} (avagy játékmechanika) \\
-	A szabályok határozzák meg, hogy milyen helyzetben mik a lehetséges lépések. Az ezt kiszolgáló osztály legyen a játékmester, aki hozzányúlhat a reprezentációhoz, így biztosítva, hogy a játék mindig a szabályoknak megfelelően megy.
-\end{itemize}
-
-A fenti felosztásból adódhat a \ref{fig:boardGameAbstractClassDiagram}. ábrán ismertetett osztálydiagram. A \texttt{GameRepresentation} osztály maga a modell. Teljesen "buta", nincs beleépítve logika, csak tárolja a tábla vagy asztal aktuális állapotát és valamilyen módon lehetőséget biztosít a módosítására. Nem szabad semmilyen játék alapelveit beleépíteni, hiszen például egy sakktáblán is lehet többfajta sakkot játszani, amelyek szabályai különbözőek.
-
-A \texttt{Game} osztály a "játékmester", ő az, aki a szabályok szerint módosítja a reprezentációt. Rajta keresztül kell validálni és végrehajtatni a lépéseket, illetve tőle lehet lekérdezni az aktuális meccs állását illetve egyéb fontosabb tulajdonságait.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{img/boardGameAbstractClassDiagram.png}
-	\caption{Egy általános táblás, körökre osztott játék absztrakt reprezentációja}
-	\label{fig:boardGameAbstractClassDiagram}
-\end{figure}
 
 
-\subsubsection{Sakk reprezentáció}
 
-A sakk is két fő részből áll: reprezentáció és játékmechanika. Ezeket a \texttt{ChessBoard} és a \texttt{ChessGame} osztályok valósítják meg. (Lásd: \ref{fig:chessClassDiagram}. ábra.)
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{img/chessClassDiagram.png}
-	\caption{Sakkot reprezentáló osztálydiagram}
-	\label{fig:chessClassDiagram}
-\end{figure}
 
-A \texttt{ChessBoard} osztály önmagában csak reprezentál, minden \textit{property} írható és olvasható. Tartalmazza a játékosok listáját (fehér, fekete), a soronkövetkező játékost, az eddig megtett lépések listáját, illetve a tábla aktuális állapotát.
 
-A \texttt{ChessGame} osztály felelős a játék kezeléséért, betartja a szabályokat, segít a lehetséges lépések kigenerálásában, validációjában és végrehajtásában. Fontos, hogy a teljes szeparáltság miatt a \texttt{ChessGame} osztálynak kizárólag egy számára átadott \texttt{ChessBoard} osztályból tudnia kell a lehetséges lépéseket, a parti állását, stb.
 
-Felmerülhet, hogy miért nincs egyben ez a két osztály. Ennek több oka van:
 
-\begin{itemize}
-	\item \textbf{Egy felelősség alapelve} \textit{(Single responsibility principle)}\cite{SingleResponsibilityHu}~\cite{SingleResponsibilityEn}~\cite{SOLID}~ \\
-	Ha egy osztály lenne, az túl bonyolulttá tenné ezt az osztályt: több felelősséget rakna rá és így megsértené a \textit{single responsibility} elvét.
-	\item \textbf{Könnyebb felhasználhatóság} \\
-	Az előzőekben ismertetett algoritmusoknak külön érdekes csak a reprezentáció, hiszen ebből tudnak "állást számolni". Így az aktuális állás osztályozásához nem kell egy mindent tudó objektum, elég csak a reprezentációt átadni a megfelelő kiértékelő függvénynek.
-	\item \textbf{Jövőbeli továbbfejleszthetőség} \\
-	Sokféle sakkjáték ismeretes, így csak a \texttt{ChessGame} osztály kicserélésével egy másik játékot tudunk készíteni. (Például francia sakk.)
-	\item \textbf{Tesztelhetőség} \\
-	Ha tiszták és minél egyszerűbbek a különböző részei a játékreprezentációnak, annál könnyebb fókuszált \textit{unit-teszteket} írni ezekre.
-\end{itemize}
 
-\subsection{Algoritmus}
 
-\subsubsection{Általános megfogalmazás}
-Az M.I. algoritmusnak "nem kell sokat tudnia": csak annyit várunk el tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása.
 
-Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
-	\caption{Absztrakt algoritmus interface és függőségei}
-	\label{fig:algorithmAbstractDiagram}
-\end{figure}
 
-A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
 
-\begin{itemize}
-	\item \textbf{Lépés-generátor} \\
-	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell beadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. (Másik felhasználási mód a saját generátorhoz: az is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése létezhet tehát nem kigenerálható, viszont egy bejövő lépésről eldönthető, hogy az érvényes-e. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.)
-	
-	\item \textbf{Kiértékelő} \\
-	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos számára. Fontos, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de el lehessen dönteni, hogy a visszaadott értékek közül melyik kisebb/nagyobb/egyenlő. Röviden fogalmazva: az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusának értékeinek halmazának legalább \textbf{részben-rendezett} halmaznak kell lennie.
-\end{itemize}
 
-\subsubsection{A Minimax algoritmus}
-A Minimax-algoritmus 
-Ennek megfelelően implementálható a Minimax algoritmus:
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{img/minimaxAbstractDiagram.png}
-	\caption{MinimaxAlgorithm osztály}
-	\label{fig:minimaxAbstractDiagram}
-\end{figure}
-
+% -------------------------------------------------------------------------------------------------------------
+% --- FELHASZNÁLÓI DOKUMENTÁCIÓ -------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------------------------------
 \newpage
+\part{Felhasználói Dokumentáció}
+
+\lipsum{2}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \bibliographystyle{plain}
 \part{\bibname}
