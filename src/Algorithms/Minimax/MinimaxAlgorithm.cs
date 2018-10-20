@@ -1,0 +1,103 @@
+﻿using System.Linq;
+using Algorithms.Abstractions.Interfaces;
+using Algorithms.Minimax.Exceptions;
+
+namespace Algorithms.Minimax
+{
+    /// <summary>
+    /// The minimax algorithm implementation.
+    /// </summary>
+    /// <typeparam name="TState">The type of the states which have to be evaluated.</typeparam>
+    /// <typeparam name="TMove">The type of the moves between states.</typeparam>
+    public class MinimaxAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
+        where TMove : class
+    {
+        private int _maxDepth;
+
+        protected readonly IEvaluator<TState> _evaluator;
+        protected readonly ITransitionGenerator<TState, TMove> _moveGenerator;
+        protected readonly IApplier<TState, TMove> _moveApplier;
+
+        public MinimaxAlgorithm(IEvaluator<TState> evaluator, ITransitionGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+        {
+            _evaluator = evaluator;
+            _moveGenerator = moveGenerator;
+            _moveApplier = applier;
+            _maxDepth = 3;
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum depth (number of transitions) the algorithm is checking.
+        /// </summary>
+        public int MaxDepth
+        {
+            get
+            {
+                return _maxDepth;
+            }
+
+            set
+            {
+                if(value < 1)
+                {
+                    throw new MinimaxMaxDepthInvalidException();
+                }
+
+                _maxDepth = value;
+            }
+        }
+
+        /// <inheritdoc />
+        public TMove Calculate(TState state, bool maximize = true)
+        {
+            var moves = _moveGenerator.Generate(state);
+
+            if(!moves.Any())
+            {
+                return null;
+            }
+
+            var movesAndValues = moves.Select(move => new
+            {
+                Move = move,
+                Value = Calculate(_moveApplier.Apply(state, move), 1, !maximize)
+            });
+
+            var max = movesAndValues.Max(x => x.Value);
+            var result = movesAndValues.First(x => Equals(x.Value, max)).Move;
+
+            return result;
+        }
+
+        private int Calculate(TState state, int depth, bool maximize)
+        {
+            if (depth == MaxDepth)
+            {
+                return _evaluator.Evaluate(state);
+            }
+
+            var nextMoves = _moveGenerator.Generate(state).ToList();
+            var isLeaf = !nextMoves.Any();
+
+            if(isLeaf)
+            {
+                return _evaluator.Evaluate(state);
+            }
+
+            var childrenValues = nextMoves
+                                    .Select(x => _moveApplier.Apply(state, x))
+                                    .Select(x => Calculate(x, depth + 1, !maximize))
+                                    .ToList();
+            if (maximize)
+            {
+                var childrenMax = childrenValues.Union(new[] { int.MinValue }).Max();
+                return childrenMax;
+            }
+            else
+            {
+                var childrenMin = childrenValues.Union(new[] { int.MaxValue }).Min();
+                return childrenMin;
+            }
+        }
+    }
+}
