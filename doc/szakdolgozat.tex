@@ -1,0 +1,929 @@
+% -------------------------------------------------------------------------------------------------------------
+% --- PREAMBLE ------------------------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------------------------------
+
+\documentclass[twoside, a4paper, 12pt]{article}
+\usepackage{bookman}
+\usepackage{thesis-style}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{amssymb,amsmath}
+\usepackage{lipsum}% just to generate text for the example
+\usepackage{listings}% http://ctan.org/pkg/listings
+\renewcommand{\lstlistingname}{Kódrészlet}% 
+\renewcommand{\lstlistlistingname}{Kódrészletek listája}
+
+\newtheorem{definition}{Definíció}
+
+
+\renewcommand{\listoffigures}{\begingroup
+\tocsection
+\tocfile{\listfigurename}{lof}
+\endgroup}
+
+\renewcommand{\listoftables}{\begingroup
+\tocsection
+\tocfile{\listtablename}{lot}
+\endgroup}
+
+
+\input{meta/metadata}
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr}
+\title{\THESISTITLE}
+\author{\THESISAUTHOR}
+\date{\THESISDEFENCEYEAR}
+
+\begin{document}
+\pagestyle{empty}
+
+\include{meta/coverpage}
+\cleardoublepage
+
+%place of the thesis subject registration form
+\null
+\vspace*{\fill}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/bots_chess.png}
+	\caption{Robotok sakkoznak a Futurama \copyright című sorozat egyik epizódjában.}
+	\label{fig:bots_chess}
+\end{figure}
+\vspace*{\fill}
+\null
+\cleardoublepage
+
+% table of contents
+\tableofcontents
+\cleardoublepage
+
+
+\pagestyle{plain}
+\setcounter{page}{1}
+
+\newpage
+
+% -------------------------------------------------------------------------------------------------------------
+% --- ÖSSZEFOGLALÁS -------------------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------------------------------
+
+\part{Összefoglalás}
+\section{Bevezető}
+\subsection{A dolgozat célja}
+A dolgozat célja a mesterséges intelligencia kurzuson bemutatott \textbf{„kétszemélyes, teljes információjú, véges és determinisztikus, zéró összegű, játékok”} algoritmusainak bemutatása a gyakorlatban, illetve az érdeklődőbb hallgatók bevonása egy olyan játékba, melyen keresztül elmélyíthetik tudásukat ezen algoritmusokból.
+
+E célból a (normál) sakkot vesszük alapul, mely elég bonyolult ahhoz, hogy látványos eredményeket láthassunk, a legtöbben ismerik a szabályait, illetve egy klasszikus példája a fent nevezett játékok halmazának.
+
+A dolgozat "mellékterméke" egy olyan \textit{API interface}, melyhez kapcsolódva nem csak mesterséges intelligenciát megvalósító programok, hanem "sima", emberi játékosok által is használható kliens is írható, így a téma iránt nem érdeklődők is kipróbálhatják magukat például egy mobilalkalmazás vagy egy asztali Windows / Linux alapú kliens megírásában.
+
+\subsection{A sakk néhány különlegessége}
+A sakk szabályait nem részleteznénk, ismertnek tételezzük fel, illetve az interneten könnyen hozzáférhető, mint például a \url{http://www.sakk.hu/help/sakk_szabalyok.html} ~\cite{chessrulessakkhu} oldalon. Néhány fontos dolog azért megjegyzendő, amely befolyással lehet (lesz is!) a megvalósításra.
+
+Egy volt munkahelyemen dekoráció gyanánt ki volt rakva egy sakktábla bábukkal. Ezt az emberek elkezdték használni: kinyomtattak egy papírt, egyik oldalára azt, hogy "fehér jön" a másik oldalára pedig azt, hogy "fekete jön". Ha valakinek volt kedve és ideje, odamehetett, elgondolkodhatott a lépésen, majd miután lépett, megfordította a papírt és várták, hogy valaki lépjen.
+
+Ez így elég egyszerűnek tünik. Ahhoz, hogy kiszámoljunk egy következő lépést, csak rá kell néznünk a táblára és arra, hogy ki következik, és kész? Az esetek többségében igen, de ha az előző lépések listája teljesen ismeretlen, akkor azért néhány problémába ütközünk, amikor megpróbáljuk kiszámolni a lehetséges lépéseket. A triviális lépésektől eltekintve problémába ütközhetünk, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa az amatőrök által (és eddig általam sem) ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csak a következő!) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg az ellenfél bábuja. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg.
+
+Másik érdekes (és versenyeken alkalmazott) szabály az, hogy ha többször fordul elő ugyanaz az állapot, akkor a játék döntetlennel ér véget.
+
+Ezekből a példákból látszik, hogy nem elég a tábla aktuális állapotának ismerete, ahhoz kell még extra információ is például a bábukról (elmozdult? en passant üthető?) ami mondjuk egy a bábukra tett jelöléssel megoldható lenne, viszont a legutóbb emlegetett problémára nem megoldás: ahhoz kell az előző lépések listája is.
+
+Ennek egyébként egy érdekes hatása lesz majd az alkalmazott reprezentációra: ha a lehetséges lépések kiszámításához elég lenne "ránézni" a táblára, akkor a játékot reprezentáló gráfunk nem lesz fa, hiszen egy bizonyos állapotba több úton is eljuthatunk. Ha azonban belevesszük egy játékállás reprezentációjához a parti addigi történelmét is, akkor az állások egyediek lesznek és a gráfunk fa-szerű lesz. (Ez mondjuk nem feltétele annak, hogy a dolgozat által ismertetett algoritmusok működjenek, mivel az ő szempontjukból készülhet más reprezentáció is, ami viszont már fa lesz. De ezekről majd később...)
+
+\subsection{A probléma komplexitása}
+A sakk reprezentációja tehát már nagyjából látható. Fogalmazzuk meg a problémát: szeretnénk egy olyan programot, amely legyőzi a másik játékost, ami ekvivalens azzal, hogy minden egyes lépésnél a legoptimálisabb lépést választja. Mivel az előzőekben láttuk, hogy ez valószínűleg egy fa bejárása lesz, ezért nem is kell nagyon tovább gondolkodni: megkeressük a fa összes olyan levelét, ahol nyerünk (vagy legalább döntetlent hozunk ki) és megkeressük azt az optimális irányt, amerre haladva ha az ellenfél is a számára legjobb lépést lépi, a nyereségünk maximális lesz.
+
+Tekintsük egy sakkjátszmát: egy átlagos meccs 35-40 fordulós~\cite{averageLengthOfChessGame}\cite{averageLengthOfChessGame2}\cite{chessStatistics}, az átlagos lehetséges lépések száma egy adott állapotból 20\cite{shannonnumber}. Shannon adott egy alsó-korlátot a lehetséges játékok számára, amely $10^{120}$. \footnote{Összehasonlításképp: a világegyetemben levő atomok számát $10^{80}$ darabra teszik, a világegyetem pedig körülbelül $4.32 \times 10^{17}$ másodperce keletkezett, ami kevesebb, mint $10^{18}$-on, ami még így is sok nagyságrenddel kevesebb, mint a lehetséges játékok száma.} Ebből látható, hogy \textit{brute-force} technikával, a jelenlegi technikai háttérrel nem érdemes hozzákezdeni.
+
+
+
+
+\section{Az algoritmus}
+Látható, hogy a probléma elég bonyolult és ezért megoldani nem lehet, csak közelíteni. A továbbiakban az algoritmus általánosan fogalmazzuk meg és formalizáljuk, de a sakkon keresztüli példálon mutatjuk be.
+
+\subsection{Egy általános táblás játék}
+Egy két- (vagy akár több-)személyes, táblás, körökre-osztott játékot meghatározzák a szabályai és a különböző (érvényes) állapotai. A szabályok határozzák meg, hogy mik az érvényes állapotok azáltal, hogy leszűkítik a lehetséges lépéseket olyanokra, amelyek csak érvényes állapotokat eredményeznek.
+
+Ezután már adódik az ötlet: egy játékot reprezentálhatunk egy \textbf{\textit{cimkézett}, irányított gráffal}, ahol a csomópontok a lehetséges állapotok, az élek pedig az átmenetek.
+
+\subsection{A probléma, mint útkeresési algoritmus}
+Általánosan fogalmazva: a sakk nem más, mint egy körökre osztott két személyes táblás játék. A bevezetőben említett játéktól most kicsit elvonatkoztatva megpróbáljuk megfogalmazni a problémát: egy táblás játék diszkrét lépésekből áll. Kezdetben van egy kezdőállapot, amely meghatározza a lehetséges lépések halmazát, amely lehet egy véges vagy végtelen halmaz. Ezek közül kiválasztva egyet a következő állapotba jutunk, amely megintcsak meghatározza a következő lehetséges lépések halmazát, és így tovább. 
+
+Ezt a legkönnyebben egy \textbf{általános irányított gráfként} képzelhetjük el, ahol a csomópontok a játék lehetséges állapotait tartalmazzák, a köztük levő élek pedig a lépéseket.
+
+Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen előfordulhat, hogy más utakon is eljuthatunk ugyanazon csúcsba, tehát nagy valószínűség szerint nem fa. Ezt a problémát megszüntethetjük többféle módon, például: 
+
+\begin{itemize}
+	\item \textbf{Csomópont duplázással} \\
+	Ilyenkor az történik, hogy ha egy állapotba több úton is eljuthatunk, akkor ezeket a csúcsokat többszörözzük. \\
+	(Lásd.: \ref{fig:game-graph-transformation} ábra.)
+
+	\item \textbf{Ügyes reprezentációval} \\
+	Ilyenkor azt tesszük, hogy elgondolkodunk: attól, hogy ugyanabba a csomópontba jutunk több úton, az nem jelenti-e esetleg azt, hogy a más úton elért csúcs már inkább egy másik csúcs. Sakkos példánál maradva: ezt úgy érhetjük el, hogy egy állapot reprezentációjába bevesszük az odavezető utakat. Például előállhat egy hasonló állapot, ha mi is és az ellenfél is előrelép majd vissza ugyanazzal a bábuval.
+\end{itemize}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/game-graph-transformation.png}
+	\caption{Általános irányított gráfból irányított fa konstruálása}
+	\label{fig:game-graph-transformation}
+\end{figure}
+
+\subsection{A Minimax-algoritmus}
+\lipsum[1]
+
+\subsection{Az alfa-béta algoritmus}
+\lipsum[2]
+
+
+
+
+
+
+
+
+
+
+% -------------------------------------------------------------------------------------------------------------
+% --- FELHASZNÁLÓI DOKUMENTÁCIÓ -------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------------------------------
+\newpage
+\part{Felhasználói Dokumentáció}
+
+\lipsum{2}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% -------------------------------------------------------------------------------------------------------------
+% --- FEJLESZTŐI DOKUMENTÁCIÓ ---------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------------------------------
+\newpage
+\part{Fejlesztői Dokumentáció}
+
+
+
+\section{Bevezető}
+A programcsomag három fő részből áll:
+\begin{itemize}
+	\item \textbf{Szerver}
+	\begin{itemize}
+	
+		\item Felhasználói adminisztrációs feladatok:
+		\begin{itemize}
+			\item Felhasználó hitelesítése.
+			\item Felhasználó hitelesítése / nyomonkövetése.
+		\end{itemize}
+
+		\item Játékkal kacsolatos adminisztáció:
+		\begin{itemize}
+			\item Ellenőrzi a kliensektől jövő lépések érvényességét.
+			\item Közvetíti a kliensek felé a partik alakulását.
+			\item Tabella kezelése.
+		\end{itemize}		
+		
+	\end{itemize}
+
+	\item \textbf{Kliens (humán vagy MI kliens)}
+	\begin{itemize}
+	
+		\item Felhasználói adminisztrációs feladatok:
+		\begin{itemize}
+			\item Felhasználó beléptetése, nyomonkövetése.
+		\end{itemize}
+
+		\item Játékkal kapcsolatos adminisztráció:
+		\begin{itemize}
+			\item Közvetíti a felhasználó felé a partik alakulását.
+			\item A játékos döntéseit közvetíti a szerver felé.
+		\end{itemize}
+		
+	\end{itemize}
+	
+	\item \textbf{Segédkönyvtárak} \\
+	\begin{itemize}
+		\item \textbf{Algoritmusok} \\
+		Tartalmazzák a leimplementált és újrafelhasználható algoritmusokat, úgymint a \textbf{Minimax} és az \textbf{Alfa-béta} algoritmusok, illetve definiálnak egy interfészt ezekhez.
+
+		\item \textbf{Sakk} \\
+		Tartalmazza a sakk egy reprezentációját és az lépéseket generáló kódot. Ez lesz az, ami mindenhol felhasználható: kliensekben legenerálja a lehetséges lépéseket, szerveren validál.
+	\end{itemize}
+	
+\end{itemize}
+
+
+\subsection{Architektúra}
+Az architektúra alapja egy sima szerver-kliens kapcsolat: (\ref{fig:highLevelArchitecture} ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/highLevelArchitecture.png}
+	\caption{Magas-szintű architektúra}
+	\label{fig:highLevelArchitecture}
+\end{figure}
+
+A szerver egy \textbf{RESTful} szolgáltatást nyújt a kliensek felé.
+
+\subsection{RESTful szolgáltatás}
+Néhány szó a REST-ről, hivatkozással...
+
+\subsection{Kommunikáció a szerver és a kliensek között}
+A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/clientServerCommunication.png}
+	\caption{Kliens - szerver közötti kommunikáció sémája}
+	\label{fig:clientServerCommunication}
+\end{figure}
+
+
+\section{Szerver}
+A szerver feladata a bejövő kérések kiszolgálása. Ő felel a felhasználók beléptetéséért, nyomonkövetéséért és a játékok kezeléséért. A legtöbb funkció kívülről egy nyílt API-n keresztül elérhető, kivétel a felhasználói regisztráció és adminisztráció,
+A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és felhasználói adatmódosítás elérhető, illetve innen lehet elérni különböző a játékkal kapcsolatos anyagokat is, mint például az API dokumentáció.
+
+\subsection{Szerver oldali UI}
+Minimalista design, csak az előbb említet funkciókat kiszolgáló UI-t tartalmazza (\ref{fig:serverUiMainScreen}. ábra):
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/serverUiMainScreen.png}
+	\caption{Szerver fő felület}
+	\label{fig:serverUiMainScreen}
+\end{figure}
+
+A később részletezett open-API dokumentációját a swagger nevű generátorral oldottuk meg, amely felépítését mutatja a \ref{fig:serverUiDocumentation}. ábra.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/serverUiDocumentation.png}
+	\caption{Szerver - generált dokumentáció}
+	\label{fig:serverUiDocumentation}
+\end{figure}
+
+
+\subsection{Publikus API}
+A szerver a következő publikus szolgáltatásokat nyújtja:
+
+% == Szerver - felhasználói fiókok =======================================================================================
+\begin{longtable}[c]{|c|p{14cm}|}
+\hline
+\rowcolor[HTML]{6665CD}
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szerver funkciói}}} \\ \hline
+\endfirsthead
+%
+\multicolumn{2}{c}%
+{{\bfseries Table \thetable\ folytatása az előző oldalról...}} \\
+\hline
+\rowcolor[HTML]{6665CD} 
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szerver funkciói}}} \\ \hline
+\endhead
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{1}
+&	Bejelentkezés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A szerver fut.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Beérkezik egy bejelentkezési kérés egy felhasználói névvel és jelszóval.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+A szerver a felhasználói név és jelszó ellenőrzése után visszajelez a kliensnek.
+Ha sikeres volt a belépés, akkor kap egy "token"-t. Más esetben hibajelzést kap.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{2}
+&	Belépési token meghosszabbítása
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A szerver fut.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Beérkezik egy kérés egy tokennel azzal a szándékkal, hogy az érvényessége meg legyen hosszabbítva.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+A szerver leellenőrzi a token-t és ha még érvényes, akkor egy meghosszabbított token-t ad vissza. Egyébként hibát jelez.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{3}
+&	Szerver-státusz lekérdezése ("Health-check")
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+-
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Beérkezik egy kérés a szerverhez, amelyben a kliens érdeklődik a szerver státusza (fut-e?) iránt.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Ha a szerver fut, akkor visszaküldi a verziószámát. Egyébként nem válaszol.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{4}
+&	Játékosok lekérdezése
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A szerver fut, a kliens rendelkezik érvényes token-nel.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri a játékosok listáját.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+A szerver visszaküldi a játékosok listáját (ha érvényes volt a token).
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{5}
+&	Partik lekérdezése
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A szerver fut, a kliens rendelkezik érvényes token-nel.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri az aktuális játékos partijainak listáját.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+A szerver visszaküldi a partik listáját (ha érvényes volt a token).
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{6}
+&	Lépés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A szerver fut, a kliens rendelkezik érvényes token-nel.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Beérkezik egy kérés a szerverhez, amelyben a kliens közli, hogy melyik partin milyen lépést szeretne kezdeményezni.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+A szerver ellenőrzi, majd végrehajtja és lementi a lépést, erről visszaigazolást küld a legfrisebb állással (ha érvényes volt a token).
+\\
+\hline
+
+\caption{Szerver alapfunkciói - API}
+\label{userStories:server:api}\\
+\end{longtable} 
+
+\vbox{
+\subsection{Dokumentáció}
+Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
+
+A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
+
+\begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
+/// <summary>
+/// The health controller. Only used to return the version information.
+/// (Can only respond when the service is up and running.)
+/// </summary>
+[Route("api/Health")]
+public class HealthController : Controller
+{
+    /// <summary>
+    /// Health check. Returns the version number of the service.
+    /// </summary>
+    /// <returns>The version information of the service.</returns>
+    [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+         var version = Microsoft.Extensions
+                                .PlatformAbstractions
+                                .PlatformServices
+                                .Default
+                                .Application
+                                .ApplicationVersion;
+
+         return Ok(version);
+    }
+}
+\end{lstlisting}
+
+A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.}
+
+\section{A Kliens}
+
+\subsection{Felhasználó és játékos}
+
+Mivel az MI és a játékkliens csak annyiban tér el, hogy ki hozza meg a döntést egy játszmában, ezért a dolgozat további részében fontos lesz a \textbf{„felhasználó”} és a \textbf{„játékos”} megkülönböztetése.
+
+\begin{definition}[Játékos]
+Játékos alatt azt értjük, aki "játszik", azaz meghozza a döntéseket. Ez botok esetén a gépi ellenfél, a sima játékkliens esetén az ember lesz.
+\end{definition}
+
+\begin{definition}[Felhasználó]
+Felhasználó alatt a továbbiakban mindig az emberi \textit{játékost} értjük.
+\end{definition}
+
+\subsection{Alapfunkciók}
+A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
+
+% == Kliens - indulás ===================================================================================================
+\begin{longtable}[c]{|c|p{14cm}|}
+\hline
+\rowcolor[HTML]{6665CD}
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens indítása}}} \\ \hline
+\endfirsthead
+%
+\multicolumn{2}{c}%
+{{\bfseries Table \thetable\ folytatása az előző oldalról...}} \\
+\hline
+\rowcolor[HTML]{6665CD} 
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens indítása}}} \\ \hline
+\endhead
+%
+\rowcolor[HTML]{CBCEFB} 
+
+% -----------------------------------------------------------------------------------------------------------------------
+\textbf{1}
+&	Alkalmazás indítása
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A kliens telepítve van.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+A felhasználó jelzi a játék indításának szándékát.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+A kilens elindul és:
+\begin{itemize}
+	\item Ha a játékos már be van lépve, akkor belép a lobbiba.
+	\item Ha a játékos nincs belépve, akkor megjelenik a hitelesítési felület.
+\end{itemize} 
+\\
+\hline
+
+\caption{Kliens alapfunkciói - indítás}
+\label{userStories:client:start}\\
+\end{longtable} 
+
+
+% == Kliens - hitelesítési felület ======================================================================================
+\begin{longtable}[c]{|c|p{14cm}|}
+\hline
+\rowcolor[HTML]{6665CD}
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Hitelesítési felület}}} \\ \hline
+\endfirsthead
+%
+\multicolumn{2}{c}%
+{{\bfseries \thetable\ folytatása az előző oldalról...}} \\
+\hline
+\rowcolor[HTML]{6665CD} 
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Hitelesítés}}} \\ \hline
+\endhead
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{1}
+&	Kilépés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+Hitelesítési felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Kilépési szándék jelzése majd annak pozitív megerősítése.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Alkalmazás bezárása.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{2}
+&	Hitelesítés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+Hitelesítési felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+\begin{itemize}
+\item Felhasználói név és jelszó megadása.
+\item Belépési szándék jelzése.
+\end{itemize}
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Adatok elküldése hitelesítésre a szerverhez.
+\begin{itemize}
+	\item Ha az adatok megfelelőek:
+	\begin{itemize}
+		\item Felhasználó beléptetése.
+		\item Hitelesítési felület elrejtése.
+		\item Lobbi megjelenítése, partik állapotának lekérdezése.
+	\end{itemize}
+
+	\item Ha az adatok nem megfelelőek:
+		\begin{itemize}
+			\item Felhasználói tájékoztatása problémáról.
+		\end{itemize}
+\end{itemize}
+\\
+\hline
+
+\caption{Kliens alapfunkciói - hitelesítési felület}
+\label{userStories:client:authentication}\\
+\end{longtable}
+
+% == Kliens - lobbi =====================================================================================================
+\begin{longtable}[c]{|c|p{14cm}|}
+\hline
+\rowcolor[HTML]{6665CD}
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Lobbi}}} \\ \hline
+\endfirsthead
+%
+\multicolumn{2}{c}%
+{{\bfseries \thetable\ folytatása az előző oldalról...}} \\
+\hline
+\rowcolor[HTML]{6665CD} 
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Lobbi}}} \\ \hline
+\endhead
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{1}
+&	Kilépés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Kilépési szándék, majd annak megerősítése.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Alkalmazás bezárása.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{2}
+&	Új játék kezdeményezése
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A lobbi-felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Bejelentkezett játékosok közül leendő ellenfél kiválasztva, új játék kezdésének szándéka.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Új játék kezdeményezésére vonatkozó kérelem elküldése szervernek, majd partik listájának megjelenítése.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{3}
+&	Partik listájának megtekintése
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Partik megtekintésének szándéka.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Partik felület mutatása.
+\\
+\hline
+\caption{Kliens alapfunkciói - lobbi}
+\label{userStories:client:lobby}\\
+\end{longtable}
+
+% == Kliens - partik listája ============================================================================================
+\begin{longtable}[c]{|c|p{14cm}|}
+\hline
+\rowcolor[HTML]{6665CD}
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Partik listája}}} \\ \hline
+\endfirsthead
+%
+\multicolumn{2}{c}%
+{{\bfseries \thetable\ folytatása az előző oldalról...}} \\
+\hline
+\rowcolor[HTML]{6665CD} 
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Partik listája}}} \\ \hline
+\endhead
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{1}
+&	Kilépés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Kilépési szándék, majd annak megerősítése.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Alkalmazás bezárása.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{2}
+&	Kihívás elfogadása / visszautasítása
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A felület aktív, partik listájában egy még nem elfogadott kérés van kiválasztva.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Kihívás elfogadása / visszautasítása.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Kérés elküldése szervernek, partik listájának frissítése.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{3}
+&	Kiválasztott játék megjelenítése
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A felület aktív, partik listájában egy már elfogadott játék van kiválasztva.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Parti megtekintésének kezdeményezése.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Játékfelület mutatása.
+\\
+\hline
+\caption{Kliens alapfunkciói - partik listája felület}
+\label{userStories:client:parties}\\
+\end{longtable}
+
+% == Kliens - játékfelület ==============================================================================================
+\begin{longtable}[c]{|c|p{14cm}|}
+\hline
+\rowcolor[HTML]{6665CD}
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - partik listája}}} \\ \hline
+\endfirsthead
+%
+\multicolumn{2}{c}%
+{{\bfseries \thetable\ folytatása az előző oldalról...}} \\
+\hline
+\rowcolor[HTML]{6665CD} 
+\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - partik listája}}} \\ \hline
+\endhead
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{1}
+&	Kilépés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Kilépési szándék, majd annak megerősítése.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Alkalmazás bezárása.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\rowcolor[HTML]{CBCEFB} 
+\textbf{2}
+&	Lépés
+\\ \nobreakhline
+
+\textbf{GIVEN} &
+A felület aktív.
+\\ \nobreakhline
+
+\textbf{WHEN} &
+Lépési szándék vagy feladás/döntetlen felajánlása ellenfélnek a sakk szabályai szerint.
+\\
+\nobreakhline
+
+\textbf{THEN} &
+Kérés elküldése szervernek, majd a játékállapot frissítése.
+\\
+\hline
+
+% -----------------------------------------------------------------------------------------------------------------------
+\caption{Kliens alapfunkciói - Játékfelület}
+\label{userStories:client:gameScreen}\\
+\end{longtable}
+
+A játékkliens képernyői közötti átmenetekért lásd \ref{fig:ClientScreenTransitions} ábra.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/ClientScreenTransitions.png}
+	\caption{A játékkliens (telefonos) képernyői közötti átmenetek}
+	\label{fig:ClientScreenTransitions}
+\end{figure}
+
+
+
+\subsection{Játékkliens UI terve}
+A játékkliens képernyőinek terveit lásd: \ref{fig:gameClientScreens} ábra.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/gameClientScreens.png}
+	\caption{A játékkliens (telefonos) képernyőinek tervei}
+	\label{fig:gameClientScreens}
+\end{figure}
+
+\section{Segédkönyvtárak}
+
+\subsection{Modell}
+
+\subsubsection{Egy általános táblás játék reprezentációja}
+
+Egy körökreosztott általános táblás játék a következő elemekből áll:
+
+\begin{itemize}
+	\item \textbf{Reprezentáció} (avagy modell) \\
+	A játékállás reprezentációja sokrétű lehet, tudni kell a játékosok listáját és a következő lépésre jogosult játékos. A további reprezentáció (tábla, vagy esetleg az asztalon levő kártyák) mind változhat.
+
+	A későbbi implementációs döntéseket figyelembe véve érdekes elgondolkodni azon, hogy a reprezentációt (a táblát, az asztalon levő kártyákat) bárki piszkálhatja, azonban ez esetben felborul a parti érvényessége: azon kívül, hogy valaki csalhat, megtörténhet az is, hogy olyan állapotba kerül a játék, amely egyébként nem lenne lehetséges. Ezért jó ötlet egy "bíró" vagy "krupié" közbeiktatása, aki figyel erre, tudja az összes szabályt és csak ő nyúlhat a játéktérhez.
+	
+	\item \textbf{Szabályok} (avagy játékmechanika) \\
+	A szabályok határozzák meg, hogy milyen helyzetben mik a lehetséges lépések. Az ezt kiszolgáló osztály legyen a játékmester, aki hozzányúlhat a reprezentációhoz, így biztosítva, hogy a játék mindig a szabályoknak megfelelően megy.
+\end{itemize}
+
+A fenti felosztásból adódhat a \ref{fig:boardGameAbstractClassDiagram}. ábrán ismertetett osztálydiagram. A \texttt{GameRepresentation} osztály maga a modell. Teljesen "buta", nincs beleépítve logika, csak tárolja a tábla vagy asztal aktuális állapotát és valamilyen módon lehetőséget biztosít a módosítására. Nem szabad semmilyen játék alapelveit beleépíteni, hiszen például egy sakktáblán is lehet többfajta sakkot játszani, amelyek szabályai különbözőek.
+
+A \texttt{Game} osztály a "játékmester", ő az, aki a szabályok szerint módosítja a reprezentációt. Rajta keresztül kell validálni és végrehajtatni a lépéseket, illetve tőle lehet lekérdezni az aktuális meccs állását illetve egyéb fontosabb tulajdonságait.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/boardGameAbstractClassDiagram.png}
+	\caption{Egy általános táblás, körökre osztott játék absztrakt reprezentációja}
+	\label{fig:boardGameAbstractClassDiagram}
+\end{figure}
+
+
+\subsubsection{Sakk reprezentáció}
+
+A sakk is két fő részből áll: reprezentáció és játékmechanika. Ezeket a \texttt{ChessBoard} és a \texttt{ChessGame} osztályok valósítják meg. (Lásd: \ref{fig:chessClassDiagram}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/chessClassDiagram.png}
+	\caption{Sakkot reprezentáló osztálydiagram}
+	\label{fig:chessClassDiagram}
+\end{figure}
+
+A \texttt{ChessBoard} osztály önmagában csak reprezentál, minden \textit{property} írható és olvasható. Tartalmazza a játékosok listáját (fehér, fekete), a soronkövetkező játékost, az eddig megtett lépések listáját, illetve a tábla aktuális állapotát.
+
+A \texttt{ChessGame} osztály felelős a játék kezeléséért, betartja a szabályokat, segít a lehetséges lépések kigenerálásában, validációjában és végrehajtásában. Fontos, hogy a teljes szeparáltság miatt a \texttt{ChessGame} osztálynak kizárólag egy számára átadott \texttt{ChessBoard} osztályból tudnia kell a lehetséges lépéseket, a parti állását, stb.
+
+Felmerülhet, hogy miért nincs egyben ez a két osztály. Ennek több oka van:
+
+\begin{itemize}
+	\item \textbf{Egy felelősség alapelve} \textit{(Single responsibility principle)}\cite{SingleResponsibilityHu}~\cite{SingleResponsibilityEn}~\cite{SOLID}~ \\
+	Ha egy osztály lenne, az túl bonyolulttá tenné ezt az osztályt: több felelősséget rakna rá és így megsértené a \textit{single responsibility} elvét.
+	\item \textbf{Könnyebb felhasználhatóság} \\
+	Az előzőekben ismertetett algoritmusoknak külön érdekes csak a reprezentáció, hiszen ebből tudnak "állást számolni". Így az aktuális állás osztályozásához nem kell egy mindent tudó objektum, elég csak a reprezentációt átadni a megfelelő kiértékelő függvénynek.
+	\item \textbf{Jövőbeli továbbfejleszthetőség} \\
+	Sokféle sakkjáték ismeretes, így csak a \texttt{ChessGame} osztály kicserélésével egy másik játékot tudunk készíteni. (Például francia sakk.)
+	\item \textbf{Tesztelhetőség} \\
+	Ha tiszták és minél egyszerűbbek a különböző részei a játékreprezentációnak, annál könnyebb fókuszált \textit{unit-teszteket} írni ezekre.
+\end{itemize}
+
+\subsection{Algoritmus}
+
+\subsubsection{Általános megfogalmazás}
+Az M.I. algoritmusnak "nem kell sokat tudnia": csak annyit várunk el tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása.
+
+Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
+	\caption{Absztrakt algoritmus interface és függőségei}
+	\label{fig:algorithmAbstractDiagram}
+\end{figure}
+
+A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
+
+\begin{itemize}
+	\item \textbf{Lépés-generátor} \\
+	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell beadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. (Másik felhasználási mód a saját generátorhoz: az is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése létezhet tehát nem kigenerálható, viszont egy bejövő lépésről eldönthető, hogy az érvényes-e. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.)
+	
+	\item \textbf{Kiértékelő} \\
+	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos számára. Fontos, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de el lehessen dönteni, hogy a visszaadott értékek közül melyik kisebb/nagyobb/egyenlő. Röviden fogalmazva: az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusának értékeinek halmazának legalább \textbf{részben-rendezett} halmaznak kell lennie.
+\end{itemize}
+
+\subsubsection{A Minimax algoritmus}
+A Minimax-algoritmus 
+Ennek megfelelően implementálható a Minimax algoritmus:
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/minimaxAbstractDiagram.png}
+	\caption{MinimaxAlgorithm osztály}
+	\label{fig:minimaxAbstractDiagram}
+\end{figure}
+
+\newpage
+
+\bibliographystyle{plain}
+\part{\bibname}
+\bibliography{szakdolgozat}
+%\addcontentsline{toc}{part}{\bibname}
+%\printbibliography[heading=none]
+%\newpage
+\listoffigures
+\listoftables
+\lstlistoflistings
+
+
+\end{document}
