@@ -8,16 +8,15 @@
 \usepackage[magyar]{babel}
 \usepackage{bookman}
 \usepackage{thesis-style}
+\usepackage{graphicx,wrapfig}
 \usepackage{cite}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{amssymb,amsmath}
 \usepackage{lipsum}% just to generate text for the example
-\usepackage{listings}% http://ctan.org/pkg/listings
-\renewcommand{\lstlistingname}{Kódrészlet}% 
-\renewcommand{\lstlistlistingname}{Kódrészletek listája}
-\newtheorem{definition}{Definíció}
+\usepackage{indentfirst}
 
+\newtheorem{definition}{Definíció}
 
 \renewcommand{\listoffigures}{\begingroup
 \tocsection
@@ -30,8 +29,66 @@
 \endgroup}
 
 
+% --- Code listing def -------------------------------------------------------------------
+
+\usepackage{color}
+\usepackage{listings}
+%\usepackage{courier} %caused problems for me
+
+\lstdefinelanguage{csharp}{
+	alsoletter={@=>},
+	morekeywords={ abstract, event, new, struct, as, explicit, null, switch, base, extern, object, this, bool, false, operator, throw, break, finally, out, true, byte, fixed, override, try, case, float, params, typeof, catch, for, private, uint, char, foreach, protected, ulong, checked, goto, public, unchecked, class, if, readonly, unsafe, const, implicit, ref, ushort, continue, in, return, using, decimal, int, sbyte, virtual, default, interface, sealed, volatile, delegate, internal, short, void, do, is, sizeof, while, double, lock, stackalloc, else, long, static, enum, namespace, string },
+%	sensitive=true,
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]",
+}
+
+\definecolor{red}{rgb}{0.6,0,0} % for strings
+\definecolor{blue}{rgb}{0,0,0.6}
+\definecolor{green}{rgb}{0,0.8,0}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+
+\lstloadlanguages{[Sharp]C}
+
+\lstset{
+	language={[Sharp]C},
+	basicstyle=\color{black}\ttfamily\scriptsize, 
+	tabsize=4, 
+	extendedchars=true, 
+	breaklines=true, 
+	stringstyle=\color{blue}\ttfamily\scriptsize, 
+	showspaces=false, 
+	showtabs=false, 
+	xleftmargin=5pt,
+	framexleftmargin=5pt,
+	framexrightmargin=2pt,
+	framexbottommargin=2pt,
+	commentstyle=\color{green}\ttfamily\scriptsize,
+	showstringspaces=false, 
+	keywordstyle=\color{cyan}\ttfamily\scriptsize,
+	morekeywords={ abstract, event, new, struct, as, explicit, null, switch, base, extern, object, this, bool, false, operator, throw, break, finally, out, true, byte, fixed, override, try, case, float, params, typeof, catch, for, private, uint, char, foreach, protected, ulong, checked, goto, public, unchecked, class, if, readonly, unsafe, const, implicit, ref, ushort, continue, in, return, using, decimal, int, sbyte, virtual, default, interface, sealed, volatile, delegate, internal, short, void, do, is, sizeof, while, double, lock, stackalloc, else, long, static, enum, namespace, string },
+	sensitive=true,
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]"
+}
+
+%\usepackage{caption}
+%\DeclareCaptionFont{white}{\color{white}}
+%\DeclareCaptionFormat{listing}{\colorbox{blue}{\parbox{\textwidth}{\hspace{15pt}#1#2#3}}} %changed \colorbox{8} to \colorbox{blue} cause 8 is not a color!
+%\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white, singlelinecheck=false, margin=0pt, font={bf,footnotesize}}
+
+\renewcommand{\lstlistingname}{Kódrészlet}% 
+\renewcommand{\lstlistlistingname}{Kódrészletek listája}
+
+% --- Code listing def (END) --------------------------------------------------------------
+
+
+
+
 \input{meta/metadata}
-\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr}
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
 \title{\THESISTITLE}
 \author{\THESISAUTHOR}
 \date{\THESISDEFENCEYEAR}
@@ -93,59 +150,58 @@ A sakk szabályait nem részleteznénk, ismertnek tételezzük fel, illetve az i
 
 \textit{Egy volt munkahelyemen dekoráció gyanánt ki volt rakva egy sakktábla bábukkal. Ezt az emberek elkezdték használni: kinyomtattak egy papírt, egyik oldalára azt, hogy "fehér jön" a másik oldalára pedig azt, hogy "fekete jön". Ha valakinek volt kedve és ideje, odamehetett, elgondolkodhatott a lépésen, majd miután lépett, megfordította a papírt és várták, hogy valaki lépjen.}
 
-A kérdés az: a meccs "történetének" ismerete nélkül vajon csak a tábla ismeretével kiszámítható-e az összes lehetséges lépés? Ha valaki odalép ehhez a táblához, meg tudja-e mondani az összes lehetséges lépést?
+A kérdés az: a meccs "történetének" ismerete nélkül vajon csak a tábla ismeretével kiszámítható-e az összes lehetséges lépés? Ha valaki odalép ehhez a táblához, meg tudja-e mondani az összes lehetséges lépést? A válasz: \textbf{nem}. Vannak különleges lépések, amelyekhez kell ismerni a parti addigi alakulását is. (Sáncolás, en passant)
 
-A válasz: \textbf{nem}. Vannak különleges lépések, amelyhez legalább valamilyen jelzés kell a bábukra (pl. \textit{en passant} üthető, vagy sáncolásnál: a király vagy a bástya mozgott-e már a játék folyamán), illetve döntetlent felajánlani is csak bizonyos esetekben lehet.
-
-\subsection{A Török}
-A Török Kempelen Farkas álatal 1769-ben alkotott legendás sakkozógép volt, melyet arra épített, hogy elkápráztassa vele Mária Teréziát. A gép sakkpartikat játszott és nyert.
-
-Végigtúrázta Európát és Észak-Amerikát míg 1854-ben Philadelphiában egy tűzben meg nem semmisült. 
-
-A gép titka nem egy zseniális korát meghaladó mechanikus mesterséges intelligencia volt, hanem egy benne elrejtőző emberi kezelő. Ez a gyanú többször is felvetődött, de Kempelen a játszmák előtt felnyitva a gépet mutatta be, hogy nincs senki a gépben. Valójában az eléggé apró termetű kezelő el tudott bújni, amíg elöl illetve hátul is kinyitották a szerkezetet, hogy belenézhessenek.
-
-A gépet végül 1857-ben leplezte le nyíltan a The Chess Monthly című amerikai sakklap.\cite{MechanicalTurkHu}\cite{MechanicalTurkEn}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/the_turk}
+\subsection{Egy "gondolkodó gép": a Török}
+\begin{wrapfigure}{l}{5cm}
 	\caption{Kempelen Farkas - A Török}
 	\label{fig:the_turk}
-\end{figure}
+	\includegraphics[width=5.0cm]{img/the_turk}
+\end{wrapfigure}
+A Török Kempelen Farkas álatal 1769-ben alkotott legendás sakkozógép volt, melyet arra épített, hogy elkápráztassa vele Mária Teréziát. A gép sakkpartikat játszott és nyert. Végül végigtúrázta Európát és Észak-Amerikát míg 1854-ben Philadelphiában egy tűzben meg nem semmisült. 
 
+A gép titka nem egy zseniális korát meghaladó "mechanikus mesterséges intelligencia" volt, hanem egy benne elrejtőző emberi kezelő. Ez a gyanú többször is felvetődött, de Kempelen a játszmák előtt felnyitva a gépet mutatta be, hogy nincs senki a gépben. Valójában az eléggé apró termetű kezelő el tudott bújni, amíg elöl illetve hátul is kinyitották a szerkezetet, hogy belenézhessenek. A gépet végül 1857-ben leplezte le nyíltan a The Chess Monthly című amerikai sakklap.\cite{MechanicalTurkHu}\cite{MechanicalTurkEn}
 
+\subsection{Deep Blue}
+\begin{wrapfigure}{r}{4cm}
+	\caption{Deep Blue}
+	\label{fig:deepblue}
+	\includegraphics[width=4.0cm]{img/deepblue.jpg}
+\end{wrapfigure}
+A Deep Blue az IBM által körülbelül 20 millió dolláros költséggel kifejlesztett számítógépe, amely sakkjátékban 1997-ben egy szabályszerű hatjátszmás páros mérkőzésen New Yorkban legyőzte Garri Kaszparovot, az emberi sakkozás akkori világbajnokát.
 
+Első meccs-győzelmét 1996 február 10.-én érte el a világbajnok ellen, de Kasparov három partit nyert és kettőt hozott ki döntetlenre, így 4-2-re győzött a számítógép ellen.
 
-
-
-
-
-
+Ezután Deep Blue-t továbbfejlesztették és ekkor már 3,5–2,5-re verte Kasparov-ot 1997 májusában, és ezzel az első számítógépes rendszer lett, amely meg tudta verni az aktuális sakk-világbajnokot a sakkbajnokságokra jellemző időmegszorítás mellett. Kasparov csalást gyanított, és követelt egy visszavágót, ám ebbe az IBM nem ment bele. \cite{DeepBlueHu}\cite{DeepBlueEn}
 
 % -------------------------------------------------------------------------------------------------------------
 % --- FEJLESZTŐI DOKUMENTÁCIÓ ---------------------------------------------------------------------------------
 % -------------------------------------------------------------------------------------------------------------
 \newpage
 \part{Fejlesztői Dokumentáció}
+\subsection{Bevezető}
 
-A programcsomag három fontos területtet fed le:
+A programcsomag három fontos területet fed le, felelősségeik a következők:
+
 \begin{itemize}
 	
-	\item \textbf{A játék reprezentációja}
+	\item \textbf{Játék-reprezentáció}
 	\begin{itemize}
-		\item Definiálja a reprezentációhoz szükséges interface-eket
+		\item Definiálja a reprezentációhoz szükséges interface-eket.
 		\item Implementálja a sakk reprezentációját és mechanikáját.
+		\item Könnyen használható és kiterjeszthető más alkalmazásokban.
 	\end{itemize}
 
 	\item \textbf{Algoritmusok}
 	\begin{itemize}
 		\item Definiál egy interface-t
-		\item Algoritmusok általános implementációi
+		\item Tartalmazza néhány algoritmus általános implementációját:
 		\begin{itemize}
 			\item Minimax
 			\item Alfa-béta
 			\item Egyéb egyszerűbb példák (random, mohó)
 		\end{itemize}
+		\item Könnyen használható és kiterjeszthető más alkalmazásokban.
 	\end{itemize}
 
 	\item \textbf{Infrastruktúra}
@@ -153,10 +209,9 @@ A programcsomag három fontos területtet fed le:
 		
 		\item \textbf{Szerver}
 		\begin{itemize}
-			\item Felhasználó hitelesítése / nyomonkövetése.
+			\item Felhasználó regisztrációja / hitelesítése / nyomonkövetése.
 			\item Ellenőrzi a kliensektől jövő lépések érvényességét.
 			\item Közvetíti a kliensek felé a partik alakulását.
-			\item Tabella kezelése.
 		\end{itemize}
 	
 		\item \textbf{Kliens (humán vagy MI kliens)}
@@ -164,34 +219,39 @@ A programcsomag három fontos területtet fed le:
 			\item Felhasználó beléptetése, nyomonkövetése.
 			\item Közvetíti a felhasználó felé a partik alakulását.
 			\item A játékos döntéseit közvetíti a szerver felé.
+			\item Példakliensek implementálása:
+			\begin{itemize}
+				\item Android alkalmazás emberi játékosoknak.
+				\item MI bot alkalmazás / alkalmazások melyek különböző algoritmusokat használnak.
+			\end{itemize}
 		\end{itemize}
 	\end{itemize}
 \end{itemize}
 
-\section{A játék reprezentációja}
+\newpage
+\section{Játék-reprezentáció}
 \subsection{Elemzés}
-Érdekes kérdés a reprezentáció. A bevezetőben láthattuk, hogy a következő lehetséges lépések megállapításához nem elég a "táblát látni", kell hozzá még néhány többletinformáció. Ilyen információ például a megfelelő bábuk cimkézése illetve ezt helyettesítve (vagy ezzel együtt alkalmazva) a játszma addigi lépéseinek nyilvántartása.
+A bevezetőben láthattuk, hogy a következő lehetséges lépések megállapításához nem elég a "táblát látni", kell hozzá még néhány többletinformáció. Ilyen például a már említett bábuk cimkézése illetve ezt helyettesítve (vagy ezzel együtt alkalmazva) a játszma addigi lépéseinek nyilvántartása.
 
-A triviális lépésektől eltekintve problémába merülhet fel, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa a kevésbé ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csakis a következő) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg előre. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg.
+A triviális lépésektől eltekintve problémába merülhet fel, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa a kevésbé ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csakis a következő) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg előre. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg. Ezekben az esetekben adódik az ötlet: rakjunk jelzéseket a bábukra: jelezzük, ha már elmozdultak az eredeti helyükhöz képest vagy például a gyalogot megjelölhetjük, hogy "en passant" üthető. (Ez utóbbi jelzőt viszont a következő körben le is kell venni róla.)
 
 Másik érdekes (és versenyeken alkalmazott) szabály az, hogy ha többször fordul elő ugyanaz az állapot, akkor a játékosok felajánlhatnak döntetlent a másiknak. Ehhez viszont ismerni kell az előző lépéseket, a táblára "simán csak ránézve" ezt a szabályt nem lehet alkalmazni.
 
 Ezekből a példákból látszik, hogy nem elég a tábla aktuális állapotának ismerete, ahhoz kell még extra információ is például a bábukról (elmozdult? en passant üthető?) ami mondjuk egy a bábukra tett jelöléssel megoldható lenne, viszont a legutóbb emlegetett problémára nem megoldás: ahhoz kell az előző lépések listája is.
 
-Ennek egyébként egy érdekes hatása lesz majd az alkalmazott reprezentációra: ha a lehetséges lépések kiszámításához elég lenne "ránézni" a táblára, akkor a játékot reprezentáló gráfunk nem lesz fa, hiszen egy bizonyos állapotba több úton is eljuthatunk. Ha azonban belevesszük egy játékállás reprezentációjához a parti addigi történelmét is, akkor az állások egyediek lesznek és a gráfunk fa-szerű lesz. (Ez mondjuk nem feltétele annak, hogy a dolgozat által ismertetett algoritmusok működjenek, mivel az ő szempontjukból készülhet más reprezentáció is, ami viszont már fa lesz. De ezekről majd később...)
+Megjegyzés: \textit{Ennek egyébként egy érdekes hatása lesz majd az alkalmazott reprezentációra: ha a lehetséges lépések kiszámításához elég lenne "ránézni" a táblára, akkor a játékot reprezentáló gráfunk nem lenne fa, hiszen egy bizonyos állapotba több úton is eljuthatunk. Ha azonban belevesszük egy játékállás reprezentációjához a parti addigi történelmét is, akkor az állások egyediek lesznek és a gráfunk fa-szerű lesz.}
 
+\subsection{Tervezés}
 \subsubsection{Egy általános táblás játék reprezentációja}
 
 Egy körökreosztott általános táblás játék a következő elemekből áll:
 
 \begin{itemize}
-	\item \textbf{Reprezentáció} (avagy modell) \\
-	A játékállás reprezentációja sokrétű lehet, tudni kell a játékosok listáját és a következő lépésre jogosult játékos. A további reprezentáció (tábla, vagy esetleg az asztalon levő kártyák) mind változhat.
-	
-	A későbbi implementációs döntéseket figyelembe véve érdekes elgondolkodni azon, hogy a reprezentációt (a táblát, az asztalon levő kártyákat) bárki piszkálhatja, azonban ez esetben felborul a parti érvényessége: azon kívül, hogy valaki csalhat, megtörténhet az is, hogy olyan állapotba kerül a játék, amely egyébként nem lenne lehetséges. Ezért jó ötlet egy "bíró" vagy "krupié" közbeiktatása, aki figyel erre, tudja az összes szabályt és csak ő nyúlhat a játéktérhez.
+	\item \textbf{Modell} \\
+	A játékállás ábrázolása sokrétű lehet. Tárolni kell a játékosok listáját, az aktuális játékost és a játéknak megfelelő állást: táblán lévő bábuk vagy asztalon levő kártyák.
 	
 	\item \textbf{Szabályok} (avagy játékmechanika) \\
-	A szabályok határozzák meg, hogy milyen helyzetben mik a lehetséges lépések. Az ezt kiszolgáló osztály legyen a játékmester, aki hozzányúlhat a reprezentációhoz, így biztosítva, hogy a játék mindig a szabályoknak megfelelően megy.
+	A szabályok határozzák meg, hogy milyen helyzetben mik a lehetséges lépések. Az ezt kiszolgáló osztály legyen a játékmester, aki hozzányúlhat a reprezentációhoz, így biztosítva, hogy a játék mindig a szabályoknak megfelelően menjen.
 \end{itemize}
 
 A fenti felosztásból adódhat a \ref{fig:boardGameAbstractClassDiagram}. ábrán ismertetett osztálydiagram. A \texttt{GameRepresentation} osztály maga a modell. Teljesen "buta", nincs beleépítve logika, csak tárolja a tábla vagy asztal aktuális állapotát és valamilyen módon lehetőséget biztosít a módosítására. Nem szabad semmilyen játék alapelveit beleépíteni, hiszen például egy sakktáblán is lehet többfajta sakkot játszani, amelyek szabályai különbözőek.
@@ -205,6 +265,7 @@ A \texttt{Game} osztály a "játékmester", ő az, aki a szabályok szerint mód
 	\label{fig:boardGameAbstractClassDiagram}
 \end{figure}
 
+A \texttt{Generate()} függvény azért van kiszürkítve az ábrán, mert egy játék lehetséges lépései nem fetétlen diszkrét értékek egy véges halmaza. Szigorúan véve csak azt kell megkövetelni a \texttt{Game} osztálytól, hogy el tudja dönteni egy bejövő lépésről, hogy az érvényes-e. A lépések kigenerálása inkább csak a mesterséges intelligencia algoritmusának "jöhetne jól".
 
 \subsubsection{Sakk reprezentáció}
 
@@ -217,7 +278,7 @@ A sakk is két fő részből áll: reprezentáció és játékmechanika. Ezeket 
 	\label{fig:chessClassDiagram}
 \end{figure}
 
-A \texttt{ChessBoard} osztály önmagában csak reprezentál, minden \textit{property} írható és olvasható. Tartalmazza a játékosok listáját (fehér, fekete), a soronkövetkező játékost, az eddig megtett lépések listáját, illetve a tábla aktuális állapotát.
+A \texttt{ChessBoard} osztály önmagában csak reprezentál, minden \textit{property} írható és olvasható. Tartalmazza a játékosok listáját (fehér, fekete), a soronkövetkező játékost, az eddig megtett lépések listáját, illetve a tábla aktuális állapotát az előzőekben már említett jelzőkkel.
 
 A \texttt{ChessGame} osztály felelős a játék kezeléséért, betartja a szabályokat, segít a lehetséges lépések kigenerálásában, validációjában és végrehajtásában. Fontos, hogy a teljes szeparáltság miatt a \texttt{ChessGame} osztálynak kizárólag egy számára átadott \texttt{ChessBoard} osztályból tudnia kell a lehetséges lépéseket, a parti állását, stb.
 
@@ -227,18 +288,118 @@ Felmerülhet, hogy miért nincs egyben ez a két osztály. Ennek több oka van:
 	\item \textbf{Egy felelősség alapelve} \textit{(Single responsibility principle)}\cite{SingleResponsibilityHu}~\cite{SingleResponsibilityEn}~\cite{SOLID}~ \\
 	Ha egy osztály lenne, az túl bonyolulttá tenné ezt az osztályt: több felelősséget rakna rá és így megsértené a \textit{single responsibility} elvét.
 	\item \textbf{Könnyebb felhasználhatóság} \\
-	Az előzőekben ismertetett algoritmusoknak külön érdekes csak a reprezentáció, hiszen ebből tudnak "állást számolni". Így az aktuális állás osztályozásához nem kell egy mindent tudó objektum, elég csak a reprezentációt átadni a megfelelő kiértékelő függvénynek.
+	A mesterséges intelligencia algoritmusoknak külön érdekes csak a reprezentáció, hiszen ebből tudnak "állást számolni". Így az aktuális állás osztályozásához nem kell egy mindent tudó objektumot minden egyes lépésben létrehozni, elég csak a reprezentációt átadni a megfelelő kiértékelő függvénynek.
 	\item \textbf{Jövőbeli továbbfejleszthetőség} \\
 	Sokféle sakkjáték ismeretes, így csak a \texttt{ChessGame} osztály kicserélésével egy másik játékot tudunk készíteni. (Például francia sakk.)
 	\item \textbf{Tesztelhetőség} \\
 	Ha tiszták és minél egyszerűbbek a különböző részei a játékreprezentációnak, annál könnyebb fókuszált \textit{unit-teszteket} írni ezekre.
 \end{itemize}
 
-\subsection{Tervezés}
-asdf
-
 \subsection{Megvalósítás}
-qwer
+
+\subsubsection{A sakktábla implementációja}
+A sakktáblát reprezentáló \texttt{ChessBoard} osztály az előzőekben részletezett alapelveknek felel meg:
+\begin{itemize}
+	\item Reprezentálja a táblát.
+	\item Nincs szabály beleépítve. \\ 
+	(Habár sakkbábukkal és sakklépésekkel dolgozik. Ezt lehetne tovább általánosítani, hogy tényleg csak egy tábla legyen, de a céljainknak egyelőre ez megfelelő.)
+\end{itemize}
+
+A legfontosabb függvény a \texttt{Move(from, to)} függvény, amely elvégzi a módosításokat a táblán, ám a \texttt{History}-ba nem írja be, az majd a "játékmester" feladata lesz. Továbbá a \texttt{Move()} függvény visszatérési értéke a "leütött" bábu, vagy \texttt{null} ha üres volt.
+
+\begin{lstlisting}[caption=Sakktábla implementáció vázlat, label=lst:chessboard_code]
+public class ChessBoard : IChessBoard, ICloneable<ChessBoard>
+{
+	private ChessPiece[] pieces = new ChessPiece[64];
+
+	public ChessBoard()	{ /*..*/ }
+
+	public ChessPiece this[Position position]
+	{
+		get { /* ... */ }
+		set { /* ... */ }
+	}
+
+	public ChessPlayer CurrentPlayer { get; set; }
+
+	public IEnumerable<ChessPlayer> Players { get; set; }
+
+	public List<ChessMove> History { get; set; }
+
+	public ChessBoard Clone() { /* ... */ }
+
+	public ChessPiece Move(Position from, Position to)
+	{
+		/* ... */
+	}
+}
+\end{lstlisting}
+
+A sakktáblát egy egydimenziós tömb tárolja, amin a tájékozódás kissé nehézkés, ezért a sakkhoz jobban illő \texttt{Position} tipuson keresztül lesz ez megkönnyítve, amely az algebrai lejegyzést használja:
+
+\begin{lstlisting}[caption=Pozíciók a sakktáblán - Position osztály, label=lst:chessboardposition_code]
+/// <summary>
+/// Represents a position in the chess board.
+/// </summary>
+public sealed class Position : IEquatable<Position>
+{
+	public Position(string notation) { /* ... */ }
+	
+	public Position(char column, int row) { /* ... */ }
+	
+	public char Column { get; }
+	
+	public int Row { get; }
+	
+	// ...
+}
+\end{lstlisting}
+
+A későbbi fejlesztések segítéséhez az osztály tartalmaz konvertereket (array index és pozíció között oda-vissza) és egyenlőségvizsgálatot is, hogy írhassuk: \texttt{p1 == p2} vagy \texttt{p1.Equals(p2)}.
+
+\subsubsection{A játékmester implementációja}
+
+A sakk implementációja sokkal bonyolultabb és felvet néhány érdekes problémát. Az implementáló osztály váza a következő:
+
+\begin{lstlisting}[caption=Sakk szabályok implementációja, label=lst:chessgame_code]
+public class ChessGame : IMechanism<ChessGameRepresentation, ChessMove, GameState>
+{
+	public IEnumerable<ChessMove> GenerateMoves(ChessGameRepresentation representation)
+	{ 
+		/* ... */ 
+	}
+	
+	public GameState GetGameState(ChessGameRepresentation representation)
+	{ 
+		/* ... */ 
+	}
+	
+	public bool ValidateMove(ChessGameRepresentation representation, ChessMove move)
+	{
+		return this.GenerateMoves(representation).Contains(move);
+	}
+	
+	public ChessGameRepresentation ApplyMove(ChessGameRepresentation representationParam, ChessMove move)
+	{ 
+		/* ... */ 
+	}
+	
+	/* ... */
+}
+\end{lstlisting}
+
+Amint látszik, minden függvény előfeltétele egy reprezentáció. Ebből állapítja meg, hogy mik a lehetséges lépések (\texttt{GenerateMoves}), egy megadott lépés helyes-e az adott helyzetben (\texttt{ValidateMove}) és alkalmazza a megadott lépést ha helyes (\texttt{ApplyMove}).
+
+Ezeket külön-külön megvizsgáljuk:
+
+\paragraph{GenerateMoves()} \mbox{} \\
+blah
+
+\paragraph{GetGameState()} \mbox{} \\
+blah
+
+\paragraph{ApplyMove()} \mbox{} \\
+blah
 
 \subsection{Tesztelés}
 
@@ -253,7 +414,7 @@ asdasdf
 
 
 
-
+\newpage
 \section{Algoritmusok}
 \subsection{Elemzés}
 \subsubsection{A probléma komplexitása}
@@ -344,7 +505,7 @@ qwer
 asdasdf
 
 
-
+\newpage
 \section{Infrastruktúra}
 \subsection{Elemzés}
 asdf
@@ -974,48 +1135,45 @@ asdasdf
 
 
 
-\section{Segédkönyvtárak}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
 
 % -------------------------------------------------------------------------------------------------------------
-% --- FELHASZNÁLÓI DOKUMENTÁCIÓ -------------------------------------------------------------------------------
+% --- FEJLESZTŐI DOKUMENTÁCIÓ ---------------------------------------------------------------------------------
 % -------------------------------------------------------------------------------------------------------------
 \newpage
 \part{Felhasználói Dokumentáció}
-
-\lipsum{2}
-
-
-
-
-
+\subsection{Bevezető}
+\lipsum[6-7]
+\newpage
+\section{Játék-reprezentáció}
+\lipsum[1-2]
 
 
+\newpage
+\section{Algoritmusok}
+\lipsum[3-4]
+
+\newpage
+\section{Infrastruktúra}
+
+\subsection{Szerver}
+\lipsum[5-6]
+
+\subsection{Játékkliens}
+\lipsum[7-8]
+
+\subsection{MI kliens}
+\lipsum[9-10]
 
 
 
 
 
 
-
-
-
-
-
+\newpage
 \bibliographystyle{plain}
 \part{\bibname}
 \bibliography{szakdolgozat}
