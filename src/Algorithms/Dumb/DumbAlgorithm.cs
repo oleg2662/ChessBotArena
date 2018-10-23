@@ -16,10 +16,10 @@ namespace Algorithms.Dumb
         private int _maxDepth;
 
         protected readonly IEvaluator<TState> _evaluator;
-        protected readonly ITransitionGenerator<TState, TMove> _moveGenerator;
+        protected readonly IGenerator<TState, TMove> _moveGenerator;
         protected readonly IApplier<TState, TMove> _moveApplier;
 
-        public DumbAlgorithm(IEvaluator<TState> evaluator, ITransitionGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+        public DumbAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
             _evaluator = evaluator;
             _moveGenerator = moveGenerator;
@@ -27,7 +27,7 @@ namespace Algorithms.Dumb
         }
 
         /// <inheritdoc />
-        public TMove Calculate(TState state, bool maximize = true)
+        public TMove Calculate(TState state)
         {
             var moves = _moveGenerator.Generate(state);
 

@@ -37,7 +37,7 @@ namespace Algorithms.Tests.Unit.TestCaseClasses
             }
         }
 
-        internal class Generator : ITransitionGenerator<State, Move>
+        internal class Generator : IGenerator<State, Move>
         {
             public IEnumerable<Move> Generate(State state)
             {

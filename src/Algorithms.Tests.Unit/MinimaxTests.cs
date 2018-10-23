@@ -17,7 +17,7 @@ namespace Algorithms.Tests.Unit
 
             var initState = new TestCase1.State(0, 0);
 
-            var move1 = algorithm.Calculate(initState, true);
+            var move1 = algorithm.Calculate(initState);
 
             Assert.Equal('b', move1.Label);
         }

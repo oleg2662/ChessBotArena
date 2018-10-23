@@ -15,10 +15,10 @@ namespace Algorithms.Minimax
         private int _maxDepth;
 
         protected readonly IEvaluator<TState> _evaluator;
-        protected readonly ITransitionGenerator<TState, TMove> _moveGenerator;
+        protected readonly IGenerator<TState, TMove> _moveGenerator;
         protected readonly IApplier<TState, TMove> _moveApplier;
 
-        public MinimaxAlgorithm(IEvaluator<TState> evaluator, ITransitionGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+        public MinimaxAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
             _evaluator = evaluator;
             _moveGenerator = moveGenerator;
@@ -48,7 +48,7 @@ namespace Algorithms.Minimax
         }
 
         /// <inheritdoc />
-        public TMove Calculate(TState state, bool maximize = true)
+        public TMove Calculate(TState state)
         {
             var moves = _moveGenerator.Generate(state);
 
@@ -60,13 +60,10 @@ namespace Algorithms.Minimax
             var movesAndValues = moves.Select(move => new
             {
                 Move = move,
-                Value = Calculate(_moveApplier.Apply(state, move), 1, !maximize)
+                Value = Calculate(_moveApplier.Apply(state, move), 1, false)
             });
 
-            var max = movesAndValues.Max(x => x.Value);
-            var result = movesAndValues.First(x => Equals(x.Value, max)).Move;
-
-            return result;
+            return movesAndValues.OrderByDescending(x => x.Value).First().Move;
         }
 
         private int Calculate(TState state, int depth, bool maximize)
@@ -84,10 +81,9 @@ namespace Algorithms.Minimax
                 return _evaluator.Evaluate(state);
             }
 
-            var childrenValues = nextMoves
-                                    .Select(x => _moveApplier.Apply(state, x))
-                                    .Select(x => Calculate(x, depth + 1, !maximize))
-                                    .ToList();
+            var childrenValues = nextMoves.Select(x => _moveApplier.Apply(state, x))
+                                            .Select(x => Calculate(x, depth + 1, !maximize))
+                                            .ToList();
             if (maximize)
             {
                 var childrenMax = childrenValues.Union(new[] { int.MinValue }).Max();

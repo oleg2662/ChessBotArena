@@ -16,10 +16,10 @@ namespace Algorithms.AlphaBeta
         private int _maxDepth;
 
         protected readonly IEvaluator<TState> _evaluator;
-        protected readonly ITransitionGenerator<TState, TMove> _moveGenerator;
+        protected readonly IGenerator<TState, TMove> _moveGenerator;
         protected readonly IApplier<TState, TMove> _moveApplier;
 
-        public AlphaBetaAlgorithm(IEvaluator<TState> evaluator, ITransitionGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+        public AlphaBetaAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
             _evaluator = evaluator;
             _moveGenerator = moveGenerator;
@@ -49,7 +49,7 @@ namespace Algorithms.AlphaBeta
         }
 
         /// <inheritdoc />
-        public TMove Calculate(TState state, bool maximize = true)
+        public TMove Calculate(TState state)
         {
             var moves = _moveGenerator.Generate(state);
 
@@ -61,7 +61,7 @@ namespace Algorithms.AlphaBeta
             var movesAndValues = moves.Select(move => new
             {
                 Move = move,
-                Value = Calculate(_moveApplier.Apply(state, move), 1, int.MaxValue, int.MinValue, !maximize)
+                Value = Calculate(_moveApplier.Apply(state, move), 1, int.MaxValue, int.MinValue, false)
             });
 
             var max = movesAndValues.Max(x => x.Value);

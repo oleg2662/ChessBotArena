@@ -1,4 +1,5 @@
 ﻿using Algorithms.AlphaBeta;
+using Algorithms.GreedyAlgorithm;
 using Algorithms.Tests.Unit.TestCaseClasses;
 using Xunit;
 
@@ -16,9 +17,9 @@ namespace Algorithms.Tests.Unit
 
             var initState = new TestCase1.State(0, 0);
 
-            var move1 = algorithm.Calculate(initState, true);
+            var move1 = algorithm.Calculate(initState);
             var state2 = applier.Apply(initState, move1);
-            var move2 = algorithm.Calculate(state2, false);
+            var move2 = algorithm.Calculate(state2);
 
             Assert.Equal('a', move1.Label);
             Assert.Equal('d', move2.Label);

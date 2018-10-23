@@ -12,6 +12,6 @@
         /// </summary>
         /// <param name="state">The current state from where the calculation has to happen.</param>
         /// <returns>A proposed move.</returns>
-        TMove Calculate(TState state, bool maximize);
+        TMove Calculate(TState state);
     }
 }
