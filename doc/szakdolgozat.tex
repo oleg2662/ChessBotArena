@@ -119,12 +119,15 @@
 % ------------------------------------------------------------------------------------------------------------
 \part{Bevezető}
 \section{A dolgozatról}
-\subsection{Célja}
+\subsection{A dolgozat célja}
 A dolgozat célja a mesterséges intelligencia kurzuson bemutatott \textbf{„kétszemélyes, teljes információjú, diszkrét, véges és determinisztikus, zéró-összegű, játékok”} algoritmusainak bemutatása a gyakorlatban, illetve az érdeklődőbb hallgatók bevonása egy olyan játékba, melyen keresztül elmélyíthetik tudásukat ezen algoritmusokból.
 
 E célból a (normál) sakkot vesszük alapul, mely elég bonyolult ahhoz, hogy látványos eredményeket láthassunk, a legtöbben ismerik a szabályait, illetve egy klasszikus példája a fent nevezett játékok halmazának.
 
 A dolgozat "mellékterméke" egy olyan \textit{API interface}, melyhez kapcsolódva nem csak mesterséges intelligenciát megvalósító programok, hanem "sima", emberi játékosok által is használható kliens is írható, így a téma iránt nem érdeklődők is kipróbálhatják magukat például egy mobilalkalmazás vagy egy asztali Windows / Linux alapú kliens megírásában.
+
+\subsection{A dolgozat felépítése}
+A dolgozat három részből áll: jelen bevezető, a fejlesztői- és a felhasználói dokumentáció. Mivel a dolgozat tárgya egy programcsomag, mind a fejlesztői, mind a felhasználói dokumentációban külön kezeljük őket. A fejlesztői dokumentációban minden modulnak van "elemzés", "tervezés", "megvalósítás" és "tesztelés" része, illetve saját szekciójuk a felhasználói dokumentációban. Így reményeim szerint jobban követhető lesz egy-egy modul fejlődése és rá is mutat arra a tervezéskor egyébként szerintem fontos hozzáállásra, hogy minden modul önmagában legyen teljes, ne függjön a többitől, önmagában is értelmes egészet alkosson, így könnyítve meg a tesztelést, felhasználást más területen is, illetve a későbbi továbbfejlesztést.
 
 \subsection{Játékok osztályozása}
 A \textbf{„kétszemélyes, teljes információjú, diszkrét, véges és determinisztikus, zéró-összegű, játékok”} definíciója egy kis magyarázatot érdemel. A játékokat a kövektező szempontok alapján lehet osztályozni:
@@ -882,26 +885,7 @@ Unit-tesztekkel... \textbf{TODO: Esetek leírása.}
 \newpage
 \section{Infrastruktúra}
 \subsection{Elemzés}
-asdf
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsubsection{Lorem}
-
+\lipsum[4]
 
 \subsection{Tervezés}
 
@@ -917,10 +901,9 @@ Az architektúra alapja egy sima szerver-kliens kapcsolat: (\ref{fig:highLevelAr
 
 A szerver egy \textbf{RESTful} szolgáltatást nyújt a kliensek felé.
 
-\subsubsection{RESTful szolgáltatás}
-Néhány szó a REST-ről, hivatkozással...
+\paragraph{RESTful szolgáltatás.} Néhány szó a REST-ről, hivatkozással...
 
-\subsubsection{Kommunikáció a szerver és a kliensek között}
+\paragraph{Kommunikáció a szerver és a kliensek között} \mbox{} \\
 A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
 
 \begin{figure}[htbp]
@@ -954,8 +937,7 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 \end{figure}
 
 
-\subsubsection{Publikus API}
-A szerver a következő publikus szolgáltatásokat nyújtja:
+\paragraph{Publikus API}. A szerver a következő publikus szolgáltatásokat kell, hogy nyújtsa:
 
 % == Szerver - felhasználói fiókok =======================================================================================
 \begin{longtable}[c]{|c|p{14cm}|}
@@ -1096,20 +1078,18 @@ A szerver a következő publikus szolgáltatásokat nyújtja:
 	\label{userStories:server:api}\\
 \end{longtable} 
 
-\vbox{
-	\subsubsection{Dokumentáció}
-	Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
-	
-	A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
-	
-	\begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
-	/// <summary>
-	/// The health controller. Only used to return the version information.
-	/// (Can only respond when the service is up and running.)
-	/// </summary>
-	[Route("api/Health")]
-	public class HealthController : Controller
-	{
+\paragraph{Dokumentáció}. Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
+
+A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
+
+\begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
+/// <summary>
+/// The health controller. Only used to return the version information.
+/// (Can only respond when the service is up and running.)
+/// </summary>
+[Route("api/Health")]
+public class HealthController : Controller
+{
 	/// <summary>
 	/// Health check. Returns the version number of the service.
 	/// </summary>
@@ -1118,23 +1098,23 @@ A szerver a következő publikus szolgáltatásokat nyújtja:
 	[HttpGet]
 	public async Task<IActionResult> Get()
 	{
-	var version = Microsoft.Extensions
-	.PlatformAbstractions
-	.PlatformServices
-	.Default
-	.Application
-	.ApplicationVersion;
-	
-	return Ok(version);
+		var version = Microsoft.Extensions
+	  						   .PlatformAbstractions
+							   .PlatformServices
+							   .Default
+							   .Application
+							   .ApplicationVersion;
+		
+		return Ok(version);
 	}
-	}
-	\end{lstlisting}
-	
-	A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.}
+}
+\end{lstlisting}
+
+A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.
 
 \subsubsection{A Kliens}
 
-\subsubsection{Felhasználó és játékos}
+\paragraph{Felhasználó és játékos}. \mbox{} \\
 
 Mivel az MI és a játékkliens csak annyiban tér el, hogy ki hozza meg a döntést egy játszmában, ezért a dolgozat további részében fontos lesz a \textbf{„felhasználó”} és a \textbf{„játékos”} megkülönböztetése.
 
@@ -1143,10 +1123,10 @@ Mivel az MI és a játékkliens csak annyiban tér el, hogy ki hozza meg a dönt
 \end{definition}
 
 \begin{definition}[Felhasználó]
-	Felhasználó alatt a továbbiakban mindig az emberi \textit{játékost} értjük.
+	Felhasználó alatt a továbbiakban mindig az emberi \textit{játékost} értjük. (Botok esetén pedig azok fejlesztőit / kezelőit.)
 \end{definition}
 
-\subsubsection{Alapfunkciók}
+\paragraph{Alapfunkciók} \mbox{} \\
 A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 
 % == Kliens - indulás ===================================================================================================
@@ -1491,7 +1471,7 @@ A játékkliens képernyői közötti átmenetekért lásd \ref{fig:ClientScreen
 
 
 
-\subsubsection{Játékkliens UI terve}
+\paragraph{Játékkliens UI terve} \mbox{} \\
 A játékkliens képernyőinek terveit lásd: \ref{fig:gameClientScreens} ábra.
 \begin{figure}[htbp]
 	\centering

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessboardVisualizer", "Too
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessboardVisualizerTestApp", "Tools\ChessboardVisualizerTestApp\ChessboardVisualizerTestApp.csproj", "{12462426-C91F-494C-BAC9-91B9A1D52E4D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{BECED6F7-AD28-4FE0-A62C-C146AFE16186}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{12462426-C91F-494C-BAC9-91B9A1D52E4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12462426-C91F-494C-BAC9-91B9A1D52E4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12462426-C91F-494C-BAC9-91B9A1D52E4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BECED6F7-AD28-4FE0-A62C-C146AFE16186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BECED6F7-AD28-4FE0-A62C-C146AFE16186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BECED6F7-AD28-4FE0-A62C-C146AFE16186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BECED6F7-AD28-4FE0-A62C-C146AFE16186}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
