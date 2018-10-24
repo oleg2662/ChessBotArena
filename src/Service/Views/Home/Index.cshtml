@@ -1,0 +1,15 @@
+﻿@model BoardGame.Service.Models.Web.HomeViewModels.IndexViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Welcome to the Chess Bot Arena.</h3>
+
+<p>Here you can register and edit your accounts used in the application.</p>
+
+<p>You can get the application from here:</p>
+<a href="#">APPLICATION URL</a>
+<p>You can get the API documentation from here:</p>
+<a href="@(Model.BaseUrl)/swagger" target="_blank">Chess Arena Documentation with Swagger</a>
