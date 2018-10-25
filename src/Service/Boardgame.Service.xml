@@ -1,0 +1,467 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Boardgame.Service</name>
+    </assembly>
+    <members>
+        <member name="T:BoardGame.Service.Controllers.Api.HealthController">
+            <summary>
+            Controller implementation of a simple healthcheck.
+            If the system is up and running it will answer to requests with the current application version number.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.HealthController.Get">
+            <summary>
+            Health check. Returns the version number of the service.
+            </summary>
+            <returns>The version information of the service.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Controllers.Api.PlayersController">
+            <summary>
+            Controller used to list the available players in the game.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.PlayersController.#ctor(Microsoft.AspNetCore.Identity.UserManager{BoardGame.Service.Models.ApplicationUser},Microsoft.Extensions.Logging.ILogger{BoardGame.Service.Controllers.Api.AccountController})">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Api.PlayersController"/> class.
+            </summary>
+            <param name="userManager">The manager of the users.</param>
+            <param name="logger">The logger used to log errors and warnings.</param>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.PlayersController.GetPlayers">
+            <summary>
+            Health check. Returns the version number of the service.
+            </summary>
+            <returns>The version information of the service.</returns>
+            <response code="200">Returns the list of registered users.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="T:BoardGame.Service.Data.ApplicationDbContext">
+            <summary>
+            The database context of the application
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Data.ApplicationDbContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{BoardGame.Service.Data.ApplicationDbContext},Microsoft.Extensions.Configuration.IConfiguration)">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Data.ApplicationDbContext.ChessGames">
+            <summary>
+            Gets or sets the chess games in the database.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Data.ApplicationDbContext.OnConfiguring(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder)">
+            <inheritdoc />>
+        </member>
+        <member name="M:BoardGame.Service.Data.ApplicationDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />>
+        </member>
+        <member name="T:BoardGame.Service.Extensions.ConfigurationExtensions">
+            <summary>
+            Shorthand to the configuration values.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Extensions.ConfigurationExtensions.GetBaseUrl(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Gets the base URL of the service.
+            </summary>
+            <param name="root">The configuration root</param>
+            <returns>The base URL of the service.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Extensions.ConfigurationExtensions.GetMainConnectionString(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Gets the connection string of the service's database.
+            </summary>
+            <param name="root">The configuration root.</param>
+            <returns>The main connection string.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Extensions.ConfigurationExtensions.GetSecurityKey(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Gets the security key used to sign the JWT tokens.
+            </summary>
+            <param name="root">The configuration root.</param>
+            <returns>The security key used to sign the JWT tokens.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge">
+            <summary>
+            Represetsn a challenge request coming from the client.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge.InitiatedBy">
+            <summary>
+            Gets or sets the id of the challenger player.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge.Opponent">
+            <summary>
+            Gets or sets the id of the challenged player.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame">
+            <summary>
+            Interface to a chess game item in the chess games controller.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Id">
+            <summary>
+            Gets or sets the ID of the game.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Name">
+            <summary>
+            Gets or sets the name of the game.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.InitiatedBy">
+            <summary>
+            Gets or sets the user who have initiated the game. (Challenged someone.)
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Opponent">
+            <summary>
+            Gets or sets the user who was challenged by the game initiator.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.ChallengeDate">
+            <summary>
+            Gets or sets the date the challenge was sent.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.LastMoveDate">
+            <summary>
+            Gets or sets the date of the last move. Initially set to the challenge date.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.HasEnded">
+            <summary>
+            Gets a value indicating whether the match has ended or not.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGameDetails">
+            <summary>
+            Detailed information about a chess game.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGameDetails.Foo">
+            <summary>
+            Gets or sets the foo. (TODO: Expand this!)
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto">
+            <summary>
+            Represents the minimum required information about the player for the chess games list controller.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto.Id">
+            <summary>
+            Gets or sets the id of the player user.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto.UserName">
+            <summary>
+            Gets or sets the name of the player user.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.PlayerControllerModels.IPlayerModel">
+            <summary>
+            Interface of the player's model.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.IPlayerModel.IsBot">
+            <summary>
+            Gets or sets a value indicating whether the player is a bot or not.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.IPlayerModel.Name">
+            <summary>
+            Gets or sets the name of the player.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.PlayerControllerModels.Player">
+            <summary>
+            Represents a player information in the players' screen.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.Player.Name">
+            <summary>
+            Gets or sets the name of the player.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.Player.IsBot">
+            <summary>
+            Gets or sets a value indicating whether the player is a bot.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.ApplicationUser">
+            <summary>
+            Represents an application user.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.ApplicationUser.Bot">
+            <summary>
+            Gets or sets a value indicating whether the user is a bot or not.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter">
+            <summary>
+            One-way implementor of the DB Chess Game to Chess Game conversion.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.ConvertToChessGame(BoardGame.Service.Models.Data.DbChessGame)">
+            <inheritdoc />
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.ConvertToChessGameDetails(BoardGame.Service.Models.Data.DbChessGame)">
+            <inheritdoc />
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.ConvertUser(BoardGame.Service.Models.ApplicationUser)">
+            <inheritdoc />
+        </member>
+        <member name="T:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter">
+            <summary>
+            Interface of the DB - API model converters used by the chess game repository.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.ConvertToChessGame(BoardGame.Service.Models.Data.DbChessGame)">
+            <summary>
+            Converts the DB side object to the API target type.
+            </summary>
+            <param name="source">Source object.</param>
+            <returns>Null if the source is null. Otherwise the converted version.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.ConvertToChessGameDetails(BoardGame.Service.Models.Data.DbChessGame)">
+            <summary>
+            Converts the DB side chess game object to the API side detailed object model.
+            </summary>
+            <param name="source">DB side source object.</param>
+            <returns>API side detailed object.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Models.Data.DbChessGame">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.InitiatedBy">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.Opponent">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.ChallengeDate">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.LastMoveDate">
+            <inheritdoc />
+        </member>
+        <member name="T:BoardGame.Service.Models.Data.IDbChessGame">
+            <summary>
+            Interface to a chess game item in the chess games controller.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.Id">
+            <summary>
+            Gets or sets the ID of the game.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.Name">
+            <summary>
+            Gets or sets the name of the game.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.InitiatedBy">
+            <summary>
+            Gets or sets the user who have initiated the game. (Challenged someone.)
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.Opponent">
+            <summary>
+            Gets or sets the user who was challenged by the game initiator.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.ChallengeDate">
+            <summary>
+            Gets or sets the date the challenge was sent.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.LastMoveDate">
+            <summary>
+            Gets or sets the date of the last move. Initially set to the challenge date.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Program">
+            <summary>
+            The main class of the whole service.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Program.Main(System.String[])">
+            <summary>
+            The main entry point of the service.
+            </summary>
+            <param name="args"></param>
+        </member>
+        <member name="M:BoardGame.Service.Program.BuildWebHost(System.String[])">
+            <summary>
+            Builds the web host.
+            </summary>
+            <param name="args">Arguments</param>
+            <returns>The created webhost object.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Repositories.ChallengeRequestResults">
+            <summary>
+            Validation and DB operation results for the <see cref="T:BoardGame.Service.Repositories.IChessGameRepository" />.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Repositories.ChallengeRequestResults.OK">
+            <summary>
+            Challenge request accepted.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Repositories.ChallengeRequestResults.InitiatedByUserNull">
+            <summary>
+            The supplied id for the game initiator couldn't be found.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Repositories.ChallengeRequestResults.OpponentNull">
+            <summary>
+            The supplied id for the opponent couldn't be found.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Repositories.ChessGameRepositoryAddResult">
+            <summary>
+            The result with additional result information.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Repositories.ChessGameRepositoryAddResult.RequestResult">
+            <summary>
+            The result of the addition.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Repositories.ChessGameRepositoryAddResult.NewlyCreatedGame">
+            <summary>
+            The newly created entity if the result was ok.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Repositories.ChessGameRepository">
+            <summary>
+            Implementation of the chess game repository.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.#ctor(BoardGame.Service.Data.ApplicationDbContext,BoardGame.Service.Models.Converters.IChessGameRepositoryConverter)">
+            <summary>
+            Initializes a new instance of the chess game repository.
+            </summary>
+            <param name="dbContext">The database context to be used to query the data.</param>
+            <param name="chessGameConveter">Converter which transforms the inner database-near model to API model.</param>
+        </member>
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Get(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
+            <inheritdoc />
+        </member>
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Add(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+            <inheritdoc />
+        </member>
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.GetDetails(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
+            <inheritdoc />
+        </member>
+        <member name="T:BoardGame.Service.Repositories.IChessGameRepository">
+            <summary>
+            Interface of the chess game repository.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Get(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
+            <summary>
+            Gets the list of chess games according to the given predicate.
+            </summary>
+            <param name="participantPlayerName">Username of the participant (either sides) to filter for.</param>
+            <param name="predicate">Predicate for additional filtering if needed.</param>
+            <returns>List of chess games.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.GetDetails(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
+            <summary>
+            Gets the list of chess game details according to the given predicate.
+            </summary>
+            <param name="participantPlayerName">Username of the participant (either sides) to filter for.</param>
+            <param name="predicate">Predicate for additional filtering if needed.</param>
+            <returns>List of detailed chess games.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Add(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+            <summary>
+            Validates and saves a new game party according to the supplied challenge request.
+            </summary>
+            <param name="challengeRequest">The request coming from the API.</param>
+            <returns>Returns the result of the validation and the operation.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Startup">
+            <summary>
+            The bootstrap of the service.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Startup.#ctor(Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Startup" /> class.
+            </summary>
+            <param name="environment">The hosting environment parameters.</param>
+        </member>
+        <member name="P:BoardGame.Service.Startup.Configuration">
+            <summary>
+            Gets the application configuration provider.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services">The service collection where the dependencies will be registered.</param>
+        </member>
+        <member name="M:BoardGame.Service.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">The application builder.</param>
+            <param name="env">The hosting environment parameters.</param>
+        </member>
+        <member name="T:Service.Controllers.Api.ChessGamesController">
+            <summary>
+            Controller used to manage the games.
+            </summary>
+        </member>
+        <member name="M:Service.Controllers.Api.ChessGamesController.#ctor(BoardGame.Service.Repositories.IChessGameRepository,Microsoft.Extensions.Logging.ILogger{Service.Controllers.Api.ChessGamesController})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Service.Controllers.Api.ChessGamesController"/> class.
+            </summary>
+            <param name="repository">The repository to manage chess game (matches) data.</param>
+            <param name="logger">The logger used to log errors and warnings.</param>
+        </member>
+        <member name="M:Service.Controllers.Api.ChessGamesController.GetChessGames">
+            <summary>
+            Returns the list of chess games for the current user.
+            </summary>
+            <returns>List of games for the current user.</returns>
+            <response code="200">Returns the list of games of the current user..</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="M:Service.Controllers.Api.ChessGamesController.GetChessGame(System.String)">
+            <summary>
+            Returns the details of the selected chess game for the current user.
+            </summary>
+            <returns>The detailed view of the selected game.</returns>
+            <response code="200">Returns the detailed view of the selected game.</response>
+            <response code="400">Returns empty if the given id is not a GUID.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="M:Service.Controllers.Api.ChessGamesController.Challenge(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+            <summary>
+            Tries to create a new game according to the incoming challenge.
+            </summary>
+            <returns>List of games for the current user.</returns>
+            <response code="200">Returns HTTP 200 OK if it's succesful.</response>
+            <response code="400">Returns HTTP 400 Bad Request and the error result if the request isn't valid.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+    </members>
+</doc>

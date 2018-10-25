@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\ChessArena.Service.xml</DocumentationFile>
+    <DocumentationFile>G:\ChessBotArena\src\Service\Boardgame.Service.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>G:\ChessBotArena\src\Service\Boardgame.Service.xml</DocumentationFile>
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
 

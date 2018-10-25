@@ -64,14 +64,12 @@
                 new Claim("OriginallyIssuedAt", DateTime.UtcNow.Ticks.ToString())
             };
 
-            var currentDomain = this.HttpContext.Request.Host.Value;
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetSecurityKey()));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: currentDomain,
-                audience: currentDomain,
+                issuer: configuration.GetBaseUrl(),
+                audience: configuration.GetBaseUrl(),
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds);
