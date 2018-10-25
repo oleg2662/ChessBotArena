@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-WebApplication1-E2A6AE7B-244E-4DE9-ADB7-1AAF65DD9CC7</UserSecretsId>
     <ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
+    <AssemblyName>Boardgame.Service</AssemblyName>
+    <RootNamespace>BoardGame.Service</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

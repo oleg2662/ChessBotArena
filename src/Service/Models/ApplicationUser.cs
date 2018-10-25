@@ -2,9 +2,14 @@
 {
     using Microsoft.AspNetCore.Identity;
 
-    // Add profile data for application users by adding properties to the ApplicationUser class
+    /// <summary>
+    /// Represents an application user.
+    /// </summary>
     public class ApplicationUser : IdentityUser
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether the user is a bot or not.
+        /// </summary>
         public bool Bot { get; set; }
     }
 }

@@ -5,6 +5,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Extensions;
+    using BoardGame.Service.Models.Data;
 
     /// <summary>
     /// The database context of the application
@@ -16,6 +17,11 @@
         /// <inheritdoc />
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration config)
             : base(options) => this.config = config;
+
+        /// <summary>
+        /// Gets or sets the chess games in the database.
+        /// </summary>
+        public DbSet<DbChessGame> ChessGames { get; set; }
 
         /// <inheritdoc />>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
