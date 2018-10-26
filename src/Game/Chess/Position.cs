@@ -1,8 +1,7 @@
-﻿namespace Game.Chess
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
 
+namespace Game.Chess
+{
     [Serializable]
     /// <summary>
     /// Represents a position in the chess board.
@@ -202,7 +201,6 @@
         }
 
         #endregion
-
 
         private static char GetColumnFromString(string notation)
         {

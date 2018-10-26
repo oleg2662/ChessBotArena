@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Game.Chess.Moves
+﻿namespace Game.Chess.Moves
 {
     public enum CastlingType
     {
