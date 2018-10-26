@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Game
+﻿namespace Game
 {
     public static class Constants
     {

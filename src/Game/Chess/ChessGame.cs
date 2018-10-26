@@ -9,19 +9,18 @@
     using Game.Chess.Extensions;
     using Game.Chess.Pieces;
 
-    public class ChessGame : IMechanism<ChessGameRepresentation, ChessMove, GameState>
+    public class ChessGame : IMechanism<ChessBoard, ChessMove, GameState>
     {
-        public IEnumerable<ChessMove> GenerateMoves(ChessGameRepresentation representation)
+        public IEnumerable<ChessMove> GenerateMoves(ChessBoard representation)
         {
             var possibleMoves = GenerateMoves(representation, null);
-            var originalBoard = representation.Board;
+            var originalBoard = representation;
             var currentPlayer = representation.CurrentPlayer;
             var opponent = currentPlayer == ChessPlayer.Black ? ChessPlayer.White : ChessPlayer.Black;
 
             foreach (var move in possibleMoves)
             {
                 var newRepresentation = ApplyMove(representation, move);
-                var newBoard = newRepresentation.Board;
                 var movingPiece = originalBoard[move.From];
                 IEnumerable<Position> threatenedPositions;
                 var originalKingPosition = FindKing(newRepresentation, currentPlayer);
@@ -74,45 +73,45 @@
             }
         }
 
-        public GameState GetGameState(ChessGameRepresentation representation)
+        public GameState GetGameState(ChessBoard representation)
         {
             // TODO : implement!
             return GameState.InProgress;
         }
 
-        public bool ValidateMove(ChessGameRepresentation representation, ChessMove move)
+        public bool ValidateMove(ChessBoard representation, ChessMove move)
         {
             return this.GenerateMoves(representation).Contains(move);
         }
 
-        public ChessGameRepresentation ApplyMove(ChessGameRepresentation representationParam, ChessMove move)
+        public ChessBoard ApplyMove(ChessBoard representationParam, ChessMove move)
         {
             var representation = representationParam.Clone();
 
             switch (move)
             {
                 case KingCastlingMove castlingMove:
-                    representation.Board.Move(castlingMove.From, castlingMove.To);
-                    representation.Board.Move(castlingMove.RookFrom, castlingMove.RookTo);
+                    representation.Move(castlingMove.From, castlingMove.To);
+                    representation.Move(castlingMove.RookFrom, castlingMove.RookTo);
                     break;
                 case PawnEnPassantMove pawnEnPassantMove:
-                    representation.Board.Move(pawnEnPassantMove.From, pawnEnPassantMove.To);
-                    representation.Board[pawnEnPassantMove.CapturePosition] = null;
+                    representation.Move(pawnEnPassantMove.From, pawnEnPassantMove.To);
+                    representation[pawnEnPassantMove.CapturePosition] = null;
                     break;
                 case PawnPromotionalMove pawnPromotionalMove:
-                    representation.Board.Move(pawnPromotionalMove.From, pawnPromotionalMove.To);
-                    representation.Board[pawnPromotionalMove.To] = pawnPromotionalMove.PromoteTo;
+                    representation.Move(pawnPromotionalMove.From, pawnPromotionalMove.To);
+                    representation[pawnPromotionalMove.To] = pawnPromotionalMove.PromoteTo;
                     break;
                 default:
-                    representation.Board.Move(move.From, move.To);
+                    representation.Move(move.From, move.To);
                     break;
             }
 
             // Setting moved piece's 'HasMoved' flag
-            representation.Board[move.To].HasMoved = true;
+            representation[move.To].HasMoved = true;
 
             // Removing en passant flag
-            var pawns = Positions.PositionList.Select(x => representation.Board[x])
+            var pawns = Positions.PositionList.Select(x => representation[x])
                                   .Where(x => x != null)
                                   .Where(x => x.Owner != representation.CurrentPlayer)
                                   .OfType<Pawn>()
@@ -131,27 +130,27 @@
             return representation;
         }
 
-        private Position FindKing(ChessGameRepresentation representation, ChessPlayer? player)
+        private Position FindKing(ChessBoard representation, ChessPlayer? player)
         {
-            if(representation.Board == null)
+            if(representation == null)
             {
                 return null;
             }
 
             player = player ?? representation.CurrentPlayer;
 
-            var position = Positions.PositionList.Where(x => representation.Board[x] != null)
-                                    .Where(x => representation.Board[x].Owner == player)
-                                    .Where(x => representation.Board[x].Kind == PieceKind.King)
+            var position = Positions.PositionList.Where(x => representation[x] != null)
+                                    .Where(x => representation[x].Owner == player)
+                                    .Where(x => representation[x].Kind == PieceKind.King)
                                     .FirstOrDefault();
 
             // TODO : If no king, then throw validation check exception!
             return position;
         }
 
-        private IEnumerable<Position> GetThreatenedPositions(ChessGameRepresentation representation, ChessPlayer threatenedPlayer)
+        private IEnumerable<Position> GetThreatenedPositions(ChessBoard representation, ChessPlayer threatenedPlayer)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if(board == null)
             {
@@ -170,8 +169,6 @@
                 {
                     continue;
                 }
-
-
 
                 switch (piece.Kind)
                 {
@@ -207,14 +204,14 @@
             return opponentMoves.Select(x => x.To).Distinct();
         }
 
-        private bool DoesMoveCausesCheck(ChessGameRepresentation representation, ChessMove move)
+        private bool DoesMoveCausesCheck(ChessBoard representation, ChessMove move)
         {
             return false;
         }
 
-        private IEnumerable<ChessMove> GenerateMoves(ChessGameRepresentation representation, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GenerateMoves(ChessBoard representation, ChessPlayer? player = null)
         {
-            if(representation.Board == null)
+            if(representation == null)
             {
                 return Enumerable.Empty<ChessMove>();
             }
@@ -227,15 +224,15 @@
             }
 
             var possibleMoves = Positions.PositionList
-                                         .Where(x => representation.Board[x] != null && representation.Board[x].Owner == representation.Board.CurrentPlayer)
+                                         .Where(x => representation[x] != null && representation[x].Owner == representation.CurrentPlayer)
                                          .SelectMany(x => GetChessMoves(representation, x));
 
             return possibleMoves;
         }
 
-        private IEnumerable<ChessMove> GetChessMoves(ChessGameRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetChessMoves(ChessBoard representation, Position from, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -263,9 +260,9 @@
             }
         }
 
-        private IEnumerable<ChessMove> GetPawnMoves(ChessGameRepresentation representation, Position from, bool onlyThreateningMoves = false, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetPawnMoves(ChessBoard representation, Position from, bool onlyThreateningMoves = false, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -734,9 +731,9 @@
             }
         }
 
-        private IEnumerable<ChessMove> GetKingMoves(ChessGameRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetKingMoves(ChessBoard representation, Position from, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -766,9 +763,9 @@
             return moves;
         }
 
-        private IEnumerable<ChessMove> GetCastlings(ChessGameRepresentation representation, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetCastlings(ChessBoard representation, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -863,9 +860,9 @@
             }
         }
 
-        private IEnumerable<ChessMove> GetBishopMoves(ChessGameRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetBishopMoves(ChessBoard representation, Position from, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -900,9 +897,9 @@
             return moves;
         }
 
-        private IEnumerable<Position> PositionIterate(ChessGameRepresentation representation, Position from, Func<Position, Position> positionModifier)
+        private IEnumerable<Position> PositionIterate(ChessBoard representation, Position from, Func<Position, Position> positionModifier)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -948,9 +945,9 @@
             }
         }
 
-        private IEnumerable<ChessMove> GetQueenMoves(ChessGameRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetQueenMoves(ChessBoard representation, Position from, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -987,9 +984,9 @@
                             });
         }
 
-        private IEnumerable<ChessMove> GetRookMoves(ChessGameRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetRookMoves(ChessBoard representation, Position from, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {
@@ -1022,9 +1019,9 @@
                             });
         }
 
-        private IEnumerable<ChessMove> GetKnightMoves(ChessGameRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetKnightMoves(ChessBoard representation, Position from, ChessPlayer? player = null)
         {
-            var board = representation.Board;
+            var board = representation;
 
             if (board == null)
             {

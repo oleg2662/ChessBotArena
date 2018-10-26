@@ -16,13 +16,7 @@ namespace Game.Tests.Unit.Chess
         {
             var expected = 20;
 
-            var representation = new ChessGameRepresentation()
-            {
-                Board = new ChessBoardInitializer().Create(),
-                CurrentPlayer = ChessPlayer.White,
-                History = new List<Game.Chess.Moves.ChessMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
-            };
+            var representation = new ChessBoardInitializer().Create();
             
             var game = new ChessGame();
 
@@ -49,17 +43,9 @@ namespace Game.Tests.Unit.Chess
             board[Positions.H1] = new Rook(ChessPlayer.White, false);
             board[Positions.E8] = new King(ChessPlayer.Black, false);
 
-            var representation = new ChessGameRepresentation()
-            {
-                Board = board,
-                CurrentPlayer = ChessPlayer.White,
-                History = new List<Game.Chess.Moves.ChessMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
-            };
-
             var game = new ChessGame();
 
-            var result = game.GenerateMoves(representation).OfType<KingCastlingMove>().Count();
+            var result = game.GenerateMoves(board).OfType<KingCastlingMove>().Count();
             
             Assert.Equal(expected, result);
         }
@@ -81,16 +67,8 @@ namespace Game.Tests.Unit.Chess
             board[Positions.H8] = new Rook(ChessPlayer.Black, false);
             board[Positions.E1] = new King(ChessPlayer.White, false);
 
-            var representation = new ChessGameRepresentation()
-            {
-                Board = board,
-                CurrentPlayer = ChessPlayer.Black,
-                History = new List<ChessMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
-            };
-
             var game = new ChessGame();
-            var moves = game.GenerateMoves(representation).OfType<KingCastlingMove>();
+            var moves = game.GenerateMoves(board).OfType<KingCastlingMove>();
             var result = moves.Count();
 
             Assert.Equal(expected, result);
@@ -121,16 +99,8 @@ namespace Game.Tests.Unit.Chess
             board[Positions.E3] = new Pawn(ChessPlayer.Black, false);
             board[Positions.E8] = new King(ChessPlayer.Black, false);
 
-            var representation = new ChessGameRepresentation()
-            {
-                Board = board,
-                CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
-            };
-
             var game = new ChessGame();
-            var moves = game.GenerateMoves(representation).ToList();
+            var moves = game.GenerateMoves(board).ToList();
             var bishopMoves = moves.Where(x => x.ChessPiece.Kind == PieceKind.Bishop)
                                    .Where(x => x.ChessPiece.Owner == ChessPlayer.White)
                                    .ToHashSet();
@@ -166,16 +136,8 @@ namespace Game.Tests.Unit.Chess
             board[Positions.E6] = new Pawn(ChessPlayer.Black, false);
             board[Positions.F5] = new Pawn(ChessPlayer.Black, false);
 
-            var representation = new ChessGameRepresentation()
-            {
-                Board = board,
-                CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
-            };
-
             var game = new ChessGame();
-            var moves = game.GenerateMoves(representation).ToList();
+            var moves = game.GenerateMoves(board).ToList();
             var knightMoves = moves.Where(x => x.ChessPiece.Kind == PieceKind.Knight)
                                    .Where(x => x.ChessPiece.Owner == ChessPlayer.White)
                                    .ToHashSet();
@@ -210,16 +172,8 @@ namespace Game.Tests.Unit.Chess
             board[Positions.C4] = new Queen(ChessPlayer.White, false);
             board[Positions.G3] = new Pawn(ChessPlayer.Black, false);
 
-            var representation = new ChessGameRepresentation()
-            {
-                Board = board,
-                CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
-            };
-
             var game = new ChessGame();
-            var moves = game.GenerateMoves(representation).ToHashSet();
+            var moves = game.GenerateMoves(board).ToHashSet();
 
             Assert.Subset(expectedKnightMoves, moves);
             Assert.Subset(moves, expectedKnightMoves);
