@@ -1,8 +1,9 @@
 ﻿namespace BoardGame.Service
 {
+    using System;
+    using System.IO;
+    using System.Reflection;
     using System.Text;
-    using BoardGame.Service.Data;
-    using BoardGame.Service.Models;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -11,13 +12,12 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.IdentityModel.Tokens;
-    using Swashbuckle.AspNetCore.Swagger;
-    using Extensions;
+    using BoardGame.Service.Data;
+    using BoardGame.Service.Models;
     using BoardGame.Service.Models.Converters;
     using BoardGame.Service.Repositories;
-    using System.Reflection;
-    using System;
-    using System.IO;
+    using Extensions;
+    using Swashbuckle.AspNetCore.Swagger;
 
     /// <summary>
     /// The bootstrap of the service.

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Repositories;
+using BoardGame.Service.Models.Repositories.ChessGameRepository;
 
 namespace Service.Controllers.Api
 {
@@ -102,6 +103,38 @@ namespace Service.Controllers.Api
                 case ChallengeRequestResults.OK:
                     return Created(new Uri($"{Request.Path}/{result.NewlyCreatedGame.Id}", UriKind.Relative), result.NewlyCreatedGame);
                 
+                case ChallengeRequestResults.InitiatedByUserNull:
+                case ChallengeRequestResults.OpponentNull:
+                    return BadRequest(result);
+
+                default:
+                    return StatusCode((int)HttpStatusCode.InternalServerError, result);
+            }
+        }
+
+        /// <summary>
+        /// Tries to apply a move.
+        /// </summary>
+        /// <returns>Returns new state of the game if successful. Otherwise HTTP error code.</returns>
+        /// <response code="200">If it's succesful.</response>
+        /// <response code="400">If the request isn't valid.</response>
+        /// <response code="401">If there is an authentication error.</response>
+        /// <response code="409">If there is a validation error.</response>
+        /// <response code="500">If there is a server error.</response>
+        [ProducesResponseType(typeof(ChallengeRequestResults), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ChallengeRequestResults), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [HttpPut]
+        public IActionResult Move([FromBody]Challenge challenge)
+        {
+            var result = _repository.Add(challenge);
+
+            switch (result.RequestResult)
+            {
+                case ChallengeRequestResults.OK:
+                    return Created(new Uri($"{Request.Path}/{result.NewlyCreatedGame.Id}", UriKind.Relative), result.NewlyCreatedGame);
+
                 case ChallengeRequestResults.InitiatedByUserNull:
                 case ChallengeRequestResults.OpponentNull:
                     return BadRequest(result);

@@ -15,6 +15,12 @@ namespace BoardGame.Service.Models.Data
         public ApplicationUser Opponent { get; set; }
 
         /// <inheritdoc />
+        public ApplicationUser WhitePlayer { get; set; }
+
+        /// <inheritdoc />
+        public ApplicationUser BlackPlayer { get; set; }
+
+        /// <inheritdoc />
         public string Name { get; set; }
 
         /// <inheritdoc />
@@ -22,5 +28,6 @@ namespace BoardGame.Service.Models.Data
 
         /// <inheritdoc />
         public DateTime LastMoveDate { get; set; }
+
     }
 }

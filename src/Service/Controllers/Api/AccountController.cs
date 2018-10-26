@@ -1,20 +1,20 @@
-﻿namespace BoardGame.Service.Controllers.Api
-{
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Security.Claims;
-    using System.Text;
-    using BoardGame.Service.Extensions;
-    using BoardGame.Service.Models;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.IdentityModel.Tokens;
-    using BoardGame.Service.Models.Api.AccountControllerModels;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using BoardGame.Service.Extensions;
+using BoardGame.Service.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using BoardGame.Service.Models.Api.AccountControllerModels;
 
+namespace BoardGame.Service.Controllers.Api
+{
     [Produces("application/json")]
     [Route("api/Account")]
     public class AccountController : Controller

@@ -1,4 +1,6 @@
-﻿namespace BoardGame.Service.Repositories
+﻿using BoardGame.Service.Repositories;
+
+namespace BoardGame.Service.Models.Repositories.ChessGameRepository
 {
     /// <summary>
     /// Validation and DB operation results for the <see cref="IChessGameRepository" />.

@@ -2,6 +2,7 @@
 using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Converters;
 using BoardGame.Service.Models.Data;
+using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -71,11 +72,18 @@ namespace BoardGame.Service.Repositories
 
             var now = DateTime.Now.ToUniversalTime();
 
+            // Randomize sides
+            var players = new[] { initiatedBy, opponent }.OrderBy(x => Guid.NewGuid()).ToArray();
+            var white = players[0];
+            var black = players[1];
+
             var newGame = new DbChessGame()
             {
                 ChallengeDate = now,
                 InitiatedBy = initiatedBy,
                 Opponent = opponent,
+                WhitePlayer = white,
+                BlackPlayer = black,
                 Name = $"{initiatedBy.UserName} vs {opponent.UserName}",
                 LastMoveDate = now
             };
@@ -104,6 +112,12 @@ namespace BoardGame.Service.Repositories
                                    .AsReadOnly();
 
             return result;
+        }
+
+        /// <inheritdoc />
+        public ChessGameRepositoryMoveResult Move(ChessMoveApiModel move)
+        {
+            return null;
         }
     }
 }

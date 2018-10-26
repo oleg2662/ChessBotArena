@@ -1,6 +1,6 @@
 ﻿using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 
-namespace BoardGame.Service.Repositories
+namespace BoardGame.Service.Models.Repositories.ChessGameRepository
 {
     /// <summary>
     /// The result with additional result information.

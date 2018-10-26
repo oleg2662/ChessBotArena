@@ -122,6 +122,16 @@
             Gets or sets the user who was challenged by the game initiator.
             </summary>
         </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.WhitePlayer">
+            <summary>
+            Gets or sets the white player.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.BlackPlayer">
+            <summary>
+            Gets or sets the black player.
+            </summary>
+        </member>
         <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.ChallengeDate">
             <summary>
             Gets or sets the date the challenge was sent.
@@ -142,11 +152,6 @@
             Detailed information about a chess game.
             </summary>
         </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGameDetails.Foo">
-            <summary>
-            Gets or sets the foo. (TODO: Expand this!)
-            </summary>
-        </member>
         <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto">
             <summary>
             Represents the minimum required information about the player for the chess games list controller.
@@ -160,6 +165,27 @@
         <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto.UserName">
             <summary>
             Gets or sets the name of the player user.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel">
+            <summary>
+            The model used by the client to the service which contains the chess move and some additional information.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel.UserId">
+            <summary>
+            Gets or sets the id of the sender.
+            Has to be modified by the controller!
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel.TargetGameId">
+            <summary>
+            Gets or sets the ID of the target game.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel.Move">
+            <summary>
+            Gets or sets the chess move.
             </summary>
         </member>
         <member name="T:BoardGame.Service.Models.Api.PlayerControllerModels.IPlayerModel">
@@ -247,6 +273,12 @@
         <member name="P:BoardGame.Service.Models.Data.DbChessGame.Opponent">
             <inheritdoc />
         </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.WhitePlayer">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.BlackPlayer">
+            <inheritdoc />
+        </member>
         <member name="P:BoardGame.Service.Models.Data.DbChessGame.Name">
             <inheritdoc />
         </member>
@@ -281,6 +313,16 @@
             Gets or sets the user who was challenged by the game initiator.
             </summary>
         </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.WhitePlayer">
+            <summary>
+            Gets or sets the white player.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.BlackPlayer">
+            <summary>
+            Gets or sets the black player.
+            </summary>
+        </member>
         <member name="P:BoardGame.Service.Models.Data.IDbChessGame.ChallengeDate">
             <summary>
             Gets or sets the date the challenge was sent.
@@ -289,6 +331,76 @@
         <member name="P:BoardGame.Service.Models.Data.IDbChessGame.LastMoveDate">
             <summary>
             Gets or sets the date of the last move. Initially set to the challenge date.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults">
+            <summary>
+            Validation and DB operation results for the <see cref="T:BoardGame.Service.Repositories.IChessGameRepository" />.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults.OK">
+            <summary>
+            Challenge request accepted.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults.InitiatedByUserNull">
+            <summary>
+            The supplied id for the game initiator couldn't be found.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults.OpponentNull">
+            <summary>
+            The supplied id for the opponent couldn't be found.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Repositories.ChessGameRepository.ChessGameRepositoryAddResult">
+            <summary>
+            The result with additional result information.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Repositories.ChessGameRepository.ChessGameRepositoryAddResult.RequestResult">
+            <summary>
+            The result of the addition.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Repositories.ChessGameRepository.ChessGameRepositoryAddResult.NewlyCreatedGame">
+            <summary>
+            The newly created entity if the result was ok.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Repositories.ChessGameRepository.ChessGameRepositoryMoveResult">
+            <summary>
+            The result with additional result information.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Repositories.ChessGameRepository.ChessGameRepositoryMoveResult.RequestResult">
+            <summary>
+            The result of the addition.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Repositories.ChessGameRepository.ChessGameRepositoryMoveResult.NewState">
+            <summary>
+            The newly created entity if the result was ok.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults">
+            <summary>
+            Validation results for the <see cref="T:BoardGame.Service.Repositories.IChessGameRepository" />'s move.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.OK">
+            <summary>
+            Move is valid and applied.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.WrongTurn">
+            <summary>
+            It's not your turn!
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.InvalidMove">
+            <summary>
+            Invalid move!
             </summary>
         </member>
         <member name="T:BoardGame.Service.Program">
@@ -309,41 +421,6 @@
             <param name="args">Arguments</param>
             <returns>The created webhost object.</returns>
         </member>
-        <member name="T:BoardGame.Service.Repositories.ChallengeRequestResults">
-            <summary>
-            Validation and DB operation results for the <see cref="T:BoardGame.Service.Repositories.IChessGameRepository" />.
-            </summary>
-        </member>
-        <member name="F:BoardGame.Service.Repositories.ChallengeRequestResults.OK">
-            <summary>
-            Challenge request accepted.
-            </summary>
-        </member>
-        <member name="F:BoardGame.Service.Repositories.ChallengeRequestResults.InitiatedByUserNull">
-            <summary>
-            The supplied id for the game initiator couldn't be found.
-            </summary>
-        </member>
-        <member name="F:BoardGame.Service.Repositories.ChallengeRequestResults.OpponentNull">
-            <summary>
-            The supplied id for the opponent couldn't be found.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Repositories.ChessGameRepositoryAddResult">
-            <summary>
-            The result with additional result information.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Repositories.ChessGameRepositoryAddResult.RequestResult">
-            <summary>
-            The result of the addition.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Repositories.ChessGameRepositoryAddResult.NewlyCreatedGame">
-            <summary>
-            The newly created entity if the result was ok.
-            </summary>
-        </member>
         <member name="T:BoardGame.Service.Repositories.ChessGameRepository">
             <summary>
             Implementation of the chess game repository.
@@ -363,6 +440,9 @@
             <inheritdoc />
         </member>
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.GetDetails(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
+            <inheritdoc />
+        </member>
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
             <inheritdoc />
         </member>
         <member name="T:BoardGame.Service.Repositories.IChessGameRepository">
@@ -391,6 +471,13 @@
             Validates and saves a new game party according to the supplied challenge request.
             </summary>
             <param name="challengeRequest">The request coming from the API.</param>
+            <returns>Returns the result of the validation and the operation.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
+            <summary>
+            Validates and saves a new game party according to the supplied challenge request.
+            </summary>
+            <param name="move">The chess move.</param>
             <returns>Returns the result of the validation and the operation.</returns>
         </member>
         <member name="T:BoardGame.Service.Startup">
@@ -461,6 +548,17 @@
             <response code="200">Returns HTTP 200 OK if it's succesful.</response>
             <response code="400">Returns HTTP 400 Bad Request and the error result if the request isn't valid.</response>
             <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="M:Service.Controllers.Api.ChessGamesController.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+            <summary>
+            Tries to apply a move.
+            </summary>
+            <returns>Returns new state of the game if successful. Otherwise HTTP error code.</returns>
+            <response code="200">If it's succesful.</response>
+            <response code="400">If the request isn't valid.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="409">If there is a validation error.</response>
             <response code="500">If there is a server error.</response>
         </member>
     </members>

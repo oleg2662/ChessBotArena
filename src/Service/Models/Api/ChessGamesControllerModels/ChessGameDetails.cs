@@ -5,9 +5,6 @@
     /// </summary>
     public class ChessGameDetails : ChessGame
     {
-        /// <summary>
-        /// Gets or sets the foo. (TODO: Expand this!)
-        /// </summary>
-        public string Foo { get; set; } = "bar";
+        public ChessGame MyProperty { get; set; }
     }
 }

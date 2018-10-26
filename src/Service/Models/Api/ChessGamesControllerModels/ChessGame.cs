@@ -28,6 +28,16 @@ namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
         public ChessGamePlayerDto Opponent { get; set; }
 
         /// <summary>
+        /// Gets or sets the white player.
+        /// </summary>
+        public ChessGamePlayerDto WhitePlayer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the black player.
+        /// </summary>
+        public ChessGamePlayerDto BlackPlayer { get; set; }
+
+        /// <summary>
         /// Gets or sets the date the challenge was sent.
         /// </summary>
         public DateTime ChallengeDate { get; set; }

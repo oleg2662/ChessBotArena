@@ -10,7 +10,7 @@
     [Serializable]
     public class ChessBoard : IChessBoard, ICloneable<ChessBoard>
     {
-        private ChessPiece[] pieces = new ChessPiece[64];
+        private readonly ChessPiece[] pieces = new ChessPiece[64];
 
         public ChessBoard()
         {

@@ -28,6 +28,16 @@ namespace BoardGame.Service.Models.Data
         ApplicationUser Opponent { get; set; }
 
         /// <summary>
+        /// Gets or sets the white player.
+        /// </summary>
+        ApplicationUser WhitePlayer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the black player.
+        /// </summary>
+        ApplicationUser BlackPlayer { get; set; }
+
+        /// <summary>
         /// Gets or sets the date the challenge was sent.
         /// </summary>
         DateTime ChallengeDate { get; set; }

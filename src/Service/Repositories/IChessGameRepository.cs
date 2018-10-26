@@ -1,7 +1,8 @@
-﻿using BoardGame.Service.Models.Api.ChessGamesControllerModels;
-using BoardGame.Service.Models.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using BoardGame.Service.Models.Api.ChessGamesControllerModels;
+using BoardGame.Service.Models.Data;
+using BoardGame.Service.Models.Repositories.ChessGameRepository;
 
 namespace BoardGame.Service.Repositories
 {
@@ -32,5 +33,12 @@ namespace BoardGame.Service.Repositories
         /// <param name="challengeRequest">The request coming from the API.</param>
         /// <returns>Returns the result of the validation and the operation.</returns>
         ChessGameRepositoryAddResult Add(Challenge challengeRequest);
+
+        /// <summary>
+        /// Validates and saves a new game party according to the supplied challenge request.
+        /// </summary>
+        /// <param name="move">The chess move.</param>
+        /// <returns>Returns the result of the validation and the operation.</returns>
+        ChessGameRepositoryMoveResult Move(ChessMoveApiModel move);
     }
 }

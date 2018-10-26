@@ -23,7 +23,9 @@ namespace BoardGame.Service.Models.Converters
                 InitiatedBy = ConvertUser(source.InitiatedBy),
                 LastMoveDate = source.LastMoveDate,
                 Name = source.Name,
-                Opponent = ConvertUser(source.Opponent)
+                Opponent = ConvertUser(source.Opponent),
+                BlackPlayer = ConvertUser(source.BlackPlayer),
+                WhitePlayer = ConvertUser(source.WhitePlayer),
             };
         }
 
@@ -43,7 +45,9 @@ namespace BoardGame.Service.Models.Converters
                 LastMoveDate = source.LastMoveDate,
                 Name = source.Name,
                 Opponent = ConvertUser(source.Opponent),
-                Foo = "custom bar"
+                BlackPlayer = ConvertUser(source.BlackPlayer),
+                WhitePlayer = ConvertUser(source.WhitePlayer),
+                //Foo = "custom bar"
             };
         }
 
