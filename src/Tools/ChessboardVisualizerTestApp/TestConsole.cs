@@ -15,7 +15,7 @@ namespace ChessboardVisualizerTestApp
     {
         static void Main(string[] args)
         {
-            var board = new ChessBoard()
+            var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
                 History = new List<ChessMove>(),

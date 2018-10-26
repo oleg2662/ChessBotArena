@@ -15,11 +15,21 @@ namespace BoardGame.Service.Models.Repositories.ChessGameRepository
         /// <summary>
         /// It's not your turn!
         /// </summary>
-        WrongTurn,
+        WrongTurn = -1,
 
         /// <summary>
         /// Invalid move!
         /// </summary>
-        InvalidMove
+        InvalidMove = -2,
+
+        /// <summary>
+        /// Couldn't find match!
+        /// </summary>
+        NoMatchFound = -3,
+
+        /// <summary>
+        /// Multiple matches found. (DB error)
+        /// </summary>
+        MultipleMatchesFound = -4,
     }
 }

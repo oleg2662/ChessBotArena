@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BoardGame.Service.Models.Data.Moves;
+using System;
+using System.Collections.Generic;
 
 namespace BoardGame.Service.Models.Data
 {
@@ -8,7 +10,7 @@ namespace BoardGame.Service.Models.Data
     public interface IDbChessGame
     {
         /// <summary>
-        /// Gets or sets the ID of the game.
+        /// Gets or sets the id of the 
         /// </summary>
         Guid Id { get; set; }
 
@@ -46,5 +48,15 @@ namespace BoardGame.Service.Models.Data
         /// Gets or sets the date of the last move. Initially set to the challenge date.
         /// </summary>
         DateTime LastMoveDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the history of the match.
+        /// </summary>
+        ICollection<DbChessMove> History { get; set; }
+
+        /// <summary>
+        /// Gets or sets the status of the game.
+        /// </summary>
+        DbChessGameStatus Status { get; set; }
     }
 }

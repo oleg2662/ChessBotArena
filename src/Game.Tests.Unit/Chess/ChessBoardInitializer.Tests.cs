@@ -9,7 +9,7 @@ namespace Game.Tests.Unit.Chess
         [Fact]
         public void ChessBoardInitializerTest_InitBoard_PiecesAtTheirDefaultPositions()
         {
-            var initializer = new ChessBoardInitializer();
+            var initializer = new ChessRepresentationInitializer();
             var board = initializer.Create();
 
             Assert.Equal(ChessPieces.WhiteRook, board[Positions.A1]);

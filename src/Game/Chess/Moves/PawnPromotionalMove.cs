@@ -6,7 +6,7 @@ namespace Game.Chess.Moves
     [Serializable]
     public class PawnPromotionalMove : ChessMove
     {
-        public ChessPiece PromoteTo { get; set; }
+        public PieceKind PromoteTo { get; set; }
 
         public override bool Equals(ChessMove other)
         {
@@ -38,18 +38,20 @@ namespace Game.Chess.Moves
 
         public override string ToString()
         {
-            return $"{base.ToString()}={PromoteTo.ToString()}.";
+            return $"{base.ToString()}={PromoteTo.ToString()}";
         }
 
         public override ChessMove Clone()
         {
             return new PawnPromotionalMove()
             {
-                ChessPiece = this.ChessPiece.Clone(),
-                From = this.From,
-                To = this.To,
-                IsCaptureMove = this.IsCaptureMove,
-                PromoteTo = this.PromoteTo.Clone()
+                ChessPiece = ChessPiece,
+                Owner = Owner,
+                From = From,
+                To = To,
+                IsCaptureMove = IsCaptureMove,
+                PromoteTo = PromoteTo,
+                ChessMoveResult = ChessMoveResult
             };
         }
     }

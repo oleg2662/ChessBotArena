@@ -9,12 +9,6 @@ namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
     public class ChessMoveApiModel
     {
         /// <summary>
-        /// Gets or sets the id of the sender.
-        /// Has to be modified by the controller!
-        /// </summary>
-        public string UserId { get; set; }
-
-        /// <summary>
         /// Gets or sets the ID of the target game.
         /// </summary>
         public Guid TargetGameId { get; set; }

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace Game.Chess
 {
-    public class ChessBoardInitializer : IChessBoardInitializer
+    public class ChessRepresentationInitializer : IChessRepresentationInitializer
     {
-        public ChessBoard Create()
+        public ChessRepresentation Create()
         {
-            var board = new ChessBoard()
+            var board = new ChessRepresentation()
             {
                 Players = new List<ChessPlayer> { ChessPlayer.White, ChessPlayer.Black },
                 CurrentPlayer = ChessPlayer.White,

@@ -1,18 +1,19 @@
 ﻿namespace Game.Chess
 {
-    using Game.Abstraction;
-    using Game.Chess.Moves;
-    using Game.Chess.Pieces;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
+    using Game.Abstraction;
+    using Game.Chess.Moves;
+    using Game.Chess.Pieces;
+
     [Serializable]
-    public class ChessBoard : IChessBoard, ICloneable<ChessBoard>
+    public class ChessRepresentation : IChessRepresentation, ICloneable<ChessRepresentation>
     {
         private readonly ChessPiece[] pieces = new ChessPiece[64];
 
-        public ChessBoard()
+        public ChessRepresentation()
         {
             History = new List<ChessMove>();
         }
@@ -53,9 +54,9 @@
         /// </summary>
         public List<ChessMove> History { get; set; }
 
-        public ChessBoard Clone()
+        public ChessRepresentation Clone()
         {
-            var newBoard = new ChessBoard()
+            var newBoard = new ChessRepresentation()
             {
                 CurrentPlayer = this.CurrentPlayer,
                 History = this.History.Select(x => x.Clone()).ToList(),

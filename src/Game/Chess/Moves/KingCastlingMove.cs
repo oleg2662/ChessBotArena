@@ -82,9 +82,9 @@ namespace Game.Chess.Moves
             unchecked
             {
                 int hash = base.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ this.RookFrom.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ this.RookTo.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ this.CastlingType.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ RookFrom.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ RookTo.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ CastlingType.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ nameof(KingCastlingMove).GetHashCode();
                 return hash;
             }
@@ -92,18 +92,30 @@ namespace Game.Chess.Moves
 
         public override string ToString()
         {
-            return CastlingType == CastlingType.Long ? "0-0-0" : "0-0";
+            var moveText = CastlingType == CastlingType.Long ? "0-0-0" : "0-0";
+
+            switch (ChessMoveResult)
+            {
+                case ChessMoveResult.Check:
+                    return $"{moveText}+";
+                case ChessMoveResult.CheckMate:
+                    return $"{moveText}#";
+                default:
+                    return moveText;
+            }
         }
 
         public override ChessMove Clone()
         {
             return new KingCastlingMove()
             {
-                ChessPiece = this.ChessPiece.Clone(),
-                From = this.From,
-                To = this.To,
-                IsCaptureMove = this.IsCaptureMove,
-                CastlingType = this.CastlingType
+                ChessPiece = ChessPiece,
+                Owner = Owner,
+                From = From,
+                To = To,
+                IsCaptureMove = IsCaptureMove,
+                CastlingType = CastlingType,
+                ChessMoveResult = ChessMoveResult
             };
         }
     }

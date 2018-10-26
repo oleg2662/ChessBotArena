@@ -37,8 +37,9 @@ namespace BoardGame.Service.Repositories
         /// <summary>
         /// Validates and saves a new game party according to the supplied challenge request.
         /// </summary>
+        /// <param name="participantPlayerName">Username of the participant sending the move request.</param>
         /// <param name="move">The chess move.</param>
         /// <returns>Returns the result of the validation and the operation.</returns>
-        ChessGameRepositoryMoveResult Move(ChessMoveApiModel move);
+        ChessGameRepositoryMoveResult Move(string participantPlayerName, ChessMoveApiModel move);
     }
 }

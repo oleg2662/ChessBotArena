@@ -1,4 +1,6 @@
-﻿namespace Game.Chess.Pieces
+﻿using System;
+
+namespace Game.Chess.Pieces
 {
     /// <summary>
     /// Shorthand for the creation of different chesspieces.
@@ -114,5 +116,28 @@
         public static Rook Rook(ChessPlayer player, bool hasMoved = false) => new Rook(player, hasMoved);
 
         #endregion
+
+        public static ChessPiece Create(PieceKind kind, ChessPlayer player, bool hasMoved = false)
+        {
+            var black = player == ChessPlayer.Black;
+
+            switch (kind)
+            {
+                case PieceKind.King:
+                    return black ? BlackKing : WhiteKing;
+                case PieceKind.Queen:
+                    return black ? BlackQueen : WhiteQueen;
+                case PieceKind.Rook:
+                    return black ? BlackRook : WhiteRook;
+                case PieceKind.Bishop:
+                    return black ? BlackBishop : WhiteBishop;
+                case PieceKind.Knight:
+                    return black ? BlackKnight : WhiteKnight;
+                case PieceKind.Pawn:
+                    return black ? BlackPawn : WhitePawn;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(kind));
+            }
+        }
     }
 }

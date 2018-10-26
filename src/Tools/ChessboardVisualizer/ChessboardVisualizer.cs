@@ -1,7 +1,7 @@
 ﻿[assembly: System.Diagnostics.DebuggerVisualizer(
     typeof(ChessboardVisualizer.ChessboardVisualizer),
     typeof(Microsoft.VisualStudio.DebuggerVisualizers.VisualizerObjectSource),
-    Target = typeof(Game.Chess.ChessBoard),
+    Target = typeof(Game.Chess.ChessRepresentation),
     Description = "Chessboard visualizer")]
 namespace ChessboardVisualizer
 {
@@ -29,7 +29,7 @@ namespace ChessboardVisualizer
             if (objectProvider == null)
                 throw new ArgumentNullException(nameof(objectProvider));
 
-            var chessBoard = (ChessBoard)objectProvider.GetObject();
+            var chessBoard = (ChessRepresentation)objectProvider.GetObject();
 
             using (var displayForm = new Form())
             {
@@ -115,7 +115,7 @@ namespace ChessboardVisualizer
         public override void GetData(object target, Stream outgoingData)
         {
             var writer = new StreamWriter(outgoingData);
-            var board = (ChessBoard)target;
+            var board = (ChessRepresentation)target;
             writer.WriteLine(((Control)target).Text);
             writer.Flush();
         }

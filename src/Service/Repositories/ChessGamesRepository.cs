@@ -1,12 +1,12 @@
-﻿using BoardGame.Service.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using BoardGame.Service.Data;
 using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Converters;
 using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace BoardGame.Service.Repositories
 {
@@ -115,9 +115,41 @@ namespace BoardGame.Service.Repositories
         }
 
         /// <inheritdoc />
-        public ChessGameRepositoryMoveResult Move(ChessMoveApiModel move)
+        public ChessGameRepositoryMoveResult Move(string participantPlayerName, ChessMoveApiModel move)
         {
-            return null;
+            var result = _dbContext.ChessGames
+                                   .Include(x => x.InitiatedBy)
+                                   .Include(x => x.Opponent)
+                                   .Where(x => x.InitiatedBy != null && x.InitiatedBy.UserName == participantPlayerName
+                                               || x.Opponent != null && x.Opponent.UserName == participantPlayerName)
+                                   .Where(x => x.Id == move.TargetGameId)
+                                   .ToList();
+
+            if(result.Count < 1)
+            {
+                return new ChessGameRepositoryMoveResult
+                {
+                    NewState = null,
+                    RequestResult = MoveRequestResults.NoMatchFound
+                };
+            }
+
+            if (result.Count > 1)
+            {
+                return new ChessGameRepositoryMoveResult
+                {
+                    NewState = null,
+                    RequestResult = MoveRequestResults.MultipleMatchesFound
+                };
+            }
+
+            var match = result.First();
+
+            return new ChessGameRepositoryMoveResult
+            {
+                RequestResult = MoveRequestResults.OK,
+                NewState = null
+            };
         }
     }
 }

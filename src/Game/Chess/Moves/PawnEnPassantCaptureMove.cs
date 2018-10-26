@@ -29,7 +29,7 @@ namespace Game.Chess.Moves
             unchecked
             {
                 int hash = base.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ this.CapturePosition.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ CapturePosition.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ nameof(PawnEnPassantMove).GetHashCode();
                 return hash;
             }
@@ -44,11 +44,13 @@ namespace Game.Chess.Moves
         {
             return new PawnEnPassantMove()
             {
-                ChessPiece = this.ChessPiece.Clone(),
-                From = this.From,
-                To = this.To,
-                IsCaptureMove = this.IsCaptureMove,
-                CapturePosition = this.CapturePosition
+                ChessPiece = ChessPiece,
+                Owner = Owner,
+                From = From,
+                To = To,
+                IsCaptureMove = IsCaptureMove,
+                CapturePosition = CapturePosition,
+                ChessMoveResult = ChessMoveResult
             };
         }
     }

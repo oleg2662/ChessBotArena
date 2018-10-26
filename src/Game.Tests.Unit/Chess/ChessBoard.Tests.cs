@@ -12,7 +12,7 @@
         public void ChessBoardTest_NewlyCreated_BoardIsEmpty()
         {
             // Arrange
-            var board = new ChessBoard();
+            var board = new ChessRepresentation();
 
             // Act
 
@@ -25,7 +25,7 @@
         {
             // Arrange
             var positionOfChessPiece = Positions.H3;
-            var board = new ChessBoard();
+            var board = new ChessRepresentation();
             var expectedChessPiece = new Bishop(ChessPlayer.Black);
             var emptyPositions = Helpers.PositionList.Where(x => x != positionOfChessPiece);
 

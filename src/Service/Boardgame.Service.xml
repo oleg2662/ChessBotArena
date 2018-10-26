@@ -152,6 +152,11 @@
             Detailed information about a chess game.
             </summary>
         </member>
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGameDetails.Representation">
+            <summary>
+            Gets or sets the current representation of a match and it's current state.
+            </summary>
+        </member>
         <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto">
             <summary>
             Represents the minimum required information about the player for the chess games list controller.
@@ -170,12 +175,6 @@
         <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel">
             <summary>
             The model used by the client to the service which contains the chess move and some additional information.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel.UserId">
-            <summary>
-            Gets or sets the id of the sender.
-            Has to be modified by the controller!
             </summary>
         </member>
         <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel.TargetGameId">
@@ -288,6 +287,37 @@
         <member name="P:BoardGame.Service.Models.Data.DbChessGame.LastMoveDate">
             <inheritdoc />
         </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.History">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.DbChessGame.Status">
+            <inheritdoc />
+        </member>
+        <member name="T:BoardGame.Service.Models.Data.DbChessGameStatus">
+            <summary>
+            Represents the game statuses.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.Ongoing">
+            <summary>
+            The game is ongoing.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.Draw">
+            <summary>
+            The game has ended in a draw.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.WhiteWins">
+            <summary>
+            White won the game.
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.BlackWins">
+            <summary>
+            Black won the game.
+            </summary>
+        </member>
         <member name="T:BoardGame.Service.Models.Data.IDbChessGame">
             <summary>
             Interface to a chess game item in the chess games controller.
@@ -295,7 +325,7 @@
         </member>
         <member name="P:BoardGame.Service.Models.Data.IDbChessGame.Id">
             <summary>
-            Gets or sets the ID of the game.
+            Gets or sets the id of the 
             </summary>
         </member>
         <member name="P:BoardGame.Service.Models.Data.IDbChessGame.Name">
@@ -331,6 +361,16 @@
         <member name="P:BoardGame.Service.Models.Data.IDbChessGame.LastMoveDate">
             <summary>
             Gets or sets the date of the last move. Initially set to the challenge date.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.History">
+            <summary>
+            Gets or sets the history of the match.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.IDbChessGame.Status">
+            <summary>
+            Gets or sets the status of the game.
             </summary>
         </member>
         <member name="T:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults">
@@ -403,6 +443,16 @@
             Invalid move!
             </summary>
         </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.NoMatchFound">
+            <summary>
+            Couldn't find match!
+            </summary>
+        </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.MultipleMatchesFound">
+            <summary>
+            Multiple matches found. (DB error)
+            </summary>
+        </member>
         <member name="T:BoardGame.Service.Program">
             <summary>
             The main class of the whole service.
@@ -442,7 +492,7 @@
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.GetDetails(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
             <inheritdoc />
         </member>
-        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Move(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
             <inheritdoc />
         </member>
         <member name="T:BoardGame.Service.Repositories.IChessGameRepository">
@@ -473,10 +523,11 @@
             <param name="challengeRequest">The request coming from the API.</param>
             <returns>Returns the result of the validation and the operation.</returns>
         </member>
-        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Move(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
             <summary>
             Validates and saves a new game party according to the supplied challenge request.
             </summary>
+            <param name="participantPlayerName">Username of the participant sending the move request.</param>
             <param name="move">The chess move.</param>
             <returns>Returns the result of the validation and the operation.</returns>
         </member>

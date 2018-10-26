@@ -47,7 +47,7 @@ namespace BoardGame.Service.Models.Converters
                 Opponent = ConvertUser(source.Opponent),
                 BlackPlayer = ConvertUser(source.BlackPlayer),
                 WhitePlayer = ConvertUser(source.WhitePlayer),
-                //Foo = "custom bar"
+                Representation = new Game.Chess.ChessRepresentationInitializer().Create()
             };
         }
 

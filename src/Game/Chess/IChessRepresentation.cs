@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Game.Chess
 {
-    public interface IChessBoard
+    public interface IChessRepresentation
     {
         /// <summary>
         /// Algebraic notation accessor.

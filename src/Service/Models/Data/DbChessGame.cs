@@ -1,8 +1,12 @@
-﻿using System;
+﻿using BoardGame.Service.Models.Data.Moves;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BoardGame.Service.Models.Data
 {
     /// <inheritdoc />
+    [Table("DbChessGames")]
     public class DbChessGame : IDbChessGame
     {
         /// <inheritdoc />
@@ -29,5 +33,10 @@ namespace BoardGame.Service.Models.Data
         /// <inheritdoc />
         public DateTime LastMoveDate { get; set; }
 
+        /// <inheritdoc />
+        public ICollection<DbChessMove> History { get; set; }
+
+        /// <inheritdoc />
+        public DbChessGameStatus Status { get; set; }
     }
 }

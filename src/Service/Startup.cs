@@ -81,7 +81,11 @@
                     };
                 });
 
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(x =>
+            {
+                x.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                x.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
 
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
