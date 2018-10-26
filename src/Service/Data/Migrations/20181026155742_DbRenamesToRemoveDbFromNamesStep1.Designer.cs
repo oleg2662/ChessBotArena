@@ -15,9 +15,10 @@ using System;
 namespace BoardGame.Service.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181026155742_DbRenamesToRemoveDbFromNamesStep1")]
+    partial class DbRenamesToRemoveDbFromNamesStep1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,7 +109,7 @@ namespace BoardGame.Service.Data.Migrations
 
                     b.HasIndex("WhitePlayerId");
 
-                    b.ToTable("ChessGames");
+                    b.ToTable("DbChessGames");
                 });
 
             modelBuilder.Entity("BoardGame.Service.Models.Data.Moves.DbChessMove", b =>
@@ -119,8 +120,6 @@ namespace BoardGame.Service.Data.Migrations
                     b.Property<int>("ChessMoveResult");
 
                     b.Property<int>("ChessPiece");
-
-                    b.Property<DateTime>("CreatedAt");
 
                     b.Property<Guid?>("DbChessGameId");
 
@@ -140,7 +139,7 @@ namespace BoardGame.Service.Data.Migrations
 
                     b.HasIndex("DbChessGameId");
 
-                    b.ToTable("ChessMoves");
+                    b.ToTable("DbChessMove");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

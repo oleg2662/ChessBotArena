@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BoardGame.Service.Models.Data
 {
     /// <inheritdoc />
-    [Table("DbChessGames")]
+    [Table("ChessGames")]
     public class DbChessGame : IDbChessGame
     {
         /// <inheritdoc />
