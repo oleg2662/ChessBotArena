@@ -96,12 +96,13 @@
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetSecurityKey()));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.Now.AddMinutes(30);
 
             var newToken = new JwtSecurityToken(
                 issuer: this.configuration.GetBaseUrl(),
                 audience: this.configuration.GetBaseUrl(),
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: expires,
                 signingCredentials: creds);
 
             return this.Ok(new

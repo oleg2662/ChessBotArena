@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Repositories;
-using System;
-using System.Linq;
 
 namespace Service.Controllers.Api
 {
     /// <summary>
     /// Controller used to manage the games.
     /// </summary>
-    //[Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/Games")]
     public class ChessGamesController : Controller
     {
