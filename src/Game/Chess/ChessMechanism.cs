@@ -127,6 +127,8 @@
                                             ? ChessPlayer.Black
                                             : ChessPlayer.White;
 
+            representationParam.History.Add(move);
+
             return representation;
         }
 

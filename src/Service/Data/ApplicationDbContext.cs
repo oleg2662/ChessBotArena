@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Configuration;
     using Extensions;
     using BoardGame.Service.Models.Data;
+    using BoardGame.Service.Models.Data.Moves;
 
     /// <summary>
     /// The database context of the application
@@ -33,9 +34,14 @@
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+
+            builder.Entity<DbChessMove>()
+                .ToTable("ChessMoves")
+                .HasDiscriminator<string>("ChessMoveType")
+                .HasValue<DbKingCastlingMove>(nameof(DbKingCastlingMove))
+                .HasValue<DbPawnEnPassantMove>(nameof(DbPawnEnPassantMove))
+                .HasValue<DbPawnPromotionalMove>(nameof(DbPawnPromotionalMove))
+                .HasValue<DbChessMove>(nameof(DbChessMove));
         }
     }
 }

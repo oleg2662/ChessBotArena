@@ -99,7 +99,7 @@ namespace Game.Chess.Moves
                 return true;
             }
 
-            var other = (ChessMove)obj;
+            var other = obj as ChessMove;
             if (other == null)
             {
                 return false;

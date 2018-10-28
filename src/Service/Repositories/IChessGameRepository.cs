@@ -30,9 +30,10 @@ namespace BoardGame.Service.Repositories
         /// <summary>
         /// Validates and saves a new game party according to the supplied challenge request.
         /// </summary>
+        /// <param name="participantPlayerName">Username of the participant sending the move request.</param>
         /// <param name="challengeRequest">The request coming from the API.</param>
         /// <returns>Returns the result of the validation and the operation.</returns>
-        ChessGameRepositoryAddResult Add(Challenge challengeRequest);
+        ChessGameRepositoryAddResult Add(string participantPlayerName, Challenge challengeRequest);
 
         /// <summary>
         /// Validates and saves a new game party according to the supplied challenge request.

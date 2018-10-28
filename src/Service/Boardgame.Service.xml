@@ -82,14 +82,21 @@
             <param name="root">The configuration root.</param>
             <returns>The security key used to sign the JWT tokens.</returns>
         </member>
+        <member name="T:BoardGame.Service.Extensions.DbModelExtensions">
+            <summary>
+            Contains extension methods of the DB model classes
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Extensions.DbModelExtensions.GetPlayerNames(BoardGame.Service.Models.Data.DbChessGame)">
+            <summary>
+            Gets a dictionary of player usernames based on their playing colour in the game.
+            </summary>
+            <param name="game">The chess game coming from database.</param>
+            <returns>Dictionary of game players.</returns>
+        </member>
         <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge">
             <summary>
             Represetsn a challenge request coming from the client.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge.InitiatedBy">
-            <summary>
-            Gets or sets the id of the challenger player.
             </summary>
         </member>
         <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge.Opponent">
@@ -241,6 +248,12 @@
         <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.ConvertUser(BoardGame.Service.Models.ApplicationUser)">
             <inheritdoc />
         </member>
+        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.CovertToChessMove(BoardGame.Service.Models.Data.Moves.DbChessMove)">
+            <inheritdoc />
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.CovertToDbChessMove(Game.Chess.Moves.ChessMove)">
+            <inheritdoc />
+        </member>
         <member name="T:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter">
             <summary>
             Interface of the DB - API model converters used by the chess game repository.
@@ -259,6 +272,20 @@
             </summary>
             <param name="source">DB side source object.</param>
             <returns>API side detailed object.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.CovertToChessMove(BoardGame.Service.Models.Data.Moves.DbChessMove)">
+            <summary>
+            Converts a move from the database to chess move.
+            </summary>
+            <param name="dbMove">The move from the database</param>
+            <returns>Chess move.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.CovertToDbChessMove(Game.Chess.Moves.ChessMove)">
+            <summary>
+            Converts a move to the database chess move.
+            </summary>
+            <param name="move">The normal move</param>
+            <returns>Database chess move.</returns>
         </member>
         <member name="T:BoardGame.Service.Models.Data.DbChessGame">
             <inheritdoc />
@@ -486,7 +513,7 @@
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Get(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
             <inheritdoc />
         </member>
-        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Add(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Add(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
             <inheritdoc />
         </member>
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.GetDetails(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
@@ -516,10 +543,11 @@
             <param name="predicate">Predicate for additional filtering if needed.</param>
             <returns>List of detailed chess games.</returns>
         </member>
-        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Add(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Add(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
             <summary>
             Validates and saves a new game party according to the supplied challenge request.
             </summary>
+            <param name="participantPlayerName">Username of the participant sending the move request.</param>
             <param name="challengeRequest">The request coming from the API.</param>
             <returns>Returns the result of the validation and the operation.</returns>
         </member>
@@ -601,7 +629,7 @@
             <response code="401">If there is an authentication error.</response>
             <response code="500">If there is a server error.</response>
         </member>
-        <member name="M:Service.Controllers.Api.ChessGamesController.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+        <member name="M:Service.Controllers.Api.ChessGamesController.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
             <summary>
             Tries to apply a move.
             </summary>
@@ -609,7 +637,8 @@
             <response code="200">If it's succesful.</response>
             <response code="400">If the request isn't valid.</response>
             <response code="401">If there is an authentication error.</response>
-            <response code="409">If there is a validation error.</response>
+            <response code="404">If the match couldn't be found.</response>
+            <response code="409">If the move is an illegal move for any reasons.</response>
             <response code="500">If there is a server error.</response>
         </member>
     </members>

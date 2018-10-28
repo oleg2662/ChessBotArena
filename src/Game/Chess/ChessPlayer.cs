@@ -1,8 +1,11 @@
-﻿namespace Game.Chess
+﻿using System;
+
+namespace Game.Chess
 {
     /// <summary>
     /// The chess player colours.
     /// </summary>
+    [Serializable]
     public enum ChessPlayer
     {
         /// <summary>

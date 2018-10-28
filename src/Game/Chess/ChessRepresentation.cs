@@ -60,7 +60,7 @@
             {
                 CurrentPlayer = this.CurrentPlayer,
                 History = this.History.Select(x => x.Clone()).ToList(),
-                Players = this.Players.Select(x => x),
+                Players = this.Players.Select(x => x).ToList(),
             };
 
             foreach(var p in Positions.PositionList)

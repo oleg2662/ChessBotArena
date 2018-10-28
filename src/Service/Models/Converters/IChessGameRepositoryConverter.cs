@@ -1,5 +1,7 @@
 ﻿using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Data;
+using BoardGame.Service.Models.Data.Moves;
+using Game.Chess.Moves;
 
 namespace BoardGame.Service.Models.Converters
 {
@@ -21,5 +23,19 @@ namespace BoardGame.Service.Models.Converters
         /// <param name="source">DB side source object.</param>
         /// <returns>API side detailed object.</returns>
         ChessGameDetails ConvertToChessGameDetails(DbChessGame source);
+
+        /// <summary>
+        /// Converts a move from the database to chess move.
+        /// </summary>
+        /// <param name="dbMove">The move from the database</param>
+        /// <returns>Chess move.</returns>
+        ChessMove CovertToChessMove(DbChessMove dbMove);
+
+        /// <summary>
+        /// Converts a move to the database chess move.
+        /// </summary>
+        /// <param name="move">The normal move</param>
+        /// <returns>Database chess move.</returns>
+        DbChessMove CovertToDbChessMove(ChessMove move);
     }
 }

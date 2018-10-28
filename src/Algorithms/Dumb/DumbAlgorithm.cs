@@ -13,8 +13,6 @@ namespace Algorithms.Dumb
     public class DumbAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
         where TMove : class
     {
-        private int _maxDepth;
-
         protected readonly IEvaluator<TState> _evaluator;
         protected readonly IGenerator<TState, TMove> _moveGenerator;
         protected readonly IApplier<TState, TMove> _moveApplier;

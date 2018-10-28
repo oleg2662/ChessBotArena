@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Repositories;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
+using Game.Chess;
 
 namespace Service.Controllers.Api
 {
@@ -45,6 +46,20 @@ namespace Service.Controllers.Api
         [HttpGet]
         public IActionResult GetChessGames()
         {
+            var x = new ChessMoveApiModel();
+            x.Move = new Game.Chess.Moves.ChessMove
+            {
+                From = Positions.B2,
+                To = Positions.B4,
+                ChessMoveResult = Game.Chess.Moves.ChessMoveResult.Nothing,
+                ChessPiece = Game.Chess.Pieces.PieceKind.Pawn,
+                IsCaptureMove = false,
+                Owner = ChessPlayer.White
+            };
+
+            var text = Newtonsoft.Json.JsonConvert.SerializeObject(x);
+            var y = Newtonsoft.Json.JsonConvert.DeserializeObject<ChessMoveApiModel>(text);
+
             var chessgames = _repository.Get(GetCurrentUser());
             return Ok(chessgames);
         }
@@ -96,7 +111,7 @@ namespace Service.Controllers.Api
         [HttpPost]
         public IActionResult Challenge([FromBody]Challenge challenge)
         {
-            var result = _repository.Add(challenge);
+            var result = _repository.Add(GetCurrentUser(), challenge);
 
             switch (result.RequestResult)
             {
@@ -119,28 +134,32 @@ namespace Service.Controllers.Api
         /// <response code="200">If it's succesful.</response>
         /// <response code="400">If the request isn't valid.</response>
         /// <response code="401">If there is an authentication error.</response>
-        /// <response code="409">If there is a validation error.</response>
+        /// <response code="404">If the match couldn't be found.</response>
+        /// <response code="409">If the move is an illegal move for any reasons.</response>
         /// <response code="500">If there is a server error.</response>
-        [ProducesResponseType(typeof(ChallengeRequestResults), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ChallengeRequestResults), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ChessGameRepositoryMoveResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ChessGameRepositoryMoveResult), (int)HttpStatusCode.Conflict)]
+        [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPut]
-        public IActionResult Move([FromBody]Challenge challenge)
+        public IActionResult Move([FromBody]ChessMoveApiModel move)
         {
-            var result = _repository.Add(challenge);
+            var result = _repository.Move(GetCurrentUser(), move);
 
             switch (result.RequestResult)
             {
-                case ChallengeRequestResults.OK:
-                    return Created(new Uri($"{Request.Path}/{result.NewlyCreatedGame.Id}", UriKind.Relative), result.NewlyCreatedGame);
-
-                case ChallengeRequestResults.InitiatedByUserNull:
-                case ChallengeRequestResults.OpponentNull:
-                    return BadRequest(result);
-
-                default:
+                case MoveRequestResults.OK:
+                    return Ok(result);
+                case MoveRequestResults.WrongTurn:
+                case MoveRequestResults.InvalidMove:
+                    return StatusCode((int)HttpStatusCode.Forbidden, result);
+                case MoveRequestResults.NoMatchFound:
+                    return NotFound(move.TargetGameId);
+                case MoveRequestResults.MultipleMatchesFound:
                     return StatusCode((int)HttpStatusCode.InternalServerError, result);
+                default:
+                    return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
 

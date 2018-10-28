@@ -7,6 +7,8 @@ using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Converters;
 using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
+using BoardGame.Service.Extensions;
+using Game.Chess;
 
 namespace BoardGame.Service.Repositories
 {
@@ -46,9 +48,9 @@ namespace BoardGame.Service.Repositories
         }
 
         /// <inheritdoc />
-        public ChessGameRepositoryAddResult Add(Challenge challengeRequest)
+        public ChessGameRepositoryAddResult Add(string participantPlayerName, Challenge challengeRequest)
         {
-            var initiatedBy = _dbContext.Users.SingleOrDefault(x => x.Id == challengeRequest.InitiatedBy);
+            var initiatedBy = _dbContext.Users.SingleOrDefault(x => x.UserName == participantPlayerName);
 
             if(initiatedBy == null)
             {
@@ -59,7 +61,7 @@ namespace BoardGame.Service.Repositories
                 };
             }
 
-            var opponent = _dbContext.Users.SingleOrDefault(x => x.Id == challengeRequest.Opponent);
+            var opponent = _dbContext.Users.SingleOrDefault(x => x.UserName == challengeRequest.Opponent);
 
             if (opponent == null)
             {
@@ -117,15 +119,15 @@ namespace BoardGame.Service.Repositories
         /// <inheritdoc />
         public ChessGameRepositoryMoveResult Move(string participantPlayerName, ChessMoveApiModel move)
         {
-            var result = _dbContext.ChessGames
-                                   .Include(x => x.InitiatedBy)
-                                   .Include(x => x.Opponent)
-                                   .Where(x => x.InitiatedBy != null && x.InitiatedBy.UserName == participantPlayerName
-                                               || x.Opponent != null && x.Opponent.UserName == participantPlayerName)
-                                   .Where(x => x.Id == move.TargetGameId)
-                                   .ToList();
+            var match = _dbContext.ChessGames.Include(x => x.InitiatedBy)
+                                             .Include(x => x.Opponent)
+                                             .Include(x => x.History)
+                                             .Where(x => x.InitiatedBy != null && x.InitiatedBy.UserName == participantPlayerName
+                                                           || x.Opponent != null && x.Opponent.UserName == participantPlayerName)
+                                             .Where(x => x.Id == move.TargetGameId)
+                                             .FirstOrDefault();
 
-            if(result.Count < 1)
+            if(match is null)
             {
                 return new ChessGameRepositoryMoveResult
                 {
@@ -134,21 +136,71 @@ namespace BoardGame.Service.Repositories
                 };
             }
 
-            if (result.Count > 1)
+            var players = match.GetPlayerNames();
+
+            var history = match.History
+                               .OrderBy(x => x.CreatedAt)
+                               .Select(x => _chessGameConverter.CovertToChessMove(x))
+                               .ToArray();
+
+            var oldChessGameDetails = _chessGameConverter.ConvertToChessGameDetails(match);
+
+            var game = new ChessRepresentationInitializer().Create();
+            var gameMechanism = new ChessMechanism();
+
+            foreach (var moveItem in history)
+            {
+                game = gameMechanism.ApplyMove(game, moveItem);
+            }
+
+            var currentPlayerName = players[game.CurrentPlayer];
+
+            if(currentPlayerName != participantPlayerName)
             {
                 return new ChessGameRepositoryMoveResult
                 {
-                    NewState = null,
-                    RequestResult = MoveRequestResults.MultipleMatchesFound
+                    RequestResult = MoveRequestResults.WrongTurn,
+                    NewState = null
                 };
             }
 
-            var match = result.First();
+            if(!gameMechanism.ValidateMove(game, move.Move))
+            {
+                return new ChessGameRepositoryMoveResult
+                {
+                    RequestResult = MoveRequestResults.InvalidMove,
+                    NewState = oldChessGameDetails
+                };
+            }
+
+            var newState = gameMechanism.ApplyMove(game, move.Move);
+
+            var result = new ChessGameDetails()
+            {
+                BlackPlayer = oldChessGameDetails.BlackPlayer,
+                ChallengeDate = oldChessGameDetails.ChallengeDate,
+                Id = oldChessGameDetails.Id,
+                InitiatedBy = oldChessGameDetails.InitiatedBy,
+                LastMoveDate = DateTime.Now.ToUniversalTime(),
+                Name = oldChessGameDetails.Name,
+                Opponent = oldChessGameDetails.Opponent,
+                WhitePlayer = oldChessGameDetails.WhitePlayer,
+                Representation = newState
+            };
+
+            var newDbMove = _chessGameConverter.CovertToDbChessMove(move.Move);
+
+            _dbContext.ChessGames
+                      .Find(match.Id)
+                      .History
+                      .Add(newDbMove);
+
+            _dbContext.SaveChanges();
 
             return new ChessGameRepositoryMoveResult
             {
                 RequestResult = MoveRequestResults.OK,
-                NewState = null
+                NewState = result
             };
         }
     }

@@ -12,8 +12,6 @@ namespace Algorithms.GreedyAlgorithm
     public class GreedyAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
         where TMove : class
     {
-        private int _maxDepth;
-
         protected readonly IEvaluator<TState> _evaluator;
         protected readonly IGenerator<TState, TMove> _moveGenerator;
         protected readonly IApplier<TState, TMove> _moveApplier;

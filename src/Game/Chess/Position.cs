@@ -8,13 +8,13 @@ namespace Game.Chess
     /// </summary>
     public sealed class Position : IEquatable<Position>
     {
-        /// <summary>
-        /// Initializes a new instance of the Position structure.
-        /// </summary>
-        /// <param name="notation">The algebraic notation of the position. (A1-H8)</param>
-        public Position(string notation) : this(GetColumnFromString(notation), GetRowFromString(notation))
-        {
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the Position structure.
+        ///// </summary>
+        ///// <param name="notation">The algebraic notation of the position. (A1-H8)</param>
+        //public Position(string notation) : this(GetColumnFromString(notation), GetRowFromString(notation))
+        //{
+        //}
 
         /// <summary>
         /// Initializes a new instance of the Position structure.
