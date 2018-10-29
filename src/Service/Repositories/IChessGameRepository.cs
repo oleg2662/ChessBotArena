@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
+using Game.Chess.Moves;
 
 namespace BoardGame.Service.Repositories
 {
@@ -39,8 +40,9 @@ namespace BoardGame.Service.Repositories
         /// Validates and saves a new game party according to the supplied challenge request.
         /// </summary>
         /// <param name="participantPlayerName">Username of the participant sending the move request.</param>
+        /// <param name="chessGameId">ID of the game.</param>
         /// <param name="move">The chess move.</param>
         /// <returns>Returns the result of the validation and the operation.</returns>
-        ChessGameRepositoryMoveResult Move(string participantPlayerName, ChessMoveApiModel move);
+        ChessGameRepositoryMoveResult Move<T>(string participantPlayerName, Guid chessGameId, T move) where T : ChessMove;
     }
 }

@@ -519,7 +519,7 @@
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.GetDetails(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
             <inheritdoc />
         </member>
-        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Move(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Move``1(System.String,System.Guid,``0)">
             <inheritdoc />
         </member>
         <member name="T:BoardGame.Service.Repositories.IChessGameRepository">
@@ -551,11 +551,12 @@
             <param name="challengeRequest">The request coming from the API.</param>
             <returns>Returns the result of the validation and the operation.</returns>
         </member>
-        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Move(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Move``1(System.String,System.Guid,``0)">
             <summary>
             Validates and saves a new game party according to the supplied challenge request.
             </summary>
             <param name="participantPlayerName">Username of the participant sending the move request.</param>
+            <param name="chessGameId">ID of the game.</param>
             <param name="move">The chess move.</param>
             <returns>Returns the result of the validation and the operation.</returns>
         </member>
@@ -617,6 +618,7 @@
             <response code="200">Returns the detailed view of the selected game.</response>
             <response code="400">Returns empty if the given id is not a GUID.</response>
             <response code="401">If there is an authentication error.</response>
+            <response code="409">If there are multiple games with the same ID.</response>
             <response code="500">If there is a server error.</response>
         </member>
         <member name="M:Service.Controllers.Api.ChessGamesController.Challenge(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
@@ -629,7 +631,7 @@
             <response code="401">If there is an authentication error.</response>
             <response code="500">If there is a server error.</response>
         </member>
-        <member name="M:Service.Controllers.Api.ChessGamesController.Move(BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel)">
+        <member name="M:Service.Controllers.Api.ChessGamesController.Move(System.String,Game.Chess.Moves.ChessMove)">
             <summary>
             Tries to apply a move.
             </summary>

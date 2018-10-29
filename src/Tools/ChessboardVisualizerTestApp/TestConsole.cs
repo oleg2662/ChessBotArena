@@ -25,7 +25,7 @@ namespace ChessboardVisualizerTestApp
 
             var step1 = new ChessMove
             {
-                ChessMoveResult = ChessMoveResult.Nothing,
+                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"B2",
                 To = (Position)"B4",
@@ -35,7 +35,7 @@ namespace ChessboardVisualizerTestApp
 
             var step2 = new ChessMove
             {
-                ChessMoveResult = ChessMoveResult.Nothing,
+                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"E7",
                 To = (Position)"E5",
@@ -45,7 +45,7 @@ namespace ChessboardVisualizerTestApp
 
             var step3 = new ChessMove
             {
-                ChessMoveResult = ChessMoveResult.Nothing,
+                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"B4",
                 To = (Position)"B5",
@@ -55,7 +55,7 @@ namespace ChessboardVisualizerTestApp
 
             var step4 = new ChessMove
             {
-                ChessMoveResult = ChessMoveResult.Nothing,
+                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"B8",
                 To = (Position)"C6",
@@ -66,7 +66,7 @@ namespace ChessboardVisualizerTestApp
 
             var step5 = new ChessMove
             {
-                ChessMoveResult = ChessMoveResult.Nothing,
+                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"B5",
                 To = (Position)"C6",

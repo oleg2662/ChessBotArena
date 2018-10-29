@@ -50,7 +50,7 @@ namespace Game.Chess.Moves
                 To = To,
                 IsCaptureMove = IsCaptureMove,
                 CapturePosition = CapturePosition,
-                ChessMoveResult = ChessMoveResult
+                //ChessMoveResult = ChessMoveResult
             };
         }
     }

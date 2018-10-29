@@ -11,13 +11,13 @@ namespace Game.Chess.Moves
 
         public virtual Position To { get; set; }
 
-        public bool IsCaptureMove { get; set; }
+        public virtual bool IsCaptureMove { get; set; }
 
         public ChessPlayer Owner { get; set; }
 
-        public PieceKind ChessPiece { get; set; }
+        public virtual PieceKind ChessPiece { get; set; }
 
-        public ChessMoveResult ChessMoveResult { get; set; }
+        //public ChessMoveResult ChessMoveResult { get; set; }
 
         public static bool operator ==(ChessMove x, ChessMove y)
         {
@@ -55,8 +55,7 @@ namespace Game.Chess.Moves
             }
 
             return From.Equals(other.From) 
-                    && To.Equals(other.To)
-                    && ChessMoveResult.Equals(other.ChessMoveResult);
+                    && To.Equals(other.To);
         }
 
         public override int GetHashCode()
@@ -68,7 +67,7 @@ namespace Game.Chess.Moves
                 hash = (hash ^ Constants.HashXor) ^ From.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ To.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ IsCaptureMove.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ ChessMoveResult.GetHashCode();
+                //hash = (hash ^ Constants.HashXor) ^ ChessMoveResult.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ ChessPiece.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ GetType().Name.GetHashCode();
 
@@ -78,18 +77,18 @@ namespace Game.Chess.Moves
 
         public override string ToString()
         {
-            var moveText =  IsCaptureMove
-                                ? $"{ChessPiece.ToString()}{From}x{To}"
-                                : $"{ChessPiece.ToString()}{From}{To}";
-            switch (ChessMoveResult)
-            {
-                case ChessMoveResult.Check:
-                    return $"{moveText}+";
-                case ChessMoveResult.CheckMate:
-                    return $"{moveText}#";
-                default:
-                    return moveText;
-            }
+            return IsCaptureMove
+                    ? $"{ChessPiece.ToString()}{From}x{To}"
+                    : $"{ChessPiece.ToString()}{From}{To}";
+            //switch (ChessMoveResult)
+            //{
+            //    case ChessMoveResult.Check:
+            //        return $"{moveText}+";
+            //    case ChessMoveResult.CheckMate:
+            //        return $"{moveText}#";
+            //    default:
+            //        return moveText;
+            //}
         }
 
         public override bool Equals(object obj)
@@ -117,7 +116,7 @@ namespace Game.Chess.Moves
                 From = From,
                 To = To,
                 IsCaptureMove = IsCaptureMove,
-                ChessMoveResult = ChessMoveResult
+                //ChessMoveResult = ChessMoveResult
             };
         }
     }

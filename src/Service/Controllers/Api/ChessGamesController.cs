@@ -9,6 +9,7 @@ using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Repositories;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using Game.Chess;
+using Game.Chess.Moves;
 
 namespace Service.Controllers.Api
 {
@@ -51,7 +52,7 @@ namespace Service.Controllers.Api
             {
                 From = Positions.B2,
                 To = Positions.B4,
-                ChessMoveResult = Game.Chess.Moves.ChessMoveResult.Nothing,
+                //ChessMoveResult = Game.Chess.Moves.ChessMoveResult.Nothing,
                 ChessPiece = Game.Chess.Pieces.PieceKind.Pawn,
                 IsCaptureMove = false,
                 Owner = ChessPlayer.White
@@ -71,6 +72,7 @@ namespace Service.Controllers.Api
         /// <response code="200">Returns the detailed view of the selected game.</response>
         /// <response code="400">Returns empty if the given id is not a GUID.</response>
         /// <response code="401">If there is an authentication error.</response>
+        /// <response code="409">If there are multiple games with the same ID.</response>
         /// <response code="500">If there is a server error.</response>
         [ProducesResponseType(typeof(ChessGameDetails), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -88,9 +90,14 @@ namespace Service.Controllers.Api
 
             var chessgames = _repository.GetDetails(GetCurrentUser(), x => x.Id == gid);
 
-            if(chessgames.Count != 1)
+            if (chessgames.Count < 1)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "Multiple chess games with same id detected!");
+                return NotFound("Multiple chess games with same id detected!");
+            }
+
+            if (chessgames.Count > 1)
+            {
+                return StatusCode((int)HttpStatusCode.Conflict, "Multiple chess games with same id detected!");
             }
 
             return Ok(chessgames.First());
@@ -142,10 +149,17 @@ namespace Service.Controllers.Api
         [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [HttpPut]
-        public IActionResult Move([FromBody]ChessMoveApiModel move)
+        [HttpPut("{gameIdString}")]
+        public IActionResult Move(string gameIdString, [FromBody]ChessMove move)
         {
-            var result = _repository.Move(GetCurrentUser(), move);
+            bool validId = Guid.TryParse(gameIdString, out Guid gid);
+
+            if (!validId)
+            {
+                return BadRequest();
+            }
+
+            var result = _repository.Move(GetCurrentUser(), gid, move);
 
             switch (result.RequestResult)
             {
@@ -155,7 +169,7 @@ namespace Service.Controllers.Api
                 case MoveRequestResults.InvalidMove:
                     return StatusCode((int)HttpStatusCode.Forbidden, result);
                 case MoveRequestResults.NoMatchFound:
-                    return NotFound(move.TargetGameId);
+                    return NotFound(gameIdString);
                 case MoveRequestResults.MultipleMatchesFound:
                     return StatusCode((int)HttpStatusCode.InternalServerError, result);
                 default:

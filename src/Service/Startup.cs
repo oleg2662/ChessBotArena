@@ -85,6 +85,7 @@
             {
                 x.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 x.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                x.SerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
             });
 
             // Register the Swagger generator, defining one or more Swagger documents

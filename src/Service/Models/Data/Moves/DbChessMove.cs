@@ -32,7 +32,7 @@ namespace BoardGame.Service.Models.Data.Moves
 
         public PieceKind ChessPiece { get; set; }
 
-        public ChessMoveResult ChessMoveResult { get; set; }
+        //public ChessMoveResult ChessMoveResult { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }

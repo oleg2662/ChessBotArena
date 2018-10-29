@@ -16,9 +16,10 @@ using System;
 namespace BoardGame.Service.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181029230323_RemoveMoveResultColumnFromHistory")]
+    partial class RemoveMoveResultColumnFromHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,6 +117,8 @@ namespace BoardGame.Service.Data.Migrations
                 {
                     b.Property<Guid>("MoveId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ChessMoveResult");
 
                     b.Property<string>("ChessMoveType")
                         .IsRequired();

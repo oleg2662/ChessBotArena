@@ -82,7 +82,7 @@ namespace BoardGame.Service.Models.Converters
                 case DbKingCastlingMove castling:
                     return new KingCastlingMove
                     {
-                        ChessMoveResult = castling.ChessMoveResult,
+                        //ChessMoveResult = castling.ChessMoveResult,
                         ChessPiece = castling.ChessPiece,
                         From = castling.From,
                         IsCaptureMove = castling.IsCaptureMove,
@@ -94,7 +94,7 @@ namespace BoardGame.Service.Models.Converters
                 case DbPawnPromotionalMove promotionalMove:
                     return new PawnPromotionalMove
                     {
-                        ChessMoveResult = promotionalMove.ChessMoveResult,
+                        //ChessMoveResult = promotionalMove.ChessMoveResult,
                         ChessPiece = promotionalMove.ChessPiece,
                         From = promotionalMove.From,
                         IsCaptureMove = promotionalMove.IsCaptureMove,
@@ -106,7 +106,7 @@ namespace BoardGame.Service.Models.Converters
                 case DbPawnEnPassantMove enPassantMove:
                     return new PawnEnPassantMove
                     {
-                        ChessMoveResult = enPassantMove.ChessMoveResult,
+                        //ChessMoveResult = enPassantMove.ChessMoveResult,
                         ChessPiece = enPassantMove.ChessPiece,
                         From = enPassantMove.From,
                         IsCaptureMove = enPassantMove.IsCaptureMove,
@@ -118,7 +118,7 @@ namespace BoardGame.Service.Models.Converters
 
             return new ChessMove
             {
-                ChessMoveResult = dbMove.ChessMoveResult,
+                //ChessMoveResult = dbMove.ChessMoveResult,
                 ChessPiece = dbMove.ChessPiece,
                 From = dbMove.From,
                 IsCaptureMove = dbMove.IsCaptureMove,
@@ -140,7 +140,7 @@ namespace BoardGame.Service.Models.Converters
                 case KingCastlingMove castling:
                     return new DbKingCastlingMove
                     {
-                        ChessMoveResult = castling.ChessMoveResult,
+                        //ChessMoveResult = castling.ChessMoveResult,
                         ChessPiece = castling.ChessPiece,
                         IsCaptureMove = castling.IsCaptureMove,
                         Owner = castling.Owner,
@@ -156,7 +156,7 @@ namespace BoardGame.Service.Models.Converters
                 case PawnPromotionalMove promotionalMove:
                     return new DbPawnPromotionalMove
                     {
-                        ChessMoveResult = promotionalMove.ChessMoveResult,
+                        //ChessMoveResult = promotionalMove.ChessMoveResult,
                         ChessPiece = promotionalMove.ChessPiece,
                         IsCaptureMove = promotionalMove.IsCaptureMove,
                         Owner = promotionalMove.Owner,
@@ -172,7 +172,7 @@ namespace BoardGame.Service.Models.Converters
                 case PawnEnPassantMove enPassantMove:
                     return new DbPawnEnPassantMove
                     {
-                        ChessMoveResult = enPassantMove.ChessMoveResult,
+                        //ChessMoveResult = enPassantMove.ChessMoveResult,
                         ChessPiece = enPassantMove.ChessPiece,
                         IsCaptureMove = enPassantMove.IsCaptureMove,
                         Owner = enPassantMove.Owner,
@@ -189,7 +189,7 @@ namespace BoardGame.Service.Models.Converters
 
             return new DbChessMove
             {
-                ChessMoveResult = move.ChessMoveResult,
+                //ChessMoveResult = move.ChessMoveResult,
                 ChessPiece = move.ChessPiece,
                 IsCaptureMove = move.IsCaptureMove,
                 Owner = move.Owner,

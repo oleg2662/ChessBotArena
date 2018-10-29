@@ -123,6 +123,12 @@
                 pawn.IsEnPassantCapturable = false;
             }
 
+            // Setting en passant flag if needed
+            if (move.ChessPiece == PieceKind.Pawn && Math.Abs(move.From.Row - move.To.Row) == 2)
+            {
+                ((Pawn)representation[move.To]).IsEnPassantCapturable = true;
+            }
+
             representation.CurrentPlayer = representation.CurrentPlayer == ChessPlayer.White
                                             ? ChessPlayer.Black
                                             : ChessPlayer.White;
@@ -489,7 +495,7 @@
 
                     if (enPassantEastPosition != null
                         && captureEast != null
-                        && board[captureEast] == null // This likely won't be the case
+                        && board[captureEast] == null
                         && board[enPassantEastPosition] != null
                         && board[enPassantEastPosition].Owner != player
                         && board[enPassantEastPosition].Kind == PieceKind.Pawn
@@ -501,8 +507,8 @@
                             Owner = piece.Owner,
                             From = from,
                             IsCaptureMove = true,
-                            To = enPassantEastPosition,
-                            CapturePosition = captureEast
+                            To = captureEast,
+                            CapturePosition = enPassantEastPosition
                         };
                     }
 
@@ -520,8 +526,8 @@
                             Owner = piece.Owner,
                             From = from,
                             IsCaptureMove = true,
-                            To = enPassantWestPosition,
-                            CapturePosition = captureWest
+                            To = captureWest,
+                            CapturePosition = enPassantWestPosition
                         };
                     }
                     break;
@@ -739,8 +745,8 @@
                             Owner = piece.Owner,
                             From = from,
                             IsCaptureMove = true,
-                            To = enPassantEastPosition,
-                            CapturePosition = captureEast
+                            To = captureEast,
+                            CapturePosition = enPassantEastPosition
                         };
                     }
 
@@ -758,8 +764,8 @@
                             Owner = piece.Owner,
                             From = from,
                             IsCaptureMove = true,
-                            To = enPassantWestPosition,
-                            CapturePosition = captureWest
+                            To = captureWest,
+                            CapturePosition = enPassantWestPosition
                         };
                     }
                     break;

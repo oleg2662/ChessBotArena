@@ -9,6 +9,7 @@ using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using BoardGame.Service.Extensions;
 using Game.Chess;
+using Game.Chess.Moves;
 
 namespace BoardGame.Service.Repositories
 {
@@ -117,14 +118,14 @@ namespace BoardGame.Service.Repositories
         }
 
         /// <inheritdoc />
-        public ChessGameRepositoryMoveResult Move(string participantPlayerName, ChessMoveApiModel move)
+        public ChessGameRepositoryMoveResult Move<T>(string participantPlayerName, Guid chessGameId, T move) where T : ChessMove
         {
             var match = _dbContext.ChessGames.Include(x => x.InitiatedBy)
                                              .Include(x => x.Opponent)
                                              .Include(x => x.History)
                                              .Where(x => x.InitiatedBy != null && x.InitiatedBy.UserName == participantPlayerName
                                                            || x.Opponent != null && x.Opponent.UserName == participantPlayerName)
-                                             .Where(x => x.Id == move.TargetGameId)
+                                             .Where(x => x.Id == chessGameId)
                                              .FirstOrDefault();
 
             if(match is null)
@@ -164,16 +165,29 @@ namespace BoardGame.Service.Repositories
                 };
             }
 
-            if(!gameMechanism.ValidateMove(game, move.Move))
+            if(!gameMechanism.ValidateMove(game, move))
             {
+                var previousState = new ChessGameDetails
+                {
+                    BlackPlayer = oldChessGameDetails.BlackPlayer,
+                    ChallengeDate = oldChessGameDetails.ChallengeDate,
+                    Id = oldChessGameDetails.Id,
+                    InitiatedBy = oldChessGameDetails.InitiatedBy,
+                    LastMoveDate = oldChessGameDetails.LastMoveDate,
+                    Name = oldChessGameDetails.Name,
+                    Opponent = oldChessGameDetails.Opponent,
+                    WhitePlayer = oldChessGameDetails.WhitePlayer,
+                    Representation = game
+                };
+
                 return new ChessGameRepositoryMoveResult
                 {
                     RequestResult = MoveRequestResults.InvalidMove,
-                    NewState = oldChessGameDetails
+                    NewState = previousState
                 };
             }
 
-            var newState = gameMechanism.ApplyMove(game, move.Move);
+            var newState = gameMechanism.ApplyMove(game, move);
 
             var result = new ChessGameDetails()
             {
@@ -188,7 +202,7 @@ namespace BoardGame.Service.Repositories
                 Representation = newState
             };
 
-            var newDbMove = _chessGameConverter.CovertToDbChessMove(move.Move);
+            var newDbMove = _chessGameConverter.CovertToDbChessMove(move);
 
             _dbContext.ChessGames
                       .Find(match.Id)
