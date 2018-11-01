@@ -2,7 +2,7 @@
 
 namespace Game.Abstraction
 {
-    public interface IMechanism<TRepresentation, TPlayerMove, TGameState>
+    public interface IMechanism<TRepresentation, TPlayerMove, out TGameState>
     {
         IEnumerable<TPlayerMove> GenerateMoves(TRepresentation representation);
         bool ValidateMove(TRepresentation representation, TPlayerMove move);

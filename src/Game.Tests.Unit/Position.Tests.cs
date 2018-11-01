@@ -118,7 +118,7 @@ namespace Game.Tests.Unit
                 yield return new object[] { 63, Positions.H1 };
             }
 
-            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
         private class PositionAndStringRepresentation : IEnumerable<object[]>
@@ -198,7 +198,7 @@ namespace Game.Tests.Unit
                 yield return new object[] { Positions.H1, "H1" };
             }
 
-            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
     }
 }

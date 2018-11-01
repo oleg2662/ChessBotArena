@@ -5,7 +5,7 @@ namespace Algorithms.Abstractions.Exceptions
 {
     public abstract class AlgorithmException : Exception
     {
-        protected AlgorithmException() : base()
+        protected AlgorithmException()
         {
         }
 

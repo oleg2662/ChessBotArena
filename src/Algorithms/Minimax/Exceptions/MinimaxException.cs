@@ -6,7 +6,7 @@ namespace Algorithms.Minimax.Exceptions
 {
     public abstract class MinimaxException : AlgorithmException
     {
-        protected MinimaxException() : base()
+        protected MinimaxException()
         {
         }
 

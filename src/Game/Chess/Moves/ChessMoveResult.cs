@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Represents the result the move has caused.
-    /// Example: chess.
+    /// Example: check.
     /// </summary>
     public enum ChessMoveResult
     {

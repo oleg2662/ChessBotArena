@@ -10,7 +10,7 @@ namespace BoardGame.Service.Models.Repositories.ChessGameRepository
         /// <summary>
         /// Challenge request accepted.
         /// </summary>
-        OK = 1,
+        Ok = 1,
 
         /// <summary>
         /// The supplied id for the game initiator couldn't be found.

@@ -3,7 +3,7 @@
 namespace Game.Chess.Pieces
 {
     /// <summary>
-    /// Shorthand for the creation of different chesspieces.
+    /// Shorthand for the creation of different chess pieces.
     /// </summary>
     public static class ChessPieces
     {

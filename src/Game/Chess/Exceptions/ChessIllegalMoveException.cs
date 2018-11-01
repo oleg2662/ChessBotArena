@@ -4,7 +4,7 @@ namespace Game.Chess.Exceptions
 {
     public class ChessIllegalMoveException : ChessException
     {
-        public ChessIllegalMoveException() : base()
+        public ChessIllegalMoveException()
         {
         }
 

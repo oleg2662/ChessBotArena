@@ -10,7 +10,7 @@ namespace BoardGame.Service.Models.Repositories.ChessGameRepository
         /// <summary>
         /// Move is valid and applied.
         /// </summary>
-        OK = 1,
+        Ok = 1,
 
         /// <summary>
         /// It's not your turn!

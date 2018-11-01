@@ -1,5 +1,6 @@
 ﻿using Game.Chess.Pieces;
 using System;
+using Game.Abstraction;
 
 namespace Game.Chess.Moves
 {
@@ -30,7 +31,7 @@ namespace Game.Chess.Moves
             unchecked
             {
                 int hash = base.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ this.PromoteTo.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ PromoteTo.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ nameof(PawnPromotionalMove).GetHashCode();
                 return hash;
             }
@@ -51,7 +52,6 @@ namespace Game.Chess.Moves
                 To = To,
                 IsCaptureMove = IsCaptureMove,
                 PromoteTo = PromoteTo,
-                //ChessMoveResult = ChessMoveResult
             };
         }
     }

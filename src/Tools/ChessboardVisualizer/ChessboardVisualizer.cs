@@ -1,4 +1,6 @@
-﻿[assembly: System.Diagnostics.DebuggerVisualizer(
+﻿using Game.Chess.Pieces;
+
+[assembly: System.Diagnostics.DebuggerVisualizer(
     typeof(ChessboardVisualizer.ChessboardVisualizer),
     typeof(Microsoft.VisualStudio.DebuggerVisualizers.VisualizerObjectSource),
     Target = typeof(Game.Chess.ChessRepresentation),
@@ -58,16 +60,30 @@ namespace ChessboardVisualizer
                     Position p = (Position)i;
 
                     var brush = ((p.Row-1) + (p.Column-'A')) % 2 == 0 ? blackBrush : whiteBrush;
-                    var rectangle = this.GetFieldRectangle(g.VisibleClipBounds, (Position)i);
+                    var rectangle = GetFieldRectangle(g.VisibleClipBounds, (Position)i);
 
                     g.FillRectangle(brush, rectangle);
 
                     var figureText = chessBoard[p]?.ToString() ?? string.Empty;
+                    var hasMoved = chessBoard[p]?.HasMoved ?? false;
+                    var enPassant = (chessBoard[p] as Pawn)?.IsEnPassantCapturable ?? false;
 
                     var sf = new StringFormat
                     {
                         Alignment = StringAlignment.Center,
                         LineAlignment = StringAlignment.Center
+                    };
+
+                    var sfEnPassant = new StringFormat
+                    {
+                        Alignment = StringAlignment.Far,
+                        LineAlignment = StringAlignment.Far
+                    };
+
+                    var sfHasMoved = new StringFormat
+                    {
+                        Alignment = StringAlignment.Near,
+                        LineAlignment = StringAlignment.Far
                     };
 
                     g.DrawString(
@@ -76,6 +92,26 @@ namespace ChessboardVisualizer
                         Brushes.Black,
                         rectangle,
                         sf);
+
+                    if (enPassant)
+                    {
+                        g.DrawString(
+                            "ep.",
+                            new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
+                            Brushes.Black,
+                            rectangle,
+                            sfEnPassant);
+                    }
+
+                    if (hasMoved)
+                    {
+                        g.DrawString(
+                            "mvd.",
+                            new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
+                            Brushes.Black,
+                            rectangle,
+                            sfHasMoved);
+                    }
                 }
 
                 displayForm.Controls.Add(pictureBox);
@@ -115,7 +151,6 @@ namespace ChessboardVisualizer
         public override void GetData(object target, Stream outgoingData)
         {
             var writer = new StreamWriter(outgoingData);
-            var board = (ChessRepresentation)target;
             writer.WriteLine(((Control)target).Text);
             writer.Flush();
         }

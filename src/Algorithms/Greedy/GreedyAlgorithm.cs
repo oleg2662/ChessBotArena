@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Algorithms.Abstractions.Interfaces;
 
-namespace Algorithms.GreedyAlgorithm
+namespace Algorithms.Greedy
 {
     /// <summary>
     /// The greedy-algorithm. Tries to ruin your day by always choosing that move which minimizes your next state.
@@ -12,9 +12,9 @@ namespace Algorithms.GreedyAlgorithm
     public class GreedyAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
         where TMove : class
     {
-        protected readonly IEvaluator<TState> _evaluator;
-        protected readonly IGenerator<TState, TMove> _moveGenerator;
-        protected readonly IApplier<TState, TMove> _moveApplier;
+        private readonly IEvaluator<TState> _evaluator;
+        private readonly IGenerator<TState, TMove> _moveGenerator;
+        private readonly IApplier<TState, TMove> _moveApplier;
 
         public GreedyAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
@@ -26,7 +26,7 @@ namespace Algorithms.GreedyAlgorithm
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            var moves = _moveGenerator.Generate(state);
+            var moves = _moveGenerator.Generate(state).ToList();
 
             if (!moves.Any())
             {
@@ -37,7 +37,7 @@ namespace Algorithms.GreedyAlgorithm
             {
                 Move = move,
                 Value = _evaluator.Evaluate(_moveApplier.Apply(state, move))
-            });
+            }).ToList();
 
             var min = movesAndValues.Min(x => x.Value);
 

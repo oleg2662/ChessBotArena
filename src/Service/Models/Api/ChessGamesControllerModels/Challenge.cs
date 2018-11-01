@@ -1,7 +1,7 @@
 ﻿namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
 {
     /// <summary>
-    /// Represetsn a challenge request coming from the client.
+    /// Represents a challenge request coming from the client.
     /// </summary>
     public class Challenge
     {

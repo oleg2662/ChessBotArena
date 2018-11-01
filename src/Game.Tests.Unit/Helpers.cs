@@ -1,7 +1,5 @@
 using Game.Chess;
-using System;
 using System.Collections.Generic;
-using Xunit;
 
 namespace Game.Tests.Unit
 {

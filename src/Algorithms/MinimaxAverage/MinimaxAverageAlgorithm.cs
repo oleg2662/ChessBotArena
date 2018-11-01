@@ -17,9 +17,9 @@ namespace Algorithms.MinimaxAverage
         private int _maxLevelAverageDepth = 2;
         private int _minLevelAverageDepth = 2;
 
-        protected readonly IEvaluator<TState> _evaluator;
-        protected readonly IGenerator<TState, TMove> _moveGenerator;
-        protected readonly IApplier<TState, TMove> _moveApplier;
+        private readonly IEvaluator<TState> _evaluator;
+        private readonly IGenerator<TState, TMove> _moveGenerator;
+        private readonly IApplier<TState, TMove> _moveApplier;
 
         public MinimaxAverageAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
@@ -34,10 +34,7 @@ namespace Algorithms.MinimaxAverage
         /// </summary>
         public int MinLevelAverageDepth
         {
-            get
-            {
-                return _minLevelAverageDepth;
-            }
+            get => _minLevelAverageDepth;
 
             set
             {
@@ -55,10 +52,7 @@ namespace Algorithms.MinimaxAverage
         /// </summary>
         public int MaxLevelAverageDepth
         {
-            get
-            {
-                return _maxLevelAverageDepth;
-            }
+            get => _maxLevelAverageDepth;
 
             set
             {
@@ -76,10 +70,7 @@ namespace Algorithms.MinimaxAverage
         /// </summary>
         public int MaxDepth
         {
-            get
-            {
-                return _maxDepth;
-            }
+            get => _maxDepth;
 
             set
             {
@@ -95,7 +86,7 @@ namespace Algorithms.MinimaxAverage
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            var moves = _moveGenerator.Generate(state);
+            var moves = _moveGenerator.Generate(state).ToList();
 
             if (!moves.Any())
             {
@@ -106,7 +97,7 @@ namespace Algorithms.MinimaxAverage
             {
                 Move = move,
                 Value = Calculate(_moveApplier.Apply(state, move), 1, false)
-            });
+            }).ToList();
 
             var max = movesAndValues.Max(x => x.Value);
             var result = movesAndValues.First(x => Equals(x.Value, max)).Move;

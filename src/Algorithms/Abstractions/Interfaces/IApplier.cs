@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Algorithms.Abstractions.Interfaces
+﻿namespace Algorithms.Abstractions.Interfaces
 {
-    public interface IApplier<TState, TMove>
+    public interface IApplier<TState, in TMove>
     {
         /// <summary>
         /// Applies the given move to the given state and returns the new state.

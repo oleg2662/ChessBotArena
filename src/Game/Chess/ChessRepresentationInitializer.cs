@@ -4,52 +4,49 @@ using System.Collections.Generic;
 
 namespace Game.Chess
 {
-    public class ChessRepresentationInitializer : IChessRepresentationInitializer
+    public class ChessRepresentationInitializer
     {
         public ChessRepresentation Create()
         {
-            var board = new ChessRepresentation()
+            var board = new ChessRepresentation
             {
-                Players = new List<ChessPlayer> { ChessPlayer.White, ChessPlayer.Black },
+                Players = new List<ChessPlayer> {ChessPlayer.White, ChessPlayer.Black},
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>()
+                History = new List<ChessMove>(),
+
+                [Positions.A1] = ChessPieces.WhiteRook,
+                [Positions.B1] = ChessPieces.WhiteKnight,
+                [Positions.C1] = ChessPieces.WhiteBishop,
+                [Positions.D1] = ChessPieces.WhiteQueen,
+                [Positions.E1] = ChessPieces.WhiteKing,
+                [Positions.F1] = ChessPieces.WhiteBishop,
+                [Positions.G1] = ChessPieces.WhiteKnight,
+                [Positions.H1] = ChessPieces.WhiteRook,
+                [Positions.A2] = ChessPieces.WhitePawn,
+                [Positions.B2] = ChessPieces.WhitePawn,
+                [Positions.C2] = ChessPieces.WhitePawn,
+                [Positions.D2] = ChessPieces.WhitePawn,
+                [Positions.E2] = ChessPieces.WhitePawn,
+                [Positions.F2] = ChessPieces.WhitePawn,
+                [Positions.G2] = ChessPieces.WhitePawn,
+                [Positions.H2] = ChessPieces.WhitePawn,
+                [Positions.A7] = ChessPieces.BlackPawn,
+                [Positions.B7] = ChessPieces.BlackPawn,
+                [Positions.C7] = ChessPieces.BlackPawn,
+                [Positions.D7] = ChessPieces.BlackPawn,
+                [Positions.E7] = ChessPieces.BlackPawn,
+                [Positions.F7] = ChessPieces.BlackPawn,
+                [Positions.G7] = ChessPieces.BlackPawn,
+                [Positions.H7] = ChessPieces.BlackPawn,
+                [Positions.A8] = ChessPieces.BlackRook,
+                [Positions.B8] = ChessPieces.BlackKnight,
+                [Positions.C8] = ChessPieces.BlackBishop,
+                [Positions.D8] = ChessPieces.BlackQueen,
+                [Positions.E8] = ChessPieces.BlackKing,
+                [Positions.F8] = ChessPieces.BlackBishop,
+                [Positions.G8] = ChessPieces.BlackKnight,
+                [Positions.H8] = ChessPieces.BlackRook
             };
-
-            board[Positions.A1] = ChessPieces.WhiteRook;
-            board[Positions.B1] = ChessPieces.WhiteKnight;
-            board[Positions.C1] = ChessPieces.WhiteBishop;
-            board[Positions.D1] = ChessPieces.WhiteQueen;
-            board[Positions.E1] = ChessPieces.WhiteKing;
-            board[Positions.F1] = ChessPieces.WhiteBishop;
-            board[Positions.G1] = ChessPieces.WhiteKnight;
-            board[Positions.H1] = ChessPieces.WhiteRook;
-
-            board[Positions.A2] = ChessPieces.WhitePawn;
-            board[Positions.B2] = ChessPieces.WhitePawn;
-            board[Positions.C2] = ChessPieces.WhitePawn;
-            board[Positions.D2] = ChessPieces.WhitePawn;
-            board[Positions.E2] = ChessPieces.WhitePawn;
-            board[Positions.F2] = ChessPieces.WhitePawn;
-            board[Positions.G2] = ChessPieces.WhitePawn;
-            board[Positions.H2] = ChessPieces.WhitePawn;
-
-            board[Positions.A7] = ChessPieces.BlackPawn;
-            board[Positions.B7] = ChessPieces.BlackPawn;
-            board[Positions.C7] = ChessPieces.BlackPawn;
-            board[Positions.D7] = ChessPieces.BlackPawn;
-            board[Positions.E7] = ChessPieces.BlackPawn;
-            board[Positions.F7] = ChessPieces.BlackPawn;
-            board[Positions.G7] = ChessPieces.BlackPawn;
-            board[Positions.H7] = ChessPieces.BlackPawn;
-
-            board[Positions.A8] = ChessPieces.BlackRook;
-            board[Positions.B8] = ChessPieces.BlackKnight;
-            board[Positions.C8] = ChessPieces.BlackBishop;
-            board[Positions.D8] = ChessPieces.BlackQueen;
-            board[Positions.E8] = ChessPieces.BlackKing;
-            board[Positions.F8] = ChessPieces.BlackBishop;
-            board[Positions.G8] = ChessPieces.BlackKnight;
-            board[Positions.H8] = ChessPieces.BlackRook;
 
             return board;
         }

@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TState">The type of the states which have to be evaluated.</typeparam>
     /// <typeparam name="TMove">The type of the moves between states.</typeparam>
-    public interface IAlgorithm<TState, TMove>
+    public interface IAlgorithm<in TState, out TMove>
     {
         /// <summary>
         /// Calculates the next proposed move.

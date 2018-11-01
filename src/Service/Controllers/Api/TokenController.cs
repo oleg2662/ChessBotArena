@@ -1,42 +1,63 @@
-﻿namespace BoardGame.Service.Controllers.Api
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Net;
+using System.Security.Claims;
+using System.Text;
+
+using BoardGame.Service.Extensions;
+using BoardGame.Service.Models;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+
+namespace BoardGame.Service.Controllers.Api
 {
-    using System;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Text;
-    using System.Threading.Tasks;
-    using BoardGame.Service.Extensions;
-    using Microsoft.AspNetCore.Mvc;
-
-    using BoardGame.Service.Models;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.IdentityModel.Tokens;
-
+    /// <summary>
+    /// Controller used to manage the JWT tokens.
+    /// </summary>
     [Authorize(AuthenticationSchemes = "Bearer")]
     [Produces("application/json")]
     [Route("api/Token")]
-    public class TokenController : Controller
+    public class TokenController : BaseController
     {
-        private readonly ILogger logger;
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly IConfiguration configuration;
+        private readonly ILogger _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TokenController"/> class.
+        /// </summary>
+        /// <param name="userManager">The manager of the users.</param>
+        /// <param name="logger">The logger used to log errors and warnings.</param>
+        /// <param name="configuration">The configuration provider.</param>
         public TokenController(
             UserManager<ApplicationUser> userManager,
             ILogger<AccountController> logger,
             IConfiguration configuration)
         {
-            this.logger = logger;
-            this.userManager = userManager;
-            this.configuration = configuration;
+            _logger = logger;
+            _userManager = userManager;
+            _configuration = configuration;
         }
 
+        /// <summary>
+        /// Prolongs the given token.
+        /// </summary>
+        /// <param name="tokenString">The token string.</param>
+        /// <returns>A prolonged JSON token.</returns>
+        /// <response code="200">If it's successful with a prolonged JWT token.</response>
+        /// <response code="401">If there is an authentication error.</response>
+        /// <response code="500">If there is a server error.</response>
+        [ProducesResponseType(typeof(JwtSecurityToken), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPost]
-        public async Task<IActionResult> ProlongToken([FromBody] string tokenString)
+        public IActionResult ProlongToken([FromBody] string tokenString)
         {
             var token = new JwtSecurityToken(tokenString);
 
@@ -47,12 +68,14 @@
 
             if (originallyIssuedAtTicksList.Count != 1)
             {
-                return this.BadRequest("Invalid token provided.");
+                _logger.LogWarning($"{GetCurrentUser()} has tried to prolong a token but the supplied token string was invalid.(OriginallyIssuedAt)");
+                return BadRequest("Invalid token provided.");
             }
 
             if (!long.TryParse(originallyIssuedAtTicksList.First(), out long originallyIssuedAtTicks))
             {
-                return this.BadRequest("Invalid token provided.");
+                _logger.LogWarning($"{GetCurrentUser()} has tried to prolong a token but the supplied token string was invalid.(OriginallyIssuedAt try parse.)");
+                return BadRequest("Invalid token provided.");
             }
 
             var originallyIssuedAt = new DateTime(originallyIssuedAtTicks, DateTimeKind.Utc);
@@ -61,8 +84,8 @@
 
             if (ageOfOriginalToken > TimeSpan.FromDays(1))
             {
-                // Too old token.
-                return this.Forbid();
+                _logger.LogWarning($"{GetCurrentUser()} has tried to prolong a token but the supplied token was too old.");
+                return Forbid();
             }
 
             var tokenUserNames = token.Claims
@@ -71,17 +94,19 @@
 
             if (tokenUserNames.Count != 1)
             {
-                return this.BadRequest("Invalid token provided.");
+                _logger.LogWarning($"{GetCurrentUser()} has tried to prolong a token but the supplied token string was invalid.(User name)");
+                return BadRequest("Invalid token provided.");
             }
 
             var tokenUserName = tokenUserNames.First();
 
-            var user = this.userManager.Users
+            var user = _userManager.Users
                 .FirstOrDefault(x => x.UserName == tokenUserName);
 
             if (user == null)
             {
-                return this.Forbid();
+                _logger.LogWarning($"{GetCurrentUser()} has tried to prolong a token but the supplied token string was invalid.(User null.)");
+                return Forbid();
             }
 
             var claims = new[]
@@ -92,20 +117,20 @@
                 new Claim("OriginallyIssuedAt", DateTime.UtcNow.Ticks.ToString())
             };
 
-            var currentDomain = this.HttpContext.Request.Host.Value;
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetSecurityKey()));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSecurityKey()));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddMinutes(30);
 
             var newToken = new JwtSecurityToken(
-                issuer: this.configuration.GetBaseUrl(),
-                audience: this.configuration.GetBaseUrl(),
+                issuer: _configuration.GetBaseUrl(),
+                audience: _configuration.GetBaseUrl(),
                 claims: claims,
                 expires: expires,
                 signingCredentials: creds);
 
-            return this.Ok(new
+            _logger.LogInformation($"{GetCurrentUser()} has asked for a prolonged token.");
+
+            return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(newToken)
             });

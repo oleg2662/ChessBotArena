@@ -1,5 +1,4 @@
-﻿using Algorithms.AlphaBeta;
-using Algorithms.GreedyAlgorithm;
+﻿using Algorithms.Greedy;
 using Algorithms.Tests.Unit.TestCaseClasses;
 using Xunit;
 

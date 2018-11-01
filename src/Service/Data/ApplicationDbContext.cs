@@ -1,6 +1,6 @@
 ﻿namespace BoardGame.Service.Data
 {
-    using BoardGame.Service.Models;
+    using Models;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -13,11 +13,14 @@
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        private readonly IConfiguration config;
+        private readonly IConfiguration _config;
 
         /// <inheritdoc />
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration config)
-            : base(options) => this.config = config;
+            : base(options)
+        {
+            _config = config;
+        }
 
         /// <summary>
         /// Gets or sets the chess games in the database.
@@ -27,7 +30,7 @@
         /// <inheritdoc />>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(this.config.GetMainConnectionString());
+            optionsBuilder.UseSqlServer(_config.GetMainConnectionString());
         }
 
         /// <inheritdoc />>

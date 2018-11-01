@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using BoardGame.Service.Extensions;
@@ -15,45 +16,66 @@ using BoardGame.Service.Models.Api.AccountControllerModels;
 
 namespace BoardGame.Service.Controllers.Api
 {
+    /// <summary>
+    /// Controller used to manage logins.
+    /// </summary>
     [Produces("application/json")]
     [Route("api/Account")]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly ILogger logger;
-        private readonly IConfiguration configuration;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController" /> class.
+        /// </summary>
+        /// <param name="userManager">The user manager repository used to query user data and check for user existence.</param>
+        /// <param name="signInManager">The sign-in manager repository used to check username and password validity.</param>
+        /// <param name="logger">The logger used to log events in the controller.</param>
+        /// <param name="configuration">The configuration provider.</param>
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<AccountController> logger,
             IConfiguration configuration)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.logger = logger;
-            this.configuration = configuration;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _logger = logger;
+            _configuration = configuration;
         }
 
+        /// <summary>
+        /// Action used to check the login and return the JWT token if successful.
+        /// </summary>
+        /// <param name="model">The login model with the username and password.</param>
+        /// <returns>Returns the JWT token if successful. Otherwise a HTTP error.</returns>
+        /// <response code="200">If it's successful with a JWT token.</response>
+        /// <response code="401">If there is an authentication error.</response>
+        /// <response code="500">If there is a server error.</response>
+        [ProducesResponseType(typeof(JwtSecurityToken), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> RequestToken([FromBody] LoginModel model)
         {
-            var user = await this.userManager.FindByNameAsync(model.UserName);
+            var user = await _userManager.FindByNameAsync(model.UserName);
 
             if (user == null)
             {
-                this.logger.LogInformation("User login denied.");
-                return this.Unauthorized();
+                _logger.LogInformation("User login denied.");
+                return Unauthorized();
             }
 
-            var result = await this.signInManager.PasswordSignInAsync(user, model.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
 
             if (!result.Succeeded)
             {
-                this.logger.LogInformation("User login denied.");
-                return this.Unauthorized();
+                _logger.LogInformation("User login denied.");
+                return Unauthorized();
             }
 
             var claims = new[]
@@ -64,17 +86,17 @@ namespace BoardGame.Service.Controllers.Api
                 new Claim("OriginallyIssuedAt", DateTime.UtcNow.Ticks.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration.GetSecurityKey()));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSecurityKey()));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: configuration.GetBaseUrl(),
-                audience: configuration.GetBaseUrl(),
+                issuer: _configuration.GetBaseUrl(),
+                audience: _configuration.GetBaseUrl(),
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
+                signingCredentials: credentials);
 
-            return this.Ok(new
+            return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token)
             });

@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Abstraction;
 
 namespace Game.Chess.Moves
 {
@@ -50,7 +51,6 @@ namespace Game.Chess.Moves
                 To = To,
                 IsCaptureMove = IsCaptureMove,
                 CapturePosition = CapturePosition,
-                //ChessMoveResult = ChessMoveResult
             };
         }
     }

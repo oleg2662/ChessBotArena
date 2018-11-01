@@ -1,9 +1,9 @@
-﻿namespace Game
+﻿namespace Game.Abstraction
 {
     public static class Constants
     {
-        internal static int HashBase = 370246717;
+        internal static readonly int HashBase = 370246717;
 
-        internal static int HashXor = 181346861;
+        internal static readonly int HashXor = 181346861;
     }
 }

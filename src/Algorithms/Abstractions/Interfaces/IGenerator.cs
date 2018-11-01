@@ -7,7 +7,7 @@ namespace Algorithms.Abstractions.Interfaces
     /// </summary>
     /// <typeparam name="TState">Type of the states.</typeparam>
     /// <typeparam name="TMove">Type of the transitions between states.</typeparam>
-    public interface IGenerator<TState, TMove>
+    public interface IGenerator<in TState, out TMove>
     {
         /// <summary>
         /// Generates the possible transitions from the given state.

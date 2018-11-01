@@ -1,41 +1,55 @@
-﻿namespace BoardGame.Service.Controllers.Web
-{
-    using System.Diagnostics;
-    using BoardGame.Service.Models;
-    using BoardGame.Service.Models.Web;
-    using BoardGame.Service.Models.Web.HomeViewModels;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics;
+using BoardGame.Service.Models.Web;
+using BoardGame.Service.Models.Web.HomeViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
+namespace BoardGame.Service.Controllers.Web
+{
+    /// <summary>
+    /// Web controller for the front page.
+    /// </summary>
     public class HomeController : Controller
     {
-        private readonly IConfiguration config;
+        private readonly IConfiguration _config;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeController" /> class.
+        /// </summary>
+        /// <param name="config">The configuration provider.</param>
         public HomeController(IConfiguration config)
         {
-            this.config = config;
+            _config = config;
         }
 
+        /// <summary>
+        /// Returns the view for the index page.
+        /// </summary>
+        /// <returns>The view for the index page.</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Index()
         {
-            if (this.User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
             {
-                return this.RedirectToAction("Index", "Manage");
+                return RedirectToAction("Index", "Manage");
             }
 
             var result = new IndexViewModel
             {
-                BaseUrl = this.config["BaseUrl"]
+                BaseUrl = _config["BaseUrl"]
             };
 
-            return this.View(result);
+            return View(result);
         }
 
+        /// <summary>
+        /// Returns the view for the error messages.
+        /// </summary>
+        /// <returns>The error messages.</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error()
         {
-            return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

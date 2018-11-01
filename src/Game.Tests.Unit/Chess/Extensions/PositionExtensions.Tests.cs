@@ -91,7 +91,7 @@ namespace Game.Tests.Unit.Chess.Extensions
                             .West()
                             .NorthWest()
                             .North()
-                            .North(1)
+                            .North()
                             .North(2)
                             .North(3)
                             .North(4);

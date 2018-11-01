@@ -96,7 +96,7 @@ namespace BoardGame.Service.Repositories
 
             return new ChessGameRepositoryAddResult
             {
-                RequestResult = ChallengeRequestResults.OK,
+                RequestResult = ChallengeRequestResults.Ok,
                 NewlyCreatedGame = _chessGameConverter.ConvertToChessGameDetails(newEntity)
             };
         }
@@ -213,7 +213,7 @@ namespace BoardGame.Service.Repositories
 
             return new ChessGameRepositoryMoveResult
             {
-                RequestResult = MoveRequestResults.OK,
+                RequestResult = MoveRequestResults.Ok,
                 NewState = result
             };
         }

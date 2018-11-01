@@ -4,7 +4,7 @@ namespace Game.Chess.Exceptions
 {
     public class ChessBoardInitException : ChessException
     {
-        public ChessBoardInitException() : base()
+        public ChessBoardInitException()
         {
         }
 

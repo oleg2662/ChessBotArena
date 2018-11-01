@@ -166,49 +166,49 @@
 
         public static Position KnightNorthEast(this Position position)
         {
-            var newPosition = position.North(2).East(1);
+            var newPosition = position.North(2).East();
             return newPosition;
         }
 
         public static Position KnightNorthWest(this Position position)
         {
-            var newPosition = position.North(2).West(1);
+            var newPosition = position.North(2).West();
             return newPosition;
         }
 
         public static Position KnightSouthEast(this Position position)
         {
-            var newPosition = position.South(2).East(1);
+            var newPosition = position.South(2).East();
             return newPosition;
         }
 
         public static Position KnightSouthWest(this Position position)
         {
-            var newPosition = position.South(2).West(1);
+            var newPosition = position.South(2).West();
             return newPosition;
         }
 
         public static Position KnightEastNorth(this Position position)
         {
-            var newPosition = position.East(2).North(1);
+            var newPosition = position.East(2).North();
             return newPosition;
         }
 
         public static Position KnightEastSouth(this Position position)
         {
-            var newPosition = position.East(2).South(1);
+            var newPosition = position.East(2).South();
             return newPosition;
         }
 
         public static Position KnightWestNorth(this Position position)
         {
-            var newPosition = position.West(2).North(1);
+            var newPosition = position.West(2).North();
             return newPosition;
         }
 
         public static Position KnightWestSouth(this Position position)
         {
-            var newPosition = position.West(2).South(1);
+            var newPosition = position.West(2).South();
             return newPosition;
         }
 
@@ -259,7 +259,7 @@
             }
         }
 
-        public static IEnumerable<Position> Southtwards(this Position position, int maxRadius = int.MaxValue)
+        public static IEnumerable<Position> Southwards(this Position position, int maxRadius = int.MaxValue)
         {
             var south = position.South();
             while (south != null && maxRadius-- > 0)
@@ -312,7 +312,7 @@
         public static IEnumerable<Position> StraightMoves(this Position position, int maxRadius = int.MaxValue)
         {
             return position.Northwards(maxRadius)
-                .Union(position.Southtwards(maxRadius))
+                .Union(position.Southwards(maxRadius))
                 .Union(position.Eastwards(maxRadius))
                 .Union(position.Westwards(maxRadius));
         }

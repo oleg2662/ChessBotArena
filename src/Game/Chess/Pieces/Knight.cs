@@ -15,16 +15,6 @@ namespace Game.Chess.Pieces
         {
         }
 
-        public override string ToString()
-        {
-            return Figure(Owner);
-        }
-
-        public static string Figure(ChessPlayer player)
-        {
-            return player == ChessPlayer.White ? "♘" : "♞";
-        }
-
         public override ChessPiece Clone()
         {
             return new Knight(Owner, HasMoved);

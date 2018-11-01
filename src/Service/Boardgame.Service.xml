@@ -4,11 +4,149 @@
         <name>Boardgame.Service</name>
     </assembly>
     <members>
+        <member name="T:BoardGame.Service.Controllers.Api.AccountController">
+            <summary>
+            Controller used to manage logins.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.AccountController.#ctor(Microsoft.AspNetCore.Identity.UserManager{BoardGame.Service.Models.ApplicationUser},Microsoft.AspNetCore.Identity.SignInManager{BoardGame.Service.Models.ApplicationUser},Microsoft.Extensions.Logging.ILogger{BoardGame.Service.Controllers.Api.AccountController},Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Api.AccountController" /> class.
+            </summary>
+            <param name="userManager">The user manager repository used to query user data and check for user existence.</param>
+            <param name="signInManager">The sign-in manager repository used to check username and password validity.</param>
+            <param name="logger">The logger used to log events in the controller.</param>
+            <param name="configuration">The configuration provider.</param>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.AccountController.RequestToken(BoardGame.Service.Models.Api.AccountControllerModels.LoginModel)">
+            <summary>
+            Action used to check the login and return the JWT token if successful.
+            </summary>
+            <param name="model">The login model with the username and password.</param>
+            <returns>Returns the JWT token if successful. Otherwise a HTTP error.</returns>
+            <response code="200">If it's successful with a JWT token.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="T:BoardGame.Service.Controllers.Api.BaseController">
+            <summary>
+            Base controller class for the other API controllers.
+            Contains some utility methods.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.BaseController.Conflict">
+            <summary>
+            Creates a <see cref="T:BoardGame.Service.Models.Api.Results.ConflictResult" /> object that produces an empty
+            <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response.
+            </summary>
+            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.ConflictResult" /> object for the response.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.BaseController.Conflict(System.Object)">
+            <summary>
+            Creates an <see cref="T:BoardGame.Service.Models.Api.Results.ConflictObjectResult" /> object that produces an <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response.
+            </summary>
+            <param name="value">The content value to format in the entity body.</param>
+            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.ConflictObjectResult" /> for the response.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.BaseController.Forbidden">
+            <summary>
+            Creates a <see cref="T:BoardGame.Service.Models.Api.Results.ForbiddenResult" /> object that produces an empty
+            <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status403Forbidden" /> response.
+            </summary>
+            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.ForbiddenResult" /> object for the response.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.BaseController.Forbidden(System.Object)">
+            <summary>
+            Creates an <see cref="T:BoardGame.Service.Models.Api.Results.ForbiddenObjectResult" /> object that produces an <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status403Forbidden" /> response.
+            </summary>
+            <param name="value">The content value to format in the entity body.</param>
+            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.ForbiddenObjectResult" /> for the response.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.BaseController.InternalServerError">
+            <summary>
+            Creates a <see cref="T:BoardGame.Service.Models.Api.Results.InternalServerErrorResult" /> object that produces an empty
+            <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError" /> response.
+            </summary>
+            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.InternalServerErrorResult" /> object for the response.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.BaseController.InternalServerError(System.Object)">
+            <summary>
+            Creates an <see cref="T:BoardGame.Service.Models.Api.Results.InternalServerErrorObjectResult" /> object that produces an <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError" /> response.
+            </summary>
+            <param name="value">The content value to format in the entity body.</param>
+            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.InternalServerErrorObjectResult" /> for the response.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.BaseController.GetCurrentUser">
+            <summary>
+            Returns the name of the currently authorized user.
+            </summary>
+            <returns>Name of the user. If it's empty or null, then there is no user logged in.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Controllers.Api.ChessGamesController">
+            <summary>
+            Controller used to manage the games.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.#ctor(BoardGame.Service.Repositories.IChessGameRepository,Microsoft.Extensions.Logging.ILogger{BoardGame.Service.Controllers.Api.ChessGamesController})">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Api.ChessGamesController"/> class.
+            </summary>
+            <param name="repository">The repository to manage chess game (matches) data.</param>
+            <param name="logger">The logger used to log errors and warnings.</param>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.GetChessGames">
+            <summary>
+            Returns the list of chess games for the current user.
+            </summary>
+            <returns>List of games for the current user.</returns>
+            <response code="200">Returns the list of games of the current user..</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.GetChessGame(System.String)">
+            <summary>
+            Returns the details of the selected chess game for the current user.
+            </summary>
+            <returns>The detailed view of the selected game.</returns>
+            <response code="200">Returns the detailed view of the selected game.</response>
+            <response code="400">Returns empty if the given id is not a GUID.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="409">If there are multiple games with the same ID.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.Challenge(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+            <summary>
+            Tries to create a new game according to the incoming challenge.
+            </summary>
+            <returns>List of games for the current user.</returns>
+            <response code="200">Returns HTTP 200 OK if it's successful.</response>
+            <response code="400">Returns HTTP 400 Bad Request and the error result if the request isn't valid.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.Move(System.String,Game.Chess.Moves.ChessMove)">
+            <summary>
+            Tries to apply a move.
+            </summary>
+            <returns>Returns new state of the game if successful. Otherwise HTTP error code.</returns>
+            <response code="200">If it's successful.</response>
+            <response code="400">If the request isn't valid.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="404">If the match couldn't be found.</response>
+            <response code="409">If the move is an illegal move for any reasons.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
         <member name="T:BoardGame.Service.Controllers.Api.HealthController">
             <summary>
-            Controller implementation of a simple healthcheck.
+            Controller implementation of a simple health check.
             If the system is up and running it will answer to requests with the current application version number.
             </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.HealthController.#ctor(Microsoft.Extensions.Logging.ILogger{BoardGame.Service.Controllers.Api.HealthController})">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Api.HealthController" /> class.
+            </summary>
+            <param name="logger">The logger used to log events in the controller.</param>
         </member>
         <member name="M:BoardGame.Service.Controllers.Api.HealthController.Get">
             <summary>
@@ -30,12 +168,180 @@
         </member>
         <member name="M:BoardGame.Service.Controllers.Api.PlayersController.GetPlayers">
             <summary>
-            Health check. Returns the version number of the service.
+            Lists the registered players.
             </summary>
-            <returns>The version information of the service.</returns>
+            <returns>List of registered players.</returns>
             <response code="200">Returns the list of registered users.</response>
             <response code="401">If there is an authentication error.</response>
             <response code="500">If there is a server error.</response>
+        </member>
+        <member name="T:BoardGame.Service.Controllers.Api.TokenController">
+            <summary>
+            Controller used to manage the JWT tokens.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.TokenController.#ctor(Microsoft.AspNetCore.Identity.UserManager{BoardGame.Service.Models.ApplicationUser},Microsoft.Extensions.Logging.ILogger{BoardGame.Service.Controllers.Api.AccountController},Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Api.TokenController"/> class.
+            </summary>
+            <param name="userManager">The manager of the users.</param>
+            <param name="logger">The logger used to log errors and warnings.</param>
+            <param name="configuration">The configuration provider.</param>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Api.TokenController.ProlongToken(System.String)">
+            <summary>
+            Prolongs the given token.
+            </summary>
+            <param name="tokenString">The token string.</param>
+            <returns>A prolonged JSON token.</returns>
+            <response code="200">If it's successful with a prolonged JWT token.</response>
+            <response code="401">If there is an authentication error.</response>
+            <response code="500">If there is a server error.</response>
+        </member>
+        <member name="T:BoardGame.Service.Controllers.Web.AccountController">
+            <summary>
+            Web controller for the account management. (Registration, login.)
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.#ctor(Microsoft.AspNetCore.Identity.UserManager{BoardGame.Service.Models.ApplicationUser},Microsoft.AspNetCore.Identity.SignInManager{BoardGame.Service.Models.ApplicationUser},Microsoft.Extensions.Logging.ILogger{BoardGame.Service.Controllers.Web.AccountController})">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Web.AccountController" /> class.
+            </summary>
+            <param name="userManager">The user manager repository used to query user data and check for user existence.</param>
+            <param name="signInManager">The sign-in manager repository used to check username and password validity.</param>
+            <param name="logger">The logger used to log events in the controller.</param>
+        </member>
+        <member name="P:BoardGame.Service.Controllers.Web.AccountController.ErrorMessage">
+            <summary>
+            Gets or sets the error message.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.Login(System.String)">
+            <summary>
+            Returns the view for the empty login screen.
+            </summary>
+            <param name="returnUrl">URL where the user will be redirected after a successful login.</param>
+            <returns>Return the login view.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.Login(BoardGame.Service.Models.Web.AccountViewModels.LoginViewModel,System.String)">
+            <summary>
+            Returns the login screen after supplying the required information for the login procedure.
+            </summary>
+            <param name="model">The required information for the login.</param>
+            <param name="returnUrl">URL where the user will be redirected after a successful login.</param>
+            <returns>The login result view.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.Lockout">
+            <summary>
+            Returns the view for the lockout screen which is displayed if the user who tried to login is locked out.
+            </summary>
+            <returns>The view for the lockout screen.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.Register(System.String)">
+            <summary>
+            Returns the view for the new user registration.
+            </summary>
+            <param name="returnUrl">URL where the user will be redirected after successful registration and login.</param>
+            <returns>The empty view for the new user registration.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.Register(BoardGame.Service.Models.Web.AccountViewModels.RegisterViewModel,System.String)">
+            <summary>
+            Returns the view for the new user registration after supplying the required information for the registration procedure.
+            </summary>
+            <param name="model">The information required to register a new user.</param>
+            <param name="returnUrl">URL where the user will be redirected after successful registration and login.</param>
+            <returns>The view for the result of the registration.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.Logout">
+            <summary>
+            Returns the view for the logout screen.
+            </summary>
+            <returns>The view for the logout screen.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.AccountController.AccessDenied">
+            <summary>
+            Returns the view for the access denied screen.
+            </summary>
+            <returns>The view for the access denied screen.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Controllers.Web.HomeController">
+            <summary>
+            Web controller for the front page.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.HomeController.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Web.HomeController" /> class.
+            </summary>
+            <param name="config">The configuration provider.</param>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.HomeController.Index">
+            <summary>
+            Returns the view for the index page.
+            </summary>
+            <returns>The view for the index page.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.HomeController.Error">
+            <summary>
+            Returns the view for the error messages.
+            </summary>
+            <returns>The error messages.</returns>
+        </member>
+        <member name="T:BoardGame.Service.Controllers.Web.ManageController">
+            <summary>
+            Web controller for the account management. (Password, e-mail change, etc.)
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.ManageController.#ctor(Microsoft.AspNetCore.Identity.UserManager{BoardGame.Service.Models.ApplicationUser},Microsoft.AspNetCore.Identity.SignInManager{BoardGame.Service.Models.ApplicationUser},Microsoft.Extensions.Logging.ILogger{BoardGame.Service.Controllers.Web.ManageController})">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Controllers.Web.ManageController" /> class.
+            </summary>
+            <param name="userManager">The user manager repository used to query user data and check for user existence.</param>
+            <param name="signInManager">The sign-in manager repository used to check username and password validity.</param>
+            <param name="logger">The logger used to log events in the controller.</param>
+        </member>
+        <member name="P:BoardGame.Service.Controllers.Web.ManageController.StatusMessage">
+            <summary>
+            Gets or sets the temporary status messages.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.ManageController.Index">
+            <summary>
+            Returns the index (front page) view for the user management section.
+            </summary>
+            <returns>The view for the user management section's index page.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.ManageController.Index(BoardGame.Service.Models.Web.ManageViewModels.IndexViewModel)">
+            <summary>
+            Returns the index view for the user management section after an operation with the result and the status message.
+            </summary>
+            <param name="model">The model of the operation result.</param>
+            <returns>The index view for the user management section with the operation result.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.ManageController.ChangePassword">
+            <summary>
+            Returns the main view for the password change form.
+            </summary>
+            <returns>The main view for the password change form.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.ManageController.ChangePassword(BoardGame.Service.Models.Web.ManageViewModels.ChangePasswordViewModel)">
+            <summary>
+            Returns the view for the change password operation result.
+            </summary>
+            <param name="model">The change password operation result.</param>
+            <returns>The view with result for the password change operation.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.ManageController.SetPassword">
+            <summary>
+            Returns the view for the changing the password form. (Just the password change.)
+            </summary>
+            <returns>The empty view asking for the new password.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Controllers.Web.ManageController.SetPassword(BoardGame.Service.Models.Web.ManageViewModels.SetPasswordViewModel)">
+            <summary>
+            Returns the view for the changing the password form with the operation result. (Just the password change.)
+            </summary>
+            <returns>The operation result view for the password change.</returns>
         </member>
         <member name="T:BoardGame.Service.Data.ApplicationDbContext">
             <summary>
@@ -94,9 +400,33 @@
             <param name="game">The chess game coming from database.</param>
             <returns>Dictionary of game players.</returns>
         </member>
+        <member name="T:BoardGame.Service.Models.Api.AccountControllerModels.ILoginModel">
+            <summary>
+            The contract for the login.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.ILoginModel.Password">
+            <summary>
+            Gets or sets the password.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.ILoginModel.UserName">
+            <summary>
+            Gets or sets the user name.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.AccountControllerModels.LoginModel">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.LoginModel.UserName">
+            <inheritdoc />
+        </member>
+        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.LoginModel.Password">
+            <inheritdoc />
+        </member>
         <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge">
             <summary>
-            Represetsn a challenge request coming from the client.
+            Represents a challenge request coming from the client.
             </summary>
         </member>
         <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge.Opponent">
@@ -224,6 +554,75 @@
             Gets or sets a value indicating whether the player is a bot.
             </summary>
         </member>
+        <member name="T:BoardGame.Service.Models.Api.Results.ConflictObjectResult">
+            <summary>
+            An <see cref="T:Microsoft.AspNetCore.Mvc.ObjectResult" /> that when executed performs content negotiation, formats the entity body, and
+            will produce a <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response if negotiation and formatting succeed.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Api.Results.ConflictObjectResult.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Models.Api.Results.ConflictObjectResult" /> class.
+            </summary>
+            <param name="value">The content to format into the entity body.</param>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.Results.ConflictResult">
+            <summary>
+            An <see cref="T:Microsoft.AspNetCore.Mvc.StatusCodeResult" /> that when executed will produce an empty
+            <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Api.Results.ConflictResult.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Models.Api.Results.ConflictResult" /> class.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.Results.ForbiddenObjectResult">
+            <summary>
+            An <see cref="T:Microsoft.AspNetCore.Mvc.ObjectResult" /> that when executed performs content negotiation, formats the entity body, and
+            will produce a <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status500Forbidden" /> response if negotiation and formatting succeed.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Api.Results.ForbiddenObjectResult.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Models.Api.Results.ForbiddenObjectResult" /> class.
+            </summary>
+            <param name="value">The content to format into the entity body.</param>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.Results.ForbiddenResult">
+            <summary>
+            An <see cref="T:Microsoft.AspNetCore.Mvc.StatusCodeResult" /> that when executed will produce an empty
+            <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status403Forbidden" /> response.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Api.Results.ForbiddenResult.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Models.Api.Results.ForbiddenResult" /> class.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.Results.InternalServerErrorObjectResult">
+            <summary>
+            An <see cref="T:Microsoft.AspNetCore.Mvc.ObjectResult" /> that when executed performs content negotiation, formats the entity body, and
+            will produce a <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError" /> response if negotiation and formatting succeed.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Api.Results.InternalServerErrorObjectResult.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Models.Api.Results.InternalServerErrorObjectResult" /> class.
+            </summary>
+            <param name="value">The content to format into the entity body.</param>
+        </member>
+        <member name="T:BoardGame.Service.Models.Api.Results.InternalServerErrorResult">
+            <summary>
+            An <see cref="T:Microsoft.AspNetCore.Mvc.StatusCodeResult" /> that when executed will produce an empty
+            <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError" /> response.
+            </summary>
+        </member>
+        <member name="M:BoardGame.Service.Models.Api.Results.InternalServerErrorResult.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:BoardGame.Service.Models.Api.Results.InternalServerErrorResult" /> class.
+            </summary>
+        </member>
         <member name="T:BoardGame.Service.Models.ApplicationUser">
             <summary>
             Represents an application user.
@@ -272,6 +671,13 @@
             </summary>
             <param name="source">DB side source object.</param>
             <returns>API side detailed object.</returns>
+        </member>
+        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.ConvertUser(BoardGame.Service.Models.ApplicationUser)">
+            <summary>
+            Converts the DB side user to a minimal information player dto used in the API.
+            </summary>
+            <param name="source">The full detailed application user object.</param>
+            <returns>The chess game player dto used in the API.</returns>
         </member>
         <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.CovertToChessMove(BoardGame.Service.Models.Data.Moves.DbChessMove)">
             <summary>
@@ -400,12 +806,131 @@
             Gets or sets the status of the game.
             </summary>
         </member>
+        <member name="T:BoardGame.Service.Models.Data.Moves.DbChessMove">
+            <summary>
+            Database representation of a chess move. Base class.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.MoveId">
+            <summary>
+            Gets or sets the id of the move. (Key)
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.FromRow">
+            <summary>
+            Gets or sets the source row of the move. (Example: 3)
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.FromColumn">
+            <summary>
+            Gets or sets the source column of the move. (Example: 'A')
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.From">
+            <summary>
+            Gets the source position calculated from the 'FromRow' and 'FromColumn' properties.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.ToRow">
+            <summary>
+            Gets or sets the destination row of the move.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.ToColumn">
+            <summary>
+            Gets or sets the destination column of the move.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.To">
+            <summary>
+            Gets the destination position calculated from the 'ToRow' and 'ToColumn' properties.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.IsCaptureMove">
+            <summary>
+            Gets or sets a value indicating whether the move was a capture move.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.Owner">
+            <summary>
+            Gets or sets the owner of the move. (Black or White.)
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.ChessPiece">
+            <summary>
+            Gets or sets the moving chess piece kind.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.CreatedAt">
+            <summary>
+            Gets or sets the date of the move.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Data.Moves.DbKingCastlingMove">
+            <summary>
+            Represents a castling move in the database.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbKingCastlingMove.RookFrom">
+            <summary>
+            Gets the source position of the rook's move.
+            Calculated based on the owner and the type of the castling.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbKingCastlingMove.RookTo">
+            <summary>
+            Gets the destination position of the rook's move.
+            Calculated based on the owner and the type of the castling.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbKingCastlingMove.To">
+            <summary>
+            Gets the destination position of the move.
+            At castling it is the move of the king so the king's destination will be here.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbKingCastlingMove.CastlingType">
+            <summary>
+            Gets or sets the type of the castling.
+            It can be short or long.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Data.Moves.DbPawnEnPassantMove">
+            <summary>
+            Represents an en passant capture move in the database.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbPawnEnPassantMove.CapturePosition">
+            <summary>
+            Gets the capture position.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbPawnEnPassantMove.CapturePositionRow">
+            <summary>
+            Gets or sets the capture position row.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbPawnEnPassantMove.CapturePositionColumn">
+            <summary>
+            Gets or sets the capture position column.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Data.Moves.DbPawnPromotionalMove">
+            <summary>
+            Represents a prawn promotional move in the database.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbPawnPromotionalMove.PromoteTo">
+            <summary>
+            Gets or sets what kind of chess piece the pawn got promoted to.
+            </summary>
+        </member>
         <member name="T:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults">
             <summary>
             Validation and DB operation results for the <see cref="T:BoardGame.Service.Repositories.IChessGameRepository" />.
             </summary>
         </member>
-        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults.OK">
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults.Ok">
             <summary>
             Challenge request accepted.
             </summary>
@@ -455,7 +980,7 @@
             Validation results for the <see cref="T:BoardGame.Service.Repositories.IChessGameRepository" />'s move.
             </summary>
         </member>
-        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.OK">
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.Ok">
             <summary>
             Move is valid and applied.
             </summary>
@@ -478,6 +1003,157 @@
         <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.MultipleMatchesFound">
             <summary>
             Multiple matches found. (DB error)
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Web.AccountViewModels.LoginViewModel">
+            <summary>
+            Web controller model for logins.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.LoginViewModel.UserName">
+            <summary>
+            Gets or sets the user name.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.LoginViewModel.Password">
+            <summary>
+            Gets or sets the password.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.LoginViewModel.RememberMe">
+            <summary>
+            Gets or sets a value indicating whether the browser should remember the user.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Web.AccountViewModels.RegisterViewModel">
+            <summary>
+            Web controller model for user registration.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.RegisterViewModel.UserName">
+            <summary>
+            Gets or sets the user name.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.RegisterViewModel.Email">
+            <summary>
+            Gets or sets the e-mail address.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.RegisterViewModel.Password">
+            <summary>
+            Gets or sets the password.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.RegisterViewModel.ConfirmPassword">
+            <summary>
+            Gets or sets the password confirmation.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.AccountViewModels.RegisterViewModel.Bot">
+            <summary>
+            Gets or sets a value indicating whether the given registration is going to be a bot account.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Web.ErrorViewModel">
+            <summary>
+            The model for error handling and logging.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ErrorViewModel.RequestId">
+            <summary>
+            Gets or sets the id of the request.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ErrorViewModel.ShowRequestId">
+            <summary>
+            Gets a value indicating whether the request id should be shown.
+            True ir the request id is not empty.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Web.HomeViewModels.IndexViewModel">
+            <summary>
+            Basic model for the index page.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.HomeViewModels.IndexViewModel.BaseUrl">
+            <summary>
+            Gets or sets the base URL.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Web.ManageViewModels.ChangePasswordViewModel">
+            <summary>
+            Model for the password change operation in the web controllers.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.ChangePasswordViewModel.OldPassword">
+            <summary>
+            Gets or sets the old password.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.ChangePasswordViewModel.NewPassword">
+            <summary>
+            Gets or sets the new password.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.ChangePasswordViewModel.ConfirmPassword">
+            <summary>
+            Gets or sets the new password's confirmation.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.ChangePasswordViewModel.StatusMessage">
+            <summary>
+            Gets or sets the status message of the operation.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Web.ManageViewModels.IndexViewModel">
+            <summary>
+            Gets or sets the user management model in the <see cref="T:BoardGame.Service.Controllers.Web.ManageController"/>.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.IndexViewModel.Username">
+            <summary>
+            Gets or sets the user name.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.IndexViewModel.IsEmailConfirmed">
+            <summary>
+            Gets or sets a value indicating whether the user's e-mail address has already been confirmed.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.IndexViewModel.Email">
+            <summary>
+            Gets or sets the e-mail address.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.IndexViewModel.StatusMessage">
+            <summary>
+            Gets or sets the status message of the operation.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.IndexViewModel.Bot">
+            <summary>
+            Gets or sets a value indicating whether the account is a bot account.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Web.ManageViewModels.SetPasswordViewModel">
+            <summary>
+            Model for the password modification.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.SetPasswordViewModel.NewPassword">
+            <summary>
+            Gets or sets the new password.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.SetPasswordViewModel.ConfirmPassword">
+            <summary>
+            Gets or sets the new password confirmation.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Web.ManageViewModels.SetPasswordViewModel.StatusMessage">
+            <summary>
+            Gets or sets the status message of the operation.
             </summary>
         </member>
         <member name="T:BoardGame.Service.Program">
@@ -588,60 +1264,6 @@
             </summary>
             <param name="app">The application builder.</param>
             <param name="env">The hosting environment parameters.</param>
-        </member>
-        <member name="T:Service.Controllers.Api.ChessGamesController">
-            <summary>
-            Controller used to manage the games.
-            </summary>
-        </member>
-        <member name="M:Service.Controllers.Api.ChessGamesController.#ctor(BoardGame.Service.Repositories.IChessGameRepository,Microsoft.Extensions.Logging.ILogger{Service.Controllers.Api.ChessGamesController})">
-            <summary>
-            Initializes a new instance of the <see cref="T:Service.Controllers.Api.ChessGamesController"/> class.
-            </summary>
-            <param name="repository">The repository to manage chess game (matches) data.</param>
-            <param name="logger">The logger used to log errors and warnings.</param>
-        </member>
-        <member name="M:Service.Controllers.Api.ChessGamesController.GetChessGames">
-            <summary>
-            Returns the list of chess games for the current user.
-            </summary>
-            <returns>List of games for the current user.</returns>
-            <response code="200">Returns the list of games of the current user..</response>
-            <response code="401">If there is an authentication error.</response>
-            <response code="500">If there is a server error.</response>
-        </member>
-        <member name="M:Service.Controllers.Api.ChessGamesController.GetChessGame(System.String)">
-            <summary>
-            Returns the details of the selected chess game for the current user.
-            </summary>
-            <returns>The detailed view of the selected game.</returns>
-            <response code="200">Returns the detailed view of the selected game.</response>
-            <response code="400">Returns empty if the given id is not a GUID.</response>
-            <response code="401">If there is an authentication error.</response>
-            <response code="409">If there are multiple games with the same ID.</response>
-            <response code="500">If there is a server error.</response>
-        </member>
-        <member name="M:Service.Controllers.Api.ChessGamesController.Challenge(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
-            <summary>
-            Tries to create a new game according to the incoming challenge.
-            </summary>
-            <returns>List of games for the current user.</returns>
-            <response code="200">Returns HTTP 200 OK if it's succesful.</response>
-            <response code="400">Returns HTTP 400 Bad Request and the error result if the request isn't valid.</response>
-            <response code="401">If there is an authentication error.</response>
-            <response code="500">If there is a server error.</response>
-        </member>
-        <member name="M:Service.Controllers.Api.ChessGamesController.Move(System.String,Game.Chess.Moves.ChessMove)">
-            <summary>
-            Tries to apply a move.
-            </summary>
-            <returns>Returns new state of the game if successful. Otherwise HTTP error code.</returns>
-            <response code="200">If it's succesful.</response>
-            <response code="400">If the request isn't valid.</response>
-            <response code="401">If there is an authentication error.</response>
-            <response code="404">If the match couldn't be found.</response>
-            <response code="409">If the move is an illegal move for any reasons.</response>
-            <response code="500">If there is a server error.</response>
         </member>
     </members>
 </doc>

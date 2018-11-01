@@ -50,6 +50,6 @@ namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
         /// <summary>
         /// Gets a value indicating whether the match has ended or not.
         /// </summary>
-        public bool HasEnded { get => false; }
+        public bool HasEnded => false;
     }
 }

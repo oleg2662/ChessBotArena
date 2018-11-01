@@ -9,11 +9,11 @@ namespace Game.Chess.Extensions
     public static class PieceKindExtensions
     {
         /// <summary>
-        /// Returns a string representation of the given chesspiece.
+        /// Returns a string representation of the given chess piece.
         /// </summary>
         /// <param name="pieceKind">Type of the piece</param>
         /// <param name="player">The owner player which defines the colour.</param>
-        /// <returns>The figure character of the chesspiece.</returns>
+        /// <returns>The figure character of the chess piece.</returns>
         public static string ToFigure(this PieceKind pieceKind, ChessPlayer player)
         {
             switch (pieceKind)
@@ -36,11 +36,11 @@ namespace Game.Chess.Extensions
         }
 
         /// <summary>
-        /// Returns a string representation of the given chesspiece.
+        /// Returns a string representation of the given chess piece.
         /// </summary>
         /// <param name="pieceKind">Type of the piece</param>
         /// <param name="player">The owner player which defines the colour.</param>
-        /// <returns>The figure character of the chesspiece. If null, returns empty string.</returns>
+        /// <returns>The figure character of the chess piece. If null, returns empty string.</returns>
         public static string ToFigure(this PieceKind? pieceKind, ChessPlayer player)
         {
             return pieceKind.HasValue
@@ -49,10 +49,10 @@ namespace Game.Chess.Extensions
         }
 
         /// <summary>
-        /// Returns a string representation of the given chesspiece.
+        /// Returns a string representation of the given chess piece.
         /// </summary>
         /// <param name="chessPiece">The chess piece.</param>
-        /// <returns>The figure character of the chesspiece. If null, returns empty string.</returns>
+        /// <returns>The figure character of the chess piece. If null, returns empty string.</returns>
         public static string ToFigure(this ChessPiece chessPiece)
         {
             var pieceKind = chessPiece?.Kind;

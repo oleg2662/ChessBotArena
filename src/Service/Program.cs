@@ -1,8 +1,8 @@
-﻿namespace BoardGame.Service
-{
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
+namespace BoardGame.Service
+{
     /// <summary>
     /// The main class of the whole service.
     /// </summary>

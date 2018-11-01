@@ -32,7 +32,7 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<Game.Chess.Moves.ChessMove>(),
+                History = new List<ChessMove>(),
                 Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 

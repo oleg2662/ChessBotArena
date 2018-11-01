@@ -1,6 +1,7 @@
 ﻿using Game.Chess.Pieces;
 using Game.Abstraction;
 using System;
+using Game.Chess.Extensions;
 
 namespace Game.Chess.Moves
 {
@@ -17,8 +18,6 @@ namespace Game.Chess.Moves
 
         public virtual PieceKind ChessPiece { get; set; }
 
-        //public ChessMoveResult ChessMoveResult { get; set; }
-
         public static bool operator ==(ChessMove x, ChessMove y)
         {
             if (x is null && y is null)
@@ -31,10 +30,7 @@ namespace Game.Chess.Moves
                 return false;
             }
 
-            var nonNullSide = x is null ? y : x;
-            var possibleNullSide = y is null ? x : y;
-
-            return nonNullSide.Equals(possibleNullSide);
+            return x.Equals(y);
         }
 
         public static bool operator !=(ChessMove obj1, ChessMove obj2)
@@ -67,7 +63,6 @@ namespace Game.Chess.Moves
                 hash = (hash ^ Constants.HashXor) ^ From.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ To.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ IsCaptureMove.GetHashCode();
-                //hash = (hash ^ Constants.HashXor) ^ ChessMoveResult.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ ChessPiece.GetHashCode();
                 hash = (hash ^ Constants.HashXor) ^ GetType().Name.GetHashCode();
 
@@ -78,17 +73,8 @@ namespace Game.Chess.Moves
         public override string ToString()
         {
             return IsCaptureMove
-                    ? $"{ChessPiece.ToString()}{From}x{To}"
-                    : $"{ChessPiece.ToString()}{From}{To}";
-            //switch (ChessMoveResult)
-            //{
-            //    case ChessMoveResult.Check:
-            //        return $"{moveText}+";
-            //    case ChessMoveResult.CheckMate:
-            //        return $"{moveText}#";
-            //    default:
-            //        return moveText;
-            //}
+                    ? $"{ChessPiece.ToFigure(Owner)}{From}x{To}"
+                    : $"{ChessPiece.ToFigure(Owner)}{From}{To}";
         }
 
         public override bool Equals(object obj)
@@ -99,12 +85,8 @@ namespace Game.Chess.Moves
             }
 
             var other = obj as ChessMove;
-            if (other == null)
-            {
-                return false;
-            }
 
-            return Equals(other);
+            return other != null && Equals(other);
         }
 
         public virtual ChessMove Clone()
@@ -116,7 +98,6 @@ namespace Game.Chess.Moves
                 From = From,
                 To = To,
                 IsCaptureMove = IsCaptureMove,
-                //ChessMoveResult = ChessMoveResult
             };
         }
     }

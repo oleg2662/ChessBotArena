@@ -13,21 +13,17 @@ namespace Algorithms.Dumb
     public class DumbAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
         where TMove : class
     {
-        protected readonly IEvaluator<TState> _evaluator;
-        protected readonly IGenerator<TState, TMove> _moveGenerator;
-        protected readonly IApplier<TState, TMove> _moveApplier;
+        private readonly IGenerator<TState, TMove> _moveGenerator;
 
-        public DumbAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+        public DumbAlgorithm(IGenerator<TState, TMove> moveGenerator)
         {
-            _evaluator = evaluator;
             _moveGenerator = moveGenerator;
-            _moveApplier = applier;
         }
 
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            var moves = _moveGenerator.Generate(state);
+            var moves = _moveGenerator.Generate(state).ToList();
 
             if (!moves.Any())
             {

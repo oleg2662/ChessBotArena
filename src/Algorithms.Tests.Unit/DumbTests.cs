@@ -9,10 +9,9 @@ namespace Algorithms.Tests.Unit
         [Fact]
         public void Test1()
         {
-            var evaluator = new TestCase1.Evaluator();
             var generator = new TestCase1.Generator();
             var applier = new TestCase1.Applier();
-            var algorithm = new DumbAlgorithm<TestCase1.State, TestCase1.Move>(evaluator, generator, applier);
+            var algorithm = new DumbAlgorithm<TestCase1.State, TestCase1.Move>(generator);
 
             var initState = new TestCase1.State(0, 0);
             var move1 = algorithm.Calculate(initState);

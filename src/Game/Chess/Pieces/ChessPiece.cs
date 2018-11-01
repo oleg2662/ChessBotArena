@@ -1,5 +1,6 @@
 ﻿using Game.Abstraction;
 using System;
+using Game.Chess.Extensions;
 
 namespace Game.Chess.Pieces
 {
@@ -31,9 +32,9 @@ namespace Game.Chess.Pieces
 
         protected ChessPiece(ChessPlayer owner, PieceKind pieceKind, bool hasMoved)
         {
-            this.Owner = owner;
-            this.Kind = pieceKind;
-            this.HasMoved = hasMoved;
+            Owner = owner;
+            Kind = pieceKind;
+            HasMoved = hasMoved;
         }
 
         public bool Equals(ChessPiece other)
@@ -43,14 +44,14 @@ namespace Game.Chess.Pieces
                 return false;
             }
 
-            return other.Owner == this.Owner
-                    && other.Kind == this.Kind;
+            return other.Owner == Owner
+                    && other.Kind == Kind;
         }
 
         public override bool Equals(object obj)
         {
             var other = obj as ChessPiece;
-            return this.Equals(other);
+            return Equals(other);
         }
 
         public override int GetHashCode()
@@ -59,11 +60,16 @@ namespace Game.Chess.Pieces
             {
                 int hash = Constants.HashBase;
 
-                hash = (hash ^ Constants.HashXor) ^ this.Owner.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ this.Kind.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ Owner.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ Kind.GetHashCode();
 
                 return hash;
             }
+        }
+
+        public override string ToString()
+        {
+            return Kind.ToFigure(Owner);
         }
 
         public abstract ChessPiece Clone();

@@ -15,9 +15,9 @@ namespace Algorithms.AlphaBeta
     {
         private int _maxDepth;
 
-        protected readonly IEvaluator<TState> _evaluator;
-        protected readonly IGenerator<TState, TMove> _moveGenerator;
-        protected readonly IApplier<TState, TMove> _moveApplier;
+        private readonly IEvaluator<TState> _evaluator;
+        private readonly IGenerator<TState, TMove> _moveGenerator;
+        private readonly IApplier<TState, TMove> _moveApplier;
 
         public AlphaBetaAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
@@ -32,10 +32,7 @@ namespace Algorithms.AlphaBeta
         /// </summary>
         public int MaxDepth
         {
-            get
-            {
-                return _maxDepth;
-            }
+            get => _maxDepth;
 
             set
             {
@@ -51,7 +48,7 @@ namespace Algorithms.AlphaBeta
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            var moves = _moveGenerator.Generate(state);
+            var moves = _moveGenerator.Generate(state).ToList();
 
             if (!moves.Any())
             {
@@ -62,7 +59,7 @@ namespace Algorithms.AlphaBeta
             {
                 Move = move,
                 Value = Calculate(_moveApplier.Apply(state, move), 1, int.MaxValue, int.MinValue, false)
-            });
+            }).ToList();
 
             var max = movesAndValues.Max(x => x.Value);
             var result = movesAndValues.First(x => Equals(x.Value, max)).Move;
@@ -92,8 +89,8 @@ namespace Algorithms.AlphaBeta
 
                 foreach (var mv in nextMoves)
                 {
-                    maximizerValue = (int)Math.Max(maximizerValue, Calculate(_moveApplier.Apply(state, mv), depth + 1, alpha, beta, false));
-                    alpha = (int)Math.Max(alpha, maximizerValue);
+                    maximizerValue = Math.Max(maximizerValue, Calculate(_moveApplier.Apply(state, mv), depth + 1, alpha, beta, false));
+                    alpha = Math.Max(alpha, maximizerValue);
 
                     if(alpha >= beta)
                     {
@@ -109,8 +106,8 @@ namespace Algorithms.AlphaBeta
 
                 foreach (var mv in nextMoves)
                 {
-                    minimizerValue = (int)Math.Min(minimizerValue, Calculate(_moveApplier.Apply(state, mv), depth + 1, alpha, beta, true));
-                    beta = (int)Math.Min(beta, minimizerValue);
+                    minimizerValue = Math.Min(minimizerValue, Calculate(_moveApplier.Apply(state, mv), depth + 1, alpha, beta, true));
+                    beta = Math.Min(beta, minimizerValue);
 
                     if (alpha >= beta)
                     {

@@ -1,45 +1,60 @@
-﻿namespace BoardGame.Service.Controllers.Web
-{
-    using System;
-    using System.Text.Encodings.Web;
-    using System.Threading.Tasks;
-    using BoardGame.Service.Models;
-    using BoardGame.Service.Models.Web.ManageViewModels;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using BoardGame.Service.Models;
+using BoardGame.Service.Models.Web.ManageViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
+namespace BoardGame.Service.Controllers.Web
+{
+    /// <summary>
+    /// Web controller for the account management. (Password, e-mail change, etc.)
+    /// </summary>
     [Authorize]
     [Route("[controller]/[action]")]
     public class ManageController : Controller
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
-        private readonly ILogger logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ILogger _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ManageController" /> class.
+        /// </summary>
+        /// <param name="userManager">The user manager repository used to query user data and check for user existence.</param>
+        /// <param name="signInManager">The sign-in manager repository used to check username and password validity.</param>
+        /// <param name="logger">The logger used to log events in the controller.</param>
         public ManageController(
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,
-          ILogger<ManageController> logger,
-          UrlEncoder urlEncoder)
+          ILogger<ManageController> logger)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _logger = logger;
         }
 
+        /// <summary>
+        /// Gets or sets the temporary status messages.
+        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
+        /// <summary>
+        /// Returns the index (front page) view for the user management section.
+        /// </summary>
+        /// <returns>The view for the user management section's index page.</returns>
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Index()
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             var model = new IndexViewModel
@@ -48,32 +63,37 @@
                 Email = user.Email,
                 Bot = user.Bot,
                 IsEmailConfirmed = user.EmailConfirmed,
-                StatusMessage = this.StatusMessage
+                StatusMessage = StatusMessage
             };
 
-            return this.View(model);
+            return View(model);
         }
 
+        /// <summary>
+        /// Returns the index view for the user management section after an operation with the result and the status message.
+        /// </summary>
+        /// <param name="model">The model of the operation result.</param>
+        /// <returns>The index view for the user management section with the operation result.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Index(IndexViewModel model)
         {
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.View(model);
+                return View(model);
             }
 
-            var user = await this.userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             var email = user.Email;
             if (model.Email != email)
             {
-                var setEmailResult = await this.userManager.SetEmailAsync(user, model.Email);
+                var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
                 if (!setEmailResult.Succeeded)
                 {
                     throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
@@ -84,127 +104,140 @@
             if (model.Bot != bot)
             {
                 user.Bot = model.Bot;
-                var setBotResult = await this.userManager.UpdateAsync(user);
+                var setBotResult = await _userManager.UpdateAsync(user);
                 if (!setBotResult.Succeeded)
                 {
                     throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
                 }
             }
 
-            this.StatusMessage = "Your profile has been updated";
-            return this.RedirectToAction(nameof(Index));
+            StatusMessage = "Your profile has been updated";
+            return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Returns the main view for the password change form.
+        /// </summary>
+        /// <returns>The main view for the password change form.</returns>
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> ChangePassword()
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var hasPassword = await this.userManager.HasPasswordAsync(user);
+            var hasPassword = await _userManager.HasPasswordAsync(user);
             if (!hasPassword)
             {
-                return this.RedirectToAction(nameof(SetPassword));
+                return RedirectToAction(nameof(SetPassword));
             }
 
-            var model = new ChangePasswordViewModel { StatusMessage = this.StatusMessage };
-            return this.View(model);
+            var model = new ChangePasswordViewModel { StatusMessage = StatusMessage };
+            return View(model);
         }
 
+        /// <summary>
+        /// Returns the view for the change password operation result.
+        /// </summary>
+        /// <param name="model">The change password operation result.</param>
+        /// <returns>The view with result for the password change operation.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.View(model);
+                return View(model);
             }
 
-            var user = await this.userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var changePasswordResult = await this.userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
-                this.AddErrors(changePasswordResult);
-                return this.View(model);
+                AddErrors(changePasswordResult);
+                return View(model);
             }
 
-            await this.signInManager.SignInAsync(user, isPersistent: false);
-            this.logger.LogInformation("User changed their password successfully.");
-            this.StatusMessage = "Your password has been changed.";
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            _logger.LogInformation("User changed their password successfully.");
+            StatusMessage = "Your password has been changed.";
 
-            return this.RedirectToAction(nameof(ChangePassword));
+            return RedirectToAction(nameof(ChangePassword));
         }
 
+        /// <summary>
+        /// Returns the view for the changing the password form. (Just the password change.)
+        /// </summary>
+        /// <returns>The empty view asking for the new password.</returns>
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> SetPassword()
         {
-            var user = await this.userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var hasPassword = await this.userManager.HasPasswordAsync(user);
+            var hasPassword = await _userManager.HasPasswordAsync(user);
 
             if (hasPassword)
             {
-                return this.RedirectToAction(nameof(ChangePassword));
+                return RedirectToAction(nameof(ChangePassword));
             }
 
-            var model = new SetPasswordViewModel { StatusMessage = this.StatusMessage };
-            return this.View(model);
+            var model = new SetPasswordViewModel { StatusMessage = StatusMessage };
+            return View(model);
         }
 
+        /// <summary>
+        /// Returns the view for the changing the password form with the operation result. (Just the password change.)
+        /// </summary>
+        /// <returns>The operation result view for the password change.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
         {
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return this.View(model);
+                return View(model);
             }
 
-            var user = await this.userManager.GetUserAsync(this.User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load user with ID '{this.userManager.GetUserId(this.User)}'.");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var addPasswordResult = await this.userManager.AddPasswordAsync(user, model.NewPassword);
+            var addPasswordResult = await _userManager.AddPasswordAsync(user, model.NewPassword);
             if (!addPasswordResult.Succeeded)
             {
-                this.AddErrors(addPasswordResult);
-                return this.View(model);
+                AddErrors(addPasswordResult);
+                return View(model);
             }
 
-            await this.signInManager.SignInAsync(user, isPersistent: false);
-            this.StatusMessage = "Your password has been set.";
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            StatusMessage = "Your password has been set.";
 
-            return this.RedirectToAction(nameof(SetPassword));
+            return RedirectToAction(nameof(SetPassword));
         }
-
-        #region Helpers
 
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
             {
-                this.ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError(string.Empty, error.Description);
             }
         }
-
-        #endregion
     }
 }

@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ChessboardVisualizer;
+﻿using System.Collections.Generic;
 using Game.Chess;
 using Game.Chess.Moves;
 using Game.Chess.Pieces;
-using Microsoft.VisualStudio.DebuggerVisualizers;
 
 namespace ChessboardVisualizerTestApp
 {
     class TestConsole
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var board = new ChessRepresentationInitializer().Create();
 
@@ -25,7 +19,6 @@ namespace ChessboardVisualizerTestApp
 
             var step1 = new ChessMove
             {
-                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"B2",
                 To = (Position)"B4",
@@ -35,7 +28,6 @@ namespace ChessboardVisualizerTestApp
 
             var step2 = new ChessMove
             {
-                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"E7",
                 To = (Position)"E5",
@@ -45,7 +37,6 @@ namespace ChessboardVisualizerTestApp
 
             var step3 = new ChessMove
             {
-                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"B4",
                 To = (Position)"B5",
@@ -55,8 +46,7 @@ namespace ChessboardVisualizerTestApp
 
             var step4 = new ChessMove
             {
-                //ChessMoveResult = ChessMoveResult.Nothing,
-                ChessPiece = PieceKind.Pawn,
+                ChessPiece = PieceKind.Knight,
                 From = (Position)"B8",
                 To = (Position)"C6",
                 IsCaptureMove = false,
@@ -66,7 +56,6 @@ namespace ChessboardVisualizerTestApp
 
             var step5 = new ChessMove
             {
-                //ChessMoveResult = ChessMoveResult.Nothing,
                 ChessPiece = PieceKind.Pawn,
                 From = (Position)"B5",
                 To = (Position)"C6",

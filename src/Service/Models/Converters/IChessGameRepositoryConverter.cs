@@ -25,6 +25,13 @@ namespace BoardGame.Service.Models.Converters
         ChessGameDetails ConvertToChessGameDetails(DbChessGame source);
 
         /// <summary>
+        /// Converts the DB side user to a minimal information player dto used in the API.
+        /// </summary>
+        /// <param name="source">The full detailed application user object.</param>
+        /// <returns>The chess game player dto used in the API.</returns>
+        ChessGamePlayerDto ConvertUser(ApplicationUser source);
+
+        /// <summary>
         /// Converts a move from the database to chess move.
         /// </summary>
         /// <param name="dbMove">The move from the database</param>

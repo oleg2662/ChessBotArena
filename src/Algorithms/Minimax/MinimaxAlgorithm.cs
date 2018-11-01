@@ -14,9 +14,9 @@ namespace Algorithms.Minimax
     {
         private int _maxDepth;
 
-        protected readonly IEvaluator<TState> _evaluator;
-        protected readonly IGenerator<TState, TMove> _moveGenerator;
-        protected readonly IApplier<TState, TMove> _moveApplier;
+        private readonly IEvaluator<TState> _evaluator;
+        private readonly IGenerator<TState, TMove> _moveGenerator;
+        private readonly IApplier<TState, TMove> _moveApplier;
 
         public MinimaxAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
@@ -31,10 +31,7 @@ namespace Algorithms.Minimax
         /// </summary>
         public int MaxDepth
         {
-            get
-            {
-                return _maxDepth;
-            }
+            get => _maxDepth;
 
             set
             {
@@ -50,7 +47,7 @@ namespace Algorithms.Minimax
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            var moves = _moveGenerator.Generate(state);
+            var moves = _moveGenerator.Generate(state).ToList();
 
             if(!moves.Any())
             {

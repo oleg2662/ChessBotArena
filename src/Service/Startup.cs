@@ -1,46 +1,42 @@
-﻿namespace BoardGame.Service
-{
-    using System;
-    using System.IO;
-    using System.Reflection;
-    using System.Text;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.IdentityModel.Tokens;
-    using BoardGame.Service.Data;
-    using BoardGame.Service.Models;
-    using BoardGame.Service.Models.Converters;
-    using BoardGame.Service.Repositories;
-    using Extensions;
-    using Swashbuckle.AspNetCore.Swagger;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using BoardGame.Service.Data;
+using BoardGame.Service.Models;
+using BoardGame.Service.Models.Converters;
+using BoardGame.Service.Repositories;
+using BoardGame.Service.Extensions;
+using Swashbuckle.AspNetCore.Swagger;
 
+namespace BoardGame.Service
+{
     /// <summary>
     /// The bootstrap of the service.
     /// </summary>
     public class Startup
     {
-        private readonly IHostingEnvironment hostingEnvironment;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup" /> class.
         /// </summary>
         /// <param name="environment">The hosting environment parameters.</param>
         public Startup(IHostingEnvironment environment)
         {
-            this.hostingEnvironment = environment;
-
             var builder = new ConfigurationBuilder()
-                .SetBasePath(this.hostingEnvironment.ContentRootPath)
+                .SetBasePath(environment.ContentRootPath)
                 .AddJsonFile("appSettings.json", true, true)
-                .AddJsonFile($"appSettings.{this.hostingEnvironment.EnvironmentName}.json", true, true)
+                .AddJsonFile($"appSettings.{environment.EnvironmentName}.json", true, true)
                 .AddEnvironmentVariables();
 
-            this.Configuration = builder.Build();
+            Configuration = builder.Build();
         }
 
         /// <summary>
@@ -54,9 +50,9 @@
         /// <param name="services">The service collection where the dependencies will be registered.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(this.Configuration);
+            services.AddSingleton(Configuration);
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(this.Configuration.GetMainConnectionString()));
+                options.UseSqlServer(Configuration.GetMainConnectionString()));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -74,10 +70,10 @@
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = this.Configuration.GetBaseUrl(),
-                        ValidAudience = this.Configuration.GetBaseUrl(),
+                        ValidIssuer = Configuration.GetBaseUrl(),
+                        ValidAudience = Configuration.GetBaseUrl(),
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(this.Configuration.GetSecurityKey()))
+                            Encoding.UTF8.GetBytes(Configuration.GetSecurityKey()))
                     };
                 });
 
@@ -109,7 +105,7 @@
         /// <param name="env">The hosting environment parameters.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            var baseUrl = this.Configuration.GetBaseUrl();
+            var baseUrl = Configuration.GetBaseUrl();
 
             if (env.IsDevelopment())
             {

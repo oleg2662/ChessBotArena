@@ -4,14 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Game.Abstraction;
-    using Game.Chess.Moves;
-    using Game.Chess.Pieces;
+    using Abstraction;
+    using Moves;
+    using Pieces;
 
     [Serializable]
-    public class ChessRepresentation : IChessRepresentation, ICloneable<ChessRepresentation>
+    public class ChessRepresentation : ICloneable<ChessRepresentation>
     {
-        private readonly ChessPiece[] pieces = new ChessPiece[64];
+        private readonly ChessPiece[] _pieces = new ChessPiece[64];
 
         public ChessRepresentation()
         {
@@ -21,21 +21,60 @@
         /// <summary>
         /// Algebraic notation accessor.
         /// </summary>
-        /// <param name="col">Character of the column. Can be A..H.</param>
-        /// <param name="row">The row number. Can be between 1..8.</param>
+        /// <param name="position">The position of the field in the board.</param>
         /// <returns>The chess piece on the given field. Returns a null chess piece object if empty. Throws exception if column or row id isn't valid.</returns>
         public ChessPiece this[Position position]
         {
             get
             {
-
                 var idx = (int)position;
-                return pieces[idx];
+                return _pieces[idx];
             }
             set
             {
                 var idx = (int)position;
-                pieces[idx] = value;
+                _pieces[idx] = value;
+            }
+        }
+
+        /// <summary>
+        /// Algebraic notation accessor.
+        /// </summary>
+        /// <param name="col">Character of the column. Can be A..H.</param>
+        /// <param name="row">The row number. Can be between 1..8.</param>
+        /// <returns>The chess piece on the given field. Returns a null chess piece object if empty. Throws exception if column or row id isn't valid.</returns>
+        public ChessPiece this[char col, int row]
+        {
+            get
+            {
+
+                var idx = new Position(col, row);
+                return this[idx];
+            }
+            set
+            {
+                var idx = new Position(col, row);
+                this[idx] = value;
+            }
+        }
+
+        /// <summary>
+        /// Algebraic notation (string) accessor.
+        /// </summary>
+        /// <param name="algebraicNotation">Algebraic notation of the position. Example: "B3".</param>
+        /// <returns>The chess piece on the given field. Returns a null chess piece object if empty. Throws exception if column or row id isn't valid.</returns>
+        public ChessPiece this[string algebraicNotation]
+        {
+            get
+            {
+
+                var idx = (Position) algebraicNotation;
+                return this[idx];
+            }
+            set
+            {
+                var idx = (Position)algebraicNotation;
+                this[idx] = value;
             }
         }
 
@@ -58,9 +97,9 @@
         {
             var newBoard = new ChessRepresentation()
             {
-                CurrentPlayer = this.CurrentPlayer,
-                History = this.History.Select(x => x.Clone()).ToList(),
-                Players = this.Players.Select(x => x).ToList(),
+                CurrentPlayer = CurrentPlayer,
+                History = History.Select(x => x.Clone()).ToList(),
+                Players = Players.Select(x => x).ToList(),
             };
 
             foreach(var p in Positions.PositionList)

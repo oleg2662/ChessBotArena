@@ -1,5 +1,6 @@
 ﻿using Game.Chess.Extensions;
 using System;
+using Game.Abstraction;
 
 namespace Game.Chess.Moves
 {
@@ -93,16 +94,6 @@ namespace Game.Chess.Moves
         public override string ToString()
         {
             return CastlingType == CastlingType.Long ? "0-0-0" : "0-0";
-
-            //switch (ChessMoveResult)
-            //{
-            //    case ChessMoveResult.Check:
-            //        return $"{moveText}+";
-            //    case ChessMoveResult.CheckMate:
-            //        return $"{moveText}#";
-            //    default:
-            //        return moveText;
-            //}
         }
 
         public override ChessMove Clone()
@@ -115,7 +106,6 @@ namespace Game.Chess.Moves
                 To = To,
                 IsCaptureMove = IsCaptureMove,
                 CastlingType = CastlingType,
-                //ChessMoveResult = ChessMoveResult
             };
         }
     }

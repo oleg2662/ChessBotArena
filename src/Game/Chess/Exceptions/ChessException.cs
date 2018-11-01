@@ -5,7 +5,7 @@ namespace Game.Chess.Exceptions
 {
     public abstract class ChessException : Exception
     {
-        protected ChessException() : base()
+        protected ChessException()
         {
         }
 

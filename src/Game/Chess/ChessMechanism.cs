@@ -1,13 +1,12 @@
 ﻿namespace Game.Chess
 {
-    using Game.Abstraction;
-    using Game.Chess.Moves;
+    using Abstraction;
+    using Moves;
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using System.Linq;
-    using Game.Chess.Extensions;
-    using Game.Chess.Pieces;
+    using Extensions;
+    using Pieces;
 
     public class ChessMechanism : IMechanism<ChessRepresentation, ChessMove, GameState>
     {
@@ -16,7 +15,6 @@
             var possibleMoves = GenerateMoves(representation, null);
             var originalBoard = representation;
             var currentPlayer = representation.CurrentPlayer;
-            var opponent = currentPlayer == ChessPlayer.Black ? ChessPlayer.White : ChessPlayer.Black;
 
             foreach (var move in possibleMoves)
             {
@@ -33,7 +31,6 @@
                     {
                         yield return move;
                     }
-                    continue;
                 }
                 else
                 {
@@ -81,7 +78,7 @@
 
         public bool ValidateMove(ChessRepresentation representation, ChessMove move)
         {
-            return this.GenerateMoves(representation).Contains(move);
+            return GenerateMoves(representation).Contains(move);
         }
 
         public ChessRepresentation ApplyMove(ChessRepresentation representationParam, ChessMove move)
@@ -226,7 +223,7 @@
 
             player = player ?? representation.CurrentPlayer;
 
-            if (this.GetGameState(representation) != GameState.InProgress)
+            if (GetGameState(representation) != GameState.InProgress)
             {
                 return Enumerable.Empty<ChessMove>();
             }
@@ -281,7 +278,7 @@
 
             var piece = board[from];
 
-            if (piece == null || piece.Kind != Pieces.PieceKind.Pawn || piece.Owner != player)
+            if (piece == null || piece.Kind != PieceKind.Pawn || piece.Owner != player)
             {
                 yield break;
             }
@@ -499,7 +496,7 @@
                         && board[enPassantEastPosition] != null
                         && board[enPassantEastPosition].Owner != player
                         && board[enPassantEastPosition].Kind == PieceKind.Pawn
-                        && (board[enPassantEastPosition] as Pawn).IsEnPassantCapturable)
+                        && ((board[enPassantEastPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
                         yield return new PawnEnPassantMove
                         {
@@ -518,7 +515,7 @@
                         && board[enPassantWestPosition] != null
                         && board[enPassantWestPosition].Owner != player
                         && board[enPassantWestPosition].Kind == PieceKind.Pawn
-                        && (board[enPassantWestPosition] as Pawn).IsEnPassantCapturable)
+                        && ((board[enPassantWestPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
                         yield return new PawnEnPassantMove
                         {
@@ -737,7 +734,7 @@
                         && board[enPassantEastPosition] != null
                         && board[enPassantEastPosition].Owner != player
                         && board[enPassantEastPosition].Kind == PieceKind.Pawn
-                        && (board[enPassantEastPosition] as Pawn).IsEnPassantCapturable)
+                        && ((board[enPassantEastPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
                         yield return new PawnEnPassantMove
                         {
@@ -756,7 +753,7 @@
                         && board[enPassantWestPosition] != null
                         && board[enPassantWestPosition].Owner != player
                         && board[enPassantWestPosition].Kind == PieceKind.Pawn
-                        && (board[enPassantWestPosition] as Pawn).IsEnPassantCapturable)
+                        && ((board[enPassantWestPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
                         yield return new PawnEnPassantMove
                         {
@@ -788,7 +785,7 @@
 
             var piece = board[from];
 
-            if (piece == null || piece.Kind != Pieces.PieceKind.King || piece.Owner != player)
+            if (piece == null || piece.Kind != PieceKind.King || piece.Owner != player)
             {
                 return Enumerable.Empty<ChessMove>();
             }
@@ -878,7 +875,7 @@
                 yield break;
             }
 
-            var threatenedPositions = GetThreatenedPositions(representation, player.Value);
+            var threatenedPositions = GetThreatenedPositions(representation, player.Value).ToList();
 
             if(!threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
             {
@@ -893,7 +890,7 @@
                 };
             }
 
-            if (!threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
+            if (!threatenedPositions.Intersect(shortCastlingNoThreatPositions).Any())
             {
                 yield return new KingCastlingMove()
                 {
@@ -920,7 +917,7 @@
 
             var piece = board[from];
 
-            if (piece == null || piece.Kind != Pieces.PieceKind.Bishop || piece.Owner != player)
+            if (piece == null || piece.Kind != PieceKind.Bishop || piece.Owner != player)
             {
                 return Enumerable.Empty<ChessMove>();
             }
@@ -1006,7 +1003,7 @@
 
             var piece = board[from];
 
-            if (piece == null || piece.Kind != Pieces.PieceKind.Queen || piece.Owner != player)
+            if (piece == null || piece.Kind != PieceKind.Queen || piece.Owner != player)
             {
                 return Enumerable.Empty<ChessMove>();
             }
@@ -1046,7 +1043,7 @@
 
             var piece = board[from];
 
-            if (piece == null || piece.Kind != Pieces.PieceKind.Rook || piece.Owner != player)
+            if (piece == null || piece.Kind != PieceKind.Rook || piece.Owner != player)
             {
                 return Enumerable.Empty<ChessMove>();
             }
