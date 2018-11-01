@@ -1,104 +1,67 @@
 ﻿using Game.Chess.Pieces;
-using Game.Abstraction;
 using System;
+using System.Collections.Generic;
 using Game.Chess.Extensions;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
-    public class ChessMove : IEquatable<ChessMove>, ICloneable<ChessMove>
+    public class ChessMove : BaseMove, IEquatable<ChessMove>
     {
-        public Position From { get; set; }
-
-        public virtual Position To { get; set; }
-
-        public virtual bool IsCaptureMove { get; set; }
-
-        public ChessPlayer Owner { get; set; }
-
-        public virtual PieceKind ChessPiece { get; set; }
-
-        public static bool operator ==(ChessMove x, ChessMove y)
+        public bool Equals(ChessMove other)
         {
-            if (x is null && y is null)
-            {
-                return true;
-            }
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-            if (x is null || y is null)
-            {
-                return false;
-            }
-
-            return x.Equals(y);
+            return base.Equals(other) 
+                   && Equals(From, other.From)
+                   && Equals(To, other.To);
         }
 
-        public static bool operator !=(ChessMove obj1, ChessMove obj2)
+        public override bool Equals(object obj)
         {
-            return !(obj1 == obj2);
-        }
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
 
-        public virtual bool Equals(ChessMove other)
-        {
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (other == null)
-            {
-                return false;
-            }
-
-            return From.Equals(other.From) 
-                    && To.Equals(other.To);
+            return Equals((ChessMove) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                int hash = Constants.HashBase;
-
-                hash = (hash ^ Constants.HashXor) ^ From.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ To.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ IsCaptureMove.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ ChessPiece.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ GetType().Name.GetHashCode();
-
-                return hash;
+                int hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (From != null ? From.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (To != null ? To.GetHashCode() : 0);
+                return hashCode;
             }
         }
 
-        public override string ToString()
+        public static bool operator ==(ChessMove left, ChessMove right)
         {
-            return IsCaptureMove
-                    ? $"{ChessPiece.ToFigure(Owner)}{From}x{To}"
-                    : $"{ChessPiece.ToFigure(Owner)}{From}{To}";
+            return Equals(left, right);
         }
 
-        public override bool Equals(object obj)
+        public static bool operator !=(ChessMove left, ChessMove right)
         {
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            var other = obj as ChessMove;
-
-            return other != null && Equals(other);
+            return !Equals(left, right);
         }
 
-        public virtual ChessMove Clone()
+        public Position From { get; }
+
+        public Position To { get; }
+
+        public ChessMove(ChessPlayer owner, Position from, Position to)
+            : base(owner)
         {
-            return new ChessMove()
-            {
-                ChessPiece = ChessPiece,
-                Owner = Owner,
-                From = From,
-                To = To,
-                IsCaptureMove = IsCaptureMove,
-            };
+            From = from;
+            To = to;
+        }
+
+        public override BaseMove Clone()
+        {
+            return new ChessMove(Owner, From, To);
         }
     }
 }

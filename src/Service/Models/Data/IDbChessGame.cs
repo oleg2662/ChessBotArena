@@ -52,7 +52,7 @@ namespace BoardGame.Service.Models.Data
         /// <summary>
         /// Gets or sets the history of the match.
         /// </summary>
-        ICollection<DbChessMove> History { get; set; }
+        ICollection<DbBaseMove> History { get; set; }
 
         /// <summary>
         /// Gets or sets the status of the game.

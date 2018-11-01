@@ -1,8 +1,6 @@
 ﻿using Game.Chess;
 using Game.Chess.Pieces;
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BoardGame.Service.Models.Data.Moves
 {
@@ -10,15 +8,8 @@ namespace BoardGame.Service.Models.Data.Moves
     /// Database representation of a chess move. Base class.
     /// </summary>
     [Serializable]
-    [Table("ChessMoves")]
-    public class DbChessMove
+    public class DbChessMove : DbBaseMove
     {
-        /// <summary>
-        /// Gets or sets the id of the move. (Key)
-        /// </summary>
-        [Key]
-        public Guid MoveId { get; set; }
-
         /// <summary>
         /// Gets or sets the source row of the move. (Example: 3)
         /// </summary>
@@ -48,25 +39,5 @@ namespace BoardGame.Service.Models.Data.Moves
         /// Gets the destination position calculated from the 'ToRow' and 'ToColumn' properties.
         /// </summary>
         public virtual Position To => new Position(ToColumn[0], ToRow);
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the move was a capture move.
-        /// </summary>
-        public bool IsCaptureMove { get; set; }
-
-        /// <summary>
-        /// Gets or sets the owner of the move. (Black or White.)
-        /// </summary>
-        public ChessPlayer Owner { get; set; }
-
-        /// <summary>
-        /// Gets or sets the moving chess piece kind.
-        /// </summary>
-        public PieceKind ChessPiece { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date of the move.
-        /// </summary>
-        public DateTime CreatedAt { get; set; }
     }
 }

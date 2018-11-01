@@ -5,7 +5,6 @@ using System.Net;
 using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using BoardGame.Service.Repositories;
-using Game.Chess;
 using Game.Chess.Moves;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,21 +46,11 @@ namespace BoardGame.Service.Controllers.Api
         [HttpGet]
         public IActionResult GetChessGames()
         {
-            var x = new ChessMoveApiModel();
-            x.Move = new ChessMove
-            {
-                From = Positions.B2,
-                To = Positions.B4,
-                ChessPiece = Game.Chess.Pieces.PieceKind.Pawn,
-                IsCaptureMove = false,
-                Owner = ChessPlayer.White
-            };
+            var chessGames = _repository.Get(GetCurrentUser());
 
-            var chessgames = _repository.Get(GetCurrentUser());
+            _logger.LogInformation($"{GetCurrentUser()} queried a list of chess games and found {chessGames.Count}.");
 
-            _logger.LogInformation($"{GetCurrentUser()} queried a list of chess games and found {chessgames.Count}.");
-
-            return Ok(chessgames);
+            return Ok(chessGames);
         }
 
         /// <summary>

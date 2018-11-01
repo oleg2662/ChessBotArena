@@ -1,58 +1,58 @@
 ﻿using Game.Chess.Pieces;
 using System;
-using Game.Abstraction;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
-    public class PawnPromotionalMove : ChessMove
+    public sealed class PawnPromotionalMove : ChessMove, IEquatable<PawnPromotionalMove>
     {
-        public PieceKind PromoteTo { get; set; }
-
-        public override bool Equals(ChessMove other)
+        public bool Equals(PawnPromotionalMove other)
         {
-            if (!base.Equals(other))
-            {
-                return false;
-            }
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-            var specificMove = (PawnPromotionalMove)other;
+            return base.Equals(other)
+                   && PromoteTo == other.PromoteTo;
+        }
 
-            if (specificMove == null)
-            {
-                return false;
-            }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
 
-            return PromoteTo.Equals(specificMove.PromoteTo);
+            return Equals((PawnPromotionalMove) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                int hash = base.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ PromoteTo.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ nameof(PawnPromotionalMove).GetHashCode();
-                return hash;
+                return (base.GetHashCode() * 397) ^ (int) PromoteTo;
             }
         }
 
-        public override string ToString()
+        public static bool operator ==(PawnPromotionalMove left, PawnPromotionalMove right)
         {
-            return $"{base.ToString()}={PromoteTo.ToString()}";
+            return Equals(left, right);
         }
 
-        public override ChessMove Clone()
+        public static bool operator !=(PawnPromotionalMove left, PawnPromotionalMove right)
         {
-            return new PawnPromotionalMove()
-            {
-                ChessPiece = ChessPiece,
-                Owner = Owner,
-                From = From,
-                To = To,
-                IsCaptureMove = IsCaptureMove,
-                PromoteTo = PromoteTo,
-            };
+            return !Equals(left, right);
+        }
+
+        public PieceKind PromoteTo { get; }
+
+        public PawnPromotionalMove(ChessPlayer owner, Position from, Position to, PieceKind promoteTo)
+            : base(owner, from, to)
+        {
+            PromoteTo = promoteTo;
+        }
+
+        public override BaseMove Clone()
+        {
+            return new PawnPromotionalMove(Owner, From, To, PromoteTo);
         }
     }
 }

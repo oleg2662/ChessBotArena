@@ -73,7 +73,7 @@ namespace BoardGame.Service.Repositories
                 };
             }
 
-            var now = DateTime.Now.ToUniversalTime();
+            var now = DateTime.UtcNow;
 
             // Randomize sides
             var players = new[] { initiatedBy, opponent }.OrderBy(x => Guid.NewGuid()).ToArray();
@@ -195,7 +195,7 @@ namespace BoardGame.Service.Repositories
                 ChallengeDate = oldChessGameDetails.ChallengeDate,
                 Id = oldChessGameDetails.Id,
                 InitiatedBy = oldChessGameDetails.InitiatedBy,
-                LastMoveDate = DateTime.Now.ToUniversalTime(),
+                LastMoveDate = DateTime.UtcNow,
                 Name = oldChessGameDetails.Name,
                 Opponent = oldChessGameDetails.Opponent,
                 WhitePlayer = oldChessGameDetails.WhitePlayer,

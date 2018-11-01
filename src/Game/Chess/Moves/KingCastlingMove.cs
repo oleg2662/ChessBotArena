@@ -5,8 +5,43 @@ using Game.Abstraction;
 namespace Game.Chess.Moves
 {
     [Serializable]
-    public sealed class KingCastlingMove : ChessMove
+    public sealed class KingCastlingMove : ChessMove, IEquatable<KingCastlingMove>
     {
+        public bool Equals(KingCastlingMove other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return base.Equals(other) 
+                   && CastlingType == other.CastlingType;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+
+            return obj is KingCastlingMove other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ (int) CastlingType;
+            }
+        }
+
+        public static bool operator ==(KingCastlingMove left, KingCastlingMove right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(KingCastlingMove left, KingCastlingMove right)
+        {
+            return !Equals(left, right);
+        }
+
         public Position RookFrom
         {
             get
@@ -39,74 +74,28 @@ namespace Game.Chess.Moves
             }
         }
 
-        public override Position To
+        public CastlingType CastlingType { get; }
+
+        public KingCastlingMove(ChessPlayer owner, Position from, CastlingType castlingType)
+            : base(owner, from, CalculateTo(castlingType, from))
         {
-            get
-            {
-                switch (CastlingType)
-                {
-                    case CastlingType.Long:
-                        return From.East(2);
-                    case CastlingType.Short:
-                        return From.West(2);
-                }
-
-                throw new ArgumentOutOfRangeException(nameof(CastlingType));
-            }
-
-            set { }
+            CastlingType = castlingType;
         }
 
-        public CastlingType CastlingType { get; set; }
-
-        public override bool Equals(ChessMove other)
+        public override BaseMove Clone()
         {
-            if (!base.Equals(other))
-            {
-                return false;
-            }
-
-            var specificMove = (KingCastlingMove)other;
-
-            if (specificMove == null)
-            {
-                return false;
-            }
-
-            return CastlingType.Equals(specificMove.CastlingType)
-                && RookFrom.Equals(specificMove.RookFrom)
-                && RookTo.Equals(specificMove.RookTo);
+            return new KingCastlingMove(Owner, From, CastlingType);
         }
 
-        public override int GetHashCode()
+        
+        private static Position CalculateTo(CastlingType castlingType, Position from)
         {
-            unchecked
+            switch (castlingType)
             {
-                int hash = base.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ RookFrom.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ RookTo.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ CastlingType.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ nameof(KingCastlingMove).GetHashCode();
-                return hash;
+                case CastlingType.Long: return from.East(2);
+                case CastlingType.Short: return from.West(2);
+                default: throw new ArgumentOutOfRangeException(nameof(castlingType));
             }
-        }
-
-        public override string ToString()
-        {
-            return CastlingType == CastlingType.Long ? "0-0-0" : "0-0";
-        }
-
-        public override ChessMove Clone()
-        {
-            return new KingCastlingMove()
-            {
-                ChessPiece = ChessPiece,
-                Owner = Owner,
-                From = From,
-                To = To,
-                IsCaptureMove = IsCaptureMove,
-                CastlingType = CastlingType,
-            };
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>(),
+                History = new List<BaseMove>(),
                 Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
@@ -56,7 +56,7 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.Black,
-                History = new List<ChessMove>(),
+                History = new List<BaseMove>(),
                 Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
@@ -77,16 +77,16 @@ namespace Game.Tests.Unit.Chess
         {
             var expectedBishopMoves = new[]
             {
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Bishop, From = Positions.D4, IsCaptureMove = false, To = Positions.E5 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Bishop, From = Positions.D4, IsCaptureMove = false, To = Positions.C5 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Bishop, From = Positions.D4, IsCaptureMove = true, To = Positions.E3 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Bishop, From = Positions.D4, IsCaptureMove = false, To = Positions.C3 }
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.E5),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.C5),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.E3),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.C3)
             }.ToHashSet();
 
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>(),
+                History = new List<BaseMove>(),
                 Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
@@ -99,7 +99,8 @@ namespace Game.Tests.Unit.Chess
 
             var game = new ChessMechanism();
             var moves = game.GenerateMoves(board).ToList();
-            var bishopMoves = moves.Where(x => x.ChessPiece == PieceKind.Bishop)
+            var bishopMoves = moves.OfType<ChessMove>()
+                                   .Where(x => x.From == Positions.D4)
                                    .Where(x => x.Owner == ChessPlayer.White)
                                    .ToHashSet();
 
@@ -112,19 +113,19 @@ namespace Game.Tests.Unit.Chess
         {
             var expectedKnightMoves = new[]
             {
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Knight, From = Positions.D4, IsCaptureMove = false, To = Positions.C2 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Knight, From = Positions.D4, IsCaptureMove = false, To = Positions.E2 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Knight, From = Positions.D4, IsCaptureMove = false, To = Positions.B3 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Knight, From = Positions.D4, IsCaptureMove = false, To = Positions.F3 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Knight, From = Positions.D4, IsCaptureMove = true, To = Positions.F5 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Knight, From = Positions.D4, IsCaptureMove = false, To = Positions.C6 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Knight, From = Positions.D4, IsCaptureMove = true, To = Positions.E6 }
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.C2),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.E2),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.B3),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.F3),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.F5),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.C6),
+                new ChessMove(ChessPlayer.White, Positions.D4, Positions.E6)
             }.ToHashSet();
 
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>(),
+                History = new List<BaseMove>(),
                 Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
@@ -136,7 +137,8 @@ namespace Game.Tests.Unit.Chess
 
             var game = new ChessMechanism();
             var moves = game.GenerateMoves(board).ToList();
-            var knightMoves = moves.Where(x => x.ChessPiece == PieceKind.Knight)
+            var knightMoves = moves.OfType<ChessMove>()
+                                   .Where(x => x.From == Positions.D4)
                                    .Where(x => x.Owner == ChessPlayer.White)
                                    .ToHashSet();
 
@@ -149,26 +151,26 @@ namespace Game.Tests.Unit.Chess
         {
             var expectedKnightMoves = new[]
             {
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.Queen, From = Positions.C4, IsCaptureMove = true, To = Positions.E2 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.King, From = Positions.G2, IsCaptureMove = true, To = Positions.G3 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.King, From = Positions.G2, IsCaptureMove = false, To = Positions.G1 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.King, From = Positions.G2, IsCaptureMove = false, To = Positions.H3 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.King, From = Positions.G2, IsCaptureMove = false, To = Positions.H1 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.King, From = Positions.G2, IsCaptureMove = false, To = Positions.F3 },
-                new ChessMove() { Owner = ChessPlayer.White, ChessPiece = PieceKind.King, From = Positions.G2, IsCaptureMove = false, To = Positions.F1 }
-            }.ToHashSet();
+                new ChessMove(ChessPlayer.White, Positions.C4, Positions.E2),
+                new ChessMove(ChessPlayer.White, Positions.G2, Positions.G3),
+                new ChessMove(ChessPlayer.White, Positions.G2, Positions.G1),
+                new ChessMove(ChessPlayer.White, Positions.G2, Positions.H3),
+                new ChessMove(ChessPlayer.White, Positions.G2, Positions.H1),
+                new ChessMove(ChessPlayer.White, Positions.G2, Positions.F3),
+                new ChessMove(ChessPlayer.White, Positions.G2, Positions.F1)
+            }.ToHashSet<BaseMove>();
 
-            var board = new ChessRepresentation()
+            var board = new ChessRepresentation
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<ChessMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
+                History = new List<BaseMove>(),
+                Players = new[] {ChessPlayer.White, ChessPlayer.Black},
+                [Positions.G2] = new King(ChessPlayer.White, true),
+                [Positions.E2] = new Rook(ChessPlayer.Black, false),
+                [Positions.C4] = new Queen(ChessPlayer.White, false),
+                [Positions.G3] = new Pawn(ChessPlayer.Black, false)
             };
 
-            board[Positions.G2] = new King(ChessPlayer.White, true);
-            board[Positions.E2] = new Rook(ChessPlayer.Black, false);
-            board[Positions.C4] = new Queen(ChessPlayer.White, false);
-            board[Positions.G3] = new Pawn(ChessPlayer.Black, false);
 
             var game = new ChessMechanism();
             var moves = game.GenerateMoves(board).ToHashSet();

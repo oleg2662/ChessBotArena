@@ -15,7 +15,7 @@
 
         public ChessRepresentation()
         {
-            History = new List<ChessMove>();
+            History = new List<BaseMove>();
         }
 
         /// <summary>
@@ -91,7 +91,7 @@
         /// <summary>
         /// Gets the history of the game.
         /// </summary>
-        public List<ChessMove> History { get; set; }
+        public List<BaseMove> History { get; set; }
 
         public ChessRepresentation Clone()
         {
@@ -105,7 +105,7 @@
             foreach(var p in Positions.PositionList)
             {
                 var piece = this[p];
-                newBoard[p] = piece == null ? null : piece.Clone();
+                newBoard[p] = piece?.Clone();
             }
 
             return newBoard;
@@ -119,6 +119,13 @@
             this[from] = null;
 
             return result;
+        }
+
+        public void TogglePlayer()
+        {
+            CurrentPlayer = CurrentPlayer == ChessPlayer.Black 
+                            ? ChessPlayer.White
+                            : ChessPlayer.Black;
         }
     }
 }

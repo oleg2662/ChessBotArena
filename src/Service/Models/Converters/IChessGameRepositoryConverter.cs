@@ -36,13 +36,13 @@ namespace BoardGame.Service.Models.Converters
         /// </summary>
         /// <param name="dbMove">The move from the database</param>
         /// <returns>Chess move.</returns>
-        ChessMove CovertToChessMove(DbChessMove dbMove);
+        BaseMove CovertToChessMove(DbBaseMove dbMove);
 
         /// <summary>
         /// Converts a move to the database chess move.
         /// </summary>
         /// <param name="move">The normal move</param>
         /// <returns>Database chess move.</returns>
-        DbChessMove CovertToDbChessMove(ChessMove move);
+        DbBaseMove CovertToDbChessMove(BaseMove move);
     }
 }

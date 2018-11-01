@@ -8,11 +8,11 @@
     using Extensions;
     using Pieces;
 
-    public class ChessMechanism : IMechanism<ChessRepresentation, ChessMove, GameState>
+    public class ChessMechanism : IMechanism<ChessRepresentation, BaseMove, GameState>
     {
-        public IEnumerable<ChessMove> GenerateMoves(ChessRepresentation representation)
+        public IEnumerable<BaseMove> GenerateMoves(ChessRepresentation representation)
         {
-            var possibleMoves = GenerateMoves(representation, null);
+            var possibleMoves = GenerateMoves(representation, representation.CurrentPlayer);
             var originalBoard = representation;
             var currentPlayer = representation.CurrentPlayer;
 
@@ -72,84 +72,127 @@
 
         public GameState GetGameState(ChessRepresentation representation)
         {
-            // TODO : implement!
-            return GameState.InProgress;
+            var specialMoves = new HashSet<SpecialMove>(representation.History.OfType<SpecialMove>());
+
+            var resign = specialMoves.FirstOrDefault(x => x.Message == MessageType.Resign);
+
+            switch (resign?.Owner)
+            {
+                case ChessPlayer.White:
+                    return GameState.BlackWon;
+                case ChessPlayer.Black:
+                    return GameState.WhiteWon;
+                case null:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            if (specialMoves.Any(x => x.Message == MessageType.DrawAccept))
+            {
+                return GameState.Draw;
+            }
+
+            var isCurrentPlayerInChess = IsPlayerInChess(representation, representation.CurrentPlayer);
+            var anyMovesLeft = GenerateMoves(representation).Any();
+
+            if (!anyMovesLeft && isCurrentPlayerInChess)
+            {
+                // Check-mate!
+                switch (representation.CurrentPlayer)
+                {
+                    case ChessPlayer.White:
+                        return GameState.BlackWon;
+                    case ChessPlayer.Black:
+                        return GameState.WhiteWon;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return anyMovesLeft ? GameState.InProgress : GameState.Draw;
         }
 
-        public bool ValidateMove(ChessRepresentation representation, ChessMove move)
+        private bool IsPlayerInChess(ChessRepresentation representation, ChessPlayer player)
+        {
+            var kingPosition = FindKing(representation, player);
+            var threatenedPositions = GetThreatenedPositions(representation, player);
+
+            return threatenedPositions.Contains(kingPosition);
+        }
+
+        public bool ValidateMove(ChessRepresentation representation, BaseMove move)
         {
             return GenerateMoves(representation).Contains(move);
         }
 
-        public ChessRepresentation ApplyMove(ChessRepresentation representationParam, ChessMove move)
+        public ChessRepresentation ApplyMove(ChessRepresentation representationParam, BaseMove move)
         {
             var representation = representationParam.Clone();
 
-            switch (move)
-            {
-                case KingCastlingMove castlingMove:
-                    representation.Move(castlingMove.From, castlingMove.To);
-                    representation.Move(castlingMove.RookFrom, castlingMove.RookTo);
-                    break;
-                case PawnEnPassantMove pawnEnPassantMove:
-                    representation.Move(pawnEnPassantMove.From, pawnEnPassantMove.To);
-                    representation[pawnEnPassantMove.CapturePosition] = null;
-                    break;
-                case PawnPromotionalMove pawnPromotionalMove:
-                    representation.Move(pawnPromotionalMove.From, pawnPromotionalMove.To);
-                    representation[pawnPromotionalMove.To] = ChessPieces.Create(pawnPromotionalMove.PromoteTo, representation[pawnPromotionalMove.To].Owner);
-                    break;
-                default:
-                    representation.Move(move.From, move.To);
-                    break;
-            }
-
-            // Setting moved piece's 'HasMoved' flag
-            representation[move.To].HasMoved = true;
-
-            // Removing en passant flag
+            // Removing en passant flags
             var pawns = Positions.PositionList.Select(x => representation[x])
-                                  .Where(x => x != null)
-                                  .Where(x => x.Owner != representation.CurrentPlayer)
-                                  .OfType<Pawn>()
-                                  .Select(x => x)
-                                  .ToArray();
+                .Where(x => x != null)
+                .Where(x => x.Owner != representation.CurrentPlayer)
+                .OfType<Pawn>()
+                .Select(x => x)
+                .ToArray();
 
             foreach (var pawn in pawns)
             {
                 pawn.IsEnPassantCapturable = false;
             }
 
-            // Setting en passant flag if needed
-            if (move.ChessPiece == PieceKind.Pawn && Math.Abs(move.From.Row - move.To.Row) == 2)
+            switch (move)
             {
-                ((Pawn)representation[move.To]).IsEnPassantCapturable = true;
+                case SpecialMove _:
+                    break;
+
+                case KingCastlingMove castlingMove:
+                    representation.Move(castlingMove.From, castlingMove.To);
+                    representation.Move(castlingMove.RookFrom, castlingMove.RookTo);
+                    representation[castlingMove.To].HasMoved = true;
+                    representation[castlingMove.RookTo].HasMoved = true;
+                    break;
+
+                case PawnEnPassantMove pawnEnPassantMove:
+                    representation.Move(pawnEnPassantMove.From, pawnEnPassantMove.To);
+                    representation[pawnEnPassantMove.CapturePosition] = null;
+                    representation[pawnEnPassantMove.To].HasMoved = true;
+                    break;
+
+                case PawnPromotionalMove pawnPromotionalMove:
+                    representation.Move(pawnPromotionalMove.From, pawnPromotionalMove.To);
+                    representation[pawnPromotionalMove.To] = ChessPieces.Create(pawnPromotionalMove.PromoteTo, representation[pawnPromotionalMove.To].Owner);
+                    representation[pawnPromotionalMove.To].HasMoved = true;
+                    break;
+
+                case ChessMove chessMove:
+                    var movingPiece = representation[chessMove.From];
+                    representation.Move(chessMove.From, chessMove.To);
+                    representation[chessMove.To].HasMoved = true;
+                    
+                    // Setting en passant flag if needed
+                    if (movingPiece.Kind == PieceKind.Pawn && Math.Abs(chessMove.From.Row - chessMove.To.Row) == 2 && chessMove.From.Column == chessMove.To.Column)
+                    {
+                        ((Pawn)representation[chessMove.To]).IsEnPassantCapturable = true;
+                    }
+                    break;
             }
 
-            representation.CurrentPlayer = representation.CurrentPlayer == ChessPlayer.White
-                                            ? ChessPlayer.Black
-                                            : ChessPlayer.White;
-
+            representation.TogglePlayer();
             representationParam.History.Add(move);
 
             return representation;
         }
 
-        private Position FindKing(ChessRepresentation representation, ChessPlayer? player)
+        private Position FindKing(ChessRepresentation representation, ChessPlayer player)
         {
-            if(representation == null)
-            {
-                return null;
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
-            var position = Positions.PositionList.Where(x => representation[x] != null)
+            var position = Positions.PositionList
+                                    .Where(x => representation[x] != null)
                                     .Where(x => representation[x].Owner == player)
-                                    .Where(x => representation[x].Kind == PieceKind.King)
-                                    .FirstOrDefault();
+                                    .FirstOrDefault(x => representation[x].Kind == PieceKind.King);
 
-            // TODO : If no king, then throw validation check exception!
             return position;
         }
 
@@ -198,7 +241,7 @@
                         break;
 
                     case PieceKind.Pawn:
-                        opponentMoves.AddRange(GetPawnMoves(representation, from, true, opponent));
+                        opponentMoves.AddRange(GetPawnMoves(representation, from, opponent, true));
                         break;
 
                     default:
@@ -209,20 +252,8 @@
             return opponentMoves.Select(x => x.To).Distinct();
         }
 
-        private bool DoesMoveCausesCheck(ChessRepresentation representation, ChessMove move)
+        private IEnumerable<ChessMove> GenerateMoves(ChessRepresentation representation, ChessPlayer player)
         {
-            return false;
-        }
-
-        private IEnumerable<ChessMove> GenerateMoves(ChessRepresentation representation, ChessPlayer? player = null)
-        {
-            if(representation == null)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
             if (GetGameState(representation) != GameState.InProgress)
             {
                 return Enumerable.Empty<ChessMove>();
@@ -230,22 +261,13 @@
 
             var possibleMoves = Positions.PositionList
                                          .Where(x => representation[x] != null && representation[x].Owner == representation.CurrentPlayer)
-                                         .SelectMany(x => GetChessMoves(representation, x));
+                                         .SelectMany(x => GetChessMoves(representation, x, player));
 
             return possibleMoves;
         }
 
-        private IEnumerable<ChessMove> GetChessMoves(ChessRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetChessMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
-            var board = representation;
-
-            if (board == null)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
             var piece = board[from];
 
             if (piece == null || piece.Owner != player)
@@ -255,27 +277,18 @@
 
             switch (piece.Kind)
             {
-                case PieceKind.King: return GetKingMoves(representation, from, player).Union(GetCastlings(representation, player));
-                case PieceKind.Queen: return GetQueenMoves(representation, from, player);
-                case PieceKind.Rook: return GetRookMoves(representation, from, player);
-                case PieceKind.Bishop: return GetBishopMoves(representation, from, player);
-                case PieceKind.Knight: return GetKnightMoves(representation, from, player);
-                case PieceKind.Pawn: return GetPawnMoves(representation, from, false, player);
+                case PieceKind.King: return GetKingMoves(board, from, player).Union(GetCastlings(board, player));
+                case PieceKind.Queen: return GetQueenMoves(board, from, player);
+                case PieceKind.Rook: return GetRookMoves(board, from, player);
+                case PieceKind.Bishop: return GetBishopMoves(board, from, player);
+                case PieceKind.Knight: return GetKnightMoves(board, from, player);
+                case PieceKind.Pawn: return GetPawnMoves(board, from, player, false);
                 default: return Enumerable.Empty<ChessMove>();
             }
         }
 
-        private IEnumerable<ChessMove> GetPawnMoves(ChessRepresentation representation, Position from, bool onlyThreateningMoves = false, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetPawnMoves(ChessRepresentation board, Position from, ChessPlayer player, bool onlyThreateningMoves)
         {
-            var board = representation;
-
-            if (board == null)
-            {
-                yield break;
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
             var piece = board[from];
 
             if (piece == null || piece.Kind != PieceKind.Pawn || piece.Owner != player)
@@ -308,128 +321,34 @@
                     {
                         if (stepForward.Row == 1)
                         {
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Bishop,
-                                To = stepForward
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Knight,
-                                To = stepForward
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Queen,
-                                To = stepForward
-                            };
-
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Rook,
-                                To = stepForward
-                            };
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Bishop);
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Knight);
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Queen);
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Rook);
                         }
                         else
                         {
-                            yield return new ChessMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                To = stepForward,
-                            };
+                            yield return new ChessMove(player, from, stepForward);
                         }
                     }
 
                     if (doubleStepForwardOpening != null && board[doubleStepForwardOpening] == null)
                     {
-                        yield return new ChessMove
-                        {
-                            ChessPiece = piece.Kind,
-                            Owner = piece.Owner,
-                            From = from,
-                            IsCaptureMove = false,
-                            To = doubleStepForwardOpening,
-                        };
+                        yield return new ChessMove(player, from, doubleStepForwardOpening);
                     }
 
                     if (captureEast != null && board[captureEast] != null && board[captureEast].Owner != player)
                     {
                         if (captureEast.Row == 1)
                         {
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Bishop,
-                                To = captureEast
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Knight,
-                                To = captureEast
-                            };
-
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Queen,
-                                To = captureEast
-                            };
-
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Rook,
-                                To = captureEast
-                            };
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Bishop);
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Knight);
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Queen);
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Rook);
                         }
                         else
                         {
-                            yield return new ChessMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                To = captureEast,
-                            };
+                            yield return new ChessMove(player, from, captureEast);
                         }
                     }
 
@@ -437,56 +356,14 @@
                     {
                         if (captureWest.Row == 1)
                         {
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Bishop,
-                                To = captureWest
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Knight,
-                                To = captureWest
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Queen,
-                                To = captureWest
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Rook,
-                                To = captureWest
-                            };
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Bishop);
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Knight);
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Queen);
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Rook);
                         }
                         else
                         {
-                            yield return new ChessMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                To = captureWest,
-                            };
+                            yield return new ChessMove(player, from, captureWest);
                         }
                     }
 
@@ -498,15 +375,7 @@
                         && board[enPassantEastPosition].Kind == PieceKind.Pawn
                         && ((board[enPassantEastPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
-                        yield return new PawnEnPassantMove
-                        {
-                            ChessPiece = piece.Kind,
-                            Owner = piece.Owner,
-                            From = from,
-                            IsCaptureMove = true,
-                            To = captureEast,
-                            CapturePosition = enPassantEastPosition
-                        };
+                        yield return new PawnEnPassantMove(player, from, captureEast, enPassantEastPosition);
                     }
 
                     if (enPassantWestPosition != null
@@ -517,15 +386,7 @@
                         && board[enPassantWestPosition].Kind == PieceKind.Pawn
                         && ((board[enPassantWestPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
-                        yield return new PawnEnPassantMove
-                        {
-                            ChessPiece = piece.Kind,
-                            Owner = piece.Owner,
-                            From = from,
-                            IsCaptureMove = true,
-                            To = captureWest,
-                            CapturePosition = enPassantWestPosition
-                        };
+                        yield return new PawnEnPassantMove(player, from, captureWest, enPassantWestPosition);
                     }
                     break;
 
@@ -545,129 +406,34 @@
                     {
                         if (stepForward.Row == 1)
                         {
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Bishop,
-                                To = stepForward
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Knight,
-                                To = stepForward
-                            };
-
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Queen,
-                                To = stepForward
-                            };
-
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                PromoteTo = PieceKind.Rook,
-                                To = stepForward
-                            };
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Bishop);
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Knight);
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Queen);
+                            yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Rook);
                         }
                         else
                         {
-                            yield return new ChessMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = false,
-                                To = stepForward,
-                            };
+                            yield return new ChessMove(player, from, stepForward);
                         }
                     }
 
                     if (doubleStepForwardOpening != null && board[doubleStepForwardOpening] == null)
                     {
-                        yield return new ChessMove
-                        {
-                            ChessPiece = piece.Kind,
-                            Owner = piece.Owner,
-                            From = from,
-                            IsCaptureMove = false,
-                            To = doubleStepForwardOpening,
-                        };
+                        yield return new ChessMove(player, from, doubleStepForwardOpening);
                     }
 
                     if (captureEast != null && board[captureEast] != null && board[captureEast].Owner != player)
                     {
                         if (captureEast.Row == 1)
                         {
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Bishop,
-                                To = captureEast
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Knight,
-                                To = captureEast
-                            };
-
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Queen,
-                                To = captureEast
-                            };
-
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Rook,
-                                To = captureEast
-                            };
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Bishop);
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Knight);
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Queen);
+                            yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Rook);
                         }
                         else
                         {
-                            yield return new ChessMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                To = captureEast,
-                            };
+                            yield return new ChessMove(player, from, captureEast);
                         }
                     }
 
@@ -675,56 +441,14 @@
                     {
                         if (captureWest.Row == 1)
                         {
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Bishop,
-                                To = captureWest
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Knight,
-                                To = captureWest
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Queen,
-                                To = captureWest
-                            };
-
-                            yield return new PawnPromotionalMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                PromoteTo = PieceKind.Rook,
-                                To = captureWest
-                            };
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Bishop);
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Knight);
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Queen);
+                            yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Rook);
                         }
                         else
                         {
-                            yield return new ChessMove
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = true,
-                                To = captureWest,
-                            };
+                            yield return new ChessMove(player, from, captureWest);
                         }
                     }
 
@@ -736,15 +460,7 @@
                         && board[enPassantEastPosition].Kind == PieceKind.Pawn
                         && ((board[enPassantEastPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
-                        yield return new PawnEnPassantMove
-                        {
-                            ChessPiece = piece.Kind,
-                            Owner = piece.Owner,
-                            From = from,
-                            IsCaptureMove = true,
-                            To = captureEast,
-                            CapturePosition = enPassantEastPosition
-                        };
+                        yield return new PawnEnPassantMove(player, from, captureEast, enPassantEastPosition);
                     }
 
                     if (enPassantWestPosition != null
@@ -755,15 +471,7 @@
                         && board[enPassantWestPosition].Kind == PieceKind.Pawn
                         && ((board[enPassantWestPosition] as Pawn)?.IsEnPassantCapturable ?? false))
                     {
-                        yield return new PawnEnPassantMove
-                        {
-                            ChessPiece = piece.Kind,
-                            Owner = piece.Owner,
-                            From = from,
-                            IsCaptureMove = true,
-                            To = captureWest,
-                            CapturePosition = enPassantWestPosition
-                        };
+                        yield return new PawnEnPassantMove(player, from, captureWest, enPassantWestPosition);
                     }
                     break;
 
@@ -772,16 +480,12 @@
             }
         }
 
-        private IEnumerable<ChessMove> GetKingMoves(ChessRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetKingMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
-            var board = representation;
-
             if (board == null)
             {
                 return Enumerable.Empty<ChessMove>();
             }
-
-            player = player ?? representation.CurrentPlayer;
 
             var piece = board[from];
 
@@ -793,28 +497,13 @@
             var moves = from.AllDirectionsMove(1)
                 .Where(x => x != null)
                 .Where(x => board[x] == null || board[x].Owner != player)
-                .Select(x => new ChessMove()
-                {
-                    ChessPiece = piece.Kind,
-                    Owner = piece.Owner,
-                    From = from,
-                    IsCaptureMove = board[x] != null,
-                    To = x
-                }).ToList();
+                .Select(x => new ChessMove(player, from, x));
 
             return moves;
         }
 
-        private IEnumerable<ChessMove> GetCastlings(ChessRepresentation representation, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetCastlings(ChessRepresentation board, ChessPlayer player)
         {
-            var board = representation;
-
-            if (board == null)
-            {
-                yield break;
-            }
-
-            player = player ?? representation.CurrentPlayer;
             var from = player == ChessPlayer.White ? Positions.E1 : Positions.E8;
 
             var piece = board[from];
@@ -875,46 +564,21 @@
                 yield break;
             }
 
-            var threatenedPositions = GetThreatenedPositions(representation, player.Value).ToList();
+            var threatenedPositions = GetThreatenedPositions(board, player).ToList();
 
             if(!threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
             {
-                yield return new KingCastlingMove()
-                {
-                    From = from,
-                    To = player == ChessPlayer.White ? Positions.C1 : Positions.C8,
-                    CastlingType = CastlingType.Long,
-                    ChessPiece = piece.Kind,
-                    Owner = piece.Owner,
-                    IsCaptureMove = false
-                };
+                yield return new KingCastlingMove(player, from, CastlingType.Long);
             }
 
             if (!threatenedPositions.Intersect(shortCastlingNoThreatPositions).Any())
             {
-                yield return new KingCastlingMove()
-                {
-                    From = from,
-                    To = player == ChessPlayer.White ? Positions.G1 : Positions.G8,
-                    CastlingType = CastlingType.Short,
-                    ChessPiece = piece.Kind,
-                    Owner = piece.Owner,
-                    IsCaptureMove = false
-                };
+                yield return new KingCastlingMove(player, from, CastlingType.Short);
             }
         }
 
-        private IEnumerable<ChessMove> GetBishopMoves(ChessRepresentation representation, Position from, ChessPlayer? player = null)
+        private IEnumerable<ChessMove> GetBishopMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
-            var board = representation;
-
-            if (board == null)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
             var piece = board[from];
 
             if (piece == null || piece.Kind != PieceKind.Bishop || piece.Owner != player)
@@ -923,37 +587,83 @@
             }
 
             var positions = new List<Position>();
-            positions.AddRange(PositionIterate(representation, from, x => x.NorthEast()));
-            positions.AddRange(PositionIterate(representation, from, x => x.NorthWest()));
-            positions.AddRange(PositionIterate(representation, from, x => x.SouthEast()));
-            positions.AddRange(PositionIterate(representation, from, x => x.SouthWest()));
+            positions.AddRange(PositionIterate(board, from, x => x.NorthEast()));
+            positions.AddRange(PositionIterate(board, from, x => x.NorthWest()));
+            positions.AddRange(PositionIterate(board, from, x => x.SouthEast()));
+            positions.AddRange(PositionIterate(board, from, x => x.SouthWest()));
 
             var moves = positions.Where(x => x != null)
-                                 .Where(x => board[x] == null || board[x].Owner != player)
-                                 .Select(x => new ChessMove()
-                                 {
-                                     ChessPiece = piece.Kind,
-                                     Owner = piece.Owner,
-                                     From = from,
-                                     IsCaptureMove = board[x] != null,
-                                     To = x
-                                 });
+                .Where(x => board[x] == null || board[x].Owner != player)
+                .Select(x => new ChessMove(player, from, x));
 
             return moves;
         }
 
-        private IEnumerable<Position> PositionIterate(ChessRepresentation representation, Position from, Func<Position, Position> positionModifier)
+        private IEnumerable<ChessMove> GetQueenMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
-            var board = representation;
-
-            if (board == null)
-            {
-                yield break;
-            }
-
             var piece = board[from];
 
-            if(piece == null)
+            if (piece == null || piece.Kind != PieceKind.Queen || piece.Owner != player)
+            {
+                return Enumerable.Empty<ChessMove>();
+            }
+
+            var positions = new List<Position>();
+            positions.AddRange(PositionIterate(board, from, x => x.North()));
+            positions.AddRange(PositionIterate(board, from, x => x.South()));
+            positions.AddRange(PositionIterate(board, from, x => x.East()));
+            positions.AddRange(PositionIterate(board, from, x => x.West()));
+            positions.AddRange(PositionIterate(board, from, x => x.NorthEast()));
+            positions.AddRange(PositionIterate(board, from, x => x.NorthWest()));
+            positions.AddRange(PositionIterate(board, from, x => x.SouthEast()));
+            positions.AddRange(PositionIterate(board, from, x => x.SouthWest()));
+
+            return positions.Where(x => x != null)
+                .Where(x => board[x] == null || board[x].Owner != player)
+                .Select(x => new ChessMove(player, from, x));
+        }
+
+        private IEnumerable<ChessMove> GetRookMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        {
+            var piece = board[from];
+
+            if (piece == null || piece.Kind != PieceKind.Rook || piece.Owner != player)
+            {
+                return Enumerable.Empty<ChessMove>();
+            }
+
+            var positions = new List<Position>();
+            positions.AddRange(PositionIterate(board, from, x => x.North()));
+            positions.AddRange(PositionIterate(board, from, x => x.South()));
+            positions.AddRange(PositionIterate(board, from, x => x.East()));
+            positions.AddRange(PositionIterate(board, from, x => x.West()));
+
+            return positions.Where(x => x != null)
+                .Where(x => board[x] == null || board[x].Owner != player)
+                .Select(x => new ChessMove(player, from, x));
+        }
+
+        private IEnumerable<ChessMove> GetKnightMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        {
+            var piece = board[from];
+
+            if (piece == null || piece.Kind != PieceKind.Knight || piece.Owner != player)
+            {
+                return Enumerable.Empty<ChessMove>();
+            }
+
+            var knightMoves = from.KnightMoves();
+
+            return knightMoves.Where(x => x != null)
+                .Where(x => board[x] == null || board[x].Owner != player)
+                .Select(x => new ChessMove(player, from, x));
+        }
+
+        private IEnumerable<Position> PositionIterate(ChessRepresentation board, Position from, Func<Position, Position> positionModifier)
+        {
+            var piece = board[from];
+
+            if (piece == null)
             {
                 yield break;
             }
@@ -988,114 +698,6 @@
                     break;
                 }
             }
-        }
-
-        private IEnumerable<ChessMove> GetQueenMoves(ChessRepresentation representation, Position from, ChessPlayer? player = null)
-        {
-            var board = representation;
-
-            if (board == null)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
-            var piece = board[from];
-
-            if (piece == null || piece.Kind != PieceKind.Queen || piece.Owner != player)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            var positions = new List<Position>();
-            positions.AddRange(PositionIterate(representation, from, x => x.North()));
-            positions.AddRange(PositionIterate(representation, from, x => x.South()));
-            positions.AddRange(PositionIterate(representation, from, x => x.East()));
-            positions.AddRange(PositionIterate(representation, from, x => x.West()));
-            positions.AddRange(PositionIterate(representation, from, x => x.NorthEast()));
-            positions.AddRange(PositionIterate(representation, from, x => x.NorthWest()));
-            positions.AddRange(PositionIterate(representation, from, x => x.SouthEast()));
-            positions.AddRange(PositionIterate(representation, from, x => x.SouthWest()));
-
-            return positions.Where(x => x != null)
-                            .Where(x => board[x] == null || board[x].Owner != player)
-                            .Select(x => new ChessMove()
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = board[x] != null,
-                                To = x
-                            });
-        }
-
-        private IEnumerable<ChessMove> GetRookMoves(ChessRepresentation representation, Position from, ChessPlayer? player = null)
-        {
-            var board = representation;
-
-            if (board == null)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
-            var piece = board[from];
-
-            if (piece == null || piece.Kind != PieceKind.Rook || piece.Owner != player)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            var positions = new List<Position>();
-            positions.AddRange(PositionIterate(representation, from, x => x.North()));
-            positions.AddRange(PositionIterate(representation, from, x => x.South()));
-            positions.AddRange(PositionIterate(representation, from, x => x.East()));
-            positions.AddRange(PositionIterate(representation, from, x => x.West()));
-
-            return positions.Where(x => x != null)
-                            .Where(x => board[x] == null || board[x].Owner != player)
-                            .Select(x => new ChessMove()
-                            {
-                                ChessPiece = piece.Kind,
-                                Owner = piece.Owner,
-                                From = from,
-                                IsCaptureMove = board[x] != null,
-                                To = x
-                            });
-        }
-
-        private IEnumerable<ChessMove> GetKnightMoves(ChessRepresentation representation, Position from, ChessPlayer? player = null)
-        {
-            var board = representation;
-
-            if (board == null)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            player = player ?? representation.CurrentPlayer;
-
-            var piece = board[from];
-
-            if (piece == null || piece.Kind != PieceKind.Knight || piece.Owner != player)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
-            var knightMoves = from.KnightMoves();
-
-            return knightMoves.Where(x => x != null)
-                              .Where(x => board[x] == null || board[x].Owner != player)
-                              .Select(x => new ChessMove()
-                              {
-                                  ChessPiece = piece.Kind,
-                                  Owner = piece.Owner,
-                                  From = from,
-                                  IsCaptureMove = board[x] != null,
-                                  To = x
-                              });
         }
     }
 }

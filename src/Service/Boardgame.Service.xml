@@ -647,10 +647,10 @@
         <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.ConvertUser(BoardGame.Service.Models.ApplicationUser)">
             <inheritdoc />
         </member>
-        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.CovertToChessMove(BoardGame.Service.Models.Data.Moves.DbChessMove)">
+        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.CovertToChessMove(BoardGame.Service.Models.Data.Moves.DbBaseMove)">
             <inheritdoc />
         </member>
-        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.CovertToDbChessMove(Game.Chess.Moves.ChessMove)">
+        <member name="M:BoardGame.Service.Models.Converters.ChessGameRepositoryConverter.CovertToDbChessMove(Game.Chess.Moves.BaseMove)">
             <inheritdoc />
         </member>
         <member name="T:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter">
@@ -679,14 +679,14 @@
             <param name="source">The full detailed application user object.</param>
             <returns>The chess game player dto used in the API.</returns>
         </member>
-        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.CovertToChessMove(BoardGame.Service.Models.Data.Moves.DbChessMove)">
+        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.CovertToChessMove(BoardGame.Service.Models.Data.Moves.DbBaseMove)">
             <summary>
             Converts a move from the database to chess move.
             </summary>
             <param name="dbMove">The move from the database</param>
             <returns>Chess move.</returns>
         </member>
-        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.CovertToDbChessMove(Game.Chess.Moves.ChessMove)">
+        <member name="M:BoardGame.Service.Models.Converters.IChessGameRepositoryConverter.CovertToDbChessMove(Game.Chess.Moves.BaseMove)">
             <summary>
             Converts a move to the database chess move.
             </summary>
@@ -806,14 +806,29 @@
             Gets or sets the status of the game.
             </summary>
         </member>
+        <member name="T:BoardGame.Service.Models.Data.Moves.DbBaseMove">
+            <summary>
+            Base class for the move representation in the database.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbBaseMove.MoveId">
+            <summary>
+            Gets or sets the id of the move. (Key)
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbBaseMove.Owner">
+            <summary>
+            Gets or sets the owner of the move. (Black or White.)
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbBaseMove.CreatedAt">
+            <summary>
+            Gets or sets the date of the move.
+            </summary>
+        </member>
         <member name="T:BoardGame.Service.Models.Data.Moves.DbChessMove">
             <summary>
             Database representation of a chess move. Base class.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.MoveId">
-            <summary>
-            Gets or sets the id of the move. (Key)
             </summary>
         </member>
         <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.FromRow">
@@ -844,26 +859,6 @@
         <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.To">
             <summary>
             Gets the destination position calculated from the 'ToRow' and 'ToColumn' properties.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.IsCaptureMove">
-            <summary>
-            Gets or sets a value indicating whether the move was a capture move.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.Owner">
-            <summary>
-            Gets or sets the owner of the move. (Black or White.)
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.ChessPiece">
-            <summary>
-            Gets or sets the moving chess piece kind.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Data.Moves.DbChessMove.CreatedAt">
-            <summary>
-            Gets or sets the date of the move.
             </summary>
         </member>
         <member name="T:BoardGame.Service.Models.Data.Moves.DbKingCastlingMove">
@@ -923,6 +918,16 @@
         <member name="P:BoardGame.Service.Models.Data.Moves.DbPawnPromotionalMove.PromoteTo">
             <summary>
             Gets or sets what kind of chess piece the pawn got promoted to.
+            </summary>
+        </member>
+        <member name="T:BoardGame.Service.Models.Data.Moves.DbSpecialMove">
+            <summary>
+            Represents the special (messaging) type moves in the chess game in the database.
+            </summary>
+        </member>
+        <member name="P:BoardGame.Service.Models.Data.Moves.DbSpecialMove.Message">
+            <summary>
+            Gets or sets the content of the special messaging move.
             </summary>
         </member>
         <member name="T:BoardGame.Service.Models.Repositories.ChessGameRepository.ChallengeRequestResults">

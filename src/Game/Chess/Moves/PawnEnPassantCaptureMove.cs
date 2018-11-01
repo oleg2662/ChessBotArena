@@ -1,57 +1,57 @@
 ﻿using System;
-using Game.Abstraction;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
-    public class PawnEnPassantMove : ChessMove
+    public sealed class PawnEnPassantMove : ChessMove, IEquatable<PawnEnPassantMove>
     {
-        public Position CapturePosition { get; set; }
-
-        public override bool Equals(ChessMove other)
+        public bool Equals(PawnEnPassantMove other)
         {
-            if (!base.Equals(other))
-            {
-                return false;
-            }
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-            var specificMove = (PawnEnPassantMove)other;
+            return base.Equals(other) 
+                   && Equals(CapturePosition, other.CapturePosition);
+        }
 
-            if (specificMove == null)
-            {
-                return false;
-            }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
 
-            return CapturePosition.Equals(specificMove.CapturePosition);
+            return Equals((PawnEnPassantMove) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                int hash = base.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ CapturePosition.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ nameof(PawnEnPassantMove).GetHashCode();
-                return hash;
+                return (base.GetHashCode() * 397) ^ (CapturePosition != null ? CapturePosition.GetHashCode() : 0);
             }
         }
 
-        public override string ToString()
+        public static bool operator ==(PawnEnPassantMove left, PawnEnPassantMove right)
         {
-            return $"{base.ToString()}e.p.";
+            return Equals(left, right);
         }
 
-        public override ChessMove Clone()
+        public static bool operator !=(PawnEnPassantMove left, PawnEnPassantMove right)
         {
-            return new PawnEnPassantMove()
-            {
-                ChessPiece = ChessPiece,
-                Owner = Owner,
-                From = From,
-                To = To,
-                IsCaptureMove = IsCaptureMove,
-                CapturePosition = CapturePosition,
-            };
+            return !Equals(left, right);
+        }
+
+        public Position CapturePosition { get; }
+
+        public PawnEnPassantMove(ChessPlayer owner, Position from, Position to, Position capturePosition)
+            : base(owner, from, to)
+        {
+            CapturePosition = capturePosition;
+        }
+
+        public override BaseMove Clone()
+        {
+            return new PawnEnPassantMove(Owner, From, To, CapturePosition);
         }
     }
 }

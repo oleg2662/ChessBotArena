@@ -34,7 +34,7 @@ namespace BoardGame.Service.Models.Data
         public DateTime LastMoveDate { get; set; }
 
         /// <inheritdoc />
-        public ICollection<DbChessMove> History { get; set; }
+        public ICollection<DbBaseMove> History { get; set; }
 
         /// <inheritdoc />
         public DbChessGameStatus Status { get; set; }
