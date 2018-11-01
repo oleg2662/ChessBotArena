@@ -38,12 +38,13 @@
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<DbChessMove>()
+            builder.Entity<DbBaseMove>()
                 .ToTable("ChessMoves")
                 .HasDiscriminator<string>("ChessMoveType")
                 .HasValue<DbKingCastlingMove>(nameof(DbKingCastlingMove))
                 .HasValue<DbPawnEnPassantMove>(nameof(DbPawnEnPassantMove))
                 .HasValue<DbPawnPromotionalMove>(nameof(DbPawnPromotionalMove))
+                .HasValue<DbSpecialMove>(nameof(DbSpecialMove))
                 .HasValue<DbChessMove>(nameof(DbChessMove));
         }
     }

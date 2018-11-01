@@ -16,9 +16,10 @@ using System;
 namespace BoardGame.Service.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181101233415_AddingSpecialMovesToDb")]
+    partial class AddingSpecialMovesToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,17 +259,6 @@ namespace BoardGame.Service.Data.Migrations
                     b.ToTable("ChessMoves");
 
                     b.HasDiscriminator().HasValue("DbChessMove");
-                });
-
-            modelBuilder.Entity("BoardGame.Service.Models.Data.Moves.DbSpecialMove", b =>
-                {
-                    b.HasBaseType("BoardGame.Service.Models.Data.Moves.DbBaseMove");
-
-                    b.Property<int>("Message");
-
-                    b.ToTable("ChessMoves");
-
-                    b.HasDiscriminator().HasValue("DbSpecialMove");
                 });
 
             modelBuilder.Entity("BoardGame.Service.Models.Data.Moves.DbKingCastlingMove", b =>
