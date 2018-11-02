@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Game.Chess;
 
 namespace BoardGame.Service.Models.Data
 {
@@ -37,6 +38,6 @@ namespace BoardGame.Service.Models.Data
         public ICollection<DbBaseMove> History { get; set; }
 
         /// <inheritdoc />
-        public DbChessGameStatus Status { get; set; }
+        public GameState Status { get; set; }
     }
 }

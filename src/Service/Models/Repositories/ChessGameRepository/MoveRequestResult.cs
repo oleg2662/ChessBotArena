@@ -31,5 +31,10 @@ namespace BoardGame.Service.Models.Repositories.ChessGameRepository
         /// Multiple matches found. (DB error)
         /// </summary>
         MultipleMatchesFound = -4,
+
+        /// <summary>
+        /// Game has already ended.
+        /// </summary>
+        GameHasAlreadyEnded = -5
     }
 }

@@ -3,6 +3,14 @@ using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Data.Moves;
 using Game.Chess.Moves;
 using System;
+using System.Linq;
+using Game.Chess;
+
+//using ChessMove = Game.Chess.Moves.ChessMove;
+//using KingCastlingMove = Game.Chess.Moves.KingCastlingMove;
+//using PawnEnPassantMove = Game.Chess.Moves.PawnEnPassantMove;
+//using PawnPromotionalMove = Game.Chess.Moves.PawnPromotionalMove;
+//using SpecialMove = Game.Chess.Moves.SpecialMove;
 
 namespace BoardGame.Service.Models.Converters
 {
@@ -40,6 +48,15 @@ namespace BoardGame.Service.Models.Converters
                 return null;
             }
 
+            var history = source.History.OrderBy(x => x.CreatedAt).Select(CovertToChessMove).ToList();
+
+            var representation = new ChessRepresentationInitializer().Create();
+            var chessMechanism = new ChessMechanism();
+            foreach (var move in history)
+            {
+                representation = chessMechanism.ApplyMove(representation, move);
+            }
+
             return new ChessGameDetails
             {
                 ChallengeDate = source.ChallengeDate,
@@ -50,7 +67,7 @@ namespace BoardGame.Service.Models.Converters
                 Opponent = ConvertUser(source.Opponent),
                 BlackPlayer = ConvertUser(source.BlackPlayer),
                 WhitePlayer = ConvertUser(source.WhitePlayer),
-                Representation = new Game.Chess.ChessRepresentationInitializer().Create()
+                Representation = representation
             };
         }
 

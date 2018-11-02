@@ -181,7 +181,7 @@
             }
 
             representation.TogglePlayer();
-            representationParam.History.Add(move);
+            representation.History.Add(move);
 
             return representation;
         }

@@ -146,7 +146,7 @@ namespace BoardGame.Service.Controllers.Api
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPut("{gameIdString}")]
-        public IActionResult Move(string gameIdString, [FromBody]ChessMove move)
+        public IActionResult Move(string gameIdString, [FromBody]BaseMove move)
         {
             bool validId = Guid.TryParse(gameIdString, out Guid gid);
 
@@ -163,18 +163,23 @@ namespace BoardGame.Service.Controllers.Api
                 case MoveRequestResults.Ok:
                     _logger.LogInformation($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString}.");
                     return Ok(result);
+
                 case MoveRequestResults.WrongTurn:
                     _logger.LogInformation($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} in the wrong turn.");
                     return Forbidden(result);
+
                 case MoveRequestResults.InvalidMove:
                     _logger.LogInformation($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} but it was an invalid move.");
                     return Forbidden(result);
+
                 case MoveRequestResults.NoMatchFound:
                     _logger.LogWarning($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} but the match was not found.");
                     return NotFound(gameIdString);
+
                 case MoveRequestResults.MultipleMatchesFound:
                     _logger.LogError($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} but multiple matches were found.");
                     return Conflict(result);
+
                 default:
                     return InternalServerError();
             }

@@ -43,6 +43,6 @@ namespace BoardGame.Service.Repositories
         /// <param name="chessGameId">ID of the game.</param>
         /// <param name="move">The chess move.</param>
         /// <returns>Returns the result of the validation and the operation.</returns>
-        ChessGameRepositoryMoveResult Move<T>(string participantPlayerName, Guid chessGameId, T move) where T : ChessMove;
+        ChessGameRepositoryMoveResult Move<T>(string participantPlayerName, Guid chessGameId, T move) where T : BaseMove;
     }
 }

@@ -48,9 +48,9 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public Position From { get; }
+        public Position From { get; set; }
 
-        public Position To { get; }
+        public Position To { get; set; }
 
         public ChessMove(ChessPlayer owner, Position from, Position to)
             : base(owner)

@@ -124,7 +124,7 @@
             <response code="401">If there is an authentication error.</response>
             <response code="500">If there is a server error.</response>
         </member>
-        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.Move(System.String,Game.Chess.Moves.ChessMove)">
+        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.Move(System.String,Game.Chess.Moves.BaseMove)">
             <summary>
             Tries to apply a move.
             </summary>
@@ -726,31 +726,6 @@
         <member name="P:BoardGame.Service.Models.Data.DbChessGame.Status">
             <inheritdoc />
         </member>
-        <member name="T:BoardGame.Service.Models.Data.DbChessGameStatus">
-            <summary>
-            Represents the game statuses.
-            </summary>
-        </member>
-        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.Ongoing">
-            <summary>
-            The game is ongoing.
-            </summary>
-        </member>
-        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.Draw">
-            <summary>
-            The game has ended in a draw.
-            </summary>
-        </member>
-        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.WhiteWins">
-            <summary>
-            White won the game.
-            </summary>
-        </member>
-        <member name="F:BoardGame.Service.Models.Data.DbChessGameStatus.BlackWins">
-            <summary>
-            Black won the game.
-            </summary>
-        </member>
         <member name="T:BoardGame.Service.Models.Data.IDbChessGame">
             <summary>
             Interface to a chess game item in the chess games controller.
@@ -1010,6 +985,11 @@
             Multiple matches found. (DB error)
             </summary>
         </member>
+        <member name="F:BoardGame.Service.Models.Repositories.ChessGameRepository.MoveRequestResults.GameHasAlreadyEnded">
+            <summary>
+            Game has already ended.
+            </summary>
+        </member>
         <member name="T:BoardGame.Service.Models.Web.AccountViewModels.LoginViewModel">
             <summary>
             Web controller model for logins.
@@ -1189,7 +1169,7 @@
             Initializes a new instance of the chess game repository.
             </summary>
             <param name="dbContext">The database context to be used to query the data.</param>
-            <param name="chessGameConveter">Converter which transforms the inner database-near model to API model.</param>
+            <param name="chessGameConverter">Converter which transforms the inner database-near model to API model.</param>
         </member>
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Get(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
             <inheritdoc />

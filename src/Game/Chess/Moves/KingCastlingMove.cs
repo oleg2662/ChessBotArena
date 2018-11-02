@@ -1,6 +1,5 @@
 ﻿using Game.Chess.Extensions;
 using System;
-using Game.Abstraction;
 
 namespace Game.Chess.Moves
 {
@@ -74,7 +73,16 @@ namespace Game.Chess.Moves
             }
         }
 
-        public CastlingType CastlingType { get; }
+        private CastlingType _castlingType;
+        public CastlingType CastlingType
+        {
+            get => _castlingType;
+            set
+            {
+                _castlingType = value;
+                To = CalculateTo(value, From);
+            }
+        }
 
         public KingCastlingMove(ChessPlayer owner, Position from, CastlingType castlingType)
             : base(owner, from, CalculateTo(castlingType, from))
@@ -92,9 +100,13 @@ namespace Game.Chess.Moves
         {
             switch (castlingType)
             {
-                case CastlingType.Long: return from.East(2);
-                case CastlingType.Short: return from.West(2);
-                default: throw new ArgumentOutOfRangeException(nameof(castlingType));
+                case CastlingType.Long:
+                    return from.East(2);
+
+                case CastlingType.Short:
+                    return from.West(2);
+
+                default: throw new ArgumentOutOfRangeException(nameof(CastlingType));
             }
         }
     }

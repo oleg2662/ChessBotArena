@@ -47,7 +47,7 @@ namespace Game.Chess.Moves
             Message = message;
         }
 
-        public MessageType Message { get; }
+        public MessageType Message { get; set; }
 
         public override BaseMove Clone()
         {

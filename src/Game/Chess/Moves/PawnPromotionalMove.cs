@@ -42,7 +42,7 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public PieceKind PromoteTo { get; }
+        public PieceKind PromoteTo { get; set; }
 
         public PawnPromotionalMove(ChessPlayer owner, Position from, Position to, PieceKind promoteTo)
             : base(owner, from, to)

@@ -41,7 +41,7 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public Position CapturePosition { get; }
+        public Position CapturePosition { get; set; }
 
         public PawnEnPassantMove(ChessPlayer owner, Position from, Position to, Position capturePosition)
             : base(owner, from, to)

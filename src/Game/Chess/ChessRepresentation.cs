@@ -98,8 +98,8 @@
             var newBoard = new ChessRepresentation()
             {
                 CurrentPlayer = CurrentPlayer,
-                History = History.Select(x => x.Clone()).ToList(),
-                Players = Players.Select(x => x).ToList(),
+                History = History,
+                Players = Players,
             };
 
             foreach(var p in Positions.PositionList)

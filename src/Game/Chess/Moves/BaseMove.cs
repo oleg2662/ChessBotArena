@@ -41,7 +41,7 @@ namespace Game.Chess.Moves
             Owner = owner;
         }
 
-        public ChessPlayer Owner { get; }
+        public ChessPlayer Owner { get; set; }
 
         public abstract BaseMove Clone();
     }

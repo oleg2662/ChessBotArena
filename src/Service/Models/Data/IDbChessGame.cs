@@ -1,6 +1,7 @@
 ﻿using BoardGame.Service.Models.Data.Moves;
 using System;
 using System.Collections.Generic;
+using Game.Chess;
 
 namespace BoardGame.Service.Models.Data
 {
@@ -57,6 +58,6 @@ namespace BoardGame.Service.Models.Data
         /// <summary>
         /// Gets or sets the status of the game.
         /// </summary>
-        DbChessGameStatus Status { get; set; }
+        GameState Status { get; set; }
     }
 }
