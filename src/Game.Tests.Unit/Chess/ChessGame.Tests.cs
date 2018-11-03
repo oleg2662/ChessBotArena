@@ -299,7 +299,7 @@ namespace Game.Tests.Unit.Chess
         public void PerformanceCheck()
         {
             var mechanism = new ChessMechanism();
-            var numberOfTries = 1000;
+            var numberOfTries = 10;
             var times = new List<double>(numberOfTries);
             ChessRepresentation game;
             for (var i = 0; i < numberOfTries; i++)
@@ -316,43 +316,7 @@ namespace Game.Tests.Unit.Chess
                         break;
                     }
 
-                    try
-                    {
-                        game = mechanism.ApplyMove(game, move);
-                    }
-                    catch (Exception e)
-                    {
-                        var cm = move as ChessMove;
-                        var km = move as KingCastlingMove;
-                        var ep = move as PawnEnPassantMove;
-                        var pr = move as PawnPromotionalMove;
-                        var sp = move as SpecialMove;
-
-                        if (cm != null)
-                        {
-                            _output.WriteLine($"CHESSMOVE: {cm.From}->{cm.To}");
-                        }
-
-                        if (km != null)
-                        {
-                            _output.WriteLine($"CASTLING: {km.From}->{km.To} ({km.RookFrom}-{km.RookTo})");
-                        }
-
-                        if (ep != null)
-                        {
-                            _output.WriteLine($"EP: {ep.From}->{ep.To} ({ep.CapturePosition})");
-                        }
-
-                        if (pr != null)
-                        {
-                            _output.WriteLine($"EP: {pr.From}->{pr.To} ({pr.PromoteTo})");
-                        }
-
-                        if (sp != null)
-                        {
-                            _output.WriteLine($"SP: {sp.Message}");
-                        }
-                    }
+                    game = mechanism.ApplyMove(game, move);
                 }
 
                 var end = DateTime.Now;

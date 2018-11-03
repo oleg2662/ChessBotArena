@@ -9,7 +9,7 @@
     using Pieces;
 
     [Serializable]
-    public class ChessRepresentation : ICloneable<ChessRepresentation>
+    public sealed class ChessRepresentation : ICloneable<ChessRepresentation>
     {
         private readonly ChessPiece[] _pieces = new ChessPiece[64];
 

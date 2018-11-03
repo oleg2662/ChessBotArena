@@ -572,6 +572,7 @@ namespace Game.Chess
                                               && !board[shortCastlingRookPosition].HasMoved
                                               && shortCastlingEmpty;
 
+
             var anyCastlingPossible = shortCastlingSeemsPossible || longCastlingSeemsPossible;
 
             if(!anyCastlingPossible)
@@ -581,12 +582,12 @@ namespace Game.Chess
 
             var threatenedPositions = GetThreatenedPositions(board, player).ToList();
 
-            if(!threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
+            if(longCastlingSeemsPossible && !threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
             {
                 yield return new KingCastlingMove(player, CastlingType.Long);
             }
 
-            if (!threatenedPositions.Intersect(shortCastlingNoThreatPositions).Any())
+            if (shortCastlingSeemsPossible && !threatenedPositions.Intersect(shortCastlingNoThreatPositions).Any())
             {
                 yield return new KingCastlingMove(player, CastlingType.Short);
             }
