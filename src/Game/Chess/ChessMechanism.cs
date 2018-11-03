@@ -1,4 +1,6 @@
-﻿namespace Game.Chess
+﻿using Game.Chess.Exceptions;
+
+namespace Game.Chess
 {
     using Abstraction;
     using Moves;
@@ -18,7 +20,7 @@
 
             foreach (var move in possibleMoves)
             {
-                var newRepresentation = ApplyMove(representation, move);
+                var newRepresentation = ApplyMove(representation, move, false);
                 var movingPiece = originalBoard[move.From];
                 IEnumerable<Position> threatenedPositions;
                 var originalKingPosition = FindKing(newRepresentation, currentPlayer);
@@ -94,6 +96,7 @@
             }
 
             var isCurrentPlayerInChess = IsPlayerInChess(representation, representation.CurrentPlayer);
+            var mvs = GenerateMoves(representation).ToList();
             var anyMovesLeft = GenerateMoves(representation).Any();
 
             if (!anyMovesLeft && isCurrentPlayerInChess)
@@ -128,6 +131,16 @@
 
         public ChessRepresentation ApplyMove(ChessRepresentation representationParam, BaseMove move)
         {
+            return ApplyMove(representationParam, move, true);
+        }
+
+        private ChessRepresentation ApplyMove(ChessRepresentation representationParam, BaseMove move, bool validateMove)
+        {
+            if (validateMove && !ValidateMove(representationParam, move))
+            {
+                throw new ChessIllegalMoveException();
+            }
+
             var representation = representationParam.Clone();
 
             // Removing en passant flags
@@ -196,17 +209,19 @@
             return position;
         }
 
-        private IEnumerable<Position> GetThreatenedPositions(ChessRepresentation representation, ChessPlayer threatenedPlayer)
+        private ChessPlayer GetOpponent(ChessPlayer player)
         {
-            var board = representation;
-
-            if(board == null)
+            switch (player)
             {
-                return Enumerable.Empty<Position>();
+                case ChessPlayer.Black: return ChessPlayer.White;
+                case ChessPlayer.White: return ChessPlayer.Black;
+                default: throw new ArgumentOutOfRangeException();
             }
+        }
 
-            var opponent = representation.CurrentPlayer;
-
+        private IEnumerable<Position> GetThreatenedPositions(ChessRepresentation board, ChessPlayer threatenedPlayer)
+        {
+            var threateningPlayer = GetOpponent(threatenedPlayer);
             var opponentMoves = new List<ChessMove>();
 
             foreach (var from in Positions.PositionList)
@@ -221,27 +236,27 @@
                 switch (piece.Kind)
                 {
                     case PieceKind.King:
-                        opponentMoves.AddRange(GetKingMoves(representation, from, opponent));
+                        opponentMoves.AddRange(GetKingMoves(board, from, threateningPlayer));
                         break;
 
                     case PieceKind.Queen:
-                        opponentMoves.AddRange(GetQueenMoves(representation, from, opponent));
+                        opponentMoves.AddRange(GetQueenMoves(board, from, threateningPlayer));
                         break;
 
                     case PieceKind.Rook:
-                        opponentMoves.AddRange(GetRookMoves(representation, from, opponent));
+                        opponentMoves.AddRange(GetRookMoves(board, from, threateningPlayer));
                         break;
 
                     case PieceKind.Bishop:
-                        opponentMoves.AddRange(GetBishopMoves(representation, from, opponent));
+                        opponentMoves.AddRange(GetBishopMoves(board, from, threateningPlayer));
                         break;
 
                     case PieceKind.Knight:
-                        opponentMoves.AddRange(GetKnightMoves(representation, from, opponent));
+                        opponentMoves.AddRange(GetKnightMoves(board, from, threateningPlayer));
                         break;
 
                     case PieceKind.Pawn:
-                        opponentMoves.AddRange(GetPawnMoves(representation, from, opponent, true));
+                        opponentMoves.AddRange(GetPawnMoves(board, from, threateningPlayer, true));
                         break;
 
                     default:
@@ -254,11 +269,6 @@
 
         private IEnumerable<ChessMove> GenerateMoves(ChessRepresentation representation, ChessPlayer player)
         {
-            if (GetGameState(representation) != GameState.InProgress)
-            {
-                return Enumerable.Empty<ChessMove>();
-            }
-
             var possibleMoves = Positions.PositionList
                                          .Where(x => representation[x] != null && representation[x].Owner == representation.CurrentPlayer)
                                          .SelectMany(x => GetChessMoves(representation, x, player));
@@ -535,8 +545,9 @@
                                         .Select(x => board[x])
                                         .Count(x => x == null) == longCastlingEmptyPositions.Count();
 
-            var longCastlingSeemsPossible = !board[longCastlingRookPosition].HasMoved && longCastlingEmpty;
-
+            var longCastlingSeemsPossible = board[longCastlingRookPosition]?.Kind == PieceKind.Rook
+                                                && !board[longCastlingRookPosition].HasMoved
+                                                && longCastlingEmpty;
 
             // Short castling trivial possibility check...
             var shortCastlingEmptyPositions = player == ChessPlayer.White
@@ -555,7 +566,9 @@
                                         .Select(x => board[x])
                                         .Count(x => x == null) == shortCastlingEmptyPositions.Count();
 
-            var shortCastlingSeemsPossible = !board[shortCastlingRookPosition].HasMoved && shortCastlingEmpty;
+            var shortCastlingSeemsPossible = board[shortCastlingRookPosition]?.Kind == PieceKind.Rook
+                                                && !board[shortCastlingRookPosition].HasMoved
+                                                && shortCastlingEmpty;
 
             var anyCastlingPossible = shortCastlingSeemsPossible || longCastlingSeemsPossible;
 
@@ -568,12 +581,12 @@
 
             if(!threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
             {
-                yield return new KingCastlingMove(player, from, CastlingType.Long);
+                yield return new KingCastlingMove(player, CastlingType.Long);
             }
 
             if (!threatenedPositions.Intersect(shortCastlingNoThreatPositions).Any())
             {
-                yield return new KingCastlingMove(player, from, CastlingType.Short);
+                yield return new KingCastlingMove(player, CastlingType.Short);
             }
         }
 

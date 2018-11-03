@@ -178,5 +178,103 @@ namespace Game.Tests.Unit.Chess
             Assert.Subset(expectedKnightMoves, moves);
             Assert.Subset(moves, expectedKnightMoves);
         }
+
+        [Fact]
+        public void GameStateCheck_CheckMateTest_BlackWins()
+        {
+            var expected = GameState.BlackWon;
+
+            // Fool's mate
+            var game = new ChessRepresentationInitializer().Create();
+            var mechanism = new ChessMechanism();
+            var moves = new List<BaseMove>(4)
+            {
+                new ChessMove(ChessPlayer.White, Positions.G2, Positions.G4),
+                new ChessMove(ChessPlayer.Black, Positions.E7, Positions.E5),
+                new ChessMove(ChessPlayer.White, Positions.F2, Positions.F3),
+                new ChessMove(ChessPlayer.Black, Positions.D8, Positions.H4)
+            };
+
+            foreach (var move in moves)
+            {
+                game = mechanism.ApplyMove(game, move);
+            }
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_CheckMateTest_WhiteWins()
+        {
+            var expected = GameState.WhiteWon;
+
+            //Scholar's Mate
+            var game = new ChessRepresentationInitializer().Create();
+            var mechanism = new ChessMechanism();
+            var moves = new List<BaseMove>(7)
+            {
+                new ChessMove(ChessPlayer.White, Positions.E2, Positions.E4),
+                new ChessMove(ChessPlayer.Black, Positions.E7, Positions.E5),
+                new ChessMove(ChessPlayer.White, Positions.F1, Positions.C4),
+                new ChessMove(ChessPlayer.Black, Positions.B8, Positions.C6),
+                new ChessMove(ChessPlayer.White, Positions.D1, Positions.H5),
+                new ChessMove(ChessPlayer.Black, Positions.G8, Positions.F6),
+                new ChessMove(ChessPlayer.White, Positions.H5, Positions.F7)
+            };
+
+            foreach (var move in moves)
+            {
+                game = mechanism.ApplyMove(game, move);
+            }
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+
+        [Fact]
+        public void GameStateCheck_StaleMateTest_Draw()
+        {
+            var expected = GameState.Draw;
+
+            //Stalemate
+            var game = new ChessRepresentationInitializer().Create();
+            var mechanism = new ChessMechanism();
+            var moves = new List<BaseMove>(19)
+            {
+                new ChessMove(ChessPlayer.White, Positions.E2, Positions.E3),
+                new ChessMove(ChessPlayer.Black, Positions.A7, Positions.A5),
+                new ChessMove(ChessPlayer.White, Positions.D1, Positions.H5),
+                new ChessMove(ChessPlayer.Black, Positions.A8, Positions.A6),
+                new ChessMove(ChessPlayer.White, Positions.H5, Positions.A5),
+                new ChessMove(ChessPlayer.Black, Positions.H7, Positions.H5),
+                new ChessMove(ChessPlayer.White, Positions.H2, Positions.H4),
+                new ChessMove(ChessPlayer.Black, Positions.A6, Positions.H6),
+                new ChessMove(ChessPlayer.White, Positions.A5, Positions.C7),
+                new ChessMove(ChessPlayer.Black, Positions.F7, Positions.F6),
+                new ChessMove(ChessPlayer.White, Positions.C7, Positions.D7),
+                new ChessMove(ChessPlayer.Black, Positions.E8, Positions.F7),
+                new ChessMove(ChessPlayer.White, Positions.D7, Positions.B7),
+                new ChessMove(ChessPlayer.Black, Positions.D8, Positions.D3),
+                new ChessMove(ChessPlayer.White, Positions.B7, Positions.B8),
+                new ChessMove(ChessPlayer.Black, Positions.D3, Positions.H7),
+                new ChessMove(ChessPlayer.White, Positions.B8, Positions.C8),
+                new ChessMove(ChessPlayer.Black, Positions.F7, Positions.G6),
+                new ChessMove(ChessPlayer.White, Positions.C8, Positions.H8)
+                //new ChessMove(ChessPlayer.White, Positions.C8, Positions.E6)
+            };
+
+            foreach (var move in moves)
+            {
+                game = mechanism.ApplyMove(game, move);
+            }
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Game.Chess.Pieces;
 using System;
+using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
@@ -42,8 +43,9 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public PieceKind PromoteTo { get; set; }
+        public PieceKind PromoteTo { get; }
 
+        [JsonConstructor]
         public PawnPromotionalMove(ChessPlayer owner, Position from, Position to, PieceKind promoteTo)
             : base(owner, from, to)
         {

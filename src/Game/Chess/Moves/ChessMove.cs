@@ -1,11 +1,11 @@
-﻿using Game.Chess.Pieces;
-using System;
-using System.Collections.Generic;
-using Game.Chess.Extensions;
+﻿using System;
+using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
+    [DebuggerDisplay("{From}->{To}")]
     public class ChessMove : BaseMove, IEquatable<ChessMove>
     {
         public bool Equals(ChessMove other)
@@ -48,10 +48,11 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public Position From { get; set; }
+        public Position From { get; }
 
-        public Position To { get; set; }
+        public Position To { get; }
 
+        [JsonConstructor]
         public ChessMove(ChessPlayer owner, Position from, Position to)
             : base(owner)
         {

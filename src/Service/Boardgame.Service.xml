@@ -479,9 +479,9 @@
             Gets or sets the date of the last move. Initially set to the challenge date.
             </summary>
         </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.HasEnded">
+        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Outcome">
             <summary>
-            Gets a value indicating whether the match has ended or not.
+            Gets or sets the outcome of the match.
             </summary>
         </member>
         <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGameDetails">

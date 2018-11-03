@@ -1,5 +1,6 @@
 ﻿using Game.Chess.Extensions;
 using System;
+using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
@@ -41,72 +42,99 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public Position RookFrom
-        {
-            get
-            {
-                switch (CastlingType)
-                {
-                    case CastlingType.Long:
-                        return new Position('A', From.Row);
-                    case CastlingType.Short:
-                        return new Position('H', From.Row);
-                }
+        public Position RookFrom { get; }
 
-                throw new ArgumentOutOfRangeException(nameof(CastlingType));
-            }
-        }
+        public Position RookTo { get; }
 
-        public Position RookTo
-        {
-            get
-            {
-                switch (CastlingType)
-                {
-                    case CastlingType.Long:
-                        return new Position('A', From.Row);
-                    case CastlingType.Short:
-                        return new Position('D', From.Row);
-                }
+        public CastlingType CastlingType { get; }
 
-                throw new ArgumentOutOfRangeException(nameof(CastlingType));
-            }
-        }
-
-        private CastlingType _castlingType;
-        public CastlingType CastlingType
-        {
-            get => _castlingType;
-            set
-            {
-                _castlingType = value;
-                To = CalculateTo(value, From);
-            }
-        }
-
-        public KingCastlingMove(ChessPlayer owner, Position from, CastlingType castlingType)
-            : base(owner, from, CalculateTo(castlingType, from))
+        [JsonConstructor]
+        public KingCastlingMove(ChessPlayer owner, CastlingType castlingType)
+            : base(owner, CalculateFrom(owner), CalculateTo(owner, castlingType))
         {
             CastlingType = castlingType;
+            switch (owner)
+            {
+                case ChessPlayer.White:
+                    switch (castlingType)
+                    {
+                        case CastlingType.Long:
+                            RookFrom = Positions.A1;
+                            RookTo = Positions.D1;
+                            break;
+
+                        case CastlingType.Short:
+                            RookFrom = Positions.H1;
+                            RookTo = Positions.F1;
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(castlingType), owner, null);
+                    }
+                    break;
+
+                case ChessPlayer.Black:
+                    switch (castlingType)
+                    {
+                        case CastlingType.Long:
+                            RookFrom = Positions.A8;
+                            RookTo = Positions.D8;
+                            break;
+
+                        case CastlingType.Short:
+                            RookFrom = Positions.H8;
+                            RookTo = Positions.F8;
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(castlingType), owner, null);
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(owner), owner, null);
+            }
         }
 
         public override BaseMove Clone()
         {
-            return new KingCastlingMove(Owner, From, CastlingType);
+            return new KingCastlingMove(Owner, CastlingType);
         }
 
-        
-        private static Position CalculateTo(CastlingType castlingType, Position from)
+        private static Position CalculateFrom(ChessPlayer owner)
         {
-            switch (castlingType)
+            switch (owner)
             {
-                case CastlingType.Long:
-                    return from.East(2);
+                case ChessPlayer.White:
+                    return Positions.E1;
+                case ChessPlayer.Black:
+                    return Positions.E8;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(owner), owner, null);
+            }
+        }
 
-                case CastlingType.Short:
-                    return from.West(2);
+        private static Position CalculateTo(ChessPlayer owner, CastlingType castlingType)
+        {
+            switch (owner)
+            {
+                case ChessPlayer.White:
+                    switch (castlingType)
+                    {
+                        case CastlingType.Long: return Positions.C1;
+                        case CastlingType.Short: return Positions.G1;
+                        default: throw new ArgumentOutOfRangeException(nameof(castlingType), owner, null);
+                    }
 
-                default: throw new ArgumentOutOfRangeException(nameof(CastlingType));
+                case ChessPlayer.Black:
+                    switch (castlingType)
+                    {
+                        case CastlingType.Long: return Positions.C8;
+                        case CastlingType.Short: return Positions.G8;
+                        default: throw new ArgumentOutOfRangeException(nameof(castlingType), owner, null);
+                    }
+
+                default: throw new ArgumentOutOfRangeException(nameof(owner), owner, null);
             }
         }
     }

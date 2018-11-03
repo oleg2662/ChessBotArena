@@ -3,14 +3,9 @@ using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Data.Moves;
 using Game.Chess.Moves;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Game.Chess;
-
-//using ChessMove = Game.Chess.Moves.ChessMove;
-//using KingCastlingMove = Game.Chess.Moves.KingCastlingMove;
-//using PawnEnPassantMove = Game.Chess.Moves.PawnEnPassantMove;
-//using PawnPromotionalMove = Game.Chess.Moves.PawnPromotionalMove;
-//using SpecialMove = Game.Chess.Moves.SpecialMove;
 
 namespace BoardGame.Service.Models.Converters
 {
@@ -37,6 +32,7 @@ namespace BoardGame.Service.Models.Converters
                 Opponent = ConvertUser(source.Opponent),
                 BlackPlayer = ConvertUser(source.BlackPlayer),
                 WhitePlayer = ConvertUser(source.WhitePlayer),
+                Outcome = source.Status
             };
         }
 
@@ -48,7 +44,7 @@ namespace BoardGame.Service.Models.Converters
                 return null;
             }
 
-            var history = source.History.OrderBy(x => x.CreatedAt).Select(CovertToChessMove).ToList();
+            var history = source.History?.OrderBy(x => x.CreatedAt).Select(CovertToChessMove).ToList() ?? new List<BaseMove>();
 
             var representation = new ChessRepresentationInitializer().Create();
             var chessMechanism = new ChessMechanism();
@@ -97,7 +93,7 @@ namespace BoardGame.Service.Models.Converters
             switch (dbMove)
             {
                 case DbKingCastlingMove castling:
-                    return new KingCastlingMove(castling.Owner, castling.From, castling.CastlingType);
+                    return new KingCastlingMove(castling.Owner, castling.CastlingType);
 
                 case DbPawnPromotionalMove promotionalMove:
                     return new PawnPromotionalMove(promotionalMove.Owner, promotionalMove.From, promotionalMove.To, promotionalMove.PromoteTo);

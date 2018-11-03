@@ -83,7 +83,8 @@ namespace BoardGame.Service.Repositories
                 WhitePlayer = white,
                 BlackPlayer = black,
                 Name = $"{initiatedBy.UserName} vs {opponent.UserName}",
-                LastMoveDate = now
+                LastMoveDate = now,
+                Status = GameState.InProgress
             };
 
             var newEntity =_dbContext.Add(newGame).Entity;
@@ -133,13 +134,8 @@ namespace BoardGame.Service.Repositories
 
             var oldChessGameDetails = _chessGameConverter.ConvertToChessGameDetails(match);
 
-            var game = new ChessRepresentationInitializer().Create();
+            var game = oldChessGameDetails.Representation;
             var gameMechanism = new ChessMechanism();
-
-            foreach (var moveItem in history)
-            {
-                game = gameMechanism.ApplyMove(game, moveItem);
-            }
 
             // Game has already ended, not accepting any more moves!
             if (gameMechanism.GetGameState(game) != GameState.InProgress)

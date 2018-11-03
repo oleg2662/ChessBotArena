@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
@@ -41,8 +42,9 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public Position CapturePosition { get; set; }
+        public Position CapturePosition { get; }
 
+        [JsonConstructor]
         public PawnEnPassantMove(ChessPlayer owner, Position from, Position to, Position capturePosition)
             : base(owner, from, to)
         {

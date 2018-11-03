@@ -115,7 +115,7 @@ namespace BoardGame.Service.Controllers.Api
             {
                 case ChallengeRequestResults.Ok:
                     _logger.LogInformation($"{GetCurrentUser()} has sent a challenge request to user with ID {challenge.Opponent}.");
-                    return Created(new Uri($"{Request.Path}/{result.NewlyCreatedGame.Id}", UriKind.Relative), result.NewlyCreatedGame);
+                    return Created(new Uri($"{Request.Path}{result.NewlyCreatedGame.Id}", UriKind.Relative), result.NewlyCreatedGame);
                 
                 case ChallengeRequestResults.InitiatedByUserNull:
                     _logger.LogError($"The challenger user ({GetCurrentUser()}) could not be found.");

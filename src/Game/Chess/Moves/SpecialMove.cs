@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
@@ -41,13 +42,14 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
+        [JsonConstructor]
         public SpecialMove(ChessPlayer owner, MessageType message)
             : base(owner)
         {
             Message = message;
         }
 
-        public MessageType Message { get; set; }
+        public MessageType Message { get; }
 
         public override BaseMove Clone()
         {

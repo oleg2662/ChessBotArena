@@ -1,5 +1,6 @@
 ﻿using System;
 using Game.Abstraction;
+using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
@@ -36,12 +37,13 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
+        [JsonConstructor]
         protected BaseMove(ChessPlayer owner)
         {
             Owner = owner;
         }
 
-        public ChessPlayer Owner { get; set; }
+        public ChessPlayer Owner { get; }
 
         public abstract BaseMove Clone();
     }

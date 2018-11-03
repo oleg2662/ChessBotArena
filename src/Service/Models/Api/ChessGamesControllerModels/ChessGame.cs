@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Chess;
 
 namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
 {
@@ -48,8 +49,8 @@ namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
         public DateTime LastMoveDate { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the match has ended or not.
+        /// Gets or sets the outcome of the match.
         /// </summary>
-        public bool HasEnded => false;
+        public GameState Outcome { get; set; }
     }
 }
