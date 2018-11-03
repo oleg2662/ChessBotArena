@@ -180,7 +180,7 @@ namespace Game.Chess
                     representation[pawnPromotionalMove.To].HasMoved = true;
                     break;
 
-                case ChessMove chessMove:
+                case BaseChessMove chessMove:
                     var movingPiece = representation[chessMove.From];
                     representation.Move(chessMove.From, chessMove.To);
                     representation[chessMove.To].HasMoved = true;
@@ -222,7 +222,7 @@ namespace Game.Chess
         private IEnumerable<Position> GetThreatenedPositions(ChessRepresentation board, ChessPlayer threatenedPlayer)
         {
             var threateningPlayer = GetOpponent(threatenedPlayer);
-            var opponentMoves = new List<ChessMove>();
+            var opponentMoves = new List<BaseChessMove>();
 
             foreach (var from in Positions.PositionList)
             {
@@ -267,7 +267,7 @@ namespace Game.Chess
             return opponentMoves.Select(x => x.To).Distinct();
         }
 
-        private IEnumerable<ChessMove> GenerateMoves(ChessRepresentation representation, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GenerateMoves(ChessRepresentation representation, ChessPlayer player)
         {
             var possibleMoves = Positions.PositionList
                                          .Where(x => representation[x] != null && representation[x].Owner == representation.CurrentPlayer)
@@ -276,13 +276,13 @@ namespace Game.Chess
             return possibleMoves;
         }
 
-        private IEnumerable<ChessMove> GetChessMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetChessMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
             var piece = board[from];
 
             if (piece == null || piece.Owner != player)
             {
-                return Enumerable.Empty<ChessMove>();
+                return Enumerable.Empty<BaseChessMove>();
             }
 
             switch (piece.Kind)
@@ -293,11 +293,11 @@ namespace Game.Chess
                 case PieceKind.Bishop: return GetBishopMoves(board, from, player);
                 case PieceKind.Knight: return GetKnightMoves(board, from, player);
                 case PieceKind.Pawn: return GetPawnMoves(board, from, player, false);
-                default: return Enumerable.Empty<ChessMove>();
+                default: return Enumerable.Empty<BaseChessMove>();
             }
         }
 
-        private IEnumerable<ChessMove> GetPawnMoves(ChessRepresentation board, Position from, ChessPlayer player, bool onlyThreateningMoves)
+        private IEnumerable<BaseChessMove> GetPawnMoves(ChessRepresentation board, Position from, ChessPlayer player, bool onlyThreateningMoves)
         {
             var piece = board[from];
 
@@ -490,18 +490,18 @@ namespace Game.Chess
             }
         }
 
-        private IEnumerable<ChessMove> GetKingMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetKingMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
             if (board == null)
             {
-                return Enumerable.Empty<ChessMove>();
+                return Enumerable.Empty<BaseChessMove>();
             }
 
             var piece = board[from];
 
             if (piece == null || piece.Kind != PieceKind.King || piece.Owner != player)
             {
-                return Enumerable.Empty<ChessMove>();
+                return Enumerable.Empty<BaseChessMove>();
             }
 
             var moves = from.AllDirectionsMove(1)
@@ -512,7 +512,7 @@ namespace Game.Chess
             return moves;
         }
 
-        private IEnumerable<ChessMove> GetCastlings(ChessRepresentation board, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetCastlings(ChessRepresentation board, ChessPlayer player)
         {
             var from = player == ChessPlayer.White ? Positions.E1 : Positions.E8;
 
@@ -545,9 +545,10 @@ namespace Game.Chess
                                         .Select(x => board[x])
                                         .Count(x => x == null) == longCastlingEmptyPositions.Count();
 
-            var longCastlingSeemsPossible = board[longCastlingRookPosition]?.Kind == PieceKind.Rook
-                                                && !board[longCastlingRookPosition].HasMoved
-                                                && longCastlingEmpty;
+            var longCastlingSeemsPossible = board[longCastlingRookPosition] != null
+                                             && board[longCastlingRookPosition]?.Kind == PieceKind.Rook
+                                             && !board[longCastlingRookPosition].HasMoved
+                                             && longCastlingEmpty;
 
             // Short castling trivial possibility check...
             var shortCastlingEmptyPositions = player == ChessPlayer.White
@@ -566,9 +567,10 @@ namespace Game.Chess
                                         .Select(x => board[x])
                                         .Count(x => x == null) == shortCastlingEmptyPositions.Count();
 
-            var shortCastlingSeemsPossible = board[shortCastlingRookPosition]?.Kind == PieceKind.Rook
-                                                && !board[shortCastlingRookPosition].HasMoved
-                                                && shortCastlingEmpty;
+            var shortCastlingSeemsPossible = board[shortCastlingRookPosition] != null
+                                              && board[shortCastlingRookPosition]?.Kind == PieceKind.Rook
+                                              && !board[shortCastlingRookPosition].HasMoved
+                                              && shortCastlingEmpty;
 
             var anyCastlingPossible = shortCastlingSeemsPossible || longCastlingSeemsPossible;
 
@@ -590,13 +592,13 @@ namespace Game.Chess
             }
         }
 
-        private IEnumerable<ChessMove> GetBishopMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetBishopMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
             var piece = board[from];
 
             if (piece == null || piece.Kind != PieceKind.Bishop || piece.Owner != player)
             {
-                return Enumerable.Empty<ChessMove>();
+                return Enumerable.Empty<BaseChessMove>();
             }
 
             var positions = new List<Position>();
@@ -612,13 +614,13 @@ namespace Game.Chess
             return moves;
         }
 
-        private IEnumerable<ChessMove> GetQueenMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetQueenMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
             var piece = board[from];
 
             if (piece == null || piece.Kind != PieceKind.Queen || piece.Owner != player)
             {
-                return Enumerable.Empty<ChessMove>();
+                return Enumerable.Empty<BaseChessMove>();
             }
 
             var positions = new List<Position>();
@@ -636,13 +638,13 @@ namespace Game.Chess
                 .Select(x => new ChessMove(player, from, x));
         }
 
-        private IEnumerable<ChessMove> GetRookMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetRookMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
             var piece = board[from];
 
             if (piece == null || piece.Kind != PieceKind.Rook || piece.Owner != player)
             {
-                return Enumerable.Empty<ChessMove>();
+                return Enumerable.Empty<BaseChessMove>();
             }
 
             var positions = new List<Position>();
@@ -656,13 +658,13 @@ namespace Game.Chess
                 .Select(x => new ChessMove(player, from, x));
         }
 
-        private IEnumerable<ChessMove> GetKnightMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetKnightMoves(ChessRepresentation board, Position from, ChessPlayer player)
         {
             var piece = board[from];
 
             if (piece == null || piece.Kind != PieceKind.Knight || piece.Owner != player)
             {
-                return Enumerable.Empty<ChessMove>();
+                return Enumerable.Empty<BaseChessMove>();
             }
 
             var knightMoves = from.KnightMoves();

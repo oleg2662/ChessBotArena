@@ -6,25 +6,23 @@ namespace Game.Chess.Moves
 {
     [Serializable]
     [DebuggerDisplay("{From}->{To}")]
-    public class ChessMove : BaseMove, IEquatable<ChessMove>
+    public sealed class ChessMove : BaseChessMove, IEquatable<ChessMove>
     {
         public bool Equals(ChessMove other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return base.Equals(other) 
-                   && Equals(From, other.From)
-                   && Equals(To, other.To);
+            return Equals(From, other.From) && Equals(To, other.To);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
 
-            return Equals((ChessMove) obj);
+            return Equals((ChessMove)obj);
         }
 
         public override int GetHashCode()
@@ -48,16 +46,10 @@ namespace Game.Chess.Moves
             return !Equals(left, right);
         }
 
-        public Position From { get; }
-
-        public Position To { get; }
-
         [JsonConstructor]
         public ChessMove(ChessPlayer owner, Position from, Position to)
-            : base(owner)
+            : base(owner, from, to)
         {
-            From = from;
-            To = to;
         }
 
         public override BaseMove Clone()

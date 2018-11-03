@@ -16,6 +16,6 @@ namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
         /// <summary>
         /// Gets or sets the chess move.
         /// </summary>
-        public ChessMove Move { get; set; }
+        public BaseChessMove Move { get; set; }
     }
 }

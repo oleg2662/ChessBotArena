@@ -162,7 +162,7 @@ namespace BoardGame.Service.Models.Converters
                         CapturePositionRow = enPassantMove.CapturePosition.Row
                     };
 
-                case ChessMove chessMove:
+                case BaseChessMove chessMove:
                     return new DbChessMove
                     {
                         Owner = chessMove.Owner,

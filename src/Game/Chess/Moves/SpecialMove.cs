@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
+    [DebuggerDisplay("{Message}")]
     public class SpecialMove : BaseMove, IEquatable<SpecialMove>
     {
         public bool Equals(SpecialMove other)
@@ -11,7 +13,7 @@ namespace Game.Chess.Moves
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return base.Equals(other) 
+            return Equals(Owner, other.Owner)
                    && Message == other.Message;
         }
 

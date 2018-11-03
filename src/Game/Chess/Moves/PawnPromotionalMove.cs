@@ -1,19 +1,22 @@
 ﻿using Game.Chess.Pieces;
 using System;
+using System.Diagnostics;
 using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
-    public sealed class PawnPromotionalMove : ChessMove, IEquatable<PawnPromotionalMove>
+    [DebuggerDisplay("{From}->{To}(prom:{PromoteTo})")]
+    public sealed class PawnPromotionalMove : BaseChessMove, IEquatable<PawnPromotionalMove>
     {
         public bool Equals(PawnPromotionalMove other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return base.Equals(other)
-                   && PromoteTo == other.PromoteTo;
+            return Equals(From, other.From)
+                   && Equals(To, other.To)
+                   && Equals(PromoteTo, other.PromoteTo);
         }
 
         public override bool Equals(object obj)

@@ -1,14 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Game.Chess;
+using Game.Chess.Exceptions;
 using Game.Chess.Moves;
 using Game.Chess.Pieces;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Game.Tests.Unit.Chess
 {
     public class ChessGameTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public ChessGameTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void GenerateMovesTest_Initial_AppropriateMovesReturned()
         {
@@ -234,7 +244,6 @@ namespace Game.Tests.Unit.Chess
             Assert.Equal(expected, actual);
         }
 
-
         [Fact]
         public void GameStateCheck_StaleMateTest_Draw()
         {
@@ -263,8 +272,7 @@ namespace Game.Tests.Unit.Chess
                 new ChessMove(ChessPlayer.Black, Positions.D3, Positions.H7),
                 new ChessMove(ChessPlayer.White, Positions.B8, Positions.C8),
                 new ChessMove(ChessPlayer.Black, Positions.F7, Positions.G6),
-                new ChessMove(ChessPlayer.White, Positions.C8, Positions.H8)
-                //new ChessMove(ChessPlayer.White, Positions.C8, Positions.E6)
+                new ChessMove(ChessPlayer.White, Positions.C8, Positions.E6)
             };
 
             foreach (var move in moves)
@@ -276,5 +284,94 @@ namespace Game.Tests.Unit.Chess
 
             Assert.Equal(expected, actual);
         }
+
+        [Theory]
+        [MemberData(nameof(InvalidMovesTestData))]
+        public void ValidationTest_InvalidMove_IllegalExceptionThrown(BaseMove move)
+        {
+            var game = new ChessRepresentationInitializer().Create();
+            var mechanism = new ChessMechanism();
+
+            Assert.Throws<ChessIllegalMoveException>(() => { mechanism.ApplyMove(game, move); });
+        }
+
+        [Fact]
+        public void PerformanceCheck()
+        {
+            var mechanism = new ChessMechanism();
+            var numberOfTries = 1000;
+            var times = new List<double>(numberOfTries);
+            ChessRepresentation game;
+            for (var i = 0; i < numberOfTries; i++)
+            {
+                game = new ChessRepresentationInitializer().Create();
+                var count = 0;
+                var start = DateTime.Now;
+                while (true)
+                {
+                    count++;
+                    var move = mechanism.GenerateMoves(game).OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                    if (move == null || count > 80)
+                    {
+                        break;
+                    }
+
+                    try
+                    {
+                        game = mechanism.ApplyMove(game, move);
+                    }
+                    catch (Exception e)
+                    {
+                        var cm = move as ChessMove;
+                        var km = move as KingCastlingMove;
+                        var ep = move as PawnEnPassantMove;
+                        var pr = move as PawnPromotionalMove;
+                        var sp = move as SpecialMove;
+
+                        if (cm != null)
+                        {
+                            _output.WriteLine($"CHESSMOVE: {cm.From}->{cm.To}");
+                        }
+
+                        if (km != null)
+                        {
+                            _output.WriteLine($"CASTLING: {km.From}->{km.To} ({km.RookFrom}-{km.RookTo})");
+                        }
+
+                        if (ep != null)
+                        {
+                            _output.WriteLine($"EP: {ep.From}->{ep.To} ({ep.CapturePosition})");
+                        }
+
+                        if (pr != null)
+                        {
+                            _output.WriteLine($"EP: {pr.From}->{pr.To} ({pr.PromoteTo})");
+                        }
+
+                        if (sp != null)
+                        {
+                            _output.WriteLine($"SP: {sp.Message}");
+                        }
+                    }
+                }
+
+                var end = DateTime.Now;
+                var time = (end - start).TotalSeconds;
+                times.Add(time);
+            }
+
+            var timeAverage = times.Average();
+            var quick = timeAverage < TimeSpan.FromSeconds(2).TotalSeconds;
+
+            Assert.True(quick);
+        }
+
+        public static IEnumerable<object[]> InvalidMovesTestData =>
+            new List<object[]>
+            {
+                new object[] { new ChessMove(ChessPlayer.White, Positions.A1, Positions.B7) },
+                new object[] { new ChessMove(ChessPlayer.Black, Positions.A1, Positions.B7) },
+                new object[] { new ChessMove(ChessPlayer.Black, Positions.A7, Positions.A6) }
+            };
     }
 }

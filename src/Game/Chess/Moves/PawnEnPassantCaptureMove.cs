@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
-    public sealed class PawnEnPassantMove : ChessMove, IEquatable<PawnEnPassantMove>
+    [DebuggerDisplay("{From}->{To}(ep:{CapturePosition})")]
+    public sealed class PawnEnPassantMove : BaseChessMove, IEquatable<PawnEnPassantMove>
     {
         public bool Equals(PawnEnPassantMove other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return base.Equals(other) 
+            return Equals(From, other.From)
+                   && Equals(To, other.To)
                    && Equals(CapturePosition, other.CapturePosition);
         }
 

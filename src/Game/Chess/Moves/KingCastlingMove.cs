@@ -1,19 +1,21 @@
-﻿using Game.Chess.Extensions;
-using System;
+﻿using System;
+using System.Diagnostics;
 using Newtonsoft.Json;
 
 namespace Game.Chess.Moves
 {
     [Serializable]
-    public sealed class KingCastlingMove : ChessMove, IEquatable<KingCastlingMove>
+    [DebuggerDisplay("{From}->{To}(Rook:{RookFrom}->{RookTo})")]
+    public sealed class KingCastlingMove : BaseChessMove, IEquatable<KingCastlingMove>
     {
         public bool Equals(KingCastlingMove other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return base.Equals(other) 
-                   && CastlingType == other.CastlingType;
+            return Equals(From, other.From)
+                   && Equals(To, other.To)
+                   && Equals(CastlingType, other.CastlingType);
         }
 
         public override bool Equals(object obj)
