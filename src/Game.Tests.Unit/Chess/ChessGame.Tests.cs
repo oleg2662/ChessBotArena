@@ -42,8 +42,6 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<BaseMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
             board[Positions.E1] = new King(ChessPlayer.White, false);
@@ -66,8 +64,6 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.Black,
-                History = new List<BaseMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
             board[Positions.E8] = new King(ChessPlayer.Black, false);
@@ -96,8 +92,6 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<BaseMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
             board[Positions.D4] = new Bishop(ChessPlayer.White, true);
@@ -135,8 +129,6 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation()
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<BaseMove>(),
-                Players = new[] { ChessPlayer.White, ChessPlayer.Black }
             };
 
             board[Positions.D4] = new Knight(ChessPlayer.White, true);
@@ -173,8 +165,6 @@ namespace Game.Tests.Unit.Chess
             var board = new ChessRepresentation
             {
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<BaseMove>(),
-                Players = new[] {ChessPlayer.White, ChessPlayer.Black},
                 [Positions.G2] = new King(ChessPlayer.White, true),
                 [Positions.E2] = new Rook(ChessPlayer.Black, false),
                 [Positions.C4] = new Queen(ChessPlayer.White, false),
@@ -301,6 +291,7 @@ namespace Game.Tests.Unit.Chess
             var mechanism = new ChessMechanism();
             var numberOfTries = 10;
             var times = new List<double>(numberOfTries);
+
             ChessRepresentation game;
             for (var i = 0; i < numberOfTries; i++)
             {
@@ -325,7 +316,7 @@ namespace Game.Tests.Unit.Chess
             }
 
             var timeAverage = times.Average();
-            var quick = timeAverage < TimeSpan.FromSeconds(2).TotalSeconds;
+            var quick = timeAverage < TimeSpan.FromSeconds(1).TotalSeconds;
 
             Assert.True(quick);
         }

@@ -1,16 +1,63 @@
-﻿namespace Game.Chess
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Game.Abstraction;
+using Game.Chess.Moves;
+using Game.Chess.Pieces;
+
+namespace Game.Chess
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Abstraction;
-    using Moves;
-    using Pieces;
-
     [Serializable]
-    public sealed class ChessRepresentation : ICloneable<ChessRepresentation>
+    public sealed class ChessRepresentation : ICloneable<ChessRepresentation>, IEquatable<ChessRepresentation>
     {
+        public bool Equals(ChessRepresentation other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
+            return _pieces.SequenceEqual(other._pieces)
+                   && CurrentPlayer.Equals(other.CurrentPlayer)
+                   && History.SequenceEqual(other.History);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is ChessRepresentation other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var historyHash = History == null || !History.Any()
+                    ? 0
+                    : History.Select(x => x.GetHashCode()).Aggregate((x, y) => x ^ y * Constants.HashXor);
+
+                var piecesHashCode = _pieces == null || !_pieces.Any()
+                                      ? 0
+                                      : _pieces.Select(x => x == null ? 0 : x.GetHashCode()).Aggregate((x, y) => x ^ y * Constants.HashXor);
+
+                var hashCode = Constants.HashBase;
+                hashCode = (hashCode * Constants.HashXor) ^ piecesHashCode;
+                hashCode = (hashCode * Constants.HashXor) ^ (Players != null ? Players.GetHashCode() : 0);
+                hashCode = (hashCode * Constants.HashXor) ^ historyHash;
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(ChessRepresentation left, ChessRepresentation right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ChessRepresentation left, ChessRepresentation right)
+        {
+            return !Equals(left, right);
+        }
+
         private readonly ChessPiece[] _pieces = new ChessPiece[64];
 
         public ChessRepresentation()
@@ -47,7 +94,6 @@
         {
             get
             {
-
                 var idx = new Position(col, row);
                 return this[idx];
             }
@@ -67,7 +113,6 @@
         {
             get
             {
-
                 var idx = (Position) algebraicNotation;
                 return this[idx];
             }
@@ -86,7 +131,7 @@
         /// <summary>
         /// Gets or sets the players playing the game.
         /// </summary>
-        public IEnumerable<ChessPlayer> Players { get; set; }
+        public IEnumerable<ChessPlayer> Players => new[] { ChessPlayer.White, ChessPlayer.Black };
 
         /// <summary>
         /// Gets the history of the game.
@@ -98,8 +143,7 @@
             var newBoard = new ChessRepresentation()
             {
                 CurrentPlayer = CurrentPlayer,
-                History = History.Select(x => x.Clone()).ToList(),
-                Players = Players.Select(x => x).ToList()
+                History = History.Select(x => x.Clone()).ToList()
             };
 
             foreach(var p in Positions.PositionList)

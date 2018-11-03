@@ -10,9 +10,7 @@ namespace Game.Chess
         {
             var board = new ChessRepresentation
             {
-                Players = new List<ChessPlayer> {ChessPlayer.White, ChessPlayer.Black},
                 CurrentPlayer = ChessPlayer.White,
-                History = new List<BaseMove>(),
 
                 [Positions.A1] = ChessPieces.WhiteRook,
                 [Positions.B1] = ChessPieces.WhiteKnight,

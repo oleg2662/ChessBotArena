@@ -18,8 +18,6 @@ namespace ChessboardVisualizerTestApp
             var board = new ChessRepresentationInitializer().Create();
 
             board.CurrentPlayer = ChessPlayer.White;
-            board.History = new List<BaseMove>();
-            board.Players = new[] { ChessPlayer.White, ChessPlayer.Black };
 
             var manager = new ChessMechanism();
 

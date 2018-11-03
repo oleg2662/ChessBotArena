@@ -29,7 +29,7 @@ namespace Game.Chess.Moves
         {
             unchecked
             {
-                int hashCode = base.GetHashCode();
+                int hashCode = Owner.GetHashCode();
                 hashCode = (hashCode * 397) ^ (From != null ? From.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (To != null ? To.GetHashCode() : 0);
                 return hashCode;

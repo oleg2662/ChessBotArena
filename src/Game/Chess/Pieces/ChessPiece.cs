@@ -1,6 +1,7 @@
 ﻿using Game.Abstraction;
 using System;
 using Game.Chess.Extensions;
+using Newtonsoft.Json;
 
 namespace Game.Chess.Pieces
 {
@@ -8,8 +9,10 @@ namespace Game.Chess.Pieces
     /// Base abstract class of a chess piece.
     /// </summary>
     [Serializable]
-    public abstract class ChessPiece : IEquatable<ChessPiece>, ICloneable<ChessPiece>
+    public abstract class ChessPiece : ICloneable<ChessPiece>
     {
+        protected readonly PieceKind OriginalPieceKind;
+
         /// <summary>
         /// Gets the owner of the chess piece.
         /// </summary>
@@ -30,28 +33,13 @@ namespace Game.Chess.Pieces
         {
         }
 
+        [JsonConstructor]
         protected ChessPiece(ChessPlayer owner, PieceKind pieceKind, bool hasMoved)
         {
             Owner = owner;
             Kind = pieceKind;
             HasMoved = hasMoved;
-        }
-
-        public bool Equals(ChessPiece other)
-        {
-            if(other is null)
-            {
-                return false;
-            }
-
-            return other.Owner == Owner
-                    && other.Kind == Kind;
-        }
-
-        public override bool Equals(object obj)
-        {
-            var other = obj as ChessPiece;
-            return Equals(other);
+            OriginalPieceKind = pieceKind;
         }
 
         public override int GetHashCode()
@@ -61,7 +49,7 @@ namespace Game.Chess.Pieces
                 int hash = Constants.HashBase;
 
                 hash = (hash ^ Constants.HashXor) ^ Owner.GetHashCode();
-                hash = (hash ^ Constants.HashXor) ^ Kind.GetHashCode();
+                hash = (hash ^ Constants.HashXor) ^ OriginalPieceKind.GetHashCode();
 
                 return hash;
             }

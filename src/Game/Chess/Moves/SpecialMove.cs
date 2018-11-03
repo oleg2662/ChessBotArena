@@ -30,7 +30,9 @@ namespace Game.Chess.Moves
         {
             unchecked
             {
-                return (base.GetHashCode() * 397) ^ (int) Message;
+                int hashCode = Owner.GetHashCode();
+                hashCode = (hashCode * 397) ^ Message.GetHashCode();
+                return hashCode;
             }
         }
 
