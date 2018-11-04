@@ -59,7 +59,7 @@ namespace ChessboardVisualizer
                 {
                     Position p = (Position)i;
 
-                    var brush = ((p.Row-1) + (p.Column-'A')) % 2 == 0 ? blackBrush : whiteBrush;
+                    var brush = p.BlackField ? blackBrush : whiteBrush;
                     var rectangle = GetFieldRectangle(g.VisibleClipBounds, (Position)i);
 
                     g.FillRectangle(brush, rectangle);

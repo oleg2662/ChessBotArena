@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +10,7 @@ using Game.Chess.Pieces;
 namespace Game.Chess
 {
     [Serializable]
-    public sealed class ChessRepresentation : ICloneable<ChessRepresentation>, IEquatable<ChessRepresentation>
+    public sealed class ChessRepresentation : ICloneable<ChessRepresentation>, IEquatable<ChessRepresentation>, IEnumerable<ChessRepresentation.ChessBoardPiece>
     {
         public bool Equals(ChessRepresentation other)
         {
@@ -19,6 +20,11 @@ namespace Game.Chess
             return _pieces.SequenceEqual(other._pieces)
                    && CurrentPlayer.Equals(other.CurrentPlayer)
                    && History.SequenceEqual(other.History);
+        }
+
+        public IEnumerator<ChessBoardPiece> GetEnumerator()
+        {
+            return _pieces.Select((t, i) => new ChessBoardPiece((Position)i, t)).GetEnumerator();
         }
 
         public override bool Equals(object obj)
@@ -48,6 +54,11 @@ namespace Game.Chess
             }
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public static bool operator ==(ChessRepresentation left, ChessRepresentation right)
         {
             return Equals(left, right);
@@ -63,6 +74,7 @@ namespace Game.Chess
         public ChessRepresentation()
         {
             History = new List<BaseMove>();
+            CurrentPlayer = ChessPlayer.White;
         }
 
         /// <summary>
@@ -170,6 +182,50 @@ namespace Game.Chess
             CurrentPlayer = CurrentPlayer == ChessPlayer.Black 
                             ? ChessPlayer.White
                             : ChessPlayer.Black;
+        }
+
+        public sealed class ChessBoardPiece : IEquatable<ChessBoardPiece>
+        {
+            public bool Equals(ChessBoardPiece other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
+                return Equals(Position, other.Position) && Equals(ChessPiece, other.ChessPiece);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                return obj is ChessBoardPiece other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return ((Position != null ? Position.GetHashCode() : 0) * 397) ^ (ChessPiece != null ? ChessPiece.GetHashCode() : 0);
+                }
+            }
+
+            public static bool operator ==(ChessBoardPiece left, ChessBoardPiece right)
+            {
+                return Equals(left, right);
+            }
+
+            public static bool operator !=(ChessBoardPiece left, ChessBoardPiece right)
+            {
+                return !Equals(left, right);
+            }
+
+            public ChessBoardPiece(Position position, ChessPiece piece)
+            {
+                Position = position;
+                ChessPiece = piece;
+            }
+            public Position Position { get; }
+
+            public ChessPiece ChessPiece { get; }
         }
     }
 }

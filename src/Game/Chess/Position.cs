@@ -42,6 +42,11 @@ namespace Game.Chess
         /// </summary>
         public int Row { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether the position's colour is black or white in the chessboard.
+        /// </summary>
+        public bool BlackField => ((Row-1) + (Column-'A')) % 2 == 0;
+
         #region Operators
 
         /// <summary>

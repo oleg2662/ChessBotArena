@@ -78,6 +78,7 @@ namespace Game.Chess
         {
             var specialMoves = new HashSet<SpecialMove>(representation.History.OfType<SpecialMove>());
 
+            // Search for resign.
             var resign = specialMoves.FirstOrDefault(x => x.Message == MessageType.Resign);
 
             switch (resign?.Owner)
@@ -92,13 +93,15 @@ namespace Game.Chess
                     throw new ArgumentOutOfRangeException();
             }
 
+            // Search for draw accept
             if (specialMoves.Any(x => x.Message == MessageType.DrawAccept))
             {
                 return GameState.Draw;
             }
 
+            // Check check-mate
             var isCurrentPlayerInChess = IsPlayerInChess(representation, representation.CurrentPlayer);
-            var mvs = GenerateMoves(representation).ToList();
+
             var anyMovesLeft = GenerateMoves(representation).Any();
 
             if (!anyMovesLeft && isCurrentPlayerInChess)
@@ -115,7 +118,40 @@ namespace Game.Chess
                 }
             }
 
-            return anyMovesLeft ? GameState.InProgress : GameState.Draw;
+            // Check stale-mate
+            if (!anyMovesLeft)
+            {
+                return GameState.Draw;
+            }
+
+            var nonEmptyPositions = representation.Where(x => x.ChessPiece != null).ToArray();
+
+            // King vs king --> Draw
+            if (nonEmptyPositions.Length == 2)
+            {
+                return GameState.Draw;
+            }
+
+            // King vs (king and (bishop or knight)
+            if (nonEmptyPositions.Length == 3 && nonEmptyPositions.Any(x =>
+                    x.ChessPiece.Kind == PieceKind.Bishop || x.ChessPiece.Kind == PieceKind.Knight))
+            {
+                return GameState.Draw;
+            }
+
+            // King and bishop vs King vs bishop (bishops on same coloured field.)
+            if (nonEmptyPositions.Length == 4
+                && nonEmptyPositions.Count(x => x.ChessPiece.Owner == ChessPlayer.Black) == 2
+                && nonEmptyPositions.Count(x => x.ChessPiece.Kind == PieceKind.Bishop) == 2
+                && nonEmptyPositions.Where(x => x.ChessPiece.Kind == PieceKind.Bishop)
+                                    .Select(x => x.Position.BlackField)
+                                    .Distinct()
+                                    .Count() == 1)
+            {
+                return GameState.Draw;
+            }
+
+            return GameState.InProgress;
         }
 
         private bool IsPlayerInChess(ChessRepresentation representation, ChessPlayer player)

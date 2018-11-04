@@ -6,19 +6,11 @@ using Game.Chess.Exceptions;
 using Game.Chess.Moves;
 using Game.Chess.Pieces;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Game.Tests.Unit.Chess
 {
     public class ChessGameTests
     {
-        private readonly ITestOutputHelper _output;
-
-        public ChessGameTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Fact]
         public void GenerateMovesTest_Initial_AppropriateMovesReturned()
         {
@@ -269,6 +261,147 @@ namespace Game.Tests.Unit.Chess
             {
                 game = mechanism.ApplyMove(game, move);
             }
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_KingVsKing_Draw()
+        {
+            var expected = GameState.Draw;
+
+            // Draw
+            var game = new ChessRepresentation()
+            {
+                History = new List<BaseMove>(),
+                ["C5"] = new King(ChessPlayer.White, true),
+                ["F4"] = new King(ChessPlayer.Black, true)
+            };
+            var mechanism = new ChessMechanism();
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_KingBishopVsKingBishopSameColour_Draw()
+        {
+            var expected = GameState.Draw;
+
+            // Draw
+            var game = new ChessRepresentation()
+            {
+                History = new List<BaseMove>(),
+                ["C5"] = new King(ChessPlayer.White, true),
+                ["F4"] = new King(ChessPlayer.Black, true),
+                ["C8"] = new Bishop(ChessPlayer.White, true),
+                ["H1"] = new Bishop(ChessPlayer.Black, true),
+            };
+            var mechanism = new ChessMechanism();
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_KingBishopVsKingBishopDifferentColour_InProgress()
+        {
+            var expected = GameState.InProgress;
+
+            // Draw
+            var game = new ChessRepresentation()
+            {
+                History = new List<BaseMove>(),
+                ["C5"] = new King(ChessPlayer.White, true),
+                ["F4"] = new King(ChessPlayer.Black, true),
+                ["C8"] = new Bishop(ChessPlayer.White, true),
+                ["G1"] = new Bishop(ChessPlayer.Black, true),
+            };
+            var mechanism = new ChessMechanism();
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_BlackKingVsWhiteKingBishop_Draw()
+        {
+            var expected = GameState.Draw;
+
+            // Draw
+            var game = new ChessRepresentation()
+            {
+                History = new List<BaseMove>(),
+                ["C5"] = new King(ChessPlayer.White, true),
+                ["F4"] = new King(ChessPlayer.Black, true),
+                ["C8"] = new Bishop(ChessPlayer.White, true)
+            };
+            var mechanism = new ChessMechanism();
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_WhiteKingVsBlackKingBishop_Draw()
+        {
+            var expected = GameState.Draw;
+
+            // Draw
+            var game = new ChessRepresentation()
+            {
+                History = new List<BaseMove>(),
+                ["C5"] = new King(ChessPlayer.Black, true),
+                ["F4"] = new King(ChessPlayer.White, true),
+                ["C8"] = new Bishop(ChessPlayer.Black, true)
+            };
+            var mechanism = new ChessMechanism();
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_BlackKingVsWhiteKingKnight_Draw()
+        {
+            var expected = GameState.Draw;
+
+            // Draw
+            var game = new ChessRepresentation()
+            {
+                History = new List<BaseMove>(),
+                ["C5"] = new King(ChessPlayer.White, true),
+                ["F4"] = new King(ChessPlayer.Black, true),
+                ["C8"] = new Knight(ChessPlayer.White, true)
+            };
+            var mechanism = new ChessMechanism();
+
+            var actual = mechanism.GetGameState(game);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void GameStateCheck_WhiteKingVsBlackKingKnight_Draw()
+        {
+            var expected = GameState.Draw;
+
+            // Draw
+            var game = new ChessRepresentation()
+            {
+                History = new List<BaseMove>(),
+                ["C5"] = new King(ChessPlayer.Black, true),
+                ["F4"] = new King(ChessPlayer.White, true),
+                ["C8"] = new Knight(ChessPlayer.Black, true)
+            };
+            var mechanism = new ChessMechanism();
 
             var actual = mechanism.GetGameState(game);
 
