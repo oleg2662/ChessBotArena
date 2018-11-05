@@ -20,6 +20,18 @@ namespace Game.Chess
             var originalBoard = representation;
             var currentPlayer = representation.CurrentPlayer;
 
+            yield return new SpecialMove(currentPlayer, MessageType.Resign);
+
+            if (representation.History.OfType<SpecialMove>().Any(x => x.Message == MessageType.DrawOffer))
+            {
+                yield return new SpecialMove(currentPlayer, MessageType.DrawAccept);
+                yield return new SpecialMove(currentPlayer, MessageType.DrawDecline);
+            }
+            else
+            {
+                yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
+            }
+
             foreach (var move in possibleMoves)
             {
                 var newRepresentation = ApplyMove(representation, move, false);
@@ -124,7 +136,13 @@ namespace Game.Chess
                 return GameState.Draw;
             }
 
-            var nonEmptyPositions = representation.Where(x => x.ChessPiece != null).ToArray();
+            var nonEmptyPositions = Positions.PositionList.Select(x => new
+                                    {
+                                        ChessPiece = representation[x],
+                                        Position = x
+                                    }).Where(x => x.ChessPiece != null)
+                                      .ToArray();
+
 
             // King vs king --> Draw
             if (nonEmptyPositions.Length == 2)

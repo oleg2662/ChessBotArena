@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using BoardGame.Service.Data;
-using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Converters;
 using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using BoardGame.Service.Extensions;
 using Game.Chess;
 using Game.Chess.Moves;
+using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Repositories
 {

@@ -18,7 +18,7 @@
             <param name="logger">The logger used to log events in the controller.</param>
             <param name="configuration">The configuration provider.</param>
         </member>
-        <member name="M:BoardGame.Service.Controllers.Api.AccountController.RequestToken(BoardGame.Service.Models.Api.AccountControllerModels.LoginModel)">
+        <member name="M:BoardGame.Service.Controllers.Api.AccountController.RequestToken(Model.Api.AccountControllerModels.LoginModel)">
             <summary>
             Action used to check the login and return the JWT token if successful.
             </summary>
@@ -114,7 +114,7 @@
             <response code="409">If there are multiple games with the same ID.</response>
             <response code="500">If there is a server error.</response>
         </member>
-        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.Challenge(BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+        <member name="M:BoardGame.Service.Controllers.Api.ChessGamesController.Challenge(Model.Api.ChessGamesControllerModels.Challenge)">
             <summary>
             Tries to create a new game according to the incoming challenge.
             </summary>
@@ -399,160 +399,6 @@
             </summary>
             <param name="game">The chess game coming from database.</param>
             <returns>Dictionary of game players.</returns>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.AccountControllerModels.ILoginModel">
-            <summary>
-            The contract for the login.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.ILoginModel.Password">
-            <summary>
-            Gets or sets the password.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.ILoginModel.UserName">
-            <summary>
-            Gets or sets the user name.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.AccountControllerModels.LoginModel">
-            <inheritdoc />
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.LoginModel.UserName">
-            <inheritdoc />
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.AccountControllerModels.LoginModel.Password">
-            <inheritdoc />
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge">
-            <summary>
-            Represents a challenge request coming from the client.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge.Opponent">
-            <summary>
-            Gets or sets the id of the challenged player.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame">
-            <summary>
-            Interface to a chess game item in the chess games controller.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Id">
-            <summary>
-            Gets or sets the ID of the game.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Name">
-            <summary>
-            Gets or sets the name of the game.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.InitiatedBy">
-            <summary>
-            Gets or sets the user who have initiated the game. (Challenged someone.)
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Opponent">
-            <summary>
-            Gets or sets the user who was challenged by the game initiator.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.WhitePlayer">
-            <summary>
-            Gets or sets the white player.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.BlackPlayer">
-            <summary>
-            Gets or sets the black player.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.ChallengeDate">
-            <summary>
-            Gets or sets the date the challenge was sent.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.LastMoveDate">
-            <summary>
-            Gets or sets the date of the last move. Initially set to the challenge date.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGame.Outcome">
-            <summary>
-            Gets or sets the outcome of the match.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGameDetails">
-            <summary>
-            Detailed information about a chess game.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGameDetails.Representation">
-            <summary>
-            Gets or sets the current representation of a match and it's current state.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto">
-            <summary>
-            Represents the minimum required information about the player for the chess games list controller.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto.Id">
-            <summary>
-            Gets or sets the id of the player user.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessGamePlayerDto.UserName">
-            <summary>
-            Gets or sets the name of the player user.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel">
-            <summary>
-            The model used by the client to the service which contains the chess move and some additional information.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel.TargetGameId">
-            <summary>
-            Gets or sets the ID of the target game.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.ChessGamesControllerModels.ChessMoveApiModel.Move">
-            <summary>
-            Gets or sets the chess move.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.PlayerControllerModels.IPlayerModel">
-            <summary>
-            Interface of the player's model.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.IPlayerModel.IsBot">
-            <summary>
-            Gets or sets a value indicating whether the player is a bot or not.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.IPlayerModel.Name">
-            <summary>
-            Gets or sets the name of the player.
-            </summary>
-        </member>
-        <member name="T:BoardGame.Service.Models.Api.PlayerControllerModels.Player">
-            <summary>
-            Represents a player information in the players' screen.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.Player.Name">
-            <summary>
-            Gets or sets the name of the player.
-            </summary>
-        </member>
-        <member name="P:BoardGame.Service.Models.Api.PlayerControllerModels.Player.IsBot">
-            <summary>
-            Gets or sets a value indicating whether the player is a bot.
-            </summary>
         </member>
         <member name="T:BoardGame.Service.Models.Api.Results.ConflictObjectResult">
             <summary>
@@ -1174,7 +1020,7 @@
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Get(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
             <inheritdoc />
         </member>
-        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Add(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+        <member name="M:BoardGame.Service.Repositories.ChessGameRepository.Add(System.String,Model.Api.ChessGamesControllerModels.Challenge)">
             <inheritdoc />
         </member>
         <member name="M:BoardGame.Service.Repositories.ChessGameRepository.GetDetails(System.String,System.Func{BoardGame.Service.Models.Data.DbChessGame,System.Boolean})">
@@ -1204,7 +1050,7 @@
             <param name="predicate">Predicate for additional filtering if needed.</param>
             <returns>List of detailed chess games.</returns>
         </member>
-        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Add(System.String,BoardGame.Service.Models.Api.ChessGamesControllerModels.Challenge)">
+        <member name="M:BoardGame.Service.Repositories.IChessGameRepository.Add(System.String,Model.Api.ChessGamesControllerModels.Challenge)">
             <summary>
             Validates and saves a new game party according to the supplied challenge request.
             </summary>

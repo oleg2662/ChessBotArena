@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 namespace Game.Chess.Moves
 {
     [Serializable]
-    [DebuggerDisplay("{Message}")]
     public class SpecialMove : BaseMove, IEquatable<SpecialMove>
     {
         public bool Equals(SpecialMove other)
@@ -34,6 +33,11 @@ namespace Game.Chess.Moves
                 hashCode = (hashCode * 397) ^ Message.GetHashCode();
                 return hashCode;
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{Message}";
         }
 
         public static bool operator ==(SpecialMove left, SpecialMove right)

@@ -1,6 +1,6 @@
 ﻿using Game.Chess;
 
-namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
+namespace Model.Api.ChessGamesControllerModels
 {
     /// <summary>
     /// Detailed information about a chess game.

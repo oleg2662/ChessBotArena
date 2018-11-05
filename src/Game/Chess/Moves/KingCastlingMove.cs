@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 namespace Game.Chess.Moves
 {
     [Serializable]
-    [DebuggerDisplay("{From}->{To}(Rook:{RookFrom}->{RookTo})")]
     public sealed class KingCastlingMove : BaseChessMove, IEquatable<KingCastlingMove>
     {
         public bool Equals(KingCastlingMove other)
@@ -107,6 +106,11 @@ namespace Game.Chess.Moves
             return new KingCastlingMove(Owner, CastlingType);
         }
 
+        public override string ToString()
+        {
+            return $"{From}->{To}(Rook:{RookFrom}->{RookTo})";
+        }
+
         private static Position CalculateFrom(ChessPlayer owner)
         {
             switch (owner)
@@ -143,5 +147,6 @@ namespace Game.Chess.Moves
                 default: throw new ArgumentOutOfRangeException(nameof(owner), owner, null);
             }
         }
+
     }
 }

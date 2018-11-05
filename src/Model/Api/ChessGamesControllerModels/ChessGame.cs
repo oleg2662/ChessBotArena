@@ -1,7 +1,7 @@
 ﻿using System;
 using Game.Chess;
 
-namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
+namespace Model.Api.ChessGamesControllerModels
 {
     /// <summary>
     /// Interface to a chess game item in the chess games controller.

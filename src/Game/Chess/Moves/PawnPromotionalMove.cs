@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 namespace Game.Chess.Moves
 {
     [Serializable]
-    [DebuggerDisplay("{From}->{To}(prom:{PromoteTo})")]
     public sealed class PawnPromotionalMove : BaseChessMove, IEquatable<PawnPromotionalMove>
     {
         public bool Equals(PawnPromotionalMove other)
@@ -62,6 +61,11 @@ namespace Game.Chess.Moves
         public override BaseMove Clone()
         {
             return new PawnPromotionalMove(Owner, From, To, PromoteTo);
+        }
+
+        public override string ToString()
+        {
+            return $"{From}->{To}(prom:{PromoteTo})";
         }
     }
 }

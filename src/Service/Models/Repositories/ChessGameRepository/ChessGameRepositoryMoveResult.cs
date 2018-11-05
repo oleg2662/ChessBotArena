@@ -1,4 +1,4 @@
-﻿using BoardGame.Service.Models.Api.ChessGamesControllerModels;
+﻿using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Models.Repositories.ChessGameRepository
 {

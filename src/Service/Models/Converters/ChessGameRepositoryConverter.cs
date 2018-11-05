@@ -1,11 +1,11 @@
-﻿using BoardGame.Service.Models.Api.ChessGamesControllerModels;
-using BoardGame.Service.Models.Data;
+﻿using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Data.Moves;
 using Game.Chess.Moves;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Chess;
+using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Models.Converters
 {

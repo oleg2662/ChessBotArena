@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using Game.Chess.Moves;
+using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Repositories
 {

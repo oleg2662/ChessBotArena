@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using BoardGame.Service.Models.Api.AccountControllerModels;
+using Model.Api.AccountControllerModels;
 
 namespace BoardGame.Service.Controllers.Api
 {

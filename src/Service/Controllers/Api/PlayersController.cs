@@ -1,15 +1,15 @@
-﻿namespace BoardGame.Service.Controllers.Api
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Net;
-    using Models;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Logging;
-    using BoardGame.Service.Models.Api.PlayerControllerModels;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using BoardGame.Service.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Model.Api.PlayerControllerModels;
 
+namespace BoardGame.Service.Controllers.Api
+{
     /// <summary>
     /// Controller used to list the available players in the game.
     /// </summary>

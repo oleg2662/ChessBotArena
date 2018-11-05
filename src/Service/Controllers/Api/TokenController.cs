@@ -118,7 +118,7 @@ namespace BoardGame.Service.Controllers.Api
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSecurityKey()));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddMinutes(30);
 
             var newToken = new JwtSecurityToken(
@@ -126,7 +126,7 @@ namespace BoardGame.Service.Controllers.Api
                 audience: _configuration.GetBaseUrl(),
                 claims: claims,
                 expires: expires,
-                signingCredentials: creds);
+                signingCredentials: credentials);
 
             _logger.LogInformation($"{GetCurrentUser()} has asked for a prolonged token.");
 

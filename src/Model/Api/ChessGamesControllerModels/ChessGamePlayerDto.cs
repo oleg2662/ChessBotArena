@@ -1,4 +1,4 @@
-﻿namespace BoardGame.Service.Models.Api.ChessGamesControllerModels
+﻿namespace Model.Api.ChessGamesControllerModels
 {
     /// <summary>
     /// Represents the minimum required information about the player for the chess games list controller.

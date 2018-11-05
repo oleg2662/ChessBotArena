@@ -1,7 +1,7 @@
-﻿using BoardGame.Service.Models.Api.ChessGamesControllerModels;
-using BoardGame.Service.Models.Data;
+﻿using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Data.Moves;
 using Game.Chess.Moves;
+using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Models.Converters
 {

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using BoardGame.Service.Models.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using BoardGame.Service.Repositories;
 using Game.Chess.Moves;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Controllers.Api
 {
@@ -102,8 +102,8 @@ namespace BoardGame.Service.Controllers.Api
         /// <response code="400">Returns HTTP 400 Bad Request and the error result if the request isn't valid.</response>
         /// <response code="401">If there is an authentication error.</response>
         /// <response code="500">If there is a server error.</response>
-        [ProducesResponseType(typeof(ChallengeRequestResults), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ChallengeRequestResults), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ChessGame), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ChessGameRepositoryAddResult), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPost]

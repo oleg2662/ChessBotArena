@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 namespace Game.Chess.Moves
 {
     [Serializable]
-    [DebuggerDisplay("{From}->{To}(ep:{CapturePosition})")]
     public sealed class PawnEnPassantMove : BaseChessMove, IEquatable<PawnEnPassantMove>
     {
         public bool Equals(PawnEnPassantMove other)
@@ -37,6 +36,11 @@ namespace Game.Chess.Moves
                 hashCode = (hashCode * 397) ^ (CapturePosition != null ? CapturePosition.GetHashCode() : 0);
                 return hashCode;
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{From}->{To}(ep:{CapturePosition})";
         }
 
         public static bool operator ==(PawnEnPassantMove left, PawnEnPassantMove right)

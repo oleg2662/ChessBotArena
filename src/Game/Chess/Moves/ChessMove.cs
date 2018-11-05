@@ -36,6 +36,11 @@ namespace Game.Chess.Moves
             }
         }
 
+        public override string ToString()
+        {
+            return $"{From}->{To}";
+        }
+
         public static bool operator ==(ChessMove left, ChessMove right)
         {
             return Equals(left, right);
