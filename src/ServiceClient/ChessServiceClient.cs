@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Game.Chess;
+using Game.Chess.Moves;
 using Model.Api.AccountControllerModels;
 using Model.Api.ChessGamesControllerModels;
 using Model.Api.PlayerControllerModels;
@@ -31,10 +34,19 @@ namespace ServiceClient
                 var x = new JsonSerializerSettings();
                 x.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 x.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                x.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
+                x.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
                 return x;
             };
         }
+
+        //private JsonSerializerSettings GetJsonSettings()
+        //{
+        //    var x = new JsonSerializerSettings();
+        //    x.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        //    x.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+        //    x.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
+        //    return x;
+        //}
 
         public async Task<string> GetVersion()
         {
@@ -135,6 +147,15 @@ namespace ServiceClient
             var resultString = await resultMessage.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<ChessGameDetails>(resultString);
 
+            var history = result.Representation.History;
+
+            result.Representation = new ChessRepresentationInitializer().Create();
+            var mechanism = new ChessMechanism();
+            foreach (var baseMove in history)
+            {
+                result.Representation = mechanism.ApplyMove(result.Representation, baseMove);
+            }
+
             return result;
         }
 
@@ -163,6 +184,42 @@ namespace ServiceClient
             var result = JsonConvert.DeserializeObject<ChessGame>(resultString);
 
             return result;
+        }
+
+        public async Task<bool> SendMove<T>(string token, Guid matchId, T move) where T : BaseMove
+        {
+            var url = $"{GamesControllerUri.AbsoluteUri}/{matchId}";
+            var uri = new Uri(url);
+            var message = new HttpRequestMessage(HttpMethod.Put, uri);
+
+            message.Headers.Add("Authorization", $"Bearer {token}");
+            message.Headers.Add("Accept", $"application/json");
+
+            var moveString = JsonConvert.SerializeObject(move/*, GetJsonSettings()*/);
+
+            message.Content = new StringContent(moveString, Encoding.UTF8, "application/json");
+
+            var resultMessage = await _client.SendAsync(message);
+
+            if (!resultMessage.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            //var resultString = await resultMessage.Content.ReadAsStringAsync();
+            //var result = JsonConvert.DeserializeObject<ChessGameDetails>(resultString);
+
+            //var history = result.Representation.History;
+
+            //result.Representation = new ChessRepresentationInitializer().Create();
+            //var mechanism = new ChessMechanism();
+            //foreach (var baseMove in history)
+            //{
+            //    result.Representation = mechanism.ApplyMove(result.Representation, baseMove);
+            //}
+
+            //return result;
+            return true;
         }
 
         public void Dispose()

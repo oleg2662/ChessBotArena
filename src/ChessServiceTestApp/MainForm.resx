@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="statusStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>133, 17</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -11553,16 +11550,6 @@
         DbLcWg8EjCA4XcAZETDjyQRMHXEM9g3ZLa6q8loIGPxrBIz1ZwiYn4ECVvovN2XQR5qN0pgHUwAHUz6m
         XCbNn/wW63QNN5bVR20WCLjCo4eAmX0Nu7YSsDpvp1GSa1ZqEQHTmaaV6wypl3KfVMAy4/8HBsnQTVm1
         nmIAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="textboxBotMessages.Text" xml:space="preserve">
-    <value> __  __ _       _                           _           _   
- |  \/  (_)_ __ (_)_ __ ___   __ ___  __    | |__   ___ | |_ 
- | |\/| | | '_ \| | '_ ` _ \ / _` \ \/ /____| '_ \ / _ \| __|
- | |  | | | | | | | | | | | | (_| |&gt;  &lt;_____| |_) | (_) | |_ 
- |_|  |_|_|_| |_|_|_| |_| |_|\__,_/_/\_\    |_.__/ \___/ \__|
- v1.0
-
 </value>
   </data>
 </root>

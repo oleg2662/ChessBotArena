@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{529EC123-5693-4224-9660-5DAFF2C5B341}</ProjectGuid>
+    <ProjectGuid>{426A6163-2005-4E68-9295-D7DA98BB947A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>MinimaxBot</RootNamespace>
-    <AssemblyName>MinimaxBot</AssemblyName>
+    <RootNamespace>ChessServiceTestApp</RootNamespace>
+    <AssemblyName>ChessServiceTestApp</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,15 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Evaluator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MoveApplier.cs" />
-    <Compile Include="MoveGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
@@ -69,6 +66,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="App.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -80,22 +78,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Algorithms\Algorithms.csproj">
-      <Project>{0ead0ffb-caf8-4f82-a5c4-89d2d8f37a1c}</Project>
-      <Name>Algorithms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Game\Game.csproj">
+    <ProjectReference Include="..\Game\Game.csproj">
       <Project>{eee35af3-b5eb-421e-bd42-f978f9541124}</Project>
       <Name>Game</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Model\Model.csproj">
+    <ProjectReference Include="..\Model\Model.csproj">
       <Project>{40ac1846-0373-47cc-9caa-f9396ba3d4e6}</Project>
       <Name>Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ServiceClient\ServiceClient.csproj">
+    <ProjectReference Include="..\ServiceClient\ServiceClient.csproj">
       <Project>{357b1da4-2aa0-49bb-9ee1-b7a4c2ee112f}</Project>
       <Name>ServiceClient</Name>
     </ProjectReference>
