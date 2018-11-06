@@ -38,7 +38,7 @@ namespace BoardGame.Service.Controllers.Api
                                    .Default
                                    .Application
                                    .ApplicationVersion;
-            Thread.Sleep(5000);
+
             _logger.LogInformation($"{GetCurrentUserNameOrAnonymous()} has queried the health status.");
             return Ok(version);
         }
