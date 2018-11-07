@@ -65,15 +65,10 @@ namespace Algorithms.Minimax
 
         private int Calculate(TState state, int depth, bool maximize)
         {
-            if (depth == MaxDepth)
-            {
-                return _evaluator.Evaluate(state);
-            }
-
             var nextMoves = _moveGenerator.Generate(state).ToList();
             var isLeaf = !nextMoves.Any();
 
-            if(isLeaf)
+            if (depth == MaxDepth || isLeaf)
             {
                 return _evaluator.Evaluate(state);
             }

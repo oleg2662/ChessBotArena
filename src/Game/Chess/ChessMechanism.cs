@@ -16,21 +16,29 @@ namespace Game.Chess
 
         public IEnumerable<BaseMove> GenerateMoves(ChessRepresentation representation)
         {
-            var possibleMoves = GenerateMoves(representation, representation.CurrentPlayer);
             var originalBoard = representation;
             var currentPlayer = representation.CurrentPlayer;
 
+            var specialMovesInHistory = originalBoard.History.OfType<SpecialMove>().ToList();
+            if (specialMovesInHistory.Any(x => x.Message == MessageType.Resign))
+            {
+                yield break;
+            }
+
             yield return new SpecialMove(currentPlayer, MessageType.Resign);
 
-            if (representation.History.OfType<SpecialMove>().Any(x => x.Message == MessageType.DrawOffer))
+            if (specialMovesInHistory.Any(x => x.Message == MessageType.DrawOffer))
             {
                 yield return new SpecialMove(currentPlayer, MessageType.DrawAccept);
                 yield return new SpecialMove(currentPlayer, MessageType.DrawDecline);
+                yield break;
             }
             else
             {
                 yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
             }
+
+            var possibleMoves = GenerateMoves(representation, representation.CurrentPlayer);
 
             foreach (var move in possibleMoves)
             {

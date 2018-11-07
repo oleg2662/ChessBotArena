@@ -9,7 +9,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Algorithms.Abstractions.Interfaces;
+using Algorithms.AlphaBeta;
+using Algorithms.Dumb;
+using Algorithms.Greedy;
 using Algorithms.Minimax;
+using Algorithms.MinimaxAverage;
 using Game.Chess;
 using Game.Chess.Moves;
 using Model.Api.ChessGamesControllerModels;
@@ -20,28 +25,86 @@ namespace MinimaxBot
 {
     public partial class MainForm : Form
     {
-        private static ChessServiceClient _client = new ChessServiceClient("http://localhost/BoardGame.Service");
-        private readonly MinimaxAlgorithm<ChessRepresentation, BaseMove> _algorithm;
+        private static readonly ChessServiceClient Client = new ChessServiceClient("http://localhost/BoardGame.Service");
+        private IAlgorithm<ChessRepresentation, BaseMove> _algorithm;
+        private static readonly Random Randomizer = new Random();
         private string _jwtToken;
         private bool _isActive = false;
         private string _username;
         private int _round = 1;
         private bool _isRobotThinking = false;
         private int _maxNumberOfMatches = 5;
+        
+
+        private void ChangeAlgorithm()
+        {
+            var mechanism = new ChessMechanism();
+            var evaluator = new Evaluator(mechanism);
+            var generator = new MoveGenerator(mechanism);
+            var applier = new MoveApplier(mechanism);
+
+            Algorithms selectedAlgorithm = Algorithms.Minimax;
+            int maxDepth = 2;
+
+            InvokeIfRequired(listboxAlgorithms, () => selectedAlgorithm = (Algorithms)listboxAlgorithms.SelectedItem);
+            InvokeIfRequired(numericMaxDepth, () => maxDepth = (int)numericMaxDepth.Value);
+
+            switch (selectedAlgorithm)
+            {
+                case Algorithms.Minimax:
+                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                    {
+                        MaxDepth = maxDepth
+                    };
+                    break;
+
+                case Algorithms.MinimaxAverage:
+                    _algorithm = new MinimaxAverageAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                    {
+                        MaxDepth = maxDepth
+                    };
+                    break;
+
+                case Algorithms.AlphaBeta:
+                    _algorithm = new AlphaBetaAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                    {
+                        MaxDepth = maxDepth
+                    };
+                    break;
+
+                case Algorithms.Random:
+                    _algorithm = new DumbAlgorithm<ChessRepresentation, BaseMove>(generator);
+                    break;
+
+                case Algorithms.Greedy:
+                    _algorithm = new GreedyAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier);
+                    break;
+
+                default:
+                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier);
+                    break;
+            }
+        }
+
+        internal enum Algorithms
+        {
+            Minimax,
+            MinimaxAverage,
+            AlphaBeta,
+            Random,
+            Greedy
+        }
 
         public MainForm()
         {
             InitializeComponent();
 
-            var mechanism = new ChessMechanism();
-
-            _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(
-                                new Evaluator(mechanism),
-                                new MoveGenerator(mechanism),
-                                new MoveApplier(mechanism))
-            {
-                MaxDepth = 3
-            };
+            listboxAlgorithms.Items.Add(Algorithms.Minimax);
+            listboxAlgorithms.Items.Add(Algorithms.MinimaxAverage);
+            listboxAlgorithms.Items.Add(Algorithms.AlphaBeta);
+            listboxAlgorithms.Items.Add(Algorithms.Greedy);
+            listboxAlgorithms.Items.Add(Algorithms.Random);
+            listboxAlgorithms.SelectedIndex = Randomizer.Next(0, listboxAlgorithms.Items.Count - 1);
 
             var task = new Task(() =>
             {
@@ -49,10 +112,23 @@ namespace MinimaxBot
                 {
                     if (!_isActive)
                     {
+                        InvokeIfRequired(progressbarBotActive, () =>
+                        {
+                            progressbarBotActive.MarqueeAnimationSpeed = 0;
+                        });
+
                         // Not doing anything, checking in every second...
                         Thread.Sleep(1000);
                         continue;
                     }
+
+                    InvokeIfRequired(progressbarBotActive, () =>
+                    {
+                        if (progressbarBotActive.MarqueeAnimationSpeed != 10)
+                        {
+                            progressbarBotActive.MarqueeAnimationSpeed = 10;
+                        }
+                    });
 
                     DoRobotWork();
 
@@ -71,25 +147,29 @@ namespace MinimaxBot
                 return;
             }
 
+            ChangeAlgorithm();
+
             _isRobotThinking = true;
             UpdateLog($" == ROUND {_round} =================================================================== ");
 
             UpdateLog("Reading list of matches which are in progress...", 1);
 
             UpdateLog("Getting list of matches...", 2);
-            var matches = _client.GetMatches(_jwtToken).Result;
+            var matches = Client.GetMatches(_jwtToken).Result;
             if (matches == null)
             {
                 UpdateLog("ERROR: Couldn't get list of matches. (Maybe unauthorized?)", 2);
+                _isRobotThinking = false;
+                _round++;
                 return;
             }
 
             var playableMatches = new List<ChessGameDetails>();
-
-            foreach (var chessGame in matches.Where(x => x.Outcome == GameState.InProgress))
+            var inProgressMatches = matches.Where(x => x.Outcome == GameState.InProgress).ToList();
+            foreach (var chessGame in inProgressMatches)
             {
                 UpdateLog($"Getting details of {chessGame.Name} ({chessGame.Id})...", 3);
-                var details = _client.GetMatch(_jwtToken, chessGame.Id.ToString()).Result;
+                var details = Client.GetMatch(_jwtToken, chessGame.Id.ToString()).Result;
                 if (details == null)
                 {
                     UpdateLog($"ERROR: Couldn't query data of match with name {chessGame.Name} ({chessGame.Id})!", 3);
@@ -105,8 +185,7 @@ namespace MinimaxBot
                     playableMatches.Add(details);
                 }
             }
-            
-            
+
             // Replying to matches where possible
             UpdateLog($"Replying to matches where possible...({playableMatches.Count})", 1);
 
@@ -116,51 +195,53 @@ namespace MinimaxBot
                 stopWatch.Reset();
                 stopWatch.Start();
                 UpdateLog($"Running algorithm for game {chessGameDetails.Name} ({chessGameDetails.Id}...", 2);
+                InvokeIfRequired(progressbarAlgorithm, () => progressbarAlgorithm.MarqueeAnimationSpeed = 10);
                 var representation = chessGameDetails.Representation;
                 var move = _algorithm.Calculate(representation);
+                InvokeIfRequired(progressbarAlgorithm, () => progressbarAlgorithm.MarqueeAnimationSpeed = 0);
                 stopWatch.Stop();
                 UpdateLog($"Algorithm finished in {stopWatch.Elapsed.TotalSeconds:F} seconds and generated move: {move}", 2);
-                UpdateLog($"Generated move: {move}", 2);
                 UpdateLog($"Sending it in...", 2);
-                var isMoveSuccess = _client.SendMove(_jwtToken, chessGameDetails.Id, move).Result;
-                if (isMoveSuccess)
-                {
-                    UpdateLog($"Successfully updated match {chessGameDetails.Name} ({chessGameDetails.Id}).", 2);
-                }
-                else
-                {
-                    UpdateLog($"ERROR: Couldn't update match with calculated move.", 2);
-                }
+                var isMoveSuccess = Client.SendMove(_jwtToken, chessGameDetails.Id, move).Result;
+
+                UpdateLog(
+                    isMoveSuccess
+                        ? $"Successfully updated match {chessGameDetails.Name} ({chessGameDetails.Id})."
+                        : $"ERROR: Couldn't update match with calculated move.", 2);
             }
 
             // Checking whether there is place for a new match and challenges a random player with no active match
+            if (playableMatches.Count > _maxNumberOfMatches)
+            {
+                _isRobotThinking = false;
+                _round++;
+                return;
+            }
+
             UpdateLog("Challenging users if possible...", 1);
-            var players = _client.GetPlayers(_jwtToken).Result;
+            var players = Client.GetPlayers(_jwtToken).Result;
+            var nonChallengedPlayer = players.Where(x =>
+                !inProgressMatches.Any(y => y.InitiatedBy.UserName == x.Name || y.Opponent.UserName == x.Name))
+                .Select(x => x.Name)
+                .OrderBy(x => Guid.NewGuid())
+                .FirstOrDefault();
 
-            var challengablePlayers = players.Select(x => new
+            if (nonChallengedPlayer == null)
             {
-                Player = x,
-                OpenForMatch = !playableMatches.Any(y => y.InitiatedBy.UserName == x.Name || y.Opponent.UserName == x.Name)
-            }).Where(x => x.OpenForMatch)
-                .Select(x => x.Player.Name)
-                .ToList();
+                UpdateLog($"Found no one to challenge. :(", 2);
+                _isRobotThinking = false;
+                _round++;
+                return;
+            }
 
-            UpdateLog($"Found {challengablePlayers.Count} players who may be open for a challenge.", 2);
+            UpdateLog($"Challenging {nonChallengedPlayer}...", 2);
 
-            matches = _client.GetMatches(_jwtToken).Result;
-
-            var numberOfOngoingMatches = matches.Count(x => x.Outcome == GameState.InProgress);
-            var numberOfOpenGameSlots = (int) Math.Max(_maxNumberOfMatches - numberOfOngoingMatches, 0);
-
-            if (numberOfOpenGameSlots > 0 && challengablePlayers.Any())
+            var newGame = Client.ChallengePlayer(_jwtToken, nonChallengedPlayer).Result;
+            if (newGame == null)
             {
-                var p = challengablePlayers.OrderBy(x => Guid.NewGuid()).First();
-                UpdateLog($"Challenging {p}...", 3);
-                var newGame = _client.ChallengePlayer(_jwtToken, p).Result;
-                if (newGame == null)
-                {
-                    UpdateLog($"ERROR: Failed...", 4);
-                }
+                UpdateLog($"ERROR: Failed...", 3);
+                _isRobotThinking = false;
+                _round++;
             }
 
             _isRobotThinking = false;
@@ -175,8 +256,6 @@ namespace MinimaxBot
 
         public static void InvokeIfRequired(Control control, MethodInvoker action)
         {
-            // See Update 2 for edits Mike de Klerk suggests to insert here.
-
             if (control.InvokeRequired)
             {
                 control.Invoke(action);
@@ -199,7 +278,7 @@ namespace MinimaxBot
 
             try
             {
-                result = await _client.GetVersion().ConfigureAwait(true);
+                result = await Client.GetVersion().ConfigureAwait(true);
             }
             catch (Exception)
             {
@@ -221,7 +300,7 @@ namespace MinimaxBot
 
             try
             {
-                result = await _client.Login(username, password).ConfigureAwait(true);
+                result = await Client.Login(username, password).ConfigureAwait(true);
             }
             catch (Exception)
             {
@@ -241,7 +320,7 @@ namespace MinimaxBot
             _jwtToken = result;
             _username = username;
 
-            labelLoginStatus.Text = "OK";
+            labelLoginStatus.Text = $"({username}) logged in.";
             labelStatus.Text = string.Empty;
 
             StartPlaying();
@@ -264,29 +343,12 @@ namespace MinimaxBot
 
         private void buttonLogout_Click(object sender, EventArgs e)
         {
+            _jwtToken = null;
+            labelLoginStatus.Text = $"({_username}) logged out.";
+            _username = null;
+
             StopPlaying();
         }
     }
 
-    internal class DecoratedPlayer : Player
-    {
-        public DecoratedPlayer(string name, bool isBot)
-        {
-            Name = name;
-            IsBot = isBot;
-        }
-
-        public override string ToString()
-        {
-            return IsBot ? $"{Name}(bot)" : $"{Name}(human)";
-        }
-    }
-
-    internal class DecoratedMatch : ChessGame
-    {
-        public override string ToString()
-        {
-            return $"{Name}({Outcome})";
-        }
-    }
 }

@@ -44,11 +44,21 @@
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.textboxBotMessages = new System.Windows.Forms.TextBox();
+            this.groupboxAlgorithms = new System.Windows.Forms.GroupBox();
+            this.listboxAlgorithms = new System.Windows.Forms.ListBox();
+            this.labelMaxDepth = new System.Windows.Forms.Label();
+            this.numericMaxDepth = new System.Windows.Forms.NumericUpDown();
+            this.progressbarAlgorithm = new System.Windows.Forms.ProgressBar();
+            this.labelAlgorithmProgress = new System.Windows.Forms.Label();
+            this.progressbarBotActive = new System.Windows.Forms.ProgressBar();
+            this.labelBotActive = new System.Windows.Forms.Label();
             this.statusStrip2.SuspendLayout();
             this.tableLayoutMain.SuspendLayout();
             this.tableLayourSidebar.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupboxAlgorithms.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericMaxDepth)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip2
@@ -56,16 +66,16 @@
             this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.labelStatus,
             this.buttonReconnect});
-            this.statusStrip2.Location = new System.Drawing.Point(0, 545);
+            this.statusStrip2.Location = new System.Drawing.Point(0, 547);
             this.statusStrip2.Name = "statusStrip2";
-            this.statusStrip2.Size = new System.Drawing.Size(1015, 22);
+            this.statusStrip2.Size = new System.Drawing.Size(763, 22);
             this.statusStrip2.TabIndex = 3;
             this.statusStrip2.Text = "statusStrip2";
             // 
             // labelStatus
             // 
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(954, 17);
+            this.labelStatus.Size = new System.Drawing.Size(702, 17);
             this.labelStatus.Spring = true;
             this.labelStatus.Text = "Message";
             this.labelStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -93,7 +103,7 @@
             this.tableLayoutMain.Name = "tableLayoutMain";
             this.tableLayoutMain.RowCount = 1;
             this.tableLayoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutMain.Size = new System.Drawing.Size(1015, 545);
+            this.tableLayoutMain.Size = new System.Drawing.Size(763, 547);
             this.tableLayoutMain.TabIndex = 8;
             // 
             // tableLayourSidebar
@@ -101,16 +111,17 @@
             this.tableLayourSidebar.ColumnCount = 1;
             this.tableLayourSidebar.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayourSidebar.Controls.Add(this.panel1, 0, 0);
-            this.tableLayourSidebar.Controls.Add(this.pictureBox1, 0, 3);
+            this.tableLayourSidebar.Controls.Add(this.pictureBox1, 0, 2);
+            this.tableLayourSidebar.Controls.Add(this.groupboxAlgorithms, 0, 1);
             this.tableLayourSidebar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayourSidebar.Location = new System.Drawing.Point(838, 3);
+            this.tableLayourSidebar.Location = new System.Drawing.Point(586, 3);
             this.tableLayourSidebar.Name = "tableLayourSidebar";
-            this.tableLayourSidebar.RowCount = 4;
+            this.tableLayourSidebar.RowCount = 3;
             this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 180F));
-            this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 130F));
-            this.tableLayourSidebar.Size = new System.Drawing.Size(174, 539);
+            this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayourSidebar.Size = new System.Drawing.Size(174, 541);
             this.tableLayourSidebar.TabIndex = 9;
             // 
             // panel1
@@ -201,9 +212,9 @@
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(3, 411);
+            this.pictureBox1.Location = new System.Drawing.Point(3, 414);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(168, 125);
+            this.pictureBox1.Size = new System.Drawing.Size(168, 124);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 10;
             this.pictureBox1.TabStop = false;
@@ -217,17 +228,119 @@
             this.textboxBotMessages.Multiline = true;
             this.textboxBotMessages.Name = "textboxBotMessages";
             this.textboxBotMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textboxBotMessages.Size = new System.Drawing.Size(829, 539);
+            this.textboxBotMessages.Size = new System.Drawing.Size(577, 541);
             this.textboxBotMessages.TabIndex = 10;
             this.textboxBotMessages.Text = resources.GetString("textboxBotMessages.Text");
+            // 
+            // groupboxAlgorithms
+            // 
+            this.groupboxAlgorithms.Controls.Add(this.labelBotActive);
+            this.groupboxAlgorithms.Controls.Add(this.progressbarBotActive);
+            this.groupboxAlgorithms.Controls.Add(this.labelAlgorithmProgress);
+            this.groupboxAlgorithms.Controls.Add(this.progressbarAlgorithm);
+            this.groupboxAlgorithms.Controls.Add(this.numericMaxDepth);
+            this.groupboxAlgorithms.Controls.Add(this.labelMaxDepth);
+            this.groupboxAlgorithms.Controls.Add(this.listboxAlgorithms);
+            this.groupboxAlgorithms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupboxAlgorithms.Location = new System.Drawing.Point(3, 183);
+            this.groupboxAlgorithms.Name = "groupboxAlgorithms";
+            this.groupboxAlgorithms.Size = new System.Drawing.Size(168, 225);
+            this.groupboxAlgorithms.TabIndex = 11;
+            this.groupboxAlgorithms.TabStop = false;
+            this.groupboxAlgorithms.Text = "Algorithm Settings";
+            // 
+            // listboxAlgorithms
+            // 
+            this.listboxAlgorithms.Dock = System.Windows.Forms.DockStyle.Top;
+            this.listboxAlgorithms.FormattingEnabled = true;
+            this.listboxAlgorithms.Location = new System.Drawing.Point(3, 16);
+            this.listboxAlgorithms.Name = "listboxAlgorithms";
+            this.listboxAlgorithms.Size = new System.Drawing.Size(162, 95);
+            this.listboxAlgorithms.TabIndex = 0;
+            // 
+            // labelMaxDepth
+            // 
+            this.labelMaxDepth.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelMaxDepth.Location = new System.Drawing.Point(3, 111);
+            this.labelMaxDepth.Name = "labelMaxDepth";
+            this.labelMaxDepth.Size = new System.Drawing.Size(162, 20);
+            this.labelMaxDepth.TabIndex = 11;
+            this.labelMaxDepth.Text = "Max depth (where applicable)";
+            this.labelMaxDepth.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            // 
+            // numericMaxDepth
+            // 
+            this.numericMaxDepth.Dock = System.Windows.Forms.DockStyle.Top;
+            this.numericMaxDepth.Location = new System.Drawing.Point(3, 131);
+            this.numericMaxDepth.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numericMaxDepth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericMaxDepth.Name = "numericMaxDepth";
+            this.numericMaxDepth.Size = new System.Drawing.Size(162, 20);
+            this.numericMaxDepth.TabIndex = 12;
+            this.numericMaxDepth.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // progressbarAlgorithm
+            // 
+            this.progressbarAlgorithm.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressbarAlgorithm.ForeColor = System.Drawing.Color.DeepSkyBlue;
+            this.progressbarAlgorithm.Location = new System.Drawing.Point(3, 207);
+            this.progressbarAlgorithm.MarqueeAnimationSpeed = 0;
+            this.progressbarAlgorithm.Name = "progressbarAlgorithm";
+            this.progressbarAlgorithm.Size = new System.Drawing.Size(162, 15);
+            this.progressbarAlgorithm.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressbarAlgorithm.TabIndex = 13;
+            // 
+            // labelAlgorithmProgress
+            // 
+            this.labelAlgorithmProgress.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelAlgorithmProgress.Location = new System.Drawing.Point(3, 187);
+            this.labelAlgorithmProgress.Name = "labelAlgorithmProgress";
+            this.labelAlgorithmProgress.Size = new System.Drawing.Size(162, 20);
+            this.labelAlgorithmProgress.TabIndex = 14;
+            this.labelAlgorithmProgress.Text = "Algorithm running...";
+            this.labelAlgorithmProgress.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            // 
+            // progressbarBotActive
+            // 
+            this.progressbarBotActive.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressbarBotActive.ForeColor = System.Drawing.Color.IndianRed;
+            this.progressbarBotActive.Location = new System.Drawing.Point(3, 172);
+            this.progressbarBotActive.MarqueeAnimationSpeed = 0;
+            this.progressbarBotActive.Name = "progressbarBotActive";
+            this.progressbarBotActive.Size = new System.Drawing.Size(162, 15);
+            this.progressbarBotActive.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressbarBotActive.TabIndex = 15;
+            // 
+            // labelBotActive
+            // 
+            this.labelBotActive.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelBotActive.Location = new System.Drawing.Point(3, 152);
+            this.labelBotActive.Name = "labelBotActive";
+            this.labelBotActive.Size = new System.Drawing.Size(162, 20);
+            this.labelBotActive.TabIndex = 16;
+            this.labelBotActive.Text = "Bot active...";
+            this.labelBotActive.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1015, 567);
+            this.ClientSize = new System.Drawing.Size(763, 569);
             this.Controls.Add(this.tableLayoutMain);
             this.Controls.Add(this.statusStrip2);
+            this.MinimumSize = new System.Drawing.Size(779, 608);
             this.Name = "MainForm";
             this.Text = "Bot";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -239,6 +352,8 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupboxAlgorithms.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericMaxDepth)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -260,6 +375,14 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button buttonLogout;
         private System.Windows.Forms.TextBox textboxBotMessages;
+        private System.Windows.Forms.GroupBox groupboxAlgorithms;
+        private System.Windows.Forms.ListBox listboxAlgorithms;
+        private System.Windows.Forms.Label labelAlgorithmProgress;
+        private System.Windows.Forms.ProgressBar progressbarAlgorithm;
+        private System.Windows.Forms.NumericUpDown numericMaxDepth;
+        private System.Windows.Forms.Label labelMaxDepth;
+        private System.Windows.Forms.Label labelBotActive;
+        private System.Windows.Forms.ProgressBar progressbarBotActive;
     }
 }
 

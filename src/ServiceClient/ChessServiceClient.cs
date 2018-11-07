@@ -17,7 +17,7 @@ namespace ServiceClient
     public class ChessServiceClient : IDisposable
     {
         private readonly string _baseUrl;
-        private readonly HttpClient _client = new HttpClient();
+        private static readonly HttpClient Client = new HttpClient();
 
         private string GamesControllerUrl => $"{_baseUrl}/api/games";
 
@@ -37,6 +37,7 @@ namespace ServiceClient
                 x.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
                 return x;
             };
+            Client.DefaultRequestHeaders.Add("Connection", "close");
         }
 
         //private JsonSerializerSettings GetJsonSettings()
@@ -52,7 +53,7 @@ namespace ServiceClient
         {
             var message = new HttpRequestMessage(HttpMethod.Get, HealthControllerUri);
 
-            var resultMessage = await _client.SendAsync(message);
+            var resultMessage = await Client.SendAsync(message);
 
             resultMessage.EnsureSuccessStatusCode();
 
@@ -78,7 +79,7 @@ namespace ServiceClient
                 Content = content
             };
 
-            var resultMessage = await _client.SendAsync(message);
+            var resultMessage = await Client.SendAsync(message);
 
             if (!resultMessage.IsSuccessStatusCode)
             {
@@ -97,7 +98,7 @@ namespace ServiceClient
 
             message.Headers.Add("Authorization", $"Bearer {token}");
 
-            var resultMessage = await _client.SendAsync(message);
+            var resultMessage = await Client.SendAsync(message);
 
             if (!resultMessage.IsSuccessStatusCode)
             {
@@ -116,7 +117,7 @@ namespace ServiceClient
 
             message.Headers.Add("Authorization", $"Bearer {token}");
 
-            var resultMessage = await _client.SendAsync(message);
+            var resultMessage = await Client.SendAsync(message);
 
             if (!resultMessage.IsSuccessStatusCode)
             {
@@ -137,7 +138,7 @@ namespace ServiceClient
 
             message.Headers.Add("Authorization", $"Bearer {token}");
 
-            var resultMessage = await _client.SendAsync(message);
+            var resultMessage = await Client.SendAsync(message);
 
             if (!resultMessage.IsSuccessStatusCode)
             {
@@ -172,7 +173,7 @@ namespace ServiceClient
 
             message.Content = new StringContent(JsonConvert.SerializeObject(challengeDto), Encoding.UTF8, "application/json");
 
-            var resultMessage = await _client.SendAsync(message);
+            var resultMessage = await Client.SendAsync(message);
 
             if (!resultMessage.IsSuccessStatusCode)
             {
@@ -199,7 +200,7 @@ namespace ServiceClient
 
             message.Content = new StringContent(moveString, Encoding.UTF8, "application/json");
 
-            var resultMessage = await _client.SendAsync(message);
+            var resultMessage = await Client.SendAsync(message);
 
             if (!resultMessage.IsSuccessStatusCode)
             {
@@ -224,7 +225,7 @@ namespace ServiceClient
 
         public void Dispose()
         {
-            _client?.Dispose();
+            Client?.Dispose();
         }
     }
 }
