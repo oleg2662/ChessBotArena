@@ -34,20 +34,6 @@
             Contains some utility methods.
             </summary>
         </member>
-        <member name="M:BoardGame.Service.Controllers.Api.BaseController.Conflict">
-            <summary>
-            Creates a <see cref="T:BoardGame.Service.Models.Api.Results.ConflictResult" /> object that produces an empty
-            <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response.
-            </summary>
-            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.ConflictResult" /> object for the response.</returns>
-        </member>
-        <member name="M:BoardGame.Service.Controllers.Api.BaseController.Conflict(System.Object)">
-            <summary>
-            Creates an <see cref="T:BoardGame.Service.Models.Api.Results.ConflictObjectResult" /> object that produces an <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response.
-            </summary>
-            <param name="value">The content value to format in the entity body.</param>
-            <returns>The created <see cref="T:BoardGame.Service.Models.Api.Results.ConflictObjectResult" /> for the response.</returns>
-        </member>
         <member name="M:BoardGame.Service.Controllers.Api.BaseController.Forbidden">
             <summary>
             Creates a <see cref="T:BoardGame.Service.Models.Api.Results.ForbiddenResult" /> object that produces an empty

@@ -10,28 +10,6 @@ namespace BoardGame.Service.Controllers.Api
     public abstract class BaseController : Controller
     {
         /// <summary>
-        /// Creates a <see cref="ConflictResult" /> object that produces an empty
-        /// <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response.
-        /// </summary>
-        /// <returns>The created <see cref="ConflictResult" /> object for the response.</returns>
-        [NonAction]
-        public virtual ConflictResult Conflict()
-        {
-            return new ConflictResult();
-        }
-
-        /// <summary>
-        /// Creates an <see cref="ConflictObjectResult" /> object that produces an <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status409Conflict" /> response.
-        /// </summary>
-        /// <param name="value">The content value to format in the entity body.</param>
-        /// <returns>The created <see cref="ConflictObjectResult" /> for the response.</returns>
-        [NonAction]
-        public virtual ConflictObjectResult Conflict(object value)
-        {
-            return new ConflictObjectResult(value);
-        }
-
-        /// <summary>
         /// Creates a <see cref="ForbiddenResult" /> object that produces an empty
         /// <see cref="F:Microsoft.AspNetCore.Http.StatusCodes.Status403Forbidden" /> response.
         /// </summary>
