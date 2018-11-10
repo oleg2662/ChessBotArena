@@ -14,7 +14,7 @@ namespace Game.Tests.Unit.Chess
         [Fact]
         public void GenerateMovesTest_Initial_AppropriateMovesReturned()
         {
-            var expected = 20;
+            var expected = 22;
 
             var representation = new ChessRepresentationInitializer().Create();
             
@@ -143,8 +143,10 @@ namespace Game.Tests.Unit.Chess
         [Fact]
         public void GenerateMovesTest_KingMovesInChess_WhiteSide()
         {
-            var expectedKnightMoves = new[]
+            var expectedKnightMoves = new BaseMove[]
             {
+                new SpecialMove(ChessPlayer.White, MessageType.Resign),
+                new SpecialMove(ChessPlayer.White, MessageType.DrawOffer),
                 new ChessMove(ChessPlayer.White, Positions.C4, Positions.E2),
                 new ChessMove(ChessPlayer.White, Positions.G2, Positions.G3),
                 new ChessMove(ChessPlayer.White, Positions.G2, Positions.G1),
@@ -162,8 +164,7 @@ namespace Game.Tests.Unit.Chess
                 [Positions.C4] = new Queen(ChessPlayer.White, false),
                 [Positions.G3] = new Pawn(ChessPlayer.Black, false)
             };
-
-
+            
             var game = new ChessMechanism();
             var moves = game.GenerateMoves(board).ToHashSet();
 
@@ -434,8 +435,12 @@ namespace Game.Tests.Unit.Chess
                 while (true)
                 {
                     count++;
-                    var move = mechanism.GenerateMoves(game).OrderBy(x => Guid.NewGuid()).FirstOrDefault();
-                    if (move == null || count > 80)
+                    var move = mechanism.GenerateMoves(game)
+                                        .OfType<BaseChessMove>()
+                                        .OrderBy(x => Guid.NewGuid())
+                                        .FirstOrDefault();
+
+                    if (move == null || count > 115)
                     {
                         break;
                     }

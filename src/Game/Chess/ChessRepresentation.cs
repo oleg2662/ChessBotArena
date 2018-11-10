@@ -33,17 +33,24 @@ namespace Game.Chess
         {
             unchecked
             {
-                var historyHash = History == null || !History.Any()
-                    ? 0
-                    : History.Select(x => x.GetHashCode()).Aggregate((x, y) => x ^ y * Constants.HashXor);
+                var historyHash = 0;
+                foreach (var baseMove in History)
+                {
+                    historyHash += baseMove.GetHashCode();
+                }
 
-                var piecesHashCode = _pieces == null || !_pieces.Any()
-                                      ? 0
-                                      : _pieces.Select(x => x == null ? 0 : x.GetHashCode()).Aggregate((x, y) => x ^ y * Constants.HashXor);
+                var piecesHashCode = 0;
+                for(var i = 0; i < 64; i++)
+                {
+                    var pieceHashcode = _pieces[i]?.GetHashCode() ?? 0;
+                    var positionHashCode = ((Position) i).GetHashCode();
+                    piecesHashCode += pieceHashcode + positionHashCode;
+                }
 
                 var hashCode = Constants.HashBase;
                 hashCode = (hashCode * Constants.HashXor) ^ piecesHashCode;
-                hashCode = (hashCode * Constants.HashXor) ^ (Players != null ? Players.GetHashCode() : 0);
+                //hashCode = (hashCode * Constants.HashXor) ^ (Players != null ? Players.GetHashCode() : 0);
+                hashCode = (hashCode * Constants.HashXor) ^ CurrentPlayer.GetHashCode();
                 hashCode = (hashCode * Constants.HashXor) ^ historyHash;
                 return hashCode;
             }

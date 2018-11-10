@@ -1,43 +1,58 @@
-﻿using Game.Chess.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Linq;
+
+using Game.Abstraction;
+using Game.Chess.Extensions;
+using Game.Chess.Moves;
+using Game.Chess.Pieces;
+using Game.Chess.Exceptions;
 
 namespace Game.Chess
 {
-    using Abstraction;
-    using Moves;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Extensions;
-    using Pieces;
-
     public class ChessMechanism : IMechanism<ChessRepresentation, BaseMove, GameState>
     {
-        //private readonly Dictionary<ChessMechanismCacheKey, IEnumerable<BaseChessMove>> _moveCache = new Dictionary<ChessMechanismCacheKey, IEnumerable<BaseChessMove>>();
+        private readonly ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>> _cache = new ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>>();
+        private readonly ConcurrentDictionary<CacheKey, IEnumerable<Position>> _threatenedPositionsCache = new ConcurrentDictionary<CacheKey, IEnumerable<Position>>();
 
         public IEnumerable<BaseMove> GenerateMoves(ChessRepresentation representation)
+        {
+            return _cache.GetOrAdd(new CacheKey(representation, representation.CurrentPlayer, CacheKey.MoveGeneratorStyle.Normal),
+                                   _ => GenerateMovesInner(representation).ToList());
+        }
+
+        private IEnumerable<BaseMove> GenerateMovesInner(ChessRepresentation representation)
         {
             var originalBoard = representation;
             var currentPlayer = representation.CurrentPlayer;
 
-            var specialMovesInHistory = originalBoard.History.OfType<SpecialMove>().ToList();
-            if (specialMovesInHistory.Any(x => x.Message == MessageType.Resign))
+            // Special moves...
+            var lastMove = (representation.History.LastOrDefault() as SpecialMove);
+
+            switch (lastMove?.Message)
             {
-                yield break;
+                case MessageType.Resign:
+                    yield break;
+
+                case MessageType.DrawOffer:
+                    yield return new SpecialMove(currentPlayer, MessageType.DrawAccept);
+                    yield return new SpecialMove(currentPlayer, MessageType.DrawDecline);
+                    break;
+
+                case MessageType.DrawAccept:
+                    yield break;
+
+                case MessageType.DrawDecline:
+                    break;
+
+                case null:
+                    yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
+                    yield return new SpecialMove(currentPlayer, MessageType.Resign);
+                    break;
             }
 
-            yield return new SpecialMove(currentPlayer, MessageType.Resign);
-
-            if (specialMovesInHistory.Any(x => x.Message == MessageType.DrawOffer))
-            {
-                yield return new SpecialMove(currentPlayer, MessageType.DrawAccept);
-                yield return new SpecialMove(currentPlayer, MessageType.DrawDecline);
-                yield break;
-            }
-            else
-            {
-                yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
-            }
-
+            // Normal moves...
             var possibleMoves = GenerateMoves(representation, representation.CurrentPlayer);
 
             foreach (var move in possibleMoves)
@@ -51,7 +66,7 @@ namespace Game.Chess
                 {
                     // Check whether the move would threaten the king
                     threatenedPositions = GetThreatenedPositions(newRepresentation, currentPlayer);
-                    if(!threatenedPositions.Contains(originalKingPosition))
+                    if (!threatenedPositions.Contains(originalKingPosition))
                     {
                         yield return move;
                     }
@@ -122,7 +137,7 @@ namespace Game.Chess
             // Check check-mate
             var isCurrentPlayerInChess = IsPlayerInChess(representation, representation.CurrentPlayer);
 
-            var anyMovesLeft = GenerateMoves(representation).Any();
+            var anyMovesLeft = GenerateMoves(representation).OfType<BaseChessMove>().Any();
 
             if (!anyMovesLeft && isCurrentPlayerInChess)
             {
@@ -145,10 +160,10 @@ namespace Game.Chess
             }
 
             var nonEmptyPositions = Positions.PositionList.Select(x => new
-                                    {
-                                        ChessPiece = representation[x],
-                                        Position = x
-                                    }).Where(x => x.ChessPiece != null)
+            {
+                ChessPiece = representation[x],
+                Position = x
+            }).Where(x => x.ChessPiece != null)
                                       .ToArray();
 
 
@@ -248,7 +263,7 @@ namespace Game.Chess
                     var movingPiece = representation[chessMove.From];
                     representation.Move(chessMove.From, chessMove.To);
                     representation[chessMove.To].HasMoved = true;
-                    
+
                     // Setting en passant flag if needed
                     if (movingPiece.Kind == PieceKind.Pawn && Math.Abs(chessMove.From.Row - chessMove.To.Row) == 2 && chessMove.From.Column == chessMove.To.Column)
                     {
@@ -285,56 +300,61 @@ namespace Game.Chess
 
         private IEnumerable<Position> GetThreatenedPositions(ChessRepresentation board, ChessPlayer threatenedPlayer)
         {
+            var key = new CacheKey(board, threatenedPlayer, CacheKey.MoveGeneratorStyle.Threatening);
+
+            var result = _threatenedPositionsCache.GetOrAdd(key, _ =>
+            {
+                IEnumerable<Position> generatedPositions = GetThreatenedPositionsInner(board, threatenedPlayer);
+                return generatedPositions;
+            });
+
+            return result;
+        }
+
+        private IEnumerable<Position> GetThreatenedPositionsInner(ChessRepresentation board, ChessPlayer threatenedPlayer)
+        {
             var threateningPlayer = GetOpponent(threatenedPlayer);
             var opponentMoves = new List<BaseChessMove>();
 
-            //var key = new ChessMechanismCacheKey(board, threateningPlayer, ChessMechanismCacheKey.MoveGeneratorStyle.Threatening);
-            //if (_moveCache.ContainsKey(key))
-            //{
-            //    opponentMoves = _moveCache[key].ToList();
-            //}
-            //else
-            //{
+            foreach (var from in Positions.PositionList)
+            {
+                var piece = board[from];
 
-                foreach (var from in Positions.PositionList)
+                if (piece == null || piece.Owner == threatenedPlayer)
                 {
-                    var piece = board[from];
-
-                    if (piece == null || piece.Owner == threatenedPlayer)
-                    {
-                        continue;
-                    }
-
-                    switch (piece.Kind)
-                    {
-                        case PieceKind.King:
-                            opponentMoves.AddRange(GetKingMoves(board, from, threateningPlayer));
-                            break;
-
-                        case PieceKind.Queen:
-                            opponentMoves.AddRange(GetQueenMoves(board, from, threateningPlayer));
-                            break;
-
-                        case PieceKind.Rook:
-                            opponentMoves.AddRange(GetRookMoves(board, from, threateningPlayer));
-                            break;
-
-                        case PieceKind.Bishop:
-                            opponentMoves.AddRange(GetBishopMoves(board, from, threateningPlayer));
-                            break;
-
-                        case PieceKind.Knight:
-                            opponentMoves.AddRange(GetKnightMoves(board, from, threateningPlayer));
-                            break;
-
-                        case PieceKind.Pawn:
-                            opponentMoves.AddRange(GetPawnMoves(board, from, threateningPlayer, true));
-                            break;
-
-                        default:
-                            continue;
-                    }
+                    continue;
                 }
+
+                switch (piece.Kind)
+                {
+                    case PieceKind.King:
+                        opponentMoves.AddRange(GetKingMoves(board, from, threateningPlayer));
+                        break;
+
+                    case PieceKind.Queen:
+                        opponentMoves.AddRange(GetQueenMoves(board, from, threateningPlayer));
+                        break;
+
+                    case PieceKind.Rook:
+                        opponentMoves.AddRange(GetRookMoves(board, from, threateningPlayer));
+                        break;
+
+                    case PieceKind.Bishop:
+                        opponentMoves.AddRange(GetBishopMoves(board, from, threateningPlayer));
+                        break;
+
+                    case PieceKind.Knight:
+                        opponentMoves.AddRange(GetKnightMoves(board, from, threateningPlayer));
+                        break;
+
+                    case PieceKind.Pawn:
+                        opponentMoves.AddRange(GetPawnMoves(board, from, threateningPlayer, true));
+                        break;
+
+                    default:
+                        continue;
+                }
+            }
             //}
 
             var result = opponentMoves.Select(x => x.To).Distinct().ToList();
@@ -607,7 +627,7 @@ namespace Game.Chess
                 yield break;
             }
 
-            if(piece.HasMoved)
+            if (piece.HasMoved)
             {
                 yield break;
             }
@@ -659,14 +679,14 @@ namespace Game.Chess
 
             var anyCastlingPossible = shortCastlingSeemsPossible || longCastlingSeemsPossible;
 
-            if(!anyCastlingPossible)
+            if (!anyCastlingPossible)
             {
                 yield break;
             }
 
             var threatenedPositions = GetThreatenedPositions(board, player).ToList();
 
-            if(longCastlingSeemsPossible && !threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
+            if (longCastlingSeemsPossible && !threatenedPositions.Intersect(longCastlingNoThreatPositions).Any())
             {
                 yield return new KingCastlingMove(player, CastlingType.Long);
             }
@@ -800,61 +820,64 @@ namespace Game.Chess
             }
         }
 
-        //private class ChessMechanismCacheKey : IEquatable<ChessMechanismCacheKey>
-        //{
-        //    public bool Equals(ChessMechanismCacheKey other)
-        //    {
-        //        if (ReferenceEquals(null, other)) return false;
-        //        if (ReferenceEquals(this, other)) return true;
+        internal class CacheKey : IEquatable<CacheKey>
+        {
+            public CacheKey(ChessRepresentation chessRepresentation, ChessPlayer chessPlayer, MoveGeneratorStyle generatorStyle)
+            {
+                ChessRepresentation = chessRepresentation.Clone();
+                ChessPlayer = chessPlayer;
+                GeneratorStyle = generatorStyle;
+            }
 
-        //        return ChessRepresentation.Equals(other.ChessRepresentation)
-        //               && Player.Equals(other.Player)
-        //               && Style.Equals(other.Style);
-        //    }
+            public ChessRepresentation ChessRepresentation { get; }
+            public ChessPlayer ChessPlayer { get; }
+            public MoveGeneratorStyle GeneratorStyle { get; }
 
-        //    public override bool Equals(object obj)
-        //    {
-        //        if (ReferenceEquals(null, obj)) return false;
-        //        if (ReferenceEquals(this, obj)) return true;
-        //        if (obj.GetType() != GetType()) return false;
+            public bool Equals(CacheKey other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
 
-        //        return Equals((ChessMechanismCacheKey) obj);
-        //    }
+                return ChessRepresentation.Equals(other.ChessRepresentation)
+                       && ChessPlayer == other.ChessPlayer
+                       && GeneratorStyle == other.GeneratorStyle;
+            }
 
-        //    public override int GetHashCode()
-        //    {
-        //        unchecked
-        //        {
-        //            return ((ChessRepresentation != null ? ChessRepresentation.GetHashCode() : 0) * 397) ^ (int) Player ^ (int) Style;
-        //        }
-        //    }
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != GetType()) return false;
 
-        //    public static bool operator ==(ChessMechanismCacheKey left, ChessMechanismCacheKey right)
-        //    {
-        //        return Equals(left, right);
-        //    }
+                return Equals((CacheKey)obj);
+            }
 
-        //    public static bool operator !=(ChessMechanismCacheKey left, ChessMechanismCacheKey right)
-        //    {
-        //        return !Equals(left, right);
-        //    }
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = ChessRepresentation.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (int)ChessPlayer;
+                    hashCode = (hashCode * 397) ^ (int)GeneratorStyle;
+                    return hashCode;
+                }
+            }
 
-        //    public ChessRepresentation ChessRepresentation { get; }
-        //    public ChessPlayer Player { get; }
-        //    public MoveGeneratorStyle Style { get; }
+            public static bool operator ==(CacheKey left, CacheKey right)
+            {
+                return Equals(left, right);
+            }
 
-        //    public ChessMechanismCacheKey(ChessRepresentation chessRepresentation, ChessPlayer chessPlayer, MoveGeneratorStyle style)
-        //    {
-        //        ChessRepresentation = chessRepresentation;
-        //        Player = chessPlayer;
-        //        Style = style;
-        //    }
+            public static bool operator !=(CacheKey left, CacheKey right)
+            {
+                return !Equals(left, right);
+            }
 
-        //    public enum MoveGeneratorStyle
-        //    {
-        //        Normal,
-        //        Threatening
-        //    }
-        //}
+            internal enum MoveGeneratorStyle
+            {
+                Normal,
+                Threatening
+            }
+        }
     }
 }
