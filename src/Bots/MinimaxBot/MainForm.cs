@@ -25,7 +25,7 @@ namespace MinimaxBot
 {
     public partial class MainForm : Form
     {
-        private static readonly ChessServiceClient Client = new ChessServiceClient("http://localhost/BoardGame.Service");
+        private static readonly ChessServiceClient Client = new ChessServiceClient("http://poseen-001-site1.gtempurl.com");
         private IAlgorithm<ChessRepresentation, BaseMove> _algorithm;
         private static readonly Random Randomizer = new Random();
         private string _jwtToken;

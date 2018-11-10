@@ -14,7 +14,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>G:\ChessBotArena\src\Service\Boardgame.Service.xml</DocumentationFile>
-    <OutputPath></OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 
 

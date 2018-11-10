@@ -43,15 +43,15 @@
             this.textboxUsername = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.textboxBotMessages = new System.Windows.Forms.TextBox();
             this.groupboxAlgorithms = new System.Windows.Forms.GroupBox();
-            this.listboxAlgorithms = new System.Windows.Forms.ListBox();
-            this.labelMaxDepth = new System.Windows.Forms.Label();
-            this.numericMaxDepth = new System.Windows.Forms.NumericUpDown();
-            this.progressbarAlgorithm = new System.Windows.Forms.ProgressBar();
-            this.labelAlgorithmProgress = new System.Windows.Forms.Label();
-            this.progressbarBotActive = new System.Windows.Forms.ProgressBar();
             this.labelBotActive = new System.Windows.Forms.Label();
+            this.progressbarBotActive = new System.Windows.Forms.ProgressBar();
+            this.labelAlgorithmProgress = new System.Windows.Forms.Label();
+            this.progressbarAlgorithm = new System.Windows.Forms.ProgressBar();
+            this.numericMaxDepth = new System.Windows.Forms.NumericUpDown();
+            this.labelMaxDepth = new System.Windows.Forms.Label();
+            this.listboxAlgorithms = new System.Windows.Forms.ListBox();
+            this.textboxBotMessages = new System.Windows.Forms.TextBox();
             this.statusStrip2.SuspendLayout();
             this.tableLayoutMain.SuspendLayout();
             this.tableLayourSidebar.SuspendLayout();
@@ -66,7 +66,7 @@
             this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.labelStatus,
             this.buttonReconnect});
-            this.statusStrip2.Location = new System.Drawing.Point(0, 547);
+            this.statusStrip2.Location = new System.Drawing.Point(0, 510);
             this.statusStrip2.Name = "statusStrip2";
             this.statusStrip2.Size = new System.Drawing.Size(763, 22);
             this.statusStrip2.TabIndex = 3;
@@ -103,7 +103,7 @@
             this.tableLayoutMain.Name = "tableLayoutMain";
             this.tableLayoutMain.RowCount = 1;
             this.tableLayoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutMain.Size = new System.Drawing.Size(763, 547);
+            this.tableLayoutMain.Size = new System.Drawing.Size(763, 510);
             this.tableLayoutMain.TabIndex = 8;
             // 
             // tableLayourSidebar
@@ -119,9 +119,8 @@
             this.tableLayourSidebar.RowCount = 3;
             this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 180F));
             this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 130F));
-            this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayourSidebar.Size = new System.Drawing.Size(174, 541);
+            this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 98F));
+            this.tableLayourSidebar.Size = new System.Drawing.Size(174, 504);
             this.tableLayourSidebar.TabIndex = 9;
             // 
             // panel1
@@ -212,25 +211,12 @@
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(3, 414);
+            this.pictureBox1.Location = new System.Drawing.Point(3, 409);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(168, 124);
+            this.pictureBox1.Size = new System.Drawing.Size(168, 92);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 10;
             this.pictureBox1.TabStop = false;
-            // 
-            // textboxBotMessages
-            // 
-            this.textboxBotMessages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textboxBotMessages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textboxBotMessages.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textboxBotMessages.Location = new System.Drawing.Point(3, 3);
-            this.textboxBotMessages.Multiline = true;
-            this.textboxBotMessages.Name = "textboxBotMessages";
-            this.textboxBotMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textboxBotMessages.Size = new System.Drawing.Size(577, 541);
-            this.textboxBotMessages.TabIndex = 10;
-            this.textboxBotMessages.Text = resources.GetString("textboxBotMessages.Text");
             // 
             // groupboxAlgorithms
             // 
@@ -244,29 +230,52 @@
             this.groupboxAlgorithms.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupboxAlgorithms.Location = new System.Drawing.Point(3, 183);
             this.groupboxAlgorithms.Name = "groupboxAlgorithms";
-            this.groupboxAlgorithms.Size = new System.Drawing.Size(168, 225);
+            this.groupboxAlgorithms.Size = new System.Drawing.Size(168, 220);
             this.groupboxAlgorithms.TabIndex = 11;
             this.groupboxAlgorithms.TabStop = false;
             this.groupboxAlgorithms.Text = "Algorithm Settings";
             // 
-            // listboxAlgorithms
+            // labelBotActive
             // 
-            this.listboxAlgorithms.Dock = System.Windows.Forms.DockStyle.Top;
-            this.listboxAlgorithms.FormattingEnabled = true;
-            this.listboxAlgorithms.Location = new System.Drawing.Point(3, 16);
-            this.listboxAlgorithms.Name = "listboxAlgorithms";
-            this.listboxAlgorithms.Size = new System.Drawing.Size(162, 95);
-            this.listboxAlgorithms.TabIndex = 0;
+            this.labelBotActive.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelBotActive.Location = new System.Drawing.Point(3, 147);
+            this.labelBotActive.Name = "labelBotActive";
+            this.labelBotActive.Size = new System.Drawing.Size(162, 20);
+            this.labelBotActive.TabIndex = 16;
+            this.labelBotActive.Text = "Bot active...";
+            this.labelBotActive.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
-            // labelMaxDepth
+            // progressbarBotActive
             // 
-            this.labelMaxDepth.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelMaxDepth.Location = new System.Drawing.Point(3, 111);
-            this.labelMaxDepth.Name = "labelMaxDepth";
-            this.labelMaxDepth.Size = new System.Drawing.Size(162, 20);
-            this.labelMaxDepth.TabIndex = 11;
-            this.labelMaxDepth.Text = "Max depth (where applicable)";
-            this.labelMaxDepth.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.progressbarBotActive.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressbarBotActive.ForeColor = System.Drawing.Color.IndianRed;
+            this.progressbarBotActive.Location = new System.Drawing.Point(3, 167);
+            this.progressbarBotActive.MarqueeAnimationSpeed = 0;
+            this.progressbarBotActive.Name = "progressbarBotActive";
+            this.progressbarBotActive.Size = new System.Drawing.Size(162, 15);
+            this.progressbarBotActive.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressbarBotActive.TabIndex = 15;
+            // 
+            // labelAlgorithmProgress
+            // 
+            this.labelAlgorithmProgress.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelAlgorithmProgress.Location = new System.Drawing.Point(3, 182);
+            this.labelAlgorithmProgress.Name = "labelAlgorithmProgress";
+            this.labelAlgorithmProgress.Size = new System.Drawing.Size(162, 20);
+            this.labelAlgorithmProgress.TabIndex = 14;
+            this.labelAlgorithmProgress.Text = "Algorithm running...";
+            this.labelAlgorithmProgress.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            // 
+            // progressbarAlgorithm
+            // 
+            this.progressbarAlgorithm.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressbarAlgorithm.ForeColor = System.Drawing.Color.DeepSkyBlue;
+            this.progressbarAlgorithm.Location = new System.Drawing.Point(3, 202);
+            this.progressbarAlgorithm.MarqueeAnimationSpeed = 0;
+            this.progressbarAlgorithm.Name = "progressbarAlgorithm";
+            this.progressbarAlgorithm.Size = new System.Drawing.Size(162, 15);
+            this.progressbarAlgorithm.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressbarAlgorithm.TabIndex = 13;
             // 
             // numericMaxDepth
             // 
@@ -291,56 +300,49 @@
             0,
             0});
             // 
-            // progressbarAlgorithm
+            // labelMaxDepth
             // 
-            this.progressbarAlgorithm.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressbarAlgorithm.ForeColor = System.Drawing.Color.DeepSkyBlue;
-            this.progressbarAlgorithm.Location = new System.Drawing.Point(3, 207);
-            this.progressbarAlgorithm.MarqueeAnimationSpeed = 0;
-            this.progressbarAlgorithm.Name = "progressbarAlgorithm";
-            this.progressbarAlgorithm.Size = new System.Drawing.Size(162, 15);
-            this.progressbarAlgorithm.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressbarAlgorithm.TabIndex = 13;
+            this.labelMaxDepth.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelMaxDepth.Location = new System.Drawing.Point(3, 111);
+            this.labelMaxDepth.Name = "labelMaxDepth";
+            this.labelMaxDepth.Size = new System.Drawing.Size(162, 20);
+            this.labelMaxDepth.TabIndex = 11;
+            this.labelMaxDepth.Text = "Max depth (where applicable)";
+            this.labelMaxDepth.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
-            // labelAlgorithmProgress
+            // listboxAlgorithms
             // 
-            this.labelAlgorithmProgress.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelAlgorithmProgress.Location = new System.Drawing.Point(3, 187);
-            this.labelAlgorithmProgress.Name = "labelAlgorithmProgress";
-            this.labelAlgorithmProgress.Size = new System.Drawing.Size(162, 20);
-            this.labelAlgorithmProgress.TabIndex = 14;
-            this.labelAlgorithmProgress.Text = "Algorithm running...";
-            this.labelAlgorithmProgress.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.listboxAlgorithms.Dock = System.Windows.Forms.DockStyle.Top;
+            this.listboxAlgorithms.FormattingEnabled = true;
+            this.listboxAlgorithms.Location = new System.Drawing.Point(3, 16);
+            this.listboxAlgorithms.Name = "listboxAlgorithms";
+            this.listboxAlgorithms.Size = new System.Drawing.Size(162, 95);
+            this.listboxAlgorithms.TabIndex = 0;
             // 
-            // progressbarBotActive
+            // textboxBotMessages
             // 
-            this.progressbarBotActive.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressbarBotActive.ForeColor = System.Drawing.Color.IndianRed;
-            this.progressbarBotActive.Location = new System.Drawing.Point(3, 172);
-            this.progressbarBotActive.MarqueeAnimationSpeed = 0;
-            this.progressbarBotActive.Name = "progressbarBotActive";
-            this.progressbarBotActive.Size = new System.Drawing.Size(162, 15);
-            this.progressbarBotActive.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressbarBotActive.TabIndex = 15;
-            // 
-            // labelBotActive
-            // 
-            this.labelBotActive.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelBotActive.Location = new System.Drawing.Point(3, 152);
-            this.labelBotActive.Name = "labelBotActive";
-            this.labelBotActive.Size = new System.Drawing.Size(162, 20);
-            this.labelBotActive.TabIndex = 16;
-            this.labelBotActive.Text = "Bot active...";
-            this.labelBotActive.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.textboxBotMessages.BackColor = System.Drawing.Color.Black;
+            this.textboxBotMessages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textboxBotMessages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textboxBotMessages.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textboxBotMessages.ForeColor = System.Drawing.Color.LawnGreen;
+            this.textboxBotMessages.Location = new System.Drawing.Point(3, 3);
+            this.textboxBotMessages.Multiline = true;
+            this.textboxBotMessages.Name = "textboxBotMessages";
+            this.textboxBotMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textboxBotMessages.Size = new System.Drawing.Size(577, 504);
+            this.textboxBotMessages.TabIndex = 10;
+            this.textboxBotMessages.Text = resources.GetString("textboxBotMessages.Text");
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(763, 569);
+            this.ClientSize = new System.Drawing.Size(763, 532);
             this.Controls.Add(this.tableLayoutMain);
             this.Controls.Add(this.statusStrip2);
-            this.MinimumSize = new System.Drawing.Size(779, 608);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(779, 571);
             this.Name = "MainForm";
             this.Text = "Bot";
             this.Load += new System.EventHandler(this.Form1_Load);

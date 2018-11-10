@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using Game.Chess;
+using Game.Chess.Moves;
 using Model.Api.ChessGamesControllerModels;
 using Model.Api.PlayerControllerModels;
 using ServiceClient;
@@ -15,7 +17,7 @@ namespace ChessServiceTestApp
         public MainForm()
         {
             InitializeComponent();
-            _client = new ChessServiceClient("http://localhost/BoardGame.Service");
+            _client = new ChessServiceClient("http://poseen-001-site1.gtempurl.com");
         }
 
         private async void MainForm_Load(object sender, EventArgs e)
@@ -33,7 +35,7 @@ namespace ChessServiceTestApp
                 return;
             }
 
-            Text = $"Minimax Bot (Server version: v{result})";
+            Text = $"Chess Client Tester App (Server version: v{result})";
             tableLayoutMain.Enabled = true;
             labelStatus.Text = string.Empty;
         }
@@ -78,22 +80,6 @@ namespace ChessServiceTestApp
 
         private async void RefreshLists()
         {
-            labelStatus.Text = "Getting list of players...";
-            var players = await _client.GetPlayers(_jwtToken);
-            listboxPlayers.Items.Clear();
-
-            if (players == null)
-            {
-                MessageBox.Show("Couldn't get list of players. (Maybe unauthorized?)");
-                labelStatus.Text = "Error while getting list of players.";
-                return;
-            }
-
-            foreach (var player in players)
-            {
-                listboxPlayers.Items.Add(new DecoratedPlayer(player.Name, player.IsBot));
-            }
-
             labelStatus.Text = "Getting list of matches...";
             var matches = await _client.GetMatches(_jwtToken);
             listboxMatches.Items.Clear();
@@ -122,35 +108,9 @@ namespace ChessServiceTestApp
             }
         }
 
-        private async void buttonChallenge_Click(object sender, EventArgs e)
-        {
-            if (listboxPlayers.SelectedItem == null)
-            {
-                return;
-            }
-
-            var selectedUsername = ((Player) listboxPlayers.SelectedItem).Name;
-
-            labelStatus.Text = $"Creating match against {selectedUsername}...";
-            var details = await _client.ChallengePlayer(_jwtToken, selectedUsername);
-
-            if (details == null)
-            {
-                MessageBox.Show($"Couldn't challenge user '{selectedUsername}'.");
-                return;
-            }
-
-            RefreshLists();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private async void listboxMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var match = (DecoratedMatch) listboxMatches.SelectedItem;
+            var match = (DecoratedMatch)listboxMatches.SelectedItem;
 
             if (match == null)
             {
@@ -173,19 +133,49 @@ namespace ChessServiceTestApp
                 listboxGameHistory.Items.Add(move);
             }
         }
-    }
 
-    internal class DecoratedPlayer : Player
-    {
-        public DecoratedPlayer(string name, bool isBot)
+        private async void listboxGameHistory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Name = name;
-            IsBot = isBot;
-        }
+            var match = (DecoratedMatch)listboxMatches.SelectedItem;
 
-        public override string ToString()
-        {
-            return IsBot ? $"{Name}(bot)" : $"{Name}(human)";
+            if (match == null)
+            {
+                return;
+            }
+
+            labelStatus.Text = $"Getting details of selected match... ({match.Name})";
+            var details = await _client.GetMatch(_jwtToken, match.Id.ToString());
+
+            if (details?.Representation?.History == null)
+            {
+                MessageBox.Show("Couldn't get details of selected match. (Maybe unauthorized?)");
+                labelStatus.Text = "Error while getting details of match";
+                return;
+            }
+
+            var selectedHistoryItem = (BaseMove)listboxGameHistory.SelectedItem;
+
+            var representation = new ChessRepresentationInitializer().Create();
+            var mechanism = new ChessMechanism();
+            var historyEnumerator = details.Representation.History.GetEnumerator();
+
+            while (historyEnumerator.MoveNext())
+            {
+                var current = historyEnumerator.Current;
+                if (current == null)
+                {
+                    break;
+                }
+
+                representation = mechanism.ApplyMove(representation, current);
+
+                if (current.Equals(selectedHistoryItem))
+                {
+                    break;
+                }
+            }
+
+            chessBoardVisualizerPictureBox1.ChessRepresentation = representation;
         }
     }
 
