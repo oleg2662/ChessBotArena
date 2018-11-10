@@ -21,11 +21,16 @@ using Model.Api.ChessGamesControllerModels;
 using Model.Api.PlayerControllerModels;
 using ServiceClient;
 
-namespace MinimaxBot
+namespace BotClient
 {
     public partial class MainForm : Form
     {
-        private static readonly ChessServiceClient Client = new ChessServiceClient("http://poseen-001-site1.gtempurl.com");
+        private ChessServiceClient Client;
+
+        private readonly IEvaluator<ChessRepresentation> _evaluator;
+        private readonly IGenerator<ChessRepresentation, BaseMove> _generator;
+        private readonly IApplier<ChessRepresentation, BaseMove> _applier;
+
         private IAlgorithm<ChessRepresentation, BaseMove> _algorithm;
         private static readonly Random Randomizer = new Random();
         private string _jwtToken;
@@ -34,15 +39,10 @@ namespace MinimaxBot
         private int _round = 1;
         private bool _isRobotThinking = false;
         private int _maxNumberOfMatches = 5;
-        
+
 
         private void ChangeAlgorithm()
         {
-            var mechanism = new ChessMechanism();
-            var evaluator = new Evaluator(mechanism);
-            var generator = new MoveGenerator(mechanism);
-            var applier = new MoveApplier(mechanism);
-
             Algorithms selectedAlgorithm = Algorithms.Minimax;
             int maxDepth = 2;
 
@@ -52,36 +52,36 @@ namespace MinimaxBot
             switch (selectedAlgorithm)
             {
                 case Algorithms.Minimax:
-                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier)
                     {
                         MaxDepth = maxDepth
                     };
                     break;
 
                 case Algorithms.MinimaxAverage:
-                    _algorithm = new MinimaxAverageAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                    _algorithm = new MinimaxAverageAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier)
                     {
                         MaxDepth = maxDepth
                     };
                     break;
 
                 case Algorithms.AlphaBeta:
-                    _algorithm = new AlphaBetaAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                    _algorithm = new AlphaBetaAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier)
                     {
                         MaxDepth = maxDepth
                     };
                     break;
 
                 case Algorithms.Random:
-                    _algorithm = new DumbAlgorithm<ChessRepresentation, BaseMove>(generator);
+                    _algorithm = new DumbAlgorithm<ChessRepresentation, BaseMove>(_generator);
                     break;
 
                 case Algorithms.Greedy:
-                    _algorithm = new GreedyAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier);
+                    _algorithm = new GreedyAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier);
                     break;
 
                 default:
-                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier);
+                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier);
                     break;
             }
         }
@@ -97,14 +97,11 @@ namespace MinimaxBot
 
         public MainForm()
         {
-            InitializeComponent();
-
-            listboxAlgorithms.Items.Add(Algorithms.Minimax);
-            listboxAlgorithms.Items.Add(Algorithms.MinimaxAverage);
-            listboxAlgorithms.Items.Add(Algorithms.AlphaBeta);
-            listboxAlgorithms.Items.Add(Algorithms.Greedy);
-            listboxAlgorithms.Items.Add(Algorithms.Random);
-            listboxAlgorithms.SelectedIndex = Randomizer.Next(0, listboxAlgorithms.Items.Count - 1);
+            Client = new ChessServiceClient("http://poseen-001-site1.gtempurl.com");
+            var mechanism = new ChessMechanism();
+            _evaluator = new Evaluator(mechanism);
+            _generator = new MoveGenerator(mechanism);
+            _applier = new MoveApplier(mechanism);
 
             var task = new Task(() =>
             {
@@ -136,6 +133,15 @@ namespace MinimaxBot
 
                 } while (true);
             });
+
+            InitializeComponent();
+
+            listboxAlgorithms.Items.Add(Algorithms.Minimax);
+            listboxAlgorithms.Items.Add(Algorithms.MinimaxAverage);
+            listboxAlgorithms.Items.Add(Algorithms.AlphaBeta);
+            listboxAlgorithms.Items.Add(Algorithms.Greedy);
+            listboxAlgorithms.Items.Add(Algorithms.Random);
+            listboxAlgorithms.SelectedIndex = Randomizer.Next(0, listboxAlgorithms.Items.Count - 1);
 
             task.Start();
         }
@@ -220,6 +226,12 @@ namespace MinimaxBot
 
             UpdateLog("Challenging users if possible...", 1);
             var players = Client.GetPlayers(_jwtToken).Result;
+            if (players == null)
+            {
+                UpdateLog("ERROR: Couldn't get list of players.", 2);
+                return;
+            }
+
             var nonChallengedPlayer = players.Where(x =>
                 !inProgressMatches.Any(y => y.InitiatedBy.UserName == x.Name || y.Opponent.UserName == x.Name))
                 .Select(x => x.Name)
@@ -286,17 +298,24 @@ namespace MinimaxBot
                 return;
             }
 
-            Text = $"Minimax Bot (Server version: v{result})";
+            Text = $"Bot (Server version: v{result})";
 
             labelStatus.Text = string.Empty;
         }
 
-        private async void buttonLogin_Click(object sender, EventArgs e)
+        private void buttonLogin_Click(object sender, EventArgs e)
+        {
+            StopPlaying();
+
+            RefreshLoginToken();
+
+            StartPlaying();
+        }
+
+        private async void RefreshLoginToken(string username, string password)
         {
             labelStatus.Text = "Logging in...";
-            string result;
-            var username = textboxUsername.Text;
-            var password = textboxPassword.Text;
+            LoginResult result;
 
             try
             {
@@ -317,13 +336,19 @@ namespace MinimaxBot
                 return;
             }
 
-            _jwtToken = result;
-            _username = username;
+            _jwtToken = result.TokenString;
+            _username = result.Username;
 
             labelLoginStatus.Text = $"({username}) logged in.";
             labelStatus.Text = string.Empty;
+        }
 
-            StartPlaying();
+        private void RefreshLoginToken()
+        {
+            var username = textboxUsername.Text;
+            var password = textboxPassword.Text;
+
+            RefreshLoginToken(username, password);
         }
 
         private void StartPlaying()

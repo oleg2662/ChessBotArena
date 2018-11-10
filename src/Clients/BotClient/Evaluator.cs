@@ -6,7 +6,7 @@ using Game.Chess;
 using Game.Chess.Moves;
 using Game.Chess.Pieces;
 
-namespace MinimaxBot
+namespace BotClient
 {
     internal class Evaluator : IEvaluator<ChessRepresentation>
     {

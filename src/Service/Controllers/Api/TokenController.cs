@@ -119,7 +119,7 @@ namespace BoardGame.Service.Controllers.Api
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSecurityKey()));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddMinutes(30);
+            var expires = DateTime.UtcNow.AddMinutes(30);
 
             var newToken = new JwtSecurityToken(
                 issuer: _configuration.GetBaseUrl(),

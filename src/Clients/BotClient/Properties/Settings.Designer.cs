@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MinimaxBot.Properties
+namespace BotClient.Properties
 {
 
 

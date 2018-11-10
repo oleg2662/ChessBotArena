@@ -43,7 +43,7 @@ namespace ChessServiceTestApp
         private async void buttonLogin_Click(object sender, EventArgs e)
         {
             labelStatus.Text = "Logging in...";
-            string result;
+            LoginResult result;
 
             try
             {
@@ -66,8 +66,9 @@ namespace ChessServiceTestApp
                 return;
             }
 
-            _jwtToken = result;
-            labelLoginStatus.Text = "OK";
+            _jwtToken = result.TokenString;
+
+            labelLoginStatus.Text = result.Username;
             labelStatus.Text = string.Empty;
 
             RefreshLists();

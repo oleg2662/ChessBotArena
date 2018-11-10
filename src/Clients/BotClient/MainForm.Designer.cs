@@ -1,4 +1,4 @@
-﻿namespace MinimaxBot
+﻿namespace BotClient
 {
     partial class MainForm
     {
@@ -140,9 +140,9 @@
             // buttonLogout
             // 
             this.buttonLogout.Dock = System.Windows.Forms.DockStyle.Top;
-            this.buttonLogout.Location = new System.Drawing.Point(0, 116);
+            this.buttonLogout.Location = new System.Drawing.Point(0, 105);
             this.buttonLogout.Name = "buttonLogout";
-            this.buttonLogout.Size = new System.Drawing.Size(168, 36);
+            this.buttonLogout.Size = new System.Drawing.Size(168, 25);
             this.buttonLogout.TabIndex = 14;
             this.buttonLogout.Text = "Logout";
             this.buttonLogout.UseVisualStyleBackColor = true;
@@ -152,9 +152,9 @@
             // 
             this.labelLoginStatus.BackColor = System.Drawing.SystemColors.ControlDark;
             this.labelLoginStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelLoginStatus.Location = new System.Drawing.Point(0, 151);
+            this.labelLoginStatus.Location = new System.Drawing.Point(0, 133);
             this.labelLoginStatus.Name = "labelLoginStatus";
-            this.labelLoginStatus.Size = new System.Drawing.Size(168, 23);
+            this.labelLoginStatus.Size = new System.Drawing.Size(168, 41);
             this.labelLoginStatus.TabIndex = 13;
             this.labelLoginStatus.Text = "Not logged in";
             this.labelLoginStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -164,7 +164,7 @@
             this.buttonLogin.Dock = System.Windows.Forms.DockStyle.Top;
             this.buttonLogin.Location = new System.Drawing.Point(0, 80);
             this.buttonLogin.Name = "buttonLogin";
-            this.buttonLogin.Size = new System.Drawing.Size(168, 36);
+            this.buttonLogin.Size = new System.Drawing.Size(168, 25);
             this.buttonLogin.TabIndex = 12;
             this.buttonLogin.Text = "Login";
             this.buttonLogin.UseVisualStyleBackColor = true;
@@ -210,7 +210,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(3, 409);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(168, 92);
@@ -341,7 +341,6 @@
             this.ClientSize = new System.Drawing.Size(763, 532);
             this.Controls.Add(this.tableLayoutMain);
             this.Controls.Add(this.statusStrip2);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(779, 571);
             this.Name = "MainForm";
             this.Text = "Bot";

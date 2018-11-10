@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Algorithms.Abstractions.Interfaces;
 using Game.Chess;
 using Game.Chess.Moves;
 
-namespace MinimaxBot
+namespace BotClient
 {
     internal class MoveGenerator : IGenerator<ChessRepresentation, BaseMove>
     {

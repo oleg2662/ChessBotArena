@@ -93,7 +93,7 @@ namespace BoardGame.Service.Controllers.Api
                 issuer: _configuration.GetBaseUrl(),
                 audience: _configuration.GetBaseUrl(),
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: credentials);
 
             return Ok(new

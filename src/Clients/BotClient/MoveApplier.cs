@@ -2,9 +2,8 @@
 using Game.Chess;
 using Game.Chess.Moves;
 
-namespace MinimaxBot
+namespace BotClient
 {
-
     internal class MoveApplier : IApplier<ChessRepresentation, BaseMove>
     {
         private readonly ChessMechanism _mechanism;

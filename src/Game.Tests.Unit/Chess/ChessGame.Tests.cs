@@ -154,7 +154,7 @@ namespace Game.Tests.Unit.Chess
                 new ChessMove(ChessPlayer.White, Positions.G2, Positions.H1),
                 new ChessMove(ChessPlayer.White, Positions.G2, Positions.F3),
                 new ChessMove(ChessPlayer.White, Positions.G2, Positions.F1)
-            }.ToHashSet<BaseMove>();
+            }.ToHashSet();
 
             var board = new ChessRepresentation
             {
@@ -426,10 +426,9 @@ namespace Game.Tests.Unit.Chess
             var numberOfTries = 10;
             var times = new List<double>(numberOfTries);
 
-            ChessRepresentation game;
-            for (var i = 0; i < numberOfTries; i++)
+            while(times.Count < numberOfTries)
             {
-                game = new ChessRepresentationInitializer().Create();
+                var game = new ChessRepresentationInitializer().Create();
                 var count = 0;
                 var start = DateTime.Now;
                 while (true)
@@ -440,7 +439,7 @@ namespace Game.Tests.Unit.Chess
                                         .OrderBy(x => Guid.NewGuid())
                                         .FirstOrDefault();
 
-                    if (move == null || count > 115)
+                    if (move == null || count > 100)
                     {
                         break;
                     }
@@ -450,13 +449,16 @@ namespace Game.Tests.Unit.Chess
 
                 var end = DateTime.Now;
                 var time = (end - start).TotalSeconds;
-                times.Add(time);
+                if (count >= 100)
+                {
+                    times.Add(time);
+                }
             }
 
             var timeAverage = times.Average();
-            var quick = timeAverage < TimeSpan.FromSeconds(1).TotalSeconds;
+            var quick = timeAverage < TimeSpan.FromSeconds(1.5d).TotalSeconds;
 
-            Assert.True(quick);
+            Assert.True(quick, $"Average time was greater than 1 sec. Min: {times.Min()}, Max:{times.Max()}, Avg:{timeAverage}");
         }
 
         public static IEnumerable<object[]> InvalidMovesTestData =>
