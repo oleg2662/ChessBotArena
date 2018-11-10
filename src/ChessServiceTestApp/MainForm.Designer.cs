@@ -40,9 +40,9 @@
             this.tableLayourSidebar = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.buttonRefresh = new System.Windows.Forms.Button();
-            this.chessBoardVisualizerPictureBox1 = new ChessServiceTestApp.ChessBoardVisualizerPictureBox();
             this.listboxMatches = new System.Windows.Forms.ListBox();
             this.listboxGameHistory = new System.Windows.Forms.ListBox();
+            this.chessBoardVisualizerPictureBox1 = new ChessServiceTestApp.ChessBoardVisualizerPictureBox();
             this.tableLayoutMain.SuspendLayout();
             this.tableLayourSidebar.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -51,9 +51,9 @@
             // labelStatus
             // 
             this.labelStatus.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelStatus.Location = new System.Drawing.Point(0, 583);
+            this.labelStatus.Location = new System.Drawing.Point(0, 606);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(896, 13);
+            this.labelStatus.Size = new System.Drawing.Size(911, 13);
             this.labelStatus.TabIndex = 0;
             this.labelStatus.Text = "Messages";
             // 
@@ -122,7 +122,7 @@
             this.tableLayoutMain.Name = "tableLayoutMain";
             this.tableLayoutMain.RowCount = 1;
             this.tableLayoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutMain.Size = new System.Drawing.Size(896, 583);
+            this.tableLayoutMain.Size = new System.Drawing.Size(911, 606);
             this.tableLayoutMain.TabIndex = 7;
             // 
             // tableLayourSidebar
@@ -133,13 +133,13 @@
             this.tableLayourSidebar.Controls.Add(this.listboxMatches, 0, 1);
             this.tableLayourSidebar.Controls.Add(this.listboxGameHistory, 0, 2);
             this.tableLayourSidebar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayourSidebar.Location = new System.Drawing.Point(594, 3);
+            this.tableLayourSidebar.Location = new System.Drawing.Point(609, 3);
             this.tableLayourSidebar.Name = "tableLayourSidebar";
             this.tableLayourSidebar.RowCount = 3;
             this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33F));
             this.tableLayourSidebar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 67F));
-            this.tableLayourSidebar.Size = new System.Drawing.Size(299, 577);
+            this.tableLayourSidebar.Size = new System.Drawing.Size(299, 600);
             this.tableLayourSidebar.TabIndex = 9;
             // 
             // panel1
@@ -166,19 +166,6 @@
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
-            // chessBoardVisualizerPictureBox1
-            // 
-            this.chessBoardVisualizerPictureBox1.Bevel = System.Drawing.Color.Brown;
-            this.chessBoardVisualizerPictureBox1.BlackSquare = System.Drawing.Color.SandyBrown;
-            this.chessBoardVisualizerPictureBox1.ChessRepresentation = null;
-            this.chessBoardVisualizerPictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chessBoardVisualizerPictureBox1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.chessBoardVisualizerPictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.chessBoardVisualizerPictureBox1.Name = "chessBoardVisualizerPictureBox1";
-            this.chessBoardVisualizerPictureBox1.Size = new System.Drawing.Size(585, 577);
-            this.chessBoardVisualizerPictureBox1.TabIndex = 10;
-            this.chessBoardVisualizerPictureBox1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
-            // 
             // listboxMatches
             // 
             this.listboxMatches.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -186,7 +173,7 @@
             this.listboxMatches.Location = new System.Drawing.Point(3, 83);
             this.listboxMatches.Name = "listboxMatches";
             this.listboxMatches.ScrollAlwaysVisible = true;
-            this.listboxMatches.Size = new System.Drawing.Size(293, 158);
+            this.listboxMatches.Size = new System.Drawing.Size(293, 165);
             this.listboxMatches.TabIndex = 9;
             this.listboxMatches.SelectedIndexChanged += new System.EventHandler(this.listboxMatches_SelectedIndexChanged);
             // 
@@ -194,22 +181,38 @@
             // 
             this.listboxGameHistory.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listboxGameHistory.FormattingEnabled = true;
-            this.listboxGameHistory.Location = new System.Drawing.Point(3, 247);
+            this.listboxGameHistory.Location = new System.Drawing.Point(3, 254);
             this.listboxGameHistory.Name = "listboxGameHistory";
             this.listboxGameHistory.ScrollAlwaysVisible = true;
-            this.listboxGameHistory.Size = new System.Drawing.Size(293, 327);
+            this.listboxGameHistory.Size = new System.Drawing.Size(293, 343);
             this.listboxGameHistory.TabIndex = 10;
             this.listboxGameHistory.SelectedIndexChanged += new System.EventHandler(this.listboxGameHistory_SelectedIndexChanged);
+            // 
+            // chessBoardVisualizerPictureBox1
+            // 
+            this.chessBoardVisualizerPictureBox1.Bevel = System.Drawing.Color.Brown;
+            this.chessBoardVisualizerPictureBox1.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardVisualizerPictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chessBoardVisualizerPictureBox1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.chessBoardVisualizerPictureBox1.Location = new System.Drawing.Point(3, 3);
+            this.chessBoardVisualizerPictureBox1.Name = "chessBoardVisualizerPictureBox1";
+            this.chessBoardVisualizerPictureBox1.Size = new System.Drawing.Size(600, 600);
+            this.chessBoardVisualizerPictureBox1.TabIndex = 10;
+            this.chessBoardVisualizerPictureBox1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(896, 596);
+            this.ClientSize = new System.Drawing.Size(911, 619);
             this.Controls.Add(this.tableLayoutMain);
             this.Controls.Add(this.labelStatus);
+            this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Chess Client Tester App";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tableLayoutMain.ResumeLayout(false);
@@ -233,9 +236,9 @@
         private System.Windows.Forms.TableLayoutPanel tableLayourSidebar;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button buttonRefresh;
-        private ChessBoardVisualizerPictureBox chessBoardVisualizerPictureBox1;
         private System.Windows.Forms.ListBox listboxMatches;
         private System.Windows.Forms.ListBox listboxGameHistory;
+        private ChessBoardVisualizerPictureBox chessBoardVisualizerPictureBox1;
     }
 }
 

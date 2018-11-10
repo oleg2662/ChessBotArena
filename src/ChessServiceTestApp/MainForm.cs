@@ -111,6 +111,8 @@ namespace ChessServiceTestApp
         private async void listboxMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
             var match = (DecoratedMatch)listboxMatches.SelectedItem;
+            var mechanism = new ChessMechanism();
+            var board = new ChessRepresentationInitializer().Create();
 
             if (match == null)
             {
@@ -128,54 +130,48 @@ namespace ChessServiceTestApp
                 return;
             }
 
+            listboxGameHistory.Items.Add(new ChessRepresentationStage()
+            {
+                AfterMove = null,
+                ChessRepresentation = board
+            });
+
             foreach (var move in details.Representation.History)
             {
-                listboxGameHistory.Items.Add(move);
+                board = mechanism.ApplyMove(board, move);
+
+                var item = new ChessRepresentationStage
+                {
+                    AfterMove = move,
+                    ChessRepresentation = board
+                };
+
+                listboxGameHistory.Items.Add(item);
             }
         }
 
-        private async void listboxGameHistory_SelectedIndexChanged(object sender, EventArgs e)
+        private void listboxGameHistory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var match = (DecoratedMatch)listboxMatches.SelectedItem;
+            var item = listboxGameHistory.SelectedItem as ChessRepresentationStage;
 
-            if (match == null)
+            if (item == null)
             {
                 return;
             }
 
-            labelStatus.Text = $"Getting details of selected match... ({match.Name})";
-            var details = await _client.GetMatch(_jwtToken, match.Id.ToString());
+            chessBoardVisualizerPictureBox1.ChessRepresentation = item.ChessRepresentation;
+        }
+    }
 
-            if (details?.Representation?.History == null)
-            {
-                MessageBox.Show("Couldn't get details of selected match. (Maybe unauthorized?)");
-                labelStatus.Text = "Error while getting details of match";
-                return;
-            }
+    internal class ChessRepresentationStage
+    {
+        public BaseMove AfterMove { get; set; }
 
-            var selectedHistoryItem = (BaseMove)listboxGameHistory.SelectedItem;
+        public ChessRepresentation ChessRepresentation { get; set; }
 
-            var representation = new ChessRepresentationInitializer().Create();
-            var mechanism = new ChessMechanism();
-            var historyEnumerator = details.Representation.History.GetEnumerator();
-
-            while (historyEnumerator.MoveNext())
-            {
-                var current = historyEnumerator.Current;
-                if (current == null)
-                {
-                    break;
-                }
-
-                representation = mechanism.ApplyMove(representation, current);
-
-                if (current.Equals(selectedHistoryItem))
-                {
-                    break;
-                }
-            }
-
-            chessBoardVisualizerPictureBox1.ChessRepresentation = representation;
+        public override string ToString()
+        {
+            return AfterMove?.ToString() ?? "Init";
         }
     }
 

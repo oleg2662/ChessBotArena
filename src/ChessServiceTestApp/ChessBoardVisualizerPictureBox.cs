@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Game.Chess;
 using Game.Chess.Pieces;
@@ -14,6 +9,22 @@ namespace ChessServiceTestApp
 {
     public sealed class ChessBoardVisualizerPictureBox : Panel
     {
+        private readonly StringFormat _sfCenter = new StringFormat
+        {
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Center
+        };
+        private readonly StringFormat _sfEnPassant = new StringFormat
+        {
+            Alignment = StringAlignment.Far,
+            LineAlignment = StringAlignment.Far
+        };
+        private readonly StringFormat _sfHasMoved = new StringFormat
+        {
+            Alignment = StringAlignment.Near,
+            LineAlignment = StringAlignment.Far
+        };
+
         public ChessBoardVisualizerPictureBox()
         {
             _chessRepresentation = new ChessRepresentationInitializer().Create();
@@ -46,41 +57,92 @@ namespace ChessServiceTestApp
             }
         }
 
-        public Color BlackSquare { get; set; }
+        private Color _blackSquare;
+        public Color BlackSquare
+        {
+            get => _blackSquare;
+            set
+            {
+                _blackSquare = value;
+                BlackSquareBrush = new SolidBrush(_blackSquare);
+                Refresh();
+            }
+        }
 
-        public Color WhiteSquare { get; set; }
+        private Color _whiteSquare;
+        public Color WhiteSquare
+        {
+            get => _whiteSquare;
+            set
+            {
+                _whiteSquare = value;
+                WhiteSquareBrush = new SolidBrush(_whiteSquare);
+                Refresh();
+            }
+        }
 
-        public Color Bevel { get; set; }
+        private Color _bevel;
+        public Color Bevel
+        {
+            get => _bevel;
+            set
+            {
+                _bevel = value;
+                BevelBrush = new SolidBrush(_bevel);
+                Refresh();
+            }
+        }
+
+        public Brush BlackSquareBrush
+        {
+            get;
+            private set;
+        }
+
+        public Brush WhiteSquareBrush
+        {
+            get;
+            private set;
+        }
+
+        public Brush BevelBrush
+        {
+            get;
+            private set;
+        }
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            var image = PaintChessBoard();
+            var image = GenerateChessBoardContent(Rectangle.Round(pe.Graphics.VisibleClipBounds).Size);
             pe.Graphics.InterpolationMode = InterpolationMode;
             var g = pe.Graphics;
             g.DrawImage(image, g.VisibleClipBounds);
-            g.Dispose();
         }
 
-        private Image PaintChessBoard()
+        protected override void OnResize(EventArgs eventargs)
         {
-            var bitmap = new Bitmap(1000, 1000);
+            Refresh();
+        }
+
+        private Image GenerateChessBoardContent(Size outputSize)
+        {
+            var rect = new Rectangle(new Point(0, 0), outputSize);
+
+            var bevelWidth = 0.05f * rect.Width;
+            var bevelHeight = 0.05f * rect.Height;
+
+            var innerBounds = new RectangleF(rect.X + bevelWidth,
+                                             rect.Y + bevelHeight,
+                                             rect.Width - 2 * bevelWidth,
+                                             rect.Height - 2 * bevelHeight);
+
+            var bitmap = new Bitmap(rect.Width, rect.Height);
 
             using (var g = Graphics.FromImage(bitmap))
             {
-                var blackBrush = new SolidBrush(BlackSquare);
-                var whiteBrush = new SolidBrush(WhiteSquare);
-                var bevelBrush = new SolidBrush(Bevel);
-                var bevelWidth = 0.05f * g.VisibleClipBounds.Width;
-                var bevelHeight = 0.05f * g.VisibleClipBounds.Height;
+                g.FillRectangle(BevelBrush, rect);
+                g.FillRectangle(WhiteSquareBrush, innerBounds);
 
-                var innerBounds = new RectangleF(g.VisibleClipBounds.X + bevelWidth,
-                    g.VisibleClipBounds.Y + bevelHeight,
-                    g.VisibleClipBounds.Width - 2 * bevelWidth,
-                    g.VisibleClipBounds.Height - 2 * bevelHeight);
-
-                g.FillRectangle(bevelBrush, g.VisibleClipBounds);
-                g.FillRectangle(whiteBrush, innerBounds);
-                
                 // Bevel characters
                 DrawRowNumbers(g, new RectangleF(0, innerBounds.Y, bevelWidth, innerBounds.Height));
                 DrawRowNumbers(g, new RectangleF(innerBounds.Right, innerBounds.Y, bevelWidth, innerBounds.Height));
@@ -90,9 +152,9 @@ namespace ChessServiceTestApp
                 // Board and pieces
                 for (var i = 0; i < 64; i++)
                 {
-                    Position p = (Position)i;
+                    var p = (Position)i;
 
-                    var brush = p.BlackField ? blackBrush : whiteBrush;
+                    var brush = p.BlackField ? BlackSquareBrush : WhiteSquareBrush;
                     var rectangle = GetFieldRectangle(innerBounds, (Position)i);
 
                     g.FillRectangle(brush, rectangle);
@@ -101,30 +163,12 @@ namespace ChessServiceTestApp
                     var hasMoved = ChessRepresentation?[p]?.HasMoved ?? false;
                     var enPassant = (ChessRepresentation?[p] as Pawn)?.IsEnPassantCapturable ?? false;
 
-                    var sf = new StringFormat
-                    {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
-
-                    var sfEnPassant = new StringFormat
-                    {
-                        Alignment = StringAlignment.Far,
-                        LineAlignment = StringAlignment.Far
-                    };
-
-                    var sfHasMoved = new StringFormat
-                    {
-                        Alignment = StringAlignment.Near,
-                        LineAlignment = StringAlignment.Far
-                    };
-
                     g.DrawString(
                         figureText,
                         new Font(FontFamily.GenericSansSerif, rectangle.Width / 2, FontStyle.Regular),
                         Brushes.Black,
                         rectangle,
-                        sf);
+                        _sfCenter);
 
                     if (enPassant)
                     {
@@ -133,7 +177,7 @@ namespace ChessServiceTestApp
                             new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
                             Brushes.Black,
                             rectangle,
-                            sfEnPassant);
+                            _sfEnPassant);
                     }
 
                     if (hasMoved)
@@ -143,19 +187,13 @@ namespace ChessServiceTestApp
                             new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
                             Brushes.Black,
                             rectangle,
-                            sfHasMoved);
+                            _sfHasMoved);
                     }
                 }
             }
 
             return bitmap;
         }
-
-        StringFormat sfCenter = new StringFormat
-        {
-            Alignment = StringAlignment.Center,
-            LineAlignment = StringAlignment.Center
-        };
 
         private void DrawRowNumbers(Graphics g, RectangleF rect)
         {
@@ -167,11 +205,11 @@ namespace ChessServiceTestApp
             {
                 var rectangle = new RectangleF(rect.X, rect.Y + i * cellHeight, cellWidth, cellHeight);
                 g.DrawString(
-                    $"{i+1}",
+                    $"{8-i}",
                     new Font(FontFamily.GenericSansSerif, rectangle.Width / 2, FontStyle.Regular),
                     Brushes.White,
                     rectangle,
-                    sfCenter);
+                    _sfCenter);
             }
         }
 
@@ -189,96 +227,9 @@ namespace ChessServiceTestApp
                     new Font(FontFamily.GenericSansSerif, rectangle.Height / 2, FontStyle.Regular),
                     Brushes.White,
                     rectangle,
-                    sfCenter);
+                    _sfCenter);
             }
         }
-
-
-        //protected override void OnPaint(PaintEventArgs pe)
-        //{
-        //    Image = PaintChessBoard();
-        //    //using (var g = pe.Graphics)
-        //    //{
-        //    //    g.im
-        //    //}
-        //    ////var bitmap = new Bitmap(1000, 1000);
-        //    ////Image = bitmap;
-        //    //using (var g = pe.Graphics)
-        //    //{
-        //    //    var blackBrush = new SolidBrush(BlackSquare);
-        //    //    var whiteBrush = new SolidBrush(WhiteSquare);
-        //    //    var bevelBrush = new SolidBrush(Bevel);
-        //    //    var bevelWidth = 0.05f * g.VisibleClipBounds.Width;
-        //    //    var bevelHeight = 0.05f * g.VisibleClipBounds.Height;
-
-        //    //    var innerBounds = new RectangleF(g.VisibleClipBounds.X + bevelWidth,
-        //    //        g.VisibleClipBounds.Y + bevelHeight,
-        //    //        g.VisibleClipBounds.Width - 2 * bevelWidth,
-        //    //        g.VisibleClipBounds.Height - 2 * bevelHeight);
-
-        //    //    g.FillRectangle(bevelBrush, g.VisibleClipBounds);
-        //    //    g.FillRectangle(whiteBrush, innerBounds);
-
-        //    //    for (var i = 0; i < 64; i++)
-        //    //    {
-        //    //        Position p = (Position) i;
-
-        //    //        var brush = p.BlackField ? blackBrush : whiteBrush;
-        //    //        var rectangle = GetFieldRectangle(innerBounds, (Position) i);
-
-        //    //        g.FillRectangle(brush, rectangle);
-
-        //    //        var figureText = ChessRepresentation?[p]?.ToString() ?? string.Empty;
-        //    //        var hasMoved = ChessRepresentation?[p]?.HasMoved ?? false;
-        //    //        var enPassant = (ChessRepresentation?[p] as Pawn)?.IsEnPassantCapturable ?? false;
-
-        //    //        var sf = new StringFormat
-        //    //        {
-        //    //            Alignment = StringAlignment.Center,
-        //    //            LineAlignment = StringAlignment.Center
-        //    //        };
-
-        //    //        var sfEnPassant = new StringFormat
-        //    //        {
-        //    //            Alignment = StringAlignment.Far,
-        //    //            LineAlignment = StringAlignment.Far
-        //    //        };
-
-        //    //        var sfHasMoved = new StringFormat
-        //    //        {
-        //    //            Alignment = StringAlignment.Near,
-        //    //            LineAlignment = StringAlignment.Far
-        //    //        };
-
-        //    //        g.DrawString(
-        //    //            figureText,
-        //    //            new Font(FontFamily.GenericSansSerif, rectangle.Width / 2, FontStyle.Regular),
-        //    //            Brushes.Black,
-        //    //            rectangle,
-        //    //            sf);
-
-        //    //        if (enPassant)
-        //    //        {
-        //    //            g.DrawString(
-        //    //                "ep.",
-        //    //                new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
-        //    //                Brushes.Black,
-        //    //                rectangle,
-        //    //                sfEnPassant);
-        //    //        }
-
-        //    //        if (hasMoved)
-        //    //        {
-        //    //            g.DrawString(
-        //    //                "mvd.",
-        //    //                new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
-        //    //                Brushes.Black,
-        //    //                rectangle,
-        //    //                sfHasMoved);
-        //    //        }
-        //    //    }
-        //    //}
-        //}
 
         private RectangleF GetFieldRectangle(RectangleF clipRectangle, Position position)
         {
