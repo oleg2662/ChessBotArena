@@ -30,7 +30,6 @@ namespace BotClient
         public int Evaluate(ChessRepresentation state)
         {
             var gameOutcome = _mechanism.GetGameState(state);
-            var previousPlayer = state.CurrentPlayer == ChessPlayer.Black ? ChessPlayer.White : ChessPlayer.Black;
             var lastMove = state.History.Last();
             var moveBonus = 0;
 
@@ -39,41 +38,31 @@ namespace BotClient
                 moveBonus += 10;
             }
 
-            if (lastMove is BaseChessMove lastBaseChessMove)
-            {
-                var movedPiece = state[lastBaseChessMove.To];
-                if (movedPiece != null)
-                {
-                    moveBonus += ChessPieceValues[movedPiece.Kind];
-                }
-            }
+            var chessPiecesValue = Positions.PositionList.Select(x => state[x])
+                .Where(x => x != null)
+                .Where(x => x.Owner == state.CurrentPlayer)
+                .Select(x => ChessPieceValues[x.Kind])
+                .Sum();
 
             switch (gameOutcome)
             {
                 case GameState.WhiteWon:
-                    return previousPlayer == ChessPlayer.White ? int.MaxValue : int.MinValue;
+                    return state.CurrentPlayer == ChessPlayer.White ? int.MaxValue : int.MinValue;
+
                 case GameState.BlackWon:
-                    return previousPlayer == ChessPlayer.Black ? int.MaxValue : int.MinValue;
+                    return state.CurrentPlayer == ChessPlayer.Black ? int.MaxValue : int.MinValue;
+
                 case GameState.Draw:
-                    return 10;
+                    var opponentChessPiecesValue = Positions.PositionList.Select(x => state[x])
+                                                    .Where(x => x != null)
+                                                    .Where(x => x.Owner != state.CurrentPlayer)
+                                                    .Select(x => ChessPieceValues[x.Kind])
+                                                    .Sum();
+
+                    return chessPiecesValue - opponentChessPiecesValue;
             }
 
-            var chessPieces = Positions.PositionList.Select(x => state[x]).Where(x => x != null).ToList();
-
-            var whitePieceAndValues =
-                chessPieces.Where(x => x.Owner == ChessPlayer.White).Select(x => ChessPieceValues[x.Kind]).ToArray();
-
-            var blackPieceAndValues =
-                chessPieces.Where(x => x.Owner == ChessPlayer.Black).Select(x => ChessPieceValues[x.Kind]).ToArray();
-
-            var whiteValue = (int)Math.Round(whitePieceAndValues.Sum() + whitePieceAndValues.Average());
-            var blackValue = (int)Math.Round(blackPieceAndValues.Sum() + whitePieceAndValues.Average());
-
-            var piecesValue = previousPlayer == ChessPlayer.White
-                                ? whiteValue - blackValue
-                                : blackValue - whiteValue;
-
-            var result = piecesValue + moveBonus;
+            var result = chessPiecesValue + moveBonus;
 
             return result;
         }
