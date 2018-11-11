@@ -223,17 +223,20 @@ namespace Game.Chess
 
             var representation = representationParam.Clone();
 
-            // Removing en passant flags
-            var pawns = Positions.PositionList.Select(x => representation[x])
-                .Where(x => x != null)
-                .Where(x => x.Owner != representation.CurrentPlayer)
-                .OfType<Pawn>()
-                .Select(x => x)
-                .ToArray();
-
-            foreach (var pawn in pawns)
+            // Removing en passant flags if the move wasn't a special move. (Usually DrawOffer)
+            if (move is BaseChessMove)
             {
-                pawn.IsEnPassantCapturable = false;
+                var pawns = Positions.PositionList.Select(x => representation[x])
+                    .Where(x => x != null)
+                    .Where(x => x.Owner != representation.CurrentPlayer)
+                    .OfType<Pawn>()
+                    .Select(x => x)
+                    .ToArray();
+
+                foreach (var pawn in pawns)
+                {
+                    pawn.IsEnPassantCapturable = false;
+                }
             }
 
             switch (move)
