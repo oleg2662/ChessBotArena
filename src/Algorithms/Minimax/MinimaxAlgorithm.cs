@@ -47,45 +47,59 @@ namespace Algorithms.Minimax
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            var moves = _moveGenerator.Generate(state).ToList();
-
-            if(!moves.Any())
-            {
-                return null;
-            }
-
-            var movesAndValues = moves.Select(move => new
-            {
-                Move = move,
-                Value = Calculate(_moveApplier.Apply(state, move), 1, false)
-            });
-
-            return movesAndValues.OrderByDescending(x => x.Value).First().Move;
+            return MiniMax(state);
         }
 
-        private int Calculate(TState state, int depth, bool maximize)
+        private TMove MiniMax(TState initialState)
         {
-            var nextMoves = _moveGenerator.Generate(state).ToList();
-            var isLeaf = !nextMoves.Any();
+            var result = MiniMaxEvaluate(null, initialState, true, 1);
+            return result?.Move;
+        }
 
-            if (depth == MaxDepth || isLeaf)
+        private int Evaluate(TState state, bool isMaximizingNode)
+        {
+            var value = _evaluator.Evaluate(state);
+            return isMaximizingNode ? value : -1 * value;
+        }
+
+        private MoveAndValue<TMove> MiniMaxEvaluate(TMove moveToNode, TState node, bool isMaximizingNode, int depth)
+        {
+            var possibleMoves = _moveGenerator.Generate(node).ToArray();
+            var nodeIsLeaf = depth == MaxDepth || !possibleMoves.Any();
+
+            if (nodeIsLeaf)
             {
-                return _evaluator.Evaluate(state);
+                var value = Evaluate(node, isMaximizingNode);
+                return new MoveAndValue<TMove>(moveToNode, value);
             }
 
-            var childrenValues = nextMoves.Select(x => _moveApplier.Apply(state, x))
-                                            .Select(x => Calculate(x, depth + 1, !maximize))
-                                            .ToList();
-            if (maximize)
+            if (isMaximizingNode)
             {
-                var childrenMax = childrenValues.Union(new[] { int.MinValue }).Max();
-                return childrenMax;
+                var value = new MoveAndValue<TMove>(null, int.MinValue);
+
+                foreach (var possibleMove in possibleMoves)
+                {
+                    var nextNode = _moveApplier.Apply(node, possibleMove);
+                    value = MoveAndValue<TMove>.Max(MiniMaxEvaluate(possibleMove, nextNode, false, depth + 1), value);
+                }
+
+                return moveToNode == null ? value : new MoveAndValue<TMove>(moveToNode, value.Value);
             }
-            else
+
+            if (!isMaximizingNode)
             {
-                var childrenMin = childrenValues.Union(new[] { int.MaxValue }).Min();
-                return childrenMin;
+                var value = new MoveAndValue<TMove>(null, int.MaxValue);
+
+                foreach (var possibleMove in possibleMoves)
+                {
+                    var nextNode = _moveApplier.Apply(node, possibleMove);
+                    value = MoveAndValue<TMove>.Min(MiniMaxEvaluate(possibleMove, nextNode, false, depth + 1), value);
+                }
+
+                return moveToNode == null ? value : new MoveAndValue<TMove>(moveToNode, value.Value);
             }
+
+            return null;
         }
     }
 }

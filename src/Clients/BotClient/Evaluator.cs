@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Algorithms.Abstractions.Interfaces;
 using Game.Chess;
-using Game.Chess.Moves;
 using Game.Chess.Pieces;
 
 namespace BotClient
@@ -15,6 +14,11 @@ namespace BotClient
         public Evaluator(ChessMechanism mechanism)
         {
             _mechanism = mechanism;
+        }
+
+        private ChessPlayer GetOpponent(ChessRepresentation representation)
+        {
+            return representation.CurrentPlayer == ChessPlayer.Black ? ChessPlayer.White : ChessPlayer.Black;
         }
 
         private static readonly Dictionary<PieceKind, int> ChessPieceValues = new Dictionary<PieceKind, int>()
@@ -30,19 +34,6 @@ namespace BotClient
         public int Evaluate(ChessRepresentation state)
         {
             var gameOutcome = _mechanism.GetGameState(state);
-            var lastMove = state.History.Last();
-            var moveBonus = 0;
-
-            if (!(lastMove is SpecialMove))
-            {
-                moveBonus += 10;
-            }
-
-            var chessPiecesValue = Positions.PositionList.Select(x => state[x])
-                .Where(x => x != null)
-                .Where(x => x.Owner == state.CurrentPlayer)
-                .Select(x => ChessPieceValues[x.Kind])
-                .Sum();
 
             switch (gameOutcome)
             {
@@ -53,18 +44,60 @@ namespace BotClient
                     return state.CurrentPlayer == ChessPlayer.Black ? int.MaxValue : int.MinValue;
 
                 case GameState.Draw:
-                    var opponentChessPiecesValue = Positions.PositionList.Select(x => state[x])
-                                                    .Where(x => x != null)
-                                                    .Where(x => x.Owner != state.CurrentPlayer)
-                                                    .Select(x => ChessPieceValues[x.Kind])
-                                                    .Sum();
-
-                    return chessPiecesValue - opponentChessPiecesValue;
+                    return 0;
             }
 
-            var result = chessPiecesValue + moveBonus;
+            var result = GetValueOfThreatenedPositions(state)
+                         + GetRelativeValueOfPiecesOnTable(state)
+                         + GetValueOfCheckStatus(state)
+                         + GetMobilityValue(state);
 
             return result;
+        }
+
+        private int GetValueOfCheckStatus(ChessRepresentation representation)
+        {
+            var inCheck = _mechanism.IsPlayerInChess(representation, representation.CurrentPlayer);
+            return inCheck ? -1000 : 1000;
+        }
+
+        private int GetValueOfThreatenedPositions(ChessRepresentation representation)
+        {
+            var opponent = GetOpponent(representation);
+
+            var threatenedPositions = _mechanism.GetThreatenedPositions(representation, representation.CurrentPlayer)
+                                          .Select(x => representation[x]?.Kind)
+                                          .Select(x => x == null ? 1 : ChessPieceValues[x.Value])
+                                          .Sum() * 0.5;
+
+            var opponentThreatenedPositions = _mechanism.GetThreatenedPositions(representation, opponent)
+                                                  .Select(x => representation[x]?.Kind)
+                                                  .Select(x => x == null ? 1 : ChessPieceValues[x.Value])
+                                                  .Sum() * 0.5;
+
+            return (int)Math.Round(threatenedPositions - opponentThreatenedPositions);
+        }
+
+        private int GetRelativeValueOfPiecesOnTable(ChessRepresentation state)
+        {
+            var chessPiecesValue = Positions.PositionList.Select(x => state[x])
+                .Where(x => x != null)
+                .Where(x => x.Owner == state.CurrentPlayer)
+                .Select(x => ChessPieceValues[x.Kind])
+                .Sum();
+
+            var opponentChessPiecesValue = Positions.PositionList.Select(x => state[x])
+                .Where(x => x != null)
+                .Where(x => x.Owner != state.CurrentPlayer)
+                .Select(x => ChessPieceValues[x.Kind])
+                .Sum();
+
+            return chessPiecesValue - opponentChessPiecesValue;
+        }
+
+        private int GetMobilityValue(ChessRepresentation state)
+        {
+            return + _mechanism.GenerateMoves(state).Count();
         }
     }
 }

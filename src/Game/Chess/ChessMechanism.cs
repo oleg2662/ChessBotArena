@@ -13,13 +13,27 @@ namespace Game.Chess
 {
     public class ChessMechanism : IMechanism<ChessRepresentation, BaseMove, GameState>
     {
-        private readonly ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>> _cache = new ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>>();
+        public ChessMechanism(bool turnOnCaching = false)
+        {
+            IsCaching = turnOnCaching;
+        }
+
+        public bool IsCaching { get; }
+
+        private readonly ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>> _moveCache = new ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>>();
         private readonly ConcurrentDictionary<CacheKey, IEnumerable<Position>> _threatenedPositionsCache = new ConcurrentDictionary<CacheKey, IEnumerable<Position>>();
 
         public IEnumerable<BaseMove> GenerateMoves(ChessRepresentation representation)
         {
-            return _cache.GetOrAdd(new CacheKey(representation, representation.CurrentPlayer, CacheKey.MoveGeneratorStyle.Normal),
-                                   _ => GenerateMovesInner(representation).ToList());
+            Func<IEnumerable<BaseMove>> generateMoves = () => GenerateMovesInner(representation).ToList();
+
+            if (IsCaching)
+            {
+                return _moveCache.GetOrAdd(
+                    new CacheKey(representation, representation.CurrentPlayer, CacheKey.MoveGeneratorStyle.Normal), _ => generateMoves());
+            }
+
+            return generateMoves();
         }
 
         private IEnumerable<BaseMove> GenerateMovesInner(ChessRepresentation representation)
@@ -42,15 +56,18 @@ namespace Game.Chess
 
                 case MessageType.DrawAccept:
                     yield break;
+            }
 
-                case MessageType.DrawDecline:
-                    yield return new SpecialMove(currentPlayer, MessageType.Resign);
-                    break;
+            // A bit simplified: draw offer only appears after 50 move-pairs (100 moves)
+            if (representation.History.Count > 100)
+            {
+                yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
+            }
 
-                case null:
-                    yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
-                    yield return new SpecialMove(currentPlayer, MessageType.Resign);
-                    break;
+            // A bit simplified: resign offer only appears after 25 move-pairs (50 moves)
+            if (representation.History.Count > 50)
+            {
+                yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
             }
 
             // Normal moves...
@@ -196,7 +213,7 @@ namespace Game.Chess
             return GameState.InProgress;
         }
 
-        private bool IsPlayerInChess(ChessRepresentation representation, ChessPlayer player)
+        public bool IsPlayerInChess(ChessRepresentation representation, ChessPlayer player)
         {
             var kingPosition = FindKing(representation, player);
             var threatenedPositions = GetThreatenedPositions(representation, player);
@@ -302,17 +319,13 @@ namespace Game.Chess
             }
         }
 
-        private IEnumerable<Position> GetThreatenedPositions(ChessRepresentation board, ChessPlayer threatenedPlayer)
+        public IEnumerable<Position> GetThreatenedPositions(ChessRepresentation board, ChessPlayer threatenedPlayer)
         {
+            Func<IEnumerable<Position>> generateThreatenedPositions = () => GetThreatenedPositionsInner(board, threatenedPlayer).ToList();
+
+            if (!IsCaching) return generateThreatenedPositions();
             var key = new CacheKey(board, threatenedPlayer, CacheKey.MoveGeneratorStyle.Threatening);
-
-            var result = _threatenedPositionsCache.GetOrAdd(key, _ =>
-            {
-                IEnumerable<Position> generatedPositions = GetThreatenedPositionsInner(board, threatenedPlayer);
-                return generatedPositions;
-            });
-
-            return result;
+            return  _threatenedPositionsCache.GetOrAdd(key, _ => generateThreatenedPositions());
         }
 
         private IEnumerable<Position> GetThreatenedPositionsInner(ChessRepresentation board, ChessPlayer threatenedPlayer)
@@ -359,7 +372,6 @@ namespace Game.Chess
                         continue;
                 }
             }
-            //}
 
             var result = opponentMoves.Select(x => x.To).Distinct().ToList();
 
@@ -368,18 +380,10 @@ namespace Game.Chess
 
         private IEnumerable<BaseChessMove> GenerateMoves(ChessRepresentation representation, ChessPlayer player)
         {
-            //var key = new ChessMechanismCacheKey(representation, player, ChessMechanismCacheKey.MoveGeneratorStyle.Normal);
-            //if (_moveCache.ContainsKey(key))
-            //{
-            //    return _moveCache[key];
-            //}
-
             var possibleMoves = Positions.PositionList
                 .Where(x => representation[x] != null && representation[x].Owner == representation.CurrentPlayer)
                 .SelectMany(x => GetChessMoves(representation, x, player))
                 .ToList();
-
-            //_moveCache.Add(key, possibleMoves);
 
             return possibleMoves;
         }
@@ -512,8 +516,8 @@ namespace Game.Chess
                     stepForward = !onlyThreateningMoves ? from.South() : null;
                     enPassantEastPosition = from.East();
                     enPassantWestPosition = from.West();
-                    captureEast = from.NorthEast();
-                    captureWest = from.NorthWest();
+                    captureEast = from.SouthEast();
+                    captureWest = from.SouthWest();
                     doubleStepForwardOpening = piece.HasMoved || onlyThreateningMoves
                                                     ? null
                                                     : board[stepForward] == null
@@ -651,7 +655,7 @@ namespace Game.Chess
 
             var longCastlingEmpty = longCastlingEmptyPositions
                                         .Select(x => board[x])
-                                        .Count(x => x == null) == longCastlingEmptyPositions.Count();
+                                        .Count(x => x == null) == longCastlingEmptyPositions.Length;
 
             var longCastlingSeemsPossible = board[longCastlingRookPosition] != null
                                              && board[longCastlingRookPosition]?.Kind == PieceKind.Rook
@@ -673,7 +677,7 @@ namespace Game.Chess
 
             var shortCastlingEmpty = shortCastlingEmptyPositions
                                         .Select(x => board[x])
-                                        .Count(x => x == null) == shortCastlingEmptyPositions.Count();
+                                        .Count(x => x == null) == shortCastlingEmptyPositions.Length;
 
             var shortCastlingSeemsPossible = board[shortCastlingRookPosition] != null
                                               && board[shortCastlingRookPosition]?.Kind == PieceKind.Rook
