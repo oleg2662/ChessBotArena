@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Algorithms.Abstractions.Interfaces;
 using Algorithms.Minimax.Exceptions;
 
@@ -19,7 +21,8 @@ namespace Algorithms.AlphaBeta
         private readonly IGenerator<TState, TMove> _moveGenerator;
         private readonly IApplier<TState, TMove> _moveApplier;
 
-        public AlphaBetaAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+        public AlphaBetaAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator,
+            IApplier<TState, TMove> applier)
         {
             _evaluator = evaluator;
             _moveGenerator = moveGenerator;
@@ -48,75 +51,130 @@ namespace Algorithms.AlphaBeta
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            var moves = _moveGenerator.Generate(state).ToList();
-
-            if (!moves.Any())
-            {
-                return null;
-            }
-
-            var movesAndValues = moves.Select(move => new
-            {
-                Move = move,
-                Value = Calculate(_moveApplier.Apply(state, move), 1, int.MaxValue, int.MinValue, false)
-            }).ToList();
-
-            var max = movesAndValues.Max(x => x.Value);
-            var result = movesAndValues.First(x => Equals(x.Value, max)).Move;
-
+            var result = AlphaBeta(state);
             return result;
         }
 
-        // https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
-        private int Calculate(TState state, int depth, int alpha, int beta, bool maximize)
+        private TMove AlphaBeta(TState initialState)
         {
-            if (depth == MaxDepth)
-            {
-                return _evaluator.Evaluate(state);
-            }
+            var alpha = new MoveAndValue<TMove>(null, int.MinValue);
+            var beta = new MoveAndValue<TMove>(null, int.MaxValue);
 
-            var nextMoves = _moveGenerator.Generate(state).ToList();
-            var isLeaf = !nextMoves.Any();
+            var result = AlphaBetaEvaluate(null, initialState, alpha, beta, true, 1);
 
-            if (isLeaf)
-            {
-                return _evaluator.Evaluate(state);
-            }
-
-            if (maximize)
-            {
-                var maximizerValue = int.MinValue;
-
-                foreach (var mv in nextMoves)
-                {
-                    maximizerValue = Math.Max(maximizerValue, Calculate(_moveApplier.Apply(state, mv), depth + 1, alpha, beta, false));
-                    alpha = Math.Max(alpha, maximizerValue);
-
-                    if(alpha >= beta)
-                    {
-                        break;
-                    }
-                }
-
-                return maximizerValue;
-            }
-            else
-            {
-                var minimizerValue = int.MaxValue;
-
-                foreach (var mv in nextMoves)
-                {
-                    minimizerValue = Math.Min(minimizerValue, Calculate(_moveApplier.Apply(state, mv), depth + 1, alpha, beta, true));
-                    beta = Math.Min(beta, minimizerValue);
-
-                    if (alpha >= beta)
-                    {
-                        break;
-                    }
-                }
-
-                return minimizerValue;
-            }
+            return result?.Move;
         }
+
+        private int Evaluate(TState state, bool isMaximizingNode)
+        {
+            var value = _evaluator.Evaluate(state);
+
+            return isMaximizingNode ? value : -1 * value;
+        }
+
+        private MoveAndValue<TMove> AlphaBetaEvaluate(TMove moveToNode, TState node, MoveAndValue<TMove> alpha, MoveAndValue<TMove> beta, bool isMaximizingNode, int depth)
+        {
+            var possibleMoves = _moveGenerator.Generate(node).ToArray();
+            var nodeIsLeaf = depth == MaxDepth || !possibleMoves.Any();
+
+            if (nodeIsLeaf)
+            {
+                var value = Evaluate(node, isMaximizingNode);
+                return new MoveAndValue<TMove>(moveToNode, value);
+            }
+
+            if (isMaximizingNode)
+            {
+                foreach (var possibleMove in possibleMoves)
+                {
+                    var nextNode = _moveApplier.Apply(node, possibleMove);
+                    var value = AlphaBetaEvaluate(possibleMove, nextNode, alpha, beta, false, depth + 1);
+                    alpha = MoveAndValue<TMove>.Max(alpha, value);
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
+                }
+
+                return moveToNode == null ? alpha : new MoveAndValue<TMove>(moveToNode, alpha.Value);
+            }
+
+            if (!isMaximizingNode)
+            {
+                foreach (var possibleMove in possibleMoves)
+                {
+                    var nextNode = _moveApplier.Apply(node, possibleMove);
+                    var value = AlphaBetaEvaluate(possibleMove, nextNode, alpha, beta, true, depth + 1);
+                    beta = MoveAndValue<TMove>.Min(beta, value);
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
+                }
+
+                //return beta;
+                return moveToNode == null ? beta : new MoveAndValue<TMove>(moveToNode, beta.Value);
+            }
+
+            return null;
+        }
+    }
+
+    internal class MoveAndValue<TMove> : IComparable<MoveAndValue<TMove>>, IComparable
+    {
+        public static MoveAndValue<TMove> Max(params MoveAndValue<TMove>[] values)
+        {
+            return values.OrderByDescending(x => x).First();
+        }
+
+        public static MoveAndValue<TMove> Min(params MoveAndValue<TMove>[] values)
+        {
+            return values.OrderBy(x => x).First();
+        }
+
+        public int CompareTo(MoveAndValue<TMove> other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            return Value.CompareTo(other.Value);
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return 1;
+            if (ReferenceEquals(this, obj)) return 0;
+            return obj is MoveAndValue<TMove> other
+                    ? CompareTo(other)
+                : throw new ArgumentException($"Object must be of type {nameof(MoveAndValue<TMove>)}");
+        }
+
+        public static bool operator <(MoveAndValue<TMove> left, MoveAndValue<TMove> right)
+        {
+            return Comparer<MoveAndValue<TMove>>.Default.Compare(left, right) < 0;
+        }
+
+        public static bool operator >(MoveAndValue<TMove> left, MoveAndValue<TMove> right)
+        {
+            return Comparer<MoveAndValue<TMove>>.Default.Compare(left, right) > 0;
+        }
+
+        public static bool operator <=(MoveAndValue<TMove> left, MoveAndValue<TMove> right)
+        {
+            return Comparer<MoveAndValue<TMove>>.Default.Compare(left, right) <= 0;
+        }
+
+        public static bool operator >=(MoveAndValue<TMove> left, MoveAndValue<TMove> right)
+        {
+            return Comparer<MoveAndValue<TMove>>.Default.Compare(left, right) >= 0;
+        }
+
+        public MoveAndValue(TMove move, int value)
+        {
+            Move = move;
+            Value = value;
+        }
+
+        public TMove Move { get; }
+        public int Value { get; }
     }
 }

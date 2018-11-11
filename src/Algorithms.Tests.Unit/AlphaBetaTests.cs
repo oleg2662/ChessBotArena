@@ -1,4 +1,5 @@
-﻿using Algorithms.AlphaBeta;
+﻿using System.Text;
+using Algorithms.AlphaBeta;
 using Algorithms.Tests.Unit.TestCaseClasses;
 using Xunit;
 
@@ -15,11 +16,42 @@ namespace Algorithms.Tests.Unit
             var algorithm = new AlphaBetaAlgorithm<TestCase1.State, TestCase1.Move>(evaluator, generator, applier);
             algorithm.MaxDepth = int.MaxValue;
 
-            var initState = new TestCase1.State(0, 0);
+            var state = new TestCase1.State(0, 0);
+            var move = algorithm.Calculate(state);
 
-            var move1 = algorithm.Calculate(initState);
+            Assert.Equal('b', move.Label);
+        }
 
-            Assert.Equal('b', move1.Label);
+        [Fact]
+        public void Test2()
+        {
+            var expected = "bflt";
+            var evaluator = new TestCase1.Evaluator();
+            var generator = new TestCase1.Generator();
+            var applier = new TestCase1.Applier();
+            var algorithm = new AlphaBetaAlgorithm<TestCase1.State, TestCase1.Move>(evaluator, generator, applier);
+            algorithm.MaxDepth = int.MaxValue;
+            var sb = new StringBuilder();
+
+            var state = new TestCase1.State(0, 0);
+            var move = algorithm.Calculate(state);
+            sb.Append(move.Label);
+
+            state = applier.Apply(state, move);
+            move = algorithm.Calculate(state);
+            sb.Append(move.Label);
+
+            state = applier.Apply(state, move);
+            move = algorithm.Calculate(state);
+            sb.Append(move.Label);
+
+            state = applier.Apply(state, move);
+            move = algorithm.Calculate(state);
+            sb.Append(move.Label);
+
+            var actual = sb.ToString();
+
+            Assert.Equal(expected, actual);
         }
     }
 }
