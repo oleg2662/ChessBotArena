@@ -38,12 +38,13 @@ namespace Game.Chess
                 case MessageType.DrawOffer:
                     yield return new SpecialMove(currentPlayer, MessageType.DrawAccept);
                     yield return new SpecialMove(currentPlayer, MessageType.DrawDecline);
-                    break;
+                    yield break;
 
                 case MessageType.DrawAccept:
                     yield break;
 
                 case MessageType.DrawDecline:
+                    yield return new SpecialMove(currentPlayer, MessageType.Resign);
                     break;
 
                 case null:
