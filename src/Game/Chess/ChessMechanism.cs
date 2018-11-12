@@ -12,7 +12,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Game.Chess
 {
-    public class ChessMechanism : IMechanism<ChessRepresentation, BaseMove, GameState>
+    public class ChessMechanism// : IMechanism<ChessRepresentation, BaseMove, GameState>
     {
         public ChessMechanism(bool turnOnCaching = false)
         {
@@ -27,9 +27,9 @@ namespace Game.Chess
         private readonly MemoryCache _moveCache = new MemoryCache(new MemoryCacheOptions());
         private readonly MemoryCache _threatenedPositionsCache = new MemoryCache(new MemoryCacheOptions());
 
-        public IEnumerable<BaseMove> GenerateMoves(ChessRepresentation representation)
+        public IEnumerable<BaseMove> GenerateMoves(ChessRepresentation representation, ChessPlayer? player = null)
         {
-            Func<IEnumerable<BaseMove>> generateMoves = () => GenerateMovesInner(representation).ToList();
+            Func<IEnumerable<BaseMove>> generateMoves = () => GenerateMovesInner(representation, player).ToList();
 
             if (IsCaching)
             {
@@ -40,10 +40,10 @@ namespace Game.Chess
             return generateMoves();
         }
 
-        private IEnumerable<BaseMove> GenerateMovesInner(ChessRepresentation representation)
+        private IEnumerable<BaseMove> GenerateMovesInner(ChessRepresentation representation, ChessPlayer? player = null)
         {
             var originalBoard = representation;
-            var currentPlayer = representation.CurrentPlayer;
+            var currentPlayer = player ?? representation.CurrentPlayer;
 
             // Special moves...
             var lastMove = (representation.History.LastOrDefault() as SpecialMove);
@@ -75,7 +75,7 @@ namespace Game.Chess
             }
 
             // Normal moves...
-            var possibleMoves = GenerateMoves(representation, representation.CurrentPlayer);
+            var possibleMoves = GetAllNonSpecialChessMoves(representation, currentPlayer);
 
             foreach (var move in possibleMoves)
             {
@@ -131,8 +131,9 @@ namespace Game.Chess
             }
         }
 
-        public GameState GetGameState(ChessRepresentation representation)
+        public GameState GetGameState(ChessRepresentation representation, ChessPlayer? player = null)
         {
+            var currentPlayer = player ?? representation.CurrentPlayer;
             var specialMoves = new HashSet<SpecialMove>(representation.History.OfType<SpecialMove>());
 
             // Search for resign.
@@ -157,7 +158,7 @@ namespace Game.Chess
             }
 
             // Check check-mate
-            var isCurrentPlayerInChess = IsPlayerInChess(representation, representation.CurrentPlayer);
+            var isCurrentPlayerInChess = IsPlayerInChess(representation, currentPlayer);
 
             var anyMovesLeft = GenerateMoves(representation).OfType<BaseChessMove>().Any();
 
@@ -382,17 +383,17 @@ namespace Game.Chess
             return result;
         }
 
-        private IEnumerable<BaseChessMove> GenerateMoves(ChessRepresentation representation, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetAllNonSpecialChessMoves(ChessRepresentation representation, ChessPlayer player)
         {
             var possibleMoves = Positions.PositionList
-                .Where(x => representation[x] != null && representation[x].Owner == representation.CurrentPlayer)
-                .SelectMany(x => GetChessMoves(representation, x, player))
+                .Where(x => representation[x] != null && representation[x].Owner == player)
+                .SelectMany(x => GetChessMovesFromPosition(representation, x, player))
                 .ToList();
 
             return possibleMoves;
         }
 
-        private IEnumerable<BaseChessMove> GetChessMoves(ChessRepresentation board, Position from, ChessPlayer player)
+        private IEnumerable<BaseChessMove> GetChessMovesFromPosition(ChessRepresentation board, Position from, ChessPlayer player)
         {
             var piece = board[from];
 

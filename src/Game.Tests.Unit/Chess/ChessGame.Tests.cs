@@ -14,7 +14,7 @@ namespace Game.Tests.Unit.Chess
         [Fact]
         public void GenerateMovesTest_Initial_AppropriateMovesReturned()
         {
-            var expected = 22;
+            var expected = 20;
 
             var representation = new ChessRepresentationInitializer().Create();
             

@@ -71,6 +71,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseChessBoardVisualizerPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ChessBoardGamePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ChessBoardVisualizerPanel.cs">
       <SubType>Component</SubType>
     </Compile>
