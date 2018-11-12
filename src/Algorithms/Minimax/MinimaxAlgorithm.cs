@@ -47,7 +47,8 @@ namespace Algorithms.Minimax
         /// <inheritdoc />
         public TMove Calculate(TState state)
         {
-            return MiniMax(state);
+            var result = MiniMax(state);
+            return result;
         }
 
         private TMove MiniMax(TState initialState)

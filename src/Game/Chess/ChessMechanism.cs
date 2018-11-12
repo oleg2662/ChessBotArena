@@ -8,6 +8,7 @@ using Game.Chess.Extensions;
 using Game.Chess.Moves;
 using Game.Chess.Pieces;
 using Game.Chess.Exceptions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Game.Chess
 {
@@ -16,12 +17,15 @@ namespace Game.Chess
         public ChessMechanism(bool turnOnCaching = false)
         {
             IsCaching = turnOnCaching;
+            if (!IsCaching) return;
+            _moveCache = new MemoryCache(new MemoryCacheOptions());
+            _threatenedPositionsCache = new MemoryCache(new MemoryCacheOptions());
         }
 
         public bool IsCaching { get; }
 
-        private readonly ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>> _moveCache = new ConcurrentDictionary<CacheKey, IEnumerable<BaseMove>>();
-        private readonly ConcurrentDictionary<CacheKey, IEnumerable<Position>> _threatenedPositionsCache = new ConcurrentDictionary<CacheKey, IEnumerable<Position>>();
+        private readonly MemoryCache _moveCache = new MemoryCache(new MemoryCacheOptions());
+        private readonly MemoryCache _threatenedPositionsCache = new MemoryCache(new MemoryCacheOptions());
 
         public IEnumerable<BaseMove> GenerateMoves(ChessRepresentation representation)
         {
@@ -29,7 +33,7 @@ namespace Game.Chess
 
             if (IsCaching)
             {
-                return _moveCache.GetOrAdd(
+                return _moveCache.GetOrCreate(
                     new CacheKey(representation, representation.CurrentPlayer, CacheKey.MoveGeneratorStyle.Normal), _ => generateMoves());
             }
 
@@ -325,7 +329,7 @@ namespace Game.Chess
 
             if (!IsCaching) return generateThreatenedPositions();
             var key = new CacheKey(board, threatenedPlayer, CacheKey.MoveGeneratorStyle.Threatening);
-            return  _threatenedPositionsCache.GetOrAdd(key, _ => generateThreatenedPositions());
+            return  _threatenedPositionsCache.GetOrCreate(key, _ => generateThreatenedPositions());
         }
 
         private IEnumerable<Position> GetThreatenedPositionsInner(ChessRepresentation board, ChessPlayer threatenedPlayer)

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Game.Chess;
+using Game.Chess.Pieces;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using Game.Chess;
-using Game.Chess.Pieces;
 
-namespace ChessServiceTestApp
+namespace Tools.Common
 {
-    public sealed class ChessBoardVisualizerPictureBox : Panel
+    public sealed class ChessBoardVisualizerPanel : Panel
     {
         private readonly StringFormat _sfCenter = new StringFormat
         {
@@ -25,7 +25,7 @@ namespace ChessServiceTestApp
             LineAlignment = StringAlignment.Far
         };
 
-        public ChessBoardVisualizerPictureBox()
+        public ChessBoardVisualizerPanel()
         {
             _chessRepresentation = new ChessRepresentationInitializer().Create();
             BlackSquare = Color.SandyBrown;
@@ -205,7 +205,7 @@ namespace ChessServiceTestApp
             {
                 var rectangle = new RectangleF(rect.X, rect.Y + i * cellHeight, cellWidth, cellHeight);
                 g.DrawString(
-                    $"{8-i}",
+                    $"{8 - i}",
                     new Font(FontFamily.GenericSansSerif, rectangle.Width / 2, FontStyle.Regular),
                     Brushes.White,
                     rectangle,

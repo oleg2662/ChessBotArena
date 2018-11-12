@@ -1,4 +1,6 @@
-﻿namespace ChessServiceTestApp
+﻿using Tools.Common;
+
+namespace ChessServiceTestApp
 {
     partial class MainForm
     {
@@ -42,7 +44,7 @@
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.listboxMatches = new System.Windows.Forms.ListBox();
             this.listboxGameHistory = new System.Windows.Forms.ListBox();
-            this.chessBoardVisualizerPictureBox1 = new ChessServiceTestApp.ChessBoardVisualizerPictureBox();
+            this.chessBoardVisualizerPictureBox1 = new ChessBoardVisualizerPanel();
             this.tableLayoutMain.SuspendLayout();
             this.tableLayourSidebar.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -238,7 +240,7 @@
         private System.Windows.Forms.Button buttonRefresh;
         private System.Windows.Forms.ListBox listboxMatches;
         private System.Windows.Forms.ListBox listboxGameHistory;
-        private ChessBoardVisualizerPictureBox chessBoardVisualizerPictureBox1;
+        private ChessBoardVisualizerPanel chessBoardVisualizerPictureBox1;
     }
 }
 
