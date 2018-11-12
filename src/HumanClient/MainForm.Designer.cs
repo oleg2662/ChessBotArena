@@ -38,48 +38,61 @@
             "b",
             "gfsgfs"}, -1);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("wertw", "BlackWins");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("wertwrt", "WhiteWins");
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("wertwrt", "InProgress");
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            "sgrsgsf",
+            "a",
+            "b",
+            "gfsgfs"}, "Draw");
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPagePlayers = new System.Windows.Forms.TabPage();
-            this.tabPageMatches = new System.Windows.Forms.TabPage();
-            this.tabPageGame = new System.Windows.Forms.TabPage();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.imageListPlayers = new System.Windows.Forms.ImageList(this.components);
+            this.listViewPlayers = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.imageListPlayers = new System.Windows.Forms.ImageList(this.components);
+            this.tabPageMatches = new System.Windows.Forms.TabPage();
+            this.listViewMatches = new System.Windows.Forms.ListView();
+            this.columnHeaderMatchName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.imageListMatchStatuses = new System.Windows.Forms.ImageList(this.components);
+            this.tabPageGame = new System.Windows.Forms.TabPage();
             this.panelSidebar = new System.Windows.Forms.Panel();
-            this.panelLogin = new System.Windows.Forms.Panel();
-            this.btnLogout = new System.Windows.Forms.Button();
-            this.btnLogin = new System.Windows.Forms.Button();
-            this.textboxPassword = new System.Windows.Forms.TextBox();
-            this.labelPassword = new System.Windows.Forms.Label();
-            this.textboxUsername = new System.Windows.Forms.TextBox();
-            this.labelUsername = new System.Windows.Forms.Label();
-            this.chessBoardGamePanel1 = new Tools.Common.ChessBoardGamePanel();
-            this.panelLogout = new System.Windows.Forms.Panel();
-            this.labelLoginStatus = new System.Windows.Forms.Label();
+            this.panelMatches = new System.Windows.Forms.Panel();
+            this.labelMatchPreviewStatus = new System.Windows.Forms.Label();
+            this.panelPlayers = new System.Windows.Forms.Panel();
+            this.btnChallenge = new System.Windows.Forms.Button();
+            this.panelRefresh = new System.Windows.Forms.Panel();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.panelGame = new System.Windows.Forms.Panel();
             this.listboxMoves = new System.Windows.Forms.ListBox();
             this.btnDeclineDraw = new System.Windows.Forms.Button();
             this.btnAcceptDraw = new System.Windows.Forms.Button();
             this.btnOfferDraw = new System.Windows.Forms.Button();
             this.btnResign = new System.Windows.Forms.Button();
-            this.panelRefresh = new System.Windows.Forms.Panel();
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.panelPlayers = new System.Windows.Forms.Panel();
-            this.btnChallenge = new System.Windows.Forms.Button();
+            this.panelLogout = new System.Windows.Forms.Panel();
+            this.labelLoginStatus = new System.Windows.Forms.Label();
+            this.btnLogout = new System.Windows.Forms.Button();
+            this.panelLogin = new System.Windows.Forms.Panel();
+            this.btnLogin = new System.Windows.Forms.Button();
+            this.textboxPassword = new System.Windows.Forms.TextBox();
+            this.labelPassword = new System.Windows.Forms.Label();
+            this.textboxUsername = new System.Windows.Forms.TextBox();
+            this.labelUsername = new System.Windows.Forms.Label();
+            this.chessBoardGamePanel1 = new Tools.Common.ChessBoardGamePanel();
+            this.chessBoardPreview = new Tools.Common.ChessBoardVisualizerPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabPagePlayers.SuspendLayout();
             this.tabPageMatches.SuspendLayout();
             this.tabPageGame.SuspendLayout();
             this.panelSidebar.SuspendLayout();
-            this.panelLogin.SuspendLayout();
-            this.panelLogout.SuspendLayout();
-            this.panelGame.SuspendLayout();
-            this.panelRefresh.SuspendLayout();
+            this.panelMatches.SuspendLayout();
             this.panelPlayers.SuspendLayout();
+            this.panelRefresh.SuspendLayout();
+            this.panelGame.SuspendLayout();
+            this.panelLogout.SuspendLayout();
+            this.panelLogin.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -94,8 +107,8 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 642F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(939, 725);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 658F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(840, 658);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tabMain
@@ -107,31 +120,115 @@
             this.tabMain.Location = new System.Drawing.Point(3, 3);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(733, 719);
+            this.tabMain.Size = new System.Drawing.Size(634, 652);
             this.tabMain.TabIndex = 0;
             this.tabMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabMain_Selected);
             // 
             // tabPagePlayers
             // 
-            this.tabPagePlayers.Controls.Add(this.listView1);
+            this.tabPagePlayers.Controls.Add(this.listViewPlayers);
             this.tabPagePlayers.Location = new System.Drawing.Point(4, 22);
             this.tabPagePlayers.Name = "tabPagePlayers";
             this.tabPagePlayers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayers.Size = new System.Drawing.Size(677, 673);
+            this.tabPagePlayers.Size = new System.Drawing.Size(626, 626);
             this.tabPagePlayers.TabIndex = 0;
             this.tabPagePlayers.Text = "Players";
             this.tabPagePlayers.UseVisualStyleBackColor = true;
             // 
+            // listViewPlayers
+            // 
+            this.listViewPlayers.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listViewPlayers.AutoArrange = false;
+            this.listViewPlayers.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listViewPlayers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
+            this.listViewPlayers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewPlayers.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            listViewItem1.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 0;
+            listViewItem3.StateImageIndex = 0;
+            listViewItem4.StateImageIndex = 0;
+            this.listViewPlayers.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4});
+            this.listViewPlayers.LargeImageList = this.imageListPlayers;
+            this.listViewPlayers.Location = new System.Drawing.Point(3, 3);
+            this.listViewPlayers.MultiSelect = false;
+            this.listViewPlayers.Name = "listViewPlayers";
+            this.listViewPlayers.Size = new System.Drawing.Size(620, 620);
+            this.listViewPlayers.SmallImageList = this.imageListPlayers;
+            this.listViewPlayers.TabIndex = 0;
+            this.listViewPlayers.UseCompatibleStateImageBehavior = false;
+            this.listViewPlayers.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Players";
+            this.columnHeader1.Width = 604;
+            // 
+            // imageListPlayers
+            // 
+            this.imageListPlayers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListPlayers.ImageStream")));
+            this.imageListPlayers.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListPlayers.Images.SetKeyName(0, "Brain");
+            this.imageListPlayers.Images.SetKeyName(1, "Robot");
+            // 
             // tabPageMatches
             // 
-            this.tabPageMatches.Controls.Add(this.listBox1);
+            this.tabPageMatches.Controls.Add(this.listViewMatches);
             this.tabPageMatches.Location = new System.Drawing.Point(4, 22);
             this.tabPageMatches.Name = "tabPageMatches";
             this.tabPageMatches.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMatches.Size = new System.Drawing.Size(677, 673);
+            this.tabPageMatches.Size = new System.Drawing.Size(626, 626);
             this.tabPageMatches.TabIndex = 1;
             this.tabPageMatches.Text = "Matches";
             this.tabPageMatches.UseVisualStyleBackColor = true;
+            // 
+            // listViewMatches
+            // 
+            this.listViewMatches.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listViewMatches.AutoArrange = false;
+            this.listViewMatches.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listViewMatches.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderMatchName});
+            this.listViewMatches.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewMatches.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            listViewItem5.StateImageIndex = 0;
+            listViewItem6.StateImageIndex = 0;
+            listViewItem7.StateImageIndex = 0;
+            listViewItem8.StateImageIndex = 0;
+            this.listViewMatches.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem5,
+            listViewItem6,
+            listViewItem7,
+            listViewItem8});
+            this.listViewMatches.LargeImageList = this.imageListMatchStatuses;
+            this.listViewMatches.Location = new System.Drawing.Point(3, 3);
+            this.listViewMatches.MultiSelect = false;
+            this.listViewMatches.Name = "listViewMatches";
+            this.listViewMatches.Size = new System.Drawing.Size(620, 620);
+            this.listViewMatches.SmallImageList = this.imageListMatchStatuses;
+            this.listViewMatches.TabIndex = 1;
+            this.listViewMatches.UseCompatibleStateImageBehavior = false;
+            this.listViewMatches.View = System.Windows.Forms.View.Details;
+            this.listViewMatches.ItemActivate += new System.EventHandler(this.listViewMatches_ItemActivate);
+            this.listViewMatches.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewMatches_MouseDoubleClick);
+            // 
+            // columnHeaderMatchName
+            // 
+            this.columnHeaderMatchName.Text = "Match";
+            this.columnHeaderMatchName.Width = 604;
+            // 
+            // imageListMatchStatuses
+            // 
+            this.imageListMatchStatuses.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListMatchStatuses.ImageStream")));
+            this.imageListMatchStatuses.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListMatchStatuses.Images.SetKeyName(0, "BlackWins");
+            this.imageListMatchStatuses.Images.SetKeyName(1, "WhiteWins");
+            this.imageListMatchStatuses.Images.SetKeyName(2, "InProgress");
+            this.imageListMatchStatuses.Images.SetKeyName(3, "Draw");
             // 
             // tabPageGame
             // 
@@ -139,78 +236,185 @@
             this.tabPageGame.Location = new System.Drawing.Point(4, 22);
             this.tabPageGame.Name = "tabPageGame";
             this.tabPageGame.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGame.Size = new System.Drawing.Size(725, 693);
+            this.tabPageGame.Size = new System.Drawing.Size(626, 626);
             this.tabPageGame.TabIndex = 2;
             this.tabPageGame.Text = "Game";
             this.tabPageGame.UseVisualStyleBackColor = true;
             // 
-            // listBox1
-            // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(3, 3);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(671, 667);
-            this.listBox1.TabIndex = 0;
-            // 
-            // listView1
-            // 
-            this.listView1.Activation = System.Windows.Forms.ItemActivation.OneClick;
-            this.listView1.AutoArrange = false;
-            this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            listViewItem1.StateImageIndex = 0;
-            listViewItem2.StateImageIndex = 0;
-            listViewItem3.StateImageIndex = 0;
-            listViewItem4.StateImageIndex = 0;
-            this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4});
-            this.listView1.LargeImageList = this.imageListPlayers;
-            this.listView1.Location = new System.Drawing.Point(3, 3);
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(671, 667);
-            this.listView1.SmallImageList = this.imageListPlayers;
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
-            // 
-            // imageListPlayers
-            // 
-            this.imageListPlayers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListPlayers.ImageStream")));
-            this.imageListPlayers.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListPlayers.Images.SetKeyName(0, "Robot");
-            this.imageListPlayers.Images.SetKeyName(1, "Brain");
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Players";
-            this.columnHeader1.Width = 604;
-            // 
-            // imageList1
-            // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            // 
             // panelSidebar
             // 
+            this.panelSidebar.Controls.Add(this.panelMatches);
             this.panelSidebar.Controls.Add(this.panelPlayers);
             this.panelSidebar.Controls.Add(this.panelRefresh);
             this.panelSidebar.Controls.Add(this.panelGame);
             this.panelSidebar.Controls.Add(this.panelLogout);
             this.panelSidebar.Controls.Add(this.panelLogin);
             this.panelSidebar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSidebar.Location = new System.Drawing.Point(742, 3);
+            this.panelSidebar.Location = new System.Drawing.Point(643, 3);
             this.panelSidebar.Name = "panelSidebar";
-            this.panelSidebar.Size = new System.Drawing.Size(194, 719);
+            this.panelSidebar.Size = new System.Drawing.Size(194, 652);
             this.panelSidebar.TabIndex = 1;
+            // 
+            // panelMatches
+            // 
+            this.panelMatches.Controls.Add(this.labelMatchPreviewStatus);
+            this.panelMatches.Controls.Add(this.chessBoardPreview);
+            this.panelMatches.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelMatches.Location = new System.Drawing.Point(0, 595);
+            this.panelMatches.Name = "panelMatches";
+            this.panelMatches.Padding = new System.Windows.Forms.Padding(4);
+            this.panelMatches.Size = new System.Drawing.Size(194, 215);
+            this.panelMatches.TabIndex = 18;
+            this.panelMatches.Visible = false;
+            // 
+            // labelMatchPreviewStatus
+            // 
+            this.labelMatchPreviewStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelMatchPreviewStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelMatchPreviewStatus.Location = new System.Drawing.Point(4, 190);
+            this.labelMatchPreviewStatus.Name = "labelMatchPreviewStatus";
+            this.labelMatchPreviewStatus.Size = new System.Drawing.Size(186, 21);
+            this.labelMatchPreviewStatus.TabIndex = 1;
+            this.labelMatchPreviewStatus.Text = "STATUS";
+            this.labelMatchPreviewStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panelPlayers
+            // 
+            this.panelPlayers.Controls.Add(this.btnChallenge);
+            this.panelPlayers.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelPlayers.Location = new System.Drawing.Point(0, 550);
+            this.panelPlayers.Name = "panelPlayers";
+            this.panelPlayers.Padding = new System.Windows.Forms.Padding(4);
+            this.panelPlayers.Size = new System.Drawing.Size(194, 45);
+            this.panelPlayers.TabIndex = 17;
+            // 
+            // btnChallenge
+            // 
+            this.btnChallenge.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnChallenge.Location = new System.Drawing.Point(4, 4);
+            this.btnChallenge.Name = "btnChallenge";
+            this.btnChallenge.Size = new System.Drawing.Size(186, 36);
+            this.btnChallenge.TabIndex = 1;
+            this.btnChallenge.Text = "Challenge";
+            this.btnChallenge.UseVisualStyleBackColor = true;
+            this.btnChallenge.Click += new System.EventHandler(this.btnChallenge_Click);
+            // 
+            // panelRefresh
+            // 
+            this.panelRefresh.Controls.Add(this.btnRefresh);
+            this.panelRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelRefresh.Location = new System.Drawing.Point(0, 607);
+            this.panelRefresh.Name = "panelRefresh";
+            this.panelRefresh.Padding = new System.Windows.Forms.Padding(4);
+            this.panelRefresh.Size = new System.Drawing.Size(194, 45);
+            this.panelRefresh.TabIndex = 16;
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnRefresh.Location = new System.Drawing.Point(4, 4);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(186, 36);
+            this.btnRefresh.TabIndex = 1;
+            this.btnRefresh.Text = "Refresh All";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            // 
+            // panelGame
+            // 
+            this.panelGame.Controls.Add(this.listboxMoves);
+            this.panelGame.Controls.Add(this.btnDeclineDraw);
+            this.panelGame.Controls.Add(this.btnAcceptDraw);
+            this.panelGame.Controls.Add(this.btnOfferDraw);
+            this.panelGame.Controls.Add(this.btnResign);
+            this.panelGame.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelGame.Location = new System.Drawing.Point(0, 198);
+            this.panelGame.Name = "panelGame";
+            this.panelGame.Padding = new System.Windows.Forms.Padding(4);
+            this.panelGame.Size = new System.Drawing.Size(194, 352);
+            this.panelGame.TabIndex = 15;
+            // 
+            // listboxMoves
+            // 
+            this.listboxMoves.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listboxMoves.FormattingEnabled = true;
+            this.listboxMoves.Location = new System.Drawing.Point(4, 148);
+            this.listboxMoves.Name = "listboxMoves";
+            this.listboxMoves.Size = new System.Drawing.Size(186, 200);
+            this.listboxMoves.TabIndex = 4;
+            // 
+            // btnDeclineDraw
+            // 
+            this.btnDeclineDraw.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnDeclineDraw.Location = new System.Drawing.Point(4, 112);
+            this.btnDeclineDraw.Name = "btnDeclineDraw";
+            this.btnDeclineDraw.Size = new System.Drawing.Size(186, 36);
+            this.btnDeclineDraw.TabIndex = 3;
+            this.btnDeclineDraw.Text = "Decline draw";
+            this.btnDeclineDraw.UseVisualStyleBackColor = true;
+            // 
+            // btnAcceptDraw
+            // 
+            this.btnAcceptDraw.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnAcceptDraw.Location = new System.Drawing.Point(4, 76);
+            this.btnAcceptDraw.Name = "btnAcceptDraw";
+            this.btnAcceptDraw.Size = new System.Drawing.Size(186, 36);
+            this.btnAcceptDraw.TabIndex = 2;
+            this.btnAcceptDraw.Text = "Accept draw";
+            this.btnAcceptDraw.UseVisualStyleBackColor = true;
+            // 
+            // btnOfferDraw
+            // 
+            this.btnOfferDraw.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnOfferDraw.Location = new System.Drawing.Point(4, 40);
+            this.btnOfferDraw.Name = "btnOfferDraw";
+            this.btnOfferDraw.Size = new System.Drawing.Size(186, 36);
+            this.btnOfferDraw.TabIndex = 1;
+            this.btnOfferDraw.Text = "Offer draw";
+            this.btnOfferDraw.UseVisualStyleBackColor = true;
+            // 
+            // btnResign
+            // 
+            this.btnResign.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnResign.Location = new System.Drawing.Point(4, 4);
+            this.btnResign.Name = "btnResign";
+            this.btnResign.Size = new System.Drawing.Size(186, 36);
+            this.btnResign.TabIndex = 0;
+            this.btnResign.Text = "Resign";
+            this.btnResign.UseVisualStyleBackColor = true;
+            // 
+            // panelLogout
+            // 
+            this.panelLogout.Controls.Add(this.labelLoginStatus);
+            this.panelLogout.Controls.Add(this.btnLogout);
+            this.panelLogout.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelLogout.Location = new System.Drawing.Point(0, 113);
+            this.panelLogout.Name = "panelLogout";
+            this.panelLogout.Padding = new System.Windows.Forms.Padding(4);
+            this.panelLogout.Size = new System.Drawing.Size(194, 85);
+            this.panelLogout.TabIndex = 14;
+            this.panelLogout.Visible = false;
+            // 
+            // labelLoginStatus
+            // 
+            this.labelLoginStatus.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.labelLoginStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelLoginStatus.Location = new System.Drawing.Point(4, 29);
+            this.labelLoginStatus.Name = "labelLoginStatus";
+            this.labelLoginStatus.Size = new System.Drawing.Size(186, 52);
+            this.labelLoginStatus.TabIndex = 15;
+            this.labelLoginStatus.Text = "Not logged in";
+            this.labelLoginStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnLogout
+            // 
+            this.btnLogout.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnLogout.Location = new System.Drawing.Point(4, 4);
+            this.btnLogout.Name = "btnLogout";
+            this.btnLogout.Size = new System.Drawing.Size(186, 25);
+            this.btnLogout.TabIndex = 14;
+            this.btnLogout.Text = "Logout";
+            this.btnLogout.UseVisualStyleBackColor = true;
+            this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
             // 
             // panelLogin
             // 
@@ -225,17 +429,6 @@
             this.panelLogin.Padding = new System.Windows.Forms.Padding(4);
             this.panelLogin.Size = new System.Drawing.Size(194, 113);
             this.panelLogin.TabIndex = 10;
-            // 
-            // btnLogout
-            // 
-            this.btnLogout.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnLogout.Location = new System.Drawing.Point(4, 4);
-            this.btnLogout.Name = "btnLogout";
-            this.btnLogout.Size = new System.Drawing.Size(186, 25);
-            this.btnLogout.TabIndex = 14;
-            this.btnLogout.Text = "Logout";
-            this.btnLogout.UseVisualStyleBackColor = true;
-            this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
             // 
             // btnLogin
             // 
@@ -293,141 +486,27 @@
             this.chessBoardGamePanel1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.chessBoardGamePanel1.Location = new System.Drawing.Point(3, 3);
             this.chessBoardGamePanel1.Name = "chessBoardGamePanel1";
-            this.chessBoardGamePanel1.Size = new System.Drawing.Size(719, 687);
+            this.chessBoardGamePanel1.Size = new System.Drawing.Size(620, 620);
             this.chessBoardGamePanel1.TabIndex = 0;
             this.chessBoardGamePanel1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
-            // panelLogout
+            // chessBoardPreview
             // 
-            this.panelLogout.Controls.Add(this.labelLoginStatus);
-            this.panelLogout.Controls.Add(this.btnLogout);
-            this.panelLogout.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelLogout.Location = new System.Drawing.Point(0, 113);
-            this.panelLogout.Name = "panelLogout";
-            this.panelLogout.Padding = new System.Windows.Forms.Padding(4);
-            this.panelLogout.Size = new System.Drawing.Size(194, 85);
-            this.panelLogout.TabIndex = 14;
-            this.panelLogout.Visible = false;
-            // 
-            // labelLoginStatus
-            // 
-            this.labelLoginStatus.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.labelLoginStatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelLoginStatus.Location = new System.Drawing.Point(4, 29);
-            this.labelLoginStatus.Name = "labelLoginStatus";
-            this.labelLoginStatus.Size = new System.Drawing.Size(186, 52);
-            this.labelLoginStatus.TabIndex = 15;
-            this.labelLoginStatus.Text = "Not logged in";
-            this.labelLoginStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // panelGame
-            // 
-            this.panelGame.Controls.Add(this.listboxMoves);
-            this.panelGame.Controls.Add(this.btnDeclineDraw);
-            this.panelGame.Controls.Add(this.btnAcceptDraw);
-            this.panelGame.Controls.Add(this.btnOfferDraw);
-            this.panelGame.Controls.Add(this.btnResign);
-            this.panelGame.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelGame.Location = new System.Drawing.Point(0, 198);
-            this.panelGame.Name = "panelGame";
-            this.panelGame.Padding = new System.Windows.Forms.Padding(4);
-            this.panelGame.Size = new System.Drawing.Size(194, 426);
-            this.panelGame.TabIndex = 15;
-            // 
-            // listboxMoves
-            // 
-            this.listboxMoves.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listboxMoves.FormattingEnabled = true;
-            this.listboxMoves.Location = new System.Drawing.Point(4, 148);
-            this.listboxMoves.Name = "listboxMoves";
-            this.listboxMoves.Size = new System.Drawing.Size(186, 274);
-            this.listboxMoves.TabIndex = 4;
-            // 
-            // btnDeclineDraw
-            // 
-            this.btnDeclineDraw.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnDeclineDraw.Location = new System.Drawing.Point(4, 112);
-            this.btnDeclineDraw.Name = "btnDeclineDraw";
-            this.btnDeclineDraw.Size = new System.Drawing.Size(186, 36);
-            this.btnDeclineDraw.TabIndex = 3;
-            this.btnDeclineDraw.Text = "Decline draw";
-            this.btnDeclineDraw.UseVisualStyleBackColor = true;
-            // 
-            // btnAcceptDraw
-            // 
-            this.btnAcceptDraw.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnAcceptDraw.Location = new System.Drawing.Point(4, 76);
-            this.btnAcceptDraw.Name = "btnAcceptDraw";
-            this.btnAcceptDraw.Size = new System.Drawing.Size(186, 36);
-            this.btnAcceptDraw.TabIndex = 2;
-            this.btnAcceptDraw.Text = "Accept draw";
-            this.btnAcceptDraw.UseVisualStyleBackColor = true;
-            // 
-            // btnOfferDraw
-            // 
-            this.btnOfferDraw.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnOfferDraw.Location = new System.Drawing.Point(4, 40);
-            this.btnOfferDraw.Name = "btnOfferDraw";
-            this.btnOfferDraw.Size = new System.Drawing.Size(186, 36);
-            this.btnOfferDraw.TabIndex = 1;
-            this.btnOfferDraw.Text = "Offer draw";
-            this.btnOfferDraw.UseVisualStyleBackColor = true;
-            // 
-            // btnResign
-            // 
-            this.btnResign.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnResign.Location = new System.Drawing.Point(4, 4);
-            this.btnResign.Name = "btnResign";
-            this.btnResign.Size = new System.Drawing.Size(186, 36);
-            this.btnResign.TabIndex = 0;
-            this.btnResign.Text = "Resign";
-            this.btnResign.UseVisualStyleBackColor = true;
-            // 
-            // panelRefresh
-            // 
-            this.panelRefresh.Controls.Add(this.btnRefresh);
-            this.panelRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelRefresh.Location = new System.Drawing.Point(0, 674);
-            this.panelRefresh.Name = "panelRefresh";
-            this.panelRefresh.Padding = new System.Windows.Forms.Padding(4);
-            this.panelRefresh.Size = new System.Drawing.Size(194, 45);
-            this.panelRefresh.TabIndex = 16;
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnRefresh.Location = new System.Drawing.Point(4, 4);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(186, 36);
-            this.btnRefresh.TabIndex = 1;
-            this.btnRefresh.Text = "Refresh All";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            // 
-            // panelPlayers
-            // 
-            this.panelPlayers.Controls.Add(this.btnChallenge);
-            this.panelPlayers.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelPlayers.Location = new System.Drawing.Point(0, 624);
-            this.panelPlayers.Name = "panelPlayers";
-            this.panelPlayers.Padding = new System.Windows.Forms.Padding(4);
-            this.panelPlayers.Size = new System.Drawing.Size(194, 45);
-            this.panelPlayers.TabIndex = 17;
-            // 
-            // btnChallenge
-            // 
-            this.btnChallenge.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnChallenge.Location = new System.Drawing.Point(4, 4);
-            this.btnChallenge.Name = "btnChallenge";
-            this.btnChallenge.Size = new System.Drawing.Size(186, 36);
-            this.btnChallenge.TabIndex = 1;
-            this.btnChallenge.Text = "Challenge";
-            this.btnChallenge.UseVisualStyleBackColor = true;
+            this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
+            this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
+            this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+            this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
+            this.chessBoardPreview.Name = "chessBoardPreview";
+            this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
+            this.chessBoardPreview.TabIndex = 0;
+            this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(939, 725);
+            this.ClientSize = new System.Drawing.Size(840, 658);
             this.Controls.Add(this.tableLayoutPanel1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -442,12 +521,13 @@
             this.tabPageMatches.ResumeLayout(false);
             this.tabPageGame.ResumeLayout(false);
             this.panelSidebar.ResumeLayout(false);
+            this.panelMatches.ResumeLayout(false);
+            this.panelPlayers.ResumeLayout(false);
+            this.panelRefresh.ResumeLayout(false);
+            this.panelGame.ResumeLayout(false);
+            this.panelLogout.ResumeLayout(false);
             this.panelLogin.ResumeLayout(false);
             this.panelLogin.PerformLayout();
-            this.panelLogout.ResumeLayout(false);
-            this.panelGame.ResumeLayout(false);
-            this.panelRefresh.ResumeLayout(false);
-            this.panelPlayers.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -457,14 +537,12 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TabControl tabMain;
         private System.Windows.Forms.TabPage tabPagePlayers;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listViewPlayers;
         private System.Windows.Forms.TabPage tabPageMatches;
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.TabPage tabPageGame;
         private Tools.Common.ChessBoardGamePanel chessBoardGamePanel1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ImageList imageListPlayers;
-        private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.Panel panelSidebar;
         private System.Windows.Forms.Panel panelLogin;
         private System.Windows.Forms.Button btnLogout;
@@ -485,6 +563,12 @@
         private System.Windows.Forms.Button btnResign;
         private System.Windows.Forms.Panel panelLogout;
         private System.Windows.Forms.Label labelLoginStatus;
+        private System.Windows.Forms.ListView listViewMatches;
+        private System.Windows.Forms.ColumnHeader columnHeaderMatchName;
+        private System.Windows.Forms.Panel panelMatches;
+        private Tools.Common.ChessBoardVisualizerPanel chessBoardPreview;
+        private System.Windows.Forms.Label labelMatchPreviewStatus;
+        private System.Windows.Forms.ImageList imageListMatchStatuses;
     }
 }
 

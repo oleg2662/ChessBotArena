@@ -54,7 +54,7 @@ namespace ServiceClient
                                .ConnectionLeaseTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
         }
 
-        public async Task<string> GetVersion()
+        public virtual async Task<string> GetVersion()
         {
             var message = new HttpRequestMessage(HttpMethod.Get, HealthControllerUri);
 
@@ -67,7 +67,7 @@ namespace ServiceClient
             return version;
         }
 
-        public async Task<LoginResult> Login(string username, string password)
+        public virtual async Task<LoginResult> Login(string username, string password)
         {
             var loginModel = new LoginModel
             {
@@ -107,7 +107,7 @@ namespace ServiceClient
             return result;
         }
 
-        public async Task<IEnumerable<Player>> GetPlayers(string token)
+        public virtual async Task<IEnumerable<Player>> GetPlayers(string token)
         {
             var message = new HttpRequestMessage(HttpMethod.Get, PlayersControllerUri);
 
@@ -126,7 +126,7 @@ namespace ServiceClient
             return result;
         }
 
-        public async Task<IEnumerable<ChessGame>> GetMatches(string token)
+        public virtual async Task<IEnumerable<ChessGame>> GetMatches(string token)
         {
             var message = new HttpRequestMessage(HttpMethod.Get, GamesControllerUri);
 
@@ -145,7 +145,7 @@ namespace ServiceClient
             return result;
         }
 
-        public async Task<ChessGameDetails> GetMatch(string token, string id)
+        public virtual async Task<ChessGameDetails> GetMatch(string token, string id)
         {
             var url = $"{GamesControllerUri.AbsoluteUri}/{id}";
             var uri = new Uri(url);
@@ -175,7 +175,7 @@ namespace ServiceClient
             return result;
         }
 
-        public async Task<ChessGame> ChallengePlayer(string token, string username)
+        public virtual async Task<ChessGame> ChallengePlayer(string token, string username)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, GamesControllerUri);
 
@@ -202,7 +202,7 @@ namespace ServiceClient
             return result;
         }
 
-        public async Task<bool> SendMove<T>(string token, Guid matchId, T move) where T : BaseMove
+        public virtual async Task<bool> SendMove<T>(string token, Guid matchId, T move) where T : BaseMove
         {
             var url = $"{GamesControllerUri.AbsoluteUri}/{matchId}";
             var uri = new Uri(url);
