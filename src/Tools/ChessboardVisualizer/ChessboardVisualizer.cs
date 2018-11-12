@@ -1,10 +1,8 @@
-﻿using Game.Chess.Pieces;
+﻿using System.Collections.Generic;
+using Game.Chess.Moves;
+using Tools.Common;
 
-[assembly: System.Diagnostics.DebuggerVisualizer(
-    typeof(ChessboardVisualizer.ChessboardVisualizer),
-    typeof(Microsoft.VisualStudio.DebuggerVisualizers.VisualizerObjectSource),
-    Target = typeof(Game.Chess.ChessRepresentation),
-    Description = "Chessboard visualizer")]
+[assembly: System.Diagnostics.DebuggerVisualizer(typeof(ChessboardVisualizer.ChessboardVisualizer), typeof(Microsoft.VisualStudio.DebuggerVisualizers.VisualizerObjectSource), Target = typeof(Game.Chess.ChessRepresentation), Description = "Chessboard visualizer")]
 namespace ChessboardVisualizer
 {
     using System;
@@ -20,9 +18,9 @@ namespace ChessboardVisualizer
     public class ChessboardVisualizer : DialogDebuggerVisualizer
     {
         /// <summary>
-        /// Shows the chess board visualizator.
+        /// Shows the chess board visualizer.
         /// </summary>
-        /// <param name="windowService">Window service used to show the visualizator.</param>
+        /// <param name="windowService">Window service used to show the visualizer.</param>
         /// <param name="objectProvider">The providers used to get the object to be inspected.</param>
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
@@ -35,104 +33,88 @@ namespace ChessboardVisualizer
 
             using (var displayForm = new Form())
             {
+                var history = chessBoard.Clone().History.ToArray();
+                var index = Math.Max(history.Length, 0);
+
                 displayForm.Size = new Size(400, 400);
                 displayForm.FormBorderStyle = FormBorderStyle.SizableToolWindow;
-                displayForm.Text = $"Next: {chessBoard.CurrentPlayer}";
+                displayForm.Text = $"Current player: {chessBoard.CurrentPlayer} ({index}/{history.Length})";
 
-                var pictureBox = new PictureBox();
-                var bitmap = new Bitmap(1000, 1000);
-
-                pictureBox.Image = bitmap;
-                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-
-                var g = Graphics.FromImage(bitmap);
-
-                var blackColour = Color.SandyBrown;
-                var whiteColour = Color.BlanchedAlmond;
-
-                var blackBrush = new SolidBrush(blackColour);
-                var whiteBrush = new SolidBrush(whiteColour);
-
-                g.FillRectangle(whiteBrush, g.VisibleClipBounds);
-
-                for (var i = 0; i < 64; i++)
+                var chessPanel = new ChessBoardVisualizerPanel();
+                chessPanel.ChessRepresentation = chessBoard;
+                displayForm.Controls.Add(chessPanel);
+                chessPanel.Dock = DockStyle.Fill;
+                displayForm.ResizeEnd += (sender, args) => chessPanel.Refresh();
+                displayForm.KeyUp += (sender, args) =>
                 {
-                    Position p = (Position)i;
+                    ChessRepresentation newBoard;
 
-                    var brush = p.BlackField ? blackBrush : whiteBrush;
-                    var rectangle = GetFieldRectangle(g.VisibleClipBounds, (Position)i);
-
-                    g.FillRectangle(brush, rectangle);
-
-                    var figureText = chessBoard[p]?.ToString() ?? string.Empty;
-                    var hasMoved = chessBoard[p]?.HasMoved ?? false;
-                    var enPassant = (chessBoard[p] as Pawn)?.IsEnPassantCapturable ?? false;
-
-                    var sf = new StringFormat
+                    switch (args.KeyCode)
                     {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
+                        case Keys.Left:
+                            if (index > 0)
+                            {
+                                index--;
+                            }
 
-                    var sfEnPassant = new StringFormat
-                    {
-                        Alignment = StringAlignment.Far,
-                        LineAlignment = StringAlignment.Far
-                    };
+                            newBoard = CalculateBoard(history, index);
+                            break;
 
-                    var sfHasMoved = new StringFormat
-                    {
-                        Alignment = StringAlignment.Near,
-                        LineAlignment = StringAlignment.Far
-                    };
+                        case Keys.Right:
+                            if (index < history.Length)
+                            {
+                                index++;
+                            }
 
-                    g.DrawString(
-                        figureText,
-                        new Font(FontFamily.GenericSansSerif, rectangle.Width / 2, FontStyle.Regular),
-                        Brushes.Black,
-                        rectangle,
-                        sf);
+                            newBoard = CalculateBoard(history, index);
+                            break;
 
-                    if (enPassant)
-                    {
-                        g.DrawString(
-                            "ep.",
-                            new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
-                            Brushes.Black,
-                            rectangle,
-                            sfEnPassant);
+                        case Keys.Home:
+                            index = 0;
+                            newBoard = CalculateBoard(history, index);
+                            break;
+
+                        case Keys.End:
+                            index = history.Length;
+                            newBoard = CalculateBoard(history, index);
+                            break;
+
+                        case Keys.F1:
+                            MessageBox.Show(
+                                "Left arrow:\tGo back in history.\r\nRight arrow:\tGo forward in history\r\nEscape:\t\tClose Window\r\nF1:\t\tHelp dialog\r\nHome\t\tGo to start state\r\nEnd\t\tGo to end",
+                                "Chessboard visualizer help");
+                            return;
+
+                        case Keys.Escape:
+                            // ReSharper disable once AccessToDisposedClosure
+                            displayForm.Close();
+                            return;
+
+                        default:
+                            return;
                     }
 
-                    if (hasMoved)
-                    {
-                        g.DrawString(
-                            "mvd.",
-                            new Font(FontFamily.GenericSansSerif, rectangle.Width / 8, FontStyle.Regular),
-                            Brushes.Black,
-                            rectangle,
-                            sfHasMoved);
-                    }
-                }
+                    chessPanel.ChessRepresentation = newBoard;
 
-                displayForm.Controls.Add(pictureBox);
-                pictureBox.Dock = DockStyle.Fill;
+                    // ReSharper disable once AccessToDisposedClosure
+                    displayForm.Text = $"Current player: {newBoard.CurrentPlayer} ({index}/{history.Length})";
+                };
 
                 windowService.ShowDialog(displayForm);
             }
         }
 
-        private RectangleF GetFieldRectangle(RectangleF clipRectangle, Position position)
+        private ChessRepresentation CalculateBoard(IReadOnlyList<BaseMove> history, int index)
         {
-            var col = position.Column - 'A';
-            var row = 8 - position.Row;
+            var newBoard = new ChessRepresentationInitializer().Create();
+            var mechanism = new ChessMechanism();
 
-            var width = clipRectangle.Width / 8.0f;
-            var height = clipRectangle.Height / 8.0f;
+            for (var i = 0; i < index; i++)
+            {
+                newBoard = mechanism.ApplyMove(newBoard, history[i]);
+            }
 
-            var calculatedPosition = new PointF(clipRectangle.Left + col * width, clipRectangle.Top + row * height);
-            var calculatedSize = new SizeF(width, height);
-
-            return new RectangleF(calculatedPosition, calculatedSize);
+            return newBoard;
         }
 
         /// <summary>
