@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Game.Chess.Moves;
 using Model.Api.ChessGamesControllerModels;
 using Model.Api.PlayerControllerModels;
+using Newtonsoft.Json;
 
 namespace ServiceClient
 {
@@ -24,7 +28,14 @@ namespace ServiceClient
 
         public Uri BaseUri => new Uri(BaseUrl);
 
-        public bool IsLoggedIn => LoginInformation != null && LoginInformation.ValidTo > DateTime.UtcNow;
+        private bool IsLoggedIn => LoginInformation != null && LoginInformation.ValidTo > DateTime.UtcNow;
+
+        public async Task<bool> EnsureSessionIsActive()
+        {
+            if (IsLoggedIn) return true;
+            if (LoginInformation == null || string.IsNullOrWhiteSpace(_username)) return false;
+            return await Initialize();
+        }
 
         public LoginResult LoginInformation { get; private set; }
 
@@ -62,6 +73,11 @@ namespace ServiceClient
         {
             await Initialize();
             return await _client.GetPlayers(JwtToken);
+        }
+
+        public virtual async Task<bool> SendMove<T>(Guid matchId, T move) where T : BaseMove
+        {
+            return await _client.SendMove(JwtToken, matchId, move);
         }
 
         public async Task<string> GetVersion()

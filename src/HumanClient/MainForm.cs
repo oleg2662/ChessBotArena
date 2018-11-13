@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Game.Chess;
@@ -43,7 +44,7 @@ namespace HumanClient
 
         private async void RefreshPlayers()
         {
-            if (!IsSessionAlive)
+            if (await CheckSessionValidity() == false)
             {
                 return;
             }
@@ -73,7 +74,7 @@ namespace HumanClient
 
         private async void RefreshMatches()
         {
-            if (!IsSessionAlive)
+            if (await CheckSessionValidity() == false)
             {
                 return;
             }
@@ -130,7 +131,7 @@ namespace HumanClient
 
         private async void RefreshGame()
         {
-            if (!IsSessionAlive || !_selectedMatchId.HasValue)
+            if (await CheckSessionValidity() == false || !_selectedMatchId.HasValue)
             {
                 return;
             }
@@ -161,6 +162,7 @@ namespace HumanClient
                 btnDeclineDraw.Enabled = false;
                 btnOfferDraw.Enabled = false;
                 btnResign.Enabled = false;
+                tabPageGame.Enabled = true;
                 return;
             }
 
@@ -180,13 +182,14 @@ namespace HumanClient
             Login();
         }
 
-        private void ToggleLoginControls()
+        private async void ToggleLoginControls()
         {
             _game = new ChessRepresentationInitializer().Create();
             _mechanism = new ChessMechanism();
+            var isSessionAlive = await CheckSessionValidity() == false;
 
-            panelLogin.Visible = !IsSessionAlive;
-            panelLogout.Visible = IsSessionAlive;
+            panelLogin.Visible = !isSessionAlive;
+            panelLogout.Visible = isSessionAlive;
         }
 
         private async void Login()
@@ -207,8 +210,6 @@ namespace HumanClient
             }
         }
 
-        private bool IsSessionAlive => _client?.IsLoggedIn ?? false;
-
         private void btnLogout_Click(object sender, EventArgs e)
         {
             _client?.Dispose();
@@ -221,9 +222,19 @@ namespace HumanClient
             chessBoardGamePanel1.Refresh();
         }
 
+        private async Task<bool> CheckSessionValidity()
+        {
+            if (_client == null)
+            {
+                return false;
+            }
+
+            return await _client.EnsureSessionIsActive();
+        }
+
         private async void btnChallenge_Click(object sender, EventArgs e)
         {
-            if (!IsSessionAlive)
+            if (await CheckSessionValidity() == false)
             {
                 return;
             }
@@ -247,9 +258,9 @@ namespace HumanClient
             tabPageMatches.Select();
         }
 
-        private void RefreshAll()
+        private void RefreshAll(bool force = false)
         {
-            if (DateTime.Now - _lastUpdate < TimeSpan.FromSeconds(30))
+            if (!force && DateTime.Now - _lastUpdate < TimeSpan.FromSeconds(30))
             {
                 return;
             }
@@ -385,6 +396,26 @@ namespace HumanClient
             }
 
             throw new ArgumentOutOfRangeException();
+        }
+
+        private async void chessBoardGamePanel1_OnValidMoveSelected(object source, Tools.Common.ChessboardMoveSelectedEventArg eventArg)
+        {
+            if (await CheckSessionValidity() == false || !_selectedMatchId.HasValue)
+            {
+                return;
+            }
+
+            var result = await _client.SendMove(_selectedMatchId.Value, eventArg.Move);
+
+            if (!result)
+            {
+                MessageBox.Show("Couldn't send in move.");
+            }
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshAll(true);
         }
     }
 }

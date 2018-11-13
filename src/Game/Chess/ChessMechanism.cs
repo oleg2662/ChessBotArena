@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Linq;
 
-using Game.Abstraction;
+
 using Game.Chess.Extensions;
 using Game.Chess.Moves;
 using Game.Chess.Pieces;
@@ -12,7 +11,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Game.Chess
 {
-    public class ChessMechanism// : IMechanism<ChessRepresentation, BaseMove, GameState>
+    public class ChessMechanism
     {
         public ChessMechanism(bool turnOnCaching = false)
         {
@@ -446,7 +445,7 @@ namespace Game.Chess
 
                     if (stepForward != null && board[stepForward] == null)
                     {
-                        if (stepForward.Row == 1)
+                        if (stepForward.Row == 8)
                         {
                             yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Bishop);
                             yield return new PawnPromotionalMove(player, from, stepForward, PieceKind.Knight);
@@ -466,7 +465,7 @@ namespace Game.Chess
 
                     if (captureEast != null && board[captureEast] != null && board[captureEast].Owner != player)
                     {
-                        if (captureEast.Row == 1)
+                        if (captureEast.Row == 8)
                         {
                             yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Bishop);
                             yield return new PawnPromotionalMove(player, from, captureEast, PieceKind.Knight);
@@ -481,7 +480,7 @@ namespace Game.Chess
 
                     if (captureWest != null && board[captureWest] != null && board[captureWest].Owner != player)
                     {
-                        if (captureWest.Row == 1)
+                        if (captureWest.Row == 8)
                         {
                             yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Bishop);
                             yield return new PawnPromotionalMove(player, from, captureWest, PieceKind.Knight);

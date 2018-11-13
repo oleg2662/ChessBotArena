@@ -1,4 +1,6 @@
-﻿namespace HumanClient
+﻿using Tools.Common;
+
+namespace HumanClient
 {
     partial class MainForm
     {
@@ -318,6 +320,7 @@
             this.btnRefresh.TabIndex = 1;
             this.btnRefresh.Text = "Refresh All";
             this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // panelGame
             // 
@@ -489,6 +492,7 @@
             this.chessBoardGamePanel1.Size = new System.Drawing.Size(620, 620);
             this.chessBoardGamePanel1.TabIndex = 0;
             this.chessBoardGamePanel1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
+            this.chessBoardGamePanel1.OnValidMoveSelected += new Tools.Common.ChessBoardMoveSelectedEventHandler(this.chessBoardGamePanel1_OnValidMoveSelected);
             // 
             // chessBoardPreview
             // 

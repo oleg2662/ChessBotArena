@@ -101,11 +101,11 @@ namespace Tools.Common
             Refresh();
         }
 
-        public Position HoverPosition { get; private set; }
+        public Position HoverPosition { get; protected set; }
 
-        public Position SelectedPosition { get; private set; }
+        public Position SelectedPosition { get; protected set; }
 
-        protected IEnumerable<Position> ThreatenedPositions { get; private set; } = Enumerable.Empty<Position>();
+        protected IEnumerable<Position> ThreatenedPositions { get; set; } = Enumerable.Empty<Position>();
 
         private InterpolationMode _interpolationMode;
         public InterpolationMode InterpolationMode
@@ -121,7 +121,7 @@ namespace Tools.Common
         private ChessRepresentation _chessRepresentation;
         public ChessRepresentation ChessRepresentation
         {
-            private get => _chessRepresentation;
+            protected get => _chessRepresentation;
             set
             {
                 _chessRepresentation = value;
@@ -234,7 +234,13 @@ namespace Tools.Common
             var row = index / 8;
             var col = index % 8;
 
-            var pen = new Pen(color, 5);
+            var pen = new Pen(color, 2);
+            var brush = new SolidBrush(Color.FromArgb(128, color.R, color.G, color.B));
+
+            g.FillRectangle(brush, bevelWidth + col * cellWidth,
+                bevelHeight + row * cellHeight,
+                cellWidth,
+                cellHeight);
 
             g.DrawRectangle(pen, bevelWidth + col * cellWidth,
                 bevelHeight + row * cellHeight,
