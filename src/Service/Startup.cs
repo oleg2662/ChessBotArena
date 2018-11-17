@@ -58,6 +58,12 @@ namespace BoardGame.Service
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            // TODO : SSL later...
+            //services.AddHttpsRedirection(options =>
+            //{
+            //    options.HttpsPort = 443;
+            //});
+
             services.AddSingleton<IChessGameRepositoryConverter, ChessGameRepositoryConverter>();
             services.AddScoped<IChessGameRepository, ChessGameRepository>();
             services.AddScoped<ILadderRepository, LadderRepository>();
@@ -114,10 +120,13 @@ namespace BoardGame.Service
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
+            // TODO : SSL later...
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCookiePolicy();
             app.UseAuthentication();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
