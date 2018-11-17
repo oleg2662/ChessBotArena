@@ -1,4 +1,4 @@
-﻿namespace Game.Chess.Pieces
+﻿namespace BoardGame.Game.Chess.Pieces
 {
     /// <summary>
     /// The available kinds of the chess pieces.

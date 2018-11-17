@@ -1,4 +1,4 @@
-﻿namespace Algorithms.Minimax.Exceptions
+﻿namespace BoardGame.Model.Minimax.Exceptions
 {
     public class MinimaxMaxDepthInvalidException : MinimaxException
     {

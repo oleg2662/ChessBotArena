@@ -1,8 +1,6 @@
-﻿using Game.Chess.Moves;
-using Game.Chess.Pieces;
-using System.Collections.Generic;
+﻿using BoardGame.Game.Chess.Pieces;
 
-namespace Game.Chess
+namespace BoardGame.Game.Chess
 {
     public class ChessRepresentationInitializer
     {

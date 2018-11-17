@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Model.Api.LadderControllerModels;
+using BoardGame.Model.Api.LadderControllerModels;
 
 namespace BoardGame.Service.Repositories
 {

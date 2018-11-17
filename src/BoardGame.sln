@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgorithmOfflineTester", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools.Common", "Tools\Tools.Common\Tools.Common.csproj", "{DD94B1CA-E09A-4AC1-AD01-50C0DB0A27B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumanClient", "HumanClient\HumanClient.csproj", "{20690FB6-7D53-4862-B9CA-996EC023FD63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HumanClient", "Clients\HumanClient\HumanClient.csproj", "{20690FB6-7D53-4862-B9CA-996EC023FD63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

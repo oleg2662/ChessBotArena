@@ -1,4 +1,4 @@
-﻿namespace Game.Chess.Moves
+﻿namespace BoardGame.Game.Chess.Moves
 {
     /// <summary>
     /// The castling types.

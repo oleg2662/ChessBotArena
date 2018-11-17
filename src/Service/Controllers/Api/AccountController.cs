@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using BoardGame.Model.Api.AccountControllerModels;
 using BoardGame.Service.Extensions;
 using BoardGame.Service.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Model.Api.AccountControllerModels;
 
 namespace BoardGame.Service.Controllers.Api
 {

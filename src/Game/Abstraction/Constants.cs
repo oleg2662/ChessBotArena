@@ -1,4 +1,4 @@
-﻿namespace Game.Abstraction
+﻿namespace BoardGame.Game.Abstraction
 {
     public static class Constants
     {

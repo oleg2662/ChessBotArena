@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Algorithms.Abstractions.Interfaces;
-using Game.Chess;
-using Game.Chess.Pieces;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Pieces;
+using BoardGame.Model.Abstractions.Interfaces;
 
-namespace AlgorithmOfflineTester
+namespace BoardGame.AlgorithmOfflineTester
 {
     internal class Evaluator : IEvaluator<ChessRepresentation>
     {

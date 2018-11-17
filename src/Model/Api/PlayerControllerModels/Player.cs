@@ -1,4 +1,4 @@
-﻿namespace Model.Api.PlayerControllerModels
+﻿namespace BoardGame.Model.Api.PlayerControllerModels
 {
     /// <summary>
     /// Represents a player information in the players' screen.

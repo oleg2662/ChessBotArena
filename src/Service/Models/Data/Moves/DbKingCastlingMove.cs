@@ -1,7 +1,7 @@
-﻿using Game.Chess;
-using Game.Chess.Extensions;
-using Game.Chess.Moves;
-using System;
+﻿using System;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Extensions;
+using BoardGame.Game.Chess.Moves;
 
 namespace BoardGame.Service.Models.Data.Moves
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game.Chess.Pieces
+namespace BoardGame.Game.Chess.Pieces
 {
     /// <summary>
     /// Shorthand for the creation of different chess pieces.

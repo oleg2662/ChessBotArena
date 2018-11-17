@@ -1,8 +1,8 @@
-﻿using Algorithms.Abstractions.Interfaces;
-using Game.Chess;
-using Game.Chess.Moves;
+﻿using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Abstractions.Interfaces;
 
-namespace BotClient
+namespace BoardGame.BotClient
 {
     internal class MoveApplier : IApplier<ChessRepresentation, BaseMove>
     {

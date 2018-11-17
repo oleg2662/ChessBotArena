@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Game.Chess.Moves
+namespace BoardGame.Game.Chess.Moves
 {
     
     [Serializable]

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Game.Chess;
-using Game.Chess.Moves;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
 
-namespace Tools.Common
+namespace BoardGame.Tools.Common
 {
     public sealed class ChessBoardGamePanel : BaseChessBoardVisualizerPanel
     {

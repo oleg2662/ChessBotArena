@@ -1,4 +1,4 @@
-﻿namespace Tools.Common
+﻿namespace BoardGame.Tools.Common
 {
     public sealed class ChessBoardVisualizerPanel : BaseChessBoardVisualizerPanel
     {

@@ -1,4 +1,4 @@
-﻿namespace Model.Api.AccountControllerModels
+﻿namespace BoardGame.Model.Api.AccountControllerModels
 {
     /// <inheritdoc />
     public class LoginModel : ILoginModel

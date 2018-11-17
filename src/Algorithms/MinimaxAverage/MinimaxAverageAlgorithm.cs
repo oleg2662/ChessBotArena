@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Algorithms.Abstractions.Interfaces;
-using Algorithms.Minimax.Exceptions;
+using BoardGame.Model.Abstractions.Interfaces;
+using BoardGame.Model.Minimax.Exceptions;
 
-namespace Algorithms.MinimaxAverage
+namespace BoardGame.Model.MinimaxAverage
 {
     /// <summary>
     /// The minimax algorithm implementation.

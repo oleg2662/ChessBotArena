@@ -1,4 +1,4 @@
-﻿namespace ServiceClient
+﻿namespace BoardGame.ServiceClient
 {
     internal class JwtTokenApiModel
     {

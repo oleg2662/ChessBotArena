@@ -1,9 +1,9 @@
-﻿using Game.Abstraction;
-using System;
-using Game.Chess.Extensions;
+﻿using System;
+using BoardGame.Game.Abstraction;
+using BoardGame.Game.Chess.Extensions;
 using Newtonsoft.Json;
 
-namespace Game.Chess.Pieces
+namespace BoardGame.Game.Chess.Pieces
 {
     /// <summary>
     /// Base abstract class of a chess piece.

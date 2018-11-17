@@ -1,9 +1,9 @@
-﻿namespace Game.Chess.Extensions
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace BoardGame.Game.Chess.Extensions
+{
     public static class PositionExtensions
     {
         /// <summary>

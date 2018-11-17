@@ -8,10 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HumanClient.Properties
+namespace BoardGame.HumanClient.Properties
 {
-
-
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>

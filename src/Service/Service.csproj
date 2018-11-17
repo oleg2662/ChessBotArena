@@ -13,12 +13,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>G:\ChessBotArena\src\Service\Boardgame.Service.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Boardgame.Service.xml</DocumentationFile>
     <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>G:\ChessBotArena\src\Service\Boardgame.Service.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Boardgame.Service.xml</DocumentationFile>
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 

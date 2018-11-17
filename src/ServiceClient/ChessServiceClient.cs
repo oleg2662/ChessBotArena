@@ -6,17 +6,17 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Api.AccountControllerModels;
+using BoardGame.Model.Api.ChessGamesControllerModels;
+using BoardGame.Model.Api.PlayerControllerModels;
 using Easy.Common;
 using Easy.Common.Extensions;
 using Easy.Common.Interfaces;
-using Game.Chess;
-using Game.Chess.Moves;
-using Model.Api.AccountControllerModels;
-using Model.Api.ChessGamesControllerModels;
-using Model.Api.PlayerControllerModels;
 using Newtonsoft.Json;
 
-namespace ServiceClient
+namespace BoardGame.ServiceClient
 {
     public class ChessServiceClient : IDisposable
     {

@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Game.Chess.Moves;
-using Model.Api.ChessGamesControllerModels;
-using Model.Api.PlayerControllerModels;
-using Newtonsoft.Json;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Api.ChessGamesControllerModels;
+using BoardGame.Model.Api.PlayerControllerModels;
 
-namespace ServiceClient
+namespace BoardGame.ServiceClient
 {
     public class ChessServiceClientSession : IDisposable
     {

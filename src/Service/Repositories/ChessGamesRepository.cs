@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Api.ChessGamesControllerModels;
 using Microsoft.EntityFrameworkCore;
 using BoardGame.Service.Data;
 using BoardGame.Service.Models.Converters;
 using BoardGame.Service.Models.Data;
 using BoardGame.Service.Extensions;
-using Game.Chess;
-using Game.Chess.Moves;
-using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Repositories
 {

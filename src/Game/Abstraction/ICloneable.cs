@@ -1,4 +1,4 @@
-﻿namespace Game.Abstraction
+﻿namespace BoardGame.Game.Abstraction
 {
     internal interface ICloneable<T>
     {

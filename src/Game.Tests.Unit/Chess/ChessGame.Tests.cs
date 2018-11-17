@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Game.Chess;
-using Game.Chess.Exceptions;
-using Game.Chess.Moves;
-using Game.Chess.Pieces;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Exceptions;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Game.Chess.Pieces;
 using Xunit;
 
-namespace Game.Tests.Unit.Chess
+namespace BoardGame.Game.Tests.Unit.Chess
 {
     public class ChessGameTests
     {

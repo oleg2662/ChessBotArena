@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BoardGame.Game.Chess;
+using BoardGame.Model.Api.LadderControllerModels;
 using BoardGame.Service.Data;
 using BoardGame.Service.Models.Data;
 using BoardGame.Service.Models.Data.Moves;
-using Game.Chess;
 using Microsoft.EntityFrameworkCore;
-using Model.Api.LadderControllerModels;
 
 namespace BoardGame.Service.Repositories
 {

@@ -1,6 +1,6 @@
-﻿using Tools.Common;
+﻿using BoardGame.Tools.Common;
 
-namespace ChessServiceTestApp
+namespace BoardGame.ChessServiceTestApp
 {
     partial class MainForm
     {

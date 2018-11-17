@@ -1,7 +1,7 @@
-using Game.Chess;
 using System.Collections.Generic;
+using BoardGame.Game.Chess;
 
-namespace Game.Tests.Unit
+namespace BoardGame.Game.Tests.Unit
 {
     public static class Helpers
     {

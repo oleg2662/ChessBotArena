@@ -1,9 +1,8 @@
-﻿using Game.Chess.Pieces;
-using System;
-using System.Diagnostics;
+﻿using System;
+using BoardGame.Game.Chess.Pieces;
 using Newtonsoft.Json;
 
-namespace Game.Chess.Moves
+namespace BoardGame.Game.Chess.Moves
 {
     [Serializable]
     public sealed class PawnPromotionalMove : BaseChessMove, IEquatable<PawnPromotionalMove>

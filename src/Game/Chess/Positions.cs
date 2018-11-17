@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Game.Chess
+namespace BoardGame.Game.Chess
 {
     public static class Positions
     {

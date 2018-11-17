@@ -146,14 +146,14 @@ namespace BoardGame.Service
 
         private string GetModelsXmlDocPath()
         {
-            var xmlFile = "BoardGame.Model.xml";
+            var xmlFile = $"{nameof(BoardGame)}.{nameof(Model)}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             return xmlPath;
         }
 
         private string GetGameModelsXmlDocPath()
         {
-            var xmlFile = "Game.xml";
+            var xmlFile = $"{nameof(BoardGame)}.{nameof(Game)}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             return xmlPath;
         }

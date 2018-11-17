@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using Algorithms.Abstractions.Interfaces;
-using Algorithms.Minimax.Exceptions;
+using BoardGame.Model.Abstractions.Interfaces;
+using BoardGame.Model.Minimax.Exceptions;
 
-namespace Algorithms.Minimax
+namespace BoardGame.Model.Minimax
 {
     /// <summary>
     /// The minimax algorithm implementation.

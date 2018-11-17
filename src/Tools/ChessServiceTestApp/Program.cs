@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ChessServiceTestApp
+namespace BoardGame.ChessServiceTestApp
 {
     static class Program
     {

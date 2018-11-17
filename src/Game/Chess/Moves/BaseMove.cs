@@ -1,8 +1,8 @@
 ﻿using System;
-using Game.Abstraction;
+using BoardGame.Game.Abstraction;
 using Newtonsoft.Json;
 
-namespace Game.Chess.Moves
+namespace BoardGame.Game.Chess.Moves
 {
     [Serializable]
     public abstract class BaseMove : ICloneable<BaseMove>

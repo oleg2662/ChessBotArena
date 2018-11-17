@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Api.ChessGamesControllerModels;
+using BoardGame.ServiceClient;
+using BoardGame.Tools.Common;
 using Easy.Common.Extensions;
-using Game.Chess;
-using Game.Chess.Moves;
-using Model.Api.ChessGamesControllerModels;
-using ServiceClient;
 
-namespace HumanClient
+namespace BoardGame.HumanClient
 {
     public partial class MainForm : Form
     {
@@ -422,29 +423,31 @@ namespace HumanClient
             var representation = details.Representation;
             var state = _mechanism.GetGameState(details.Representation);
 
-            if (state == GameState.InProgress)
+            if (state != GameState.InProgress)
             {
-                var sb = new StringBuilder();
-
-                switch (representation.CurrentPlayer)
-                {
-                    case ChessPlayer.White:
-                        if (details.WhitePlayer.UserName == _client.LoginInformation.Username)
-                        {
-                            return true;
-                        }
-                        break;
-
-                    case ChessPlayer.Black:
-                        if (details.WhitePlayer.UserName == _client.LoginInformation.Username)
-                        {
-                            return true;
-                        }
-                        break;
-                }
-
-                labelMatchPreviewStatus.Text = sb.ToString();
+                return false;
             }
+
+            var sb = new StringBuilder();
+
+            switch (representation.CurrentPlayer)
+            {
+                case ChessPlayer.White:
+                    if (details.WhitePlayer.UserName == _client.LoginInformation.Username)
+                    {
+                        return true;
+                    }
+                    break;
+
+                case ChessPlayer.Black:
+                    if (details.WhitePlayer.UserName == _client.LoginInformation.Username)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+            labelMatchPreviewStatus.Text = sb.ToString();
 
             return false;
         }
@@ -479,7 +482,7 @@ namespace HumanClient
             throw new ArgumentOutOfRangeException();
         }
 
-        private async void chessBoardGamePanel1_OnValidMoveSelected(object source, Tools.Common.ChessboardMoveSelectedEventArg eventArg)
+        private async void chessBoardGamePanel1_OnValidMoveSelected(object source, ChessboardMoveSelectedEventArg eventArg)
         {
             if (await CheckSessionValidity() == false || !_selectedMatchId.HasValue)
             {

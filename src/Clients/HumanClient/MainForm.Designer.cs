@@ -1,6 +1,6 @@
-﻿using Tools.Common;
+﻿using BoardGame.Tools.Common;
 
-namespace HumanClient
+namespace BoardGame.HumanClient
 {
     partial class MainForm
     {
@@ -555,7 +555,7 @@ namespace HumanClient
         private System.Windows.Forms.ListView listViewMatches;
         private System.Windows.Forms.ColumnHeader columnHeaderMatchName;
         private System.Windows.Forms.Panel panelMatches;
-        private Tools.Common.ChessBoardVisualizerPanel chessBoardPreview;
+        private ChessBoardVisualizerPanel chessBoardPreview;
         private System.Windows.Forms.Label labelMatchPreviewStatus;
         private System.Windows.Forms.ImageList imageListMatchStatuses;
         private System.Windows.Forms.ColumnHeader playerColumnHeader;

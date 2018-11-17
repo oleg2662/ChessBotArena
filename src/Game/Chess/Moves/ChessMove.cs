@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Newtonsoft.Json;
 
-namespace Game.Chess.Moves
+namespace BoardGame.Game.Chess.Moves
 {
     [Serializable]
     [DebuggerDisplay("{From}->{To}")]

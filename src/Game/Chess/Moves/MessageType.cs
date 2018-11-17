@@ -1,4 +1,4 @@
-﻿namespace Game.Chess.Moves
+﻿namespace BoardGame.Game.Chess.Moves
 {
     /// <summary>
     /// Represents special moves.

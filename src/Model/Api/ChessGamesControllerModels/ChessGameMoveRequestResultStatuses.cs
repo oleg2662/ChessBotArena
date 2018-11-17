@@ -1,4 +1,4 @@
-﻿namespace Model.Api.ChessGamesControllerModels
+﻿namespace BoardGame.Model.Api.ChessGamesControllerModels
 {
     /// <summary>
     /// Validation results for the chess move request.

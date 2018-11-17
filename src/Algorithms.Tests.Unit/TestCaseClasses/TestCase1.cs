@@ -1,9 +1,8 @@
-﻿using Algorithms.Abstractions.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using BoardGame.Model.Abstractions.Interfaces;
 
-namespace Algorithms.Tests.Unit.TestCaseClasses
+namespace BoardGame.Algorithms.Tests.Unit.TestCaseClasses
 {
     internal static class TestCase1
     {

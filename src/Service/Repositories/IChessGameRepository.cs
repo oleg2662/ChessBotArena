@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Api.ChessGamesControllerModels;
 using BoardGame.Service.Models.Data;
-using Game.Chess.Moves;
-using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Repositories
 {

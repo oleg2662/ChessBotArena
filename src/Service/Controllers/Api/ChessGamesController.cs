@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Api.ChessGamesControllerModels;
 using BoardGame.Service.Repositories;
-using Game.Chess.Moves;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Model.Api.ChessGamesControllerModels;
 
 namespace BoardGame.Service.Controllers.Api
 {

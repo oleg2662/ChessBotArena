@@ -1,4 +1,4 @@
-﻿namespace Model.Api.ChessGamesControllerModels
+﻿namespace BoardGame.Model.Api.ChessGamesControllerModels
 {
     /// <summary>
     /// Represents a challenge request coming from the client.

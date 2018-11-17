@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>BoardGame.Game.Tests.Unit</AssemblyName>
+
+    <RootNamespace>BoardGame.Game.Tests.Unit</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

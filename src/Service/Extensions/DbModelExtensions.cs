@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-
+using BoardGame.Game.Chess;
 using BoardGame.Service.Models.Data;
-using Game.Chess;
 
 namespace BoardGame.Service.Extensions
 {

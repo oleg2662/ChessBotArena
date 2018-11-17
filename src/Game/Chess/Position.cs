@@ -1,7 +1,7 @@
 ﻿using System;
-using Game.Abstraction;
+using BoardGame.Game.Abstraction;
 
-namespace Game.Chess
+namespace BoardGame.Game.Chess
 {
     /// <summary>
     /// Represents a position in the chess board.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game.Chess.Exceptions
+namespace BoardGame.Game.Chess.Exceptions
 {
     public class ChessIllegalMoveException : ChessException
     {

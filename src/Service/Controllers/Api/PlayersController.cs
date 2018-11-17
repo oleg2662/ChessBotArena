@@ -2,11 +2,11 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using BoardGame.Model.Api.PlayerControllerModels;
 using BoardGame.Service.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Model.Api.PlayerControllerModels;
 
 namespace BoardGame.Service.Controllers.Api
 {

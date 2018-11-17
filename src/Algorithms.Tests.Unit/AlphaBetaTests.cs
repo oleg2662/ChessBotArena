@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using Algorithms.AlphaBeta;
-using Algorithms.Tests.Unit.TestCaseClasses;
+using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
+using BoardGame.Model.AlphaBeta;
 using Xunit;
 
-namespace Algorithms.Tests.Unit
+namespace BoardGame.Algorithms.Tests.Unit
 {
     public class AlphaBetaTests
     {

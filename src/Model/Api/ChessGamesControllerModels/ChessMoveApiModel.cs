@@ -1,7 +1,7 @@
-﻿using Game.Chess.Moves;
-using System;
+﻿using System;
+using BoardGame.Game.Chess.Moves;
 
-namespace Model.Api.ChessGamesControllerModels
+namespace BoardGame.Model.Api.ChessGamesControllerModels
 {
     /// <summary>
     /// The model used by the client to the service which contains the chess move and some additional information.

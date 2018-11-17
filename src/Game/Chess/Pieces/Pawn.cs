@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game.Chess.Pieces
+namespace BoardGame.Game.Chess.Pieces
 {
     [Serializable]
     public sealed class Pawn : ChessPiece, IEquatable<Pawn>

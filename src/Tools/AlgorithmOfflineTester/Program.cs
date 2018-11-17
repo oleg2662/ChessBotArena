@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using AlgorithmOfflineTester;
 
-namespace BotClient
+namespace BoardGame.AlgorithmOfflineTester
 {
     internal static class Program
     {

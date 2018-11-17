@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace HumanClient
+namespace BoardGame.HumanClient
 {
     public static class Extensions
     {

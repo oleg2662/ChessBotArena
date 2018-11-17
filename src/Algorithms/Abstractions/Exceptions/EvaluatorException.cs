@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Algorithms.Abstractions.Exceptions
+namespace BoardGame.Model.Abstractions.Exceptions
 {
     public abstract class EvaluatorException : Exception
     {

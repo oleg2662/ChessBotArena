@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace Algorithms.Minimax
+namespace BoardGame.Model.Minimax
 {
     internal class MoveAndValue<TMove> : IComparable<MoveAndValue<TMove>>, IComparable
     {

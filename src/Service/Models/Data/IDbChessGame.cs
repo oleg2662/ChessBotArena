@@ -1,7 +1,7 @@
 ﻿using BoardGame.Service.Models.Data.Moves;
 using System;
 using System.Collections.Generic;
-using Game.Chess;
+using BoardGame.Game.Chess;
 
 namespace BoardGame.Service.Models.Data
 {

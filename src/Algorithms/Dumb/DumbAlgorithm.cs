@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Algorithms.Abstractions.Interfaces;
+using BoardGame.Model.Abstractions.Interfaces;
 
-namespace Algorithms.Dumb
+namespace BoardGame.Model.Dumb
 {
     /// <summary>
     /// The random-algorithm.Tries to impress you with it's speed, but is working only randomly.

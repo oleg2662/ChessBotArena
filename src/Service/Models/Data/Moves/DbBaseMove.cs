@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Game.Chess;
+using BoardGame.Game.Chess;
 
 namespace BoardGame.Service.Models.Data.Moves
 {

@@ -1,4 +1,4 @@
-﻿namespace Model.Api.LadderControllerModels
+﻿namespace BoardGame.Model.Api.LadderControllerModels
 {
     /// <summary>
     /// Represents a row in the ladder.

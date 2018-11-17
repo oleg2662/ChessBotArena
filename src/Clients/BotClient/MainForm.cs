@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Algorithms.Abstractions.Interfaces;
-using Algorithms.AlphaBeta;
-using Algorithms.Dumb;
-using Algorithms.Greedy;
-using Algorithms.Minimax;
-using Algorithms.MinimaxAverage;
-using Game.Chess;
-using Game.Chess.Moves;
-using Model.Api.ChessGamesControllerModels;
-using Model.Api.PlayerControllerModels;
-using ServiceClient;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Abstractions.Interfaces;
+using BoardGame.Model.AlphaBeta;
+using BoardGame.Model.Api.ChessGamesControllerModels;
+using BoardGame.Model.Dumb;
+using BoardGame.Model.Greedy;
+using BoardGame.Model.Minimax;
+using BoardGame.Model.MinimaxAverage;
+using BoardGame.ServiceClient;
 
-namespace BotClient
+namespace BoardGame.BotClient
 {
     public partial class MainForm : Form
     {

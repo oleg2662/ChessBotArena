@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Game.Chess;
+using BoardGame.Game.Chess;
 
-namespace Game.Abstraction
+namespace BoardGame.Game.Abstraction
 {
     public interface IMechanism<TRepresentation, TPlayerMove, out TGameState>
     {

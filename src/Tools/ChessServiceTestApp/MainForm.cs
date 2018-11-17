@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using Game.Chess;
-using Game.Chess.Moves;
-using Model.Api.ChessGamesControllerModels;
-using Model.Api.PlayerControllerModels;
-using ServiceClient;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Api.ChessGamesControllerModels;
+using BoardGame.ServiceClient;
 
-namespace ChessServiceTestApp
+namespace BoardGame.ChessServiceTestApp
 {
     public partial class MainForm : Form
     {

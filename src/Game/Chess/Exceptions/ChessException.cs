@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Game.Chess.Exceptions
+namespace BoardGame.Game.Chess.Exceptions
 {
     public abstract class ChessException : Exception
     {

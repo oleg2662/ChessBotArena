@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using BoardGame.Game.Abstraction;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Game.Chess.Pieces;
 
-using Game.Abstraction;
-using Game.Chess.Moves;
-using Game.Chess.Pieces;
-
-namespace Game.Chess
+namespace BoardGame.Game.Chess
 {
     [Serializable]
     public sealed class ChessRepresentation : ICloneable<ChessRepresentation>, IEquatable<ChessRepresentation>

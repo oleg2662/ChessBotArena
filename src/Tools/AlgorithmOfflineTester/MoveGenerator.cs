@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Algorithms.Abstractions.Interfaces;
-using Game.Chess;
-using Game.Chess.Moves;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Model.Abstractions.Interfaces;
 
-namespace AlgorithmOfflineTester
+namespace BoardGame.AlgorithmOfflineTester
 {
     internal class MoveGenerator : IGenerator<ChessRepresentation, BaseMove>
     {

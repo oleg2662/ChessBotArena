@@ -1,8 +1,8 @@
-﻿using Game.Chess;
-using Game.Chess.Pieces;
+﻿using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Pieces;
 using Xunit;
 
-namespace Game.Tests.Unit.Chess
+namespace BoardGame.Game.Tests.Unit.Chess
 {
     public class ChessBoardInitializerTests
     {

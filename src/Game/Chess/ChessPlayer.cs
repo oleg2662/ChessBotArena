@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game.Chess
+namespace BoardGame.Game.Chess
 {
     /// <summary>
     /// The chess player colours.

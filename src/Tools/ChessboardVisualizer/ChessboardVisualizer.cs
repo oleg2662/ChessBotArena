@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using Game.Chess.Moves;
-using Tools.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using BoardGame.ChessboardVisualizer;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Tools.Common;
+using Microsoft.VisualStudio.DebuggerVisualizers;
 
-[assembly: System.Diagnostics.DebuggerVisualizer(typeof(ChessboardVisualizer.ChessboardVisualizer), typeof(Microsoft.VisualStudio.DebuggerVisualizers.VisualizerObjectSource), Target = typeof(Game.Chess.ChessRepresentation), Description = "Chessboard visualizer")]
-namespace ChessboardVisualizer
+[assembly: System.Diagnostics.DebuggerVisualizer(typeof(ChessboardVisualizer), typeof(Microsoft.VisualStudio.DebuggerVisualizers.VisualizerObjectSource), Target = typeof(ChessRepresentation), Description = "Chessboard visualizer")]
+namespace BoardGame.ChessboardVisualizer
 {
-    using System;
-    using System.Windows.Forms;
-    using Microsoft.VisualStudio.DebuggerVisualizers;
-    using Game.Chess;
-    using System.Drawing;
-    using System.IO;
-
     /// <summary>
     /// Visualizer for the chessboard. 
     /// </summary>

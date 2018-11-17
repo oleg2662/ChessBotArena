@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Algorithms.AlphaBeta
+namespace BoardGame.Model.AlphaBeta
 {
     internal class MoveAndValue<TMove> : IComparable<MoveAndValue<TMove>>, IComparable
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Game.Chess.Pieces
+namespace BoardGame.Game.Chess.Pieces
 {
     [Serializable]
     public sealed class Bishop : ChessPiece, IEquatable<Bishop>

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D35AE76A-573B-46DD-BB84-2FA2D81E727B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>AlgorithmOfflineTester</RootNamespace>
-    <AssemblyName>AlgorithmOfflineTester</AssemblyName>
+    <RootNamespace>BoardGame.AlgorithmOfflineTester</RootNamespace>
+    <AssemblyName>BoardGame.AlgorithmOfflineTester</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\BoardGame.AlgorithmOfflineTester.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\BoardGame.AlgorithmOfflineTester.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Easy.Common, Version=2.9.7.0, Culture=neutral, processorArchitecture=MSIL">
@@ -98,7 +100,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Tools.Common">
-      <HintPath>..\Tools.Common\obj\Debug\Tools.Common.dll</HintPath>
+      <HintPath>..\Tools.Common\bin\Debug\BoardGame.Tools.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

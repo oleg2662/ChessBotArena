@@ -1,4 +1,4 @@
-﻿namespace AlgorithmOfflineTester
+﻿namespace BoardGame.AlgorithmOfflineTester
 {
     partial class MainForm
     {
@@ -437,7 +437,7 @@
         private System.Windows.Forms.TabPage tabPageChessboard;
         private System.Windows.Forms.TabPage tabPageLogs;
         private System.Windows.Forms.Button btnRestart;
-        private Tools.Common.ChessBoardVisualizerPanel chessBoardVisualizerPanel1;
+        private BoardGame.Tools.Common.ChessBoardVisualizerPanel chessBoardVisualizerPanel1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label labelGameStatus;

@@ -4,11 +4,11 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
-using Game.Chess;
-using Game.Chess.Moves;
-using Game.Chess.Pieces;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Game.Chess.Pieces;
 
-namespace Tools.Common
+namespace BoardGame.Tools.Common
 {
     public abstract class BaseChessBoardVisualizerPanel : Panel
     {

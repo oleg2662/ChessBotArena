@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using Game.Chess;
+using BoardGame.Game.Chess;
 
 namespace BoardGame.Service.Models.Data
 {

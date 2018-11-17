@@ -3,16 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>BoardGame.Model</AssemblyName>
+    <RootNamespace>BoardGame.Model</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>G:\ChessBotArena\src\Model\BoardGame.Model.xml</DocumentationFile>
-    <OutputPath>G:\ChessBotArena\src\Service\bin\Release\</OutputPath>
+    <DocumentationFile>bin\Release\BoardGame.Model.xml</DocumentationFile>
+    <OutputPath>bin\Release</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>G:\ChessBotArena\src\Model\BoardGame.Model.xml</DocumentationFile>
-    <OutputPath>G:\ChessBotArena\src\Service\bin\Debug\</OutputPath>
+    <DocumentationFile>bin\Debug\BoardGame.Model.xml</DocumentationFile>
+    <OutputPath>bin\Debug</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace Tools.Common
+﻿namespace BoardGame.Tools.Common
 {
     partial class PromotionForm
     {

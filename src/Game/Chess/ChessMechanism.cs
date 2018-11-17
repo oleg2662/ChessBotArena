@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-
-using Game.Chess.Extensions;
-using Game.Chess.Moves;
-using Game.Chess.Pieces;
-using Game.Chess.Exceptions;
+using BoardGame.Game.Chess.Exceptions;
+using BoardGame.Game.Chess.Extensions;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Game.Chess.Pieces;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Game.Chess
+namespace BoardGame.Game.Chess
 {
     public class ChessMechanism
     {

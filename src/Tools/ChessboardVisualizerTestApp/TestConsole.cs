@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ChessboardVisualizer;
-using Game.Chess;
-using Game.Chess.Moves;
-using Game.Chess.Pieces;
-using Microsoft.VisualStudio.DebuggerVisualizers;
+﻿using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
 
-namespace ChessboardVisualizerTestApp
+namespace BoardGame.ChessboardVisualizer.TestApp
 {
     class TestConsole
     {
@@ -33,7 +25,7 @@ namespace ChessboardVisualizerTestApp
             board = manager.ApplyMove(board, step4);
             board = manager.ApplyMove(board, step5);
 
-            ChessboardVisualizer.ChessboardVisualizer.TestShowVisualizer(board);
+            ChessboardVisualizer.TestShowVisualizer(board);
         }
     }
 }

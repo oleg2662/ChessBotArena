@@ -1,14 +1,12 @@
 ﻿using System;
-using Game.Chess.Moves;
+using System.Linq;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Moves;
+using BoardGame.Game.Chess.Pieces;
+using Xunit;
 
-namespace Game.Tests.Unit.Chess
+namespace BoardGame.Game.Tests.Unit.Chess
 {
-    using System.Linq;
-
-    using Game.Chess;
-    using Game.Chess.Pieces;
-    using Xunit;
-
     public class ChessBoardTests
     {
         [Fact]

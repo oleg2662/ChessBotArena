@@ -1,7 +1,7 @@
 ﻿using System;
-using Game.Chess.Pieces;
+using BoardGame.Game.Chess.Pieces;
 
-namespace Game.Chess.Extensions
+namespace BoardGame.Game.Chess.Extensions
 {
     /// <summary>
     /// Contains extension methods of chess pieces

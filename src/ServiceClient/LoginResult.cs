@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ServiceClient
+namespace BoardGame.ServiceClient
 {
     /// <summary>
     /// The result of the login.

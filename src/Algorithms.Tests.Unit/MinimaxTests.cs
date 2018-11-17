@@ -1,8 +1,8 @@
-using Algorithms.Minimax;
-using Algorithms.Tests.Unit.TestCaseClasses;
+using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
+using BoardGame.Model.Minimax;
 using Xunit;
 
-namespace Algorithms.Tests.Unit
+namespace BoardGame.Algorithms.Tests.Unit
 {
     public class MinimaxTests
     {

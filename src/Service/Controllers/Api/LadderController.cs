@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using BoardGame.Model.Api.LadderControllerModels;
 using BoardGame.Service.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Model.Api.LadderControllerModels;
 
 namespace BoardGame.Service.Controllers.Api
 {

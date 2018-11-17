@@ -1,8 +1,8 @@
-﻿using Game.Chess;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BoardGame.Game.Chess;
 using Xunit;
 
-namespace Game.Tests.Unit.Chess
+namespace BoardGame.Game.Tests.Unit.Chess
 {
     public class PositionTests
     {

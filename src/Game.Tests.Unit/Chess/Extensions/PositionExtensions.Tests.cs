@@ -1,9 +1,9 @@
-﻿using Game.Chess;
-using Game.Chess.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BoardGame.Game.Chess;
+using BoardGame.Game.Chess.Extensions;
 using Xunit;
 
-namespace Game.Tests.Unit.Chess.Extensions
+namespace BoardGame.Game.Tests.Unit.Chess.Extensions
 {
     public class PositionExtensions
     {

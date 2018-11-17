@@ -1,4 +1,4 @@
-﻿namespace Model.Api.ChessGamesControllerModels
+﻿namespace BoardGame.Model.Api.ChessGamesControllerModels
 {
     /// <summary>
     /// Validation and DB operation results for the <see cref="IChessGameRepository" />.

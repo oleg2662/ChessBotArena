@@ -1,5 +1,5 @@
 ﻿using System;
-using Game.Chess.Moves;
+using BoardGame.Game.Chess.Moves;
 
 namespace BoardGame.Service.Models.Data.Moves
 {

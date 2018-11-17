@@ -1,4 +1,4 @@
-﻿namespace Game.Chess
+﻿namespace BoardGame.Game.Chess
 {
     /// <summary>
     /// Actual state of the game.

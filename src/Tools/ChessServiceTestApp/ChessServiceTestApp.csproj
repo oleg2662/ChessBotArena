@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{426A6163-2005-4E68-9295-D7DA98BB947A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ChessServiceTestApp</RootNamespace>
-    <AssemblyName>ChessServiceTestApp</AssemblyName>
+    <RootNamespace>BoardGame.ChessServiceTestApp</RootNamespace>
+    <AssemblyName>BoardGame.ChessServiceTestApp</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\BoardGame.ChessServiceTestApp.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\BoardGame.ChessServiceTestApp.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Easy.Common, Version=2.9.7.0, Culture=neutral, processorArchitecture=MSIL">
@@ -118,6 +120,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="App.config" />
     <None Include="packages.config" />
