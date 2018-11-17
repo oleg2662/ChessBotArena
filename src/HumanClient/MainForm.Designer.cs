@@ -31,28 +31,11 @@ namespace HumanClient
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("wertw", "Brain");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("wertwrt");
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("wertwrt");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
-            "sgrsgsf",
-            "a",
-            "b",
-            "gfsgfs"}, -1);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("wertw", "BlackWins");
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("wertwrt", "WhiteWins");
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("wertwrt", "InProgress");
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
-            "sgrsgsf",
-            "a",
-            "b",
-            "gfsgfs"}, "Draw");
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPagePlayers = new System.Windows.Forms.TabPage();
             this.listViewPlayers = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageListPlayers = new System.Windows.Forms.ImageList(this.components);
             this.tabPageMatches = new System.Windows.Forms.TabPage();
             this.listViewMatches = new System.Windows.Forms.ListView();
@@ -65,9 +48,8 @@ namespace HumanClient
             this.panelPlayers = new System.Windows.Forms.Panel();
             this.btnChallenge = new System.Windows.Forms.Button();
             this.panelRefresh = new System.Windows.Forms.Panel();
-            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnSync = new System.Windows.Forms.Button();
             this.panelGame = new System.Windows.Forms.Panel();
-            this.listboxMoves = new System.Windows.Forms.ListBox();
             this.btnDeclineDraw = new System.Windows.Forms.Button();
             this.btnAcceptDraw = new System.Windows.Forms.Button();
             this.btnOfferDraw = new System.Windows.Forms.Button();
@@ -81,8 +63,12 @@ namespace HumanClient
             this.labelPassword = new System.Windows.Forms.Label();
             this.textboxUsername = new System.Windows.Forms.TextBox();
             this.labelUsername = new System.Windows.Forms.Label();
+            this.playerColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.chessBoardGamePanel1 = new Tools.Common.ChessBoardGamePanel();
             this.chessBoardPreview = new Tools.Common.ChessBoardVisualizerPanel();
+            this.labelGameState = new System.Windows.Forms.Label();
+            this.listboxMoves = new System.Windows.Forms.ListBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabPagePlayers.SuspendLayout();
@@ -143,18 +129,9 @@ namespace HumanClient
             this.listViewPlayers.AutoArrange = false;
             this.listViewPlayers.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listViewPlayers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
+            this.playerColumnHeader});
             this.listViewPlayers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewPlayers.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            listViewItem1.StateImageIndex = 0;
-            listViewItem2.StateImageIndex = 0;
-            listViewItem3.StateImageIndex = 0;
-            listViewItem4.StateImageIndex = 0;
-            this.listViewPlayers.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4});
             this.listViewPlayers.LargeImageList = this.imageListPlayers;
             this.listViewPlayers.Location = new System.Drawing.Point(3, 3);
             this.listViewPlayers.MultiSelect = false;
@@ -164,11 +141,6 @@ namespace HumanClient
             this.listViewPlayers.TabIndex = 0;
             this.listViewPlayers.UseCompatibleStateImageBehavior = false;
             this.listViewPlayers.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Players";
-            this.columnHeader1.Width = 604;
             // 
             // imageListPlayers
             // 
@@ -197,15 +169,6 @@ namespace HumanClient
             this.columnHeaderMatchName});
             this.listViewMatches.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewMatches.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            listViewItem5.StateImageIndex = 0;
-            listViewItem6.StateImageIndex = 0;
-            listViewItem7.StateImageIndex = 0;
-            listViewItem8.StateImageIndex = 0;
-            this.listViewMatches.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8});
             this.listViewMatches.LargeImageList = this.imageListMatchStatuses;
             this.listViewMatches.Location = new System.Drawing.Point(3, 3);
             this.listViewMatches.MultiSelect = false;
@@ -220,7 +183,7 @@ namespace HumanClient
             // 
             // columnHeaderMatchName
             // 
-            this.columnHeaderMatchName.Text = "Match";
+            this.columnHeaderMatchName.Text = "Matches";
             this.columnHeaderMatchName.Width = 604;
             // 
             // imageListMatchStatuses
@@ -289,6 +252,7 @@ namespace HumanClient
             this.panelPlayers.Padding = new System.Windows.Forms.Padding(4);
             this.panelPlayers.Size = new System.Drawing.Size(194, 45);
             this.panelPlayers.TabIndex = 17;
+            this.panelPlayers.Visible = false;
             // 
             // btnChallenge
             // 
@@ -303,7 +267,7 @@ namespace HumanClient
             // 
             // panelRefresh
             // 
-            this.panelRefresh.Controls.Add(this.btnRefresh);
+            this.panelRefresh.Controls.Add(this.btnSync);
             this.panelRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelRefresh.Location = new System.Drawing.Point(0, 607);
             this.panelRefresh.Name = "panelRefresh";
@@ -311,20 +275,21 @@ namespace HumanClient
             this.panelRefresh.Size = new System.Drawing.Size(194, 45);
             this.panelRefresh.TabIndex = 16;
             // 
-            // btnRefresh
+            // btnSync
             // 
-            this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnRefresh.Location = new System.Drawing.Point(4, 4);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(186, 36);
-            this.btnRefresh.TabIndex = 1;
-            this.btnRefresh.Text = "Refresh All";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnSync.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnSync.Location = new System.Drawing.Point(4, 4);
+            this.btnSync.Name = "btnSync";
+            this.btnSync.Size = new System.Drawing.Size(186, 36);
+            this.btnSync.TabIndex = 1;
+            this.btnSync.Text = "Sync all";
+            this.btnSync.UseVisualStyleBackColor = true;
+            this.btnSync.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // panelGame
             // 
             this.panelGame.Controls.Add(this.listboxMoves);
+            this.panelGame.Controls.Add(this.labelGameState);
             this.panelGame.Controls.Add(this.btnDeclineDraw);
             this.panelGame.Controls.Add(this.btnAcceptDraw);
             this.panelGame.Controls.Add(this.btnOfferDraw);
@@ -335,15 +300,7 @@ namespace HumanClient
             this.panelGame.Padding = new System.Windows.Forms.Padding(4);
             this.panelGame.Size = new System.Drawing.Size(194, 352);
             this.panelGame.TabIndex = 15;
-            // 
-            // listboxMoves
-            // 
-            this.listboxMoves.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listboxMoves.FormattingEnabled = true;
-            this.listboxMoves.Location = new System.Drawing.Point(4, 148);
-            this.listboxMoves.Name = "listboxMoves";
-            this.listboxMoves.Size = new System.Drawing.Size(186, 200);
-            this.listboxMoves.TabIndex = 4;
+            this.panelGame.Visible = false;
             // 
             // btnDeclineDraw
             // 
@@ -481,6 +438,16 @@ namespace HumanClient
             this.labelUsername.Text = "Username";
             this.labelUsername.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
+            // playerColumnHeader
+            // 
+            this.playerColumnHeader.Text = "Players";
+            this.playerColumnHeader.Width = 620;
+            // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Interval = 1000;
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
+            // 
             // chessBoardGamePanel1
             // 
             this.chessBoardGamePanel1.Bevel = System.Drawing.Color.Brown;
@@ -505,6 +472,26 @@ namespace HumanClient
             this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
             this.chessBoardPreview.TabIndex = 0;
             this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
+            // 
+            // labelGameState
+            // 
+            this.labelGameState.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelGameState.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelGameState.Location = new System.Drawing.Point(4, 315);
+            this.labelGameState.Name = "labelGameState";
+            this.labelGameState.Size = new System.Drawing.Size(186, 33);
+            this.labelGameState.TabIndex = 5;
+            this.labelGameState.Text = "-";
+            this.labelGameState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // listboxMoves
+            // 
+            this.listboxMoves.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listboxMoves.FormattingEnabled = true;
+            this.listboxMoves.Location = new System.Drawing.Point(4, 148);
+            this.listboxMoves.Name = "listboxMoves";
+            this.listboxMoves.Size = new System.Drawing.Size(186, 167);
+            this.listboxMoves.TabIndex = 6;
             // 
             // MainForm
             // 
@@ -545,7 +532,6 @@ namespace HumanClient
         private System.Windows.Forms.TabPage tabPageMatches;
         private System.Windows.Forms.TabPage tabPageGame;
         private Tools.Common.ChessBoardGamePanel chessBoardGamePanel1;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ImageList imageListPlayers;
         private System.Windows.Forms.Panel panelSidebar;
         private System.Windows.Forms.Panel panelLogin;
@@ -558,9 +544,8 @@ namespace HumanClient
         private System.Windows.Forms.Panel panelPlayers;
         private System.Windows.Forms.Button btnChallenge;
         private System.Windows.Forms.Panel panelRefresh;
-        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnSync;
         private System.Windows.Forms.Panel panelGame;
-        private System.Windows.Forms.ListBox listboxMoves;
         private System.Windows.Forms.Button btnDeclineDraw;
         private System.Windows.Forms.Button btnAcceptDraw;
         private System.Windows.Forms.Button btnOfferDraw;
@@ -573,6 +558,10 @@ namespace HumanClient
         private Tools.Common.ChessBoardVisualizerPanel chessBoardPreview;
         private System.Windows.Forms.Label labelMatchPreviewStatus;
         private System.Windows.Forms.ImageList imageListMatchStatuses;
+        private System.Windows.Forms.ColumnHeader playerColumnHeader;
+        private System.Windows.Forms.Timer timerRefresh;
+        private System.Windows.Forms.ListBox listboxMoves;
+        private System.Windows.Forms.Label labelGameState;
     }
 }
 

@@ -14,10 +14,13 @@ namespace ChessServiceTestApp
 
         private string _jwtToken;
 
+        private readonly string _baseUrl = "http://localhost/BoardGame.Service";
+        //private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+
         public MainForm()
         {
             InitializeComponent();
-            _client = new ChessServiceClient("http://poseen-001-site1.gtempurl.com");
+            _client = new ChessServiceClient(_baseUrl);
         }
 
         private async void MainForm_Load(object sender, EventArgs e)

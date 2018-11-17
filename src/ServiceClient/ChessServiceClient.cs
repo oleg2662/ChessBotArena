@@ -181,7 +181,7 @@ namespace ServiceClient
 
             message.Headers.Add("Authorization", $"Bearer {token}");
 
-            var challengeDto = new Challenge()
+            var challengeDto = new ChallengeRequest()
             {
                 Opponent = username
             };

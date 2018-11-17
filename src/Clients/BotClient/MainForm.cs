@@ -39,7 +39,8 @@ namespace BotClient
         private int _round = 1;
         private bool _isRobotThinking = false;
         private int _maxNumberOfMatches = 5;
-
+        private readonly string _baseUrl = "http://localhost/BoardGame.Service";
+        //private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
 
         private void ChangeAlgorithm()
         {
@@ -97,7 +98,7 @@ namespace BotClient
 
         public MainForm()
         {
-            Client = new ChessServiceClient("http://poseen-001-site1.gtempurl.com");
+            Client = new ChessServiceClient(_baseUrl);
             var mechanism = new ChessMechanism();
             _evaluator = new Evaluator(mechanism);
             _generator = new MoveGenerator(mechanism);

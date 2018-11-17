@@ -1,0 +1,273 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BoardGame.Model</name>
+    </assembly>
+    <members>
+        <member name="T:Model.Api.AccountControllerModels.ILoginModel">
+            <summary>
+            The contract for the login.
+            </summary>
+        </member>
+        <member name="P:Model.Api.AccountControllerModels.ILoginModel.Password">
+            <summary>
+            Gets or sets the password.
+            </summary>
+        </member>
+        <member name="P:Model.Api.AccountControllerModels.ILoginModel.UserName">
+            <summary>
+            Gets or sets the user name.
+            </summary>
+        </member>
+        <member name="T:Model.Api.AccountControllerModels.LoginModel">
+            <inheritdoc />
+        </member>
+        <member name="P:Model.Api.AccountControllerModels.LoginModel.UserName">
+            <inheritdoc />
+        </member>
+        <member name="P:Model.Api.AccountControllerModels.LoginModel.Password">
+            <inheritdoc />
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChallengeRequest">
+            <summary>
+            Represents a challenge request coming from the client.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChallengeRequest.Opponent">
+            <summary>
+            Gets or sets the id of the challenged player.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChallengeRequestResult">
+            <summary>
+            The result with additional result information.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChallengeRequestResult.RequestResult">
+            <summary>
+            The result of the addition.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChallengeRequestResult.NewlyCreatedGame">
+            <summary>
+            The newly created entity if the result was ok.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChallengeRequestResultStatuses">
+            <summary>
+            Validation and DB operation results for the <see cref="!:IChessGameRepository" />.
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChallengeRequestResultStatuses.Ok">
+            <summary>
+            Challenge request accepted.
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChallengeRequestResultStatuses.InitiatedByUserNull">
+            <summary>
+            The supplied id for the game initiator couldn't be found.
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChallengeRequestResultStatuses.OpponentNull">
+            <summary>
+            The supplied id for the opponent couldn't be found.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChessGame">
+            <summary>
+            Interface to a chess game item in the chess games controller.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.Id">
+            <summary>
+            Gets or sets the ID of the game.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.Name">
+            <summary>
+            Gets or sets the name of the game.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.InitiatedBy">
+            <summary>
+            Gets or sets the user who have initiated the game. (Challenged someone.)
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.Opponent">
+            <summary>
+            Gets or sets the user who was challenged by the game initiator.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.WhitePlayer">
+            <summary>
+            Gets or sets the white player.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.BlackPlayer">
+            <summary>
+            Gets or sets the black player.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.ChallengeDate">
+            <summary>
+            Gets or sets the date the challenge was sent.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.LastMoveDate">
+            <summary>
+            Gets or sets the date of the last move. Initially set to the challenge date.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGame.Outcome">
+            <summary>
+            Gets or sets the outcome of the match.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChessGameDetails">
+            <summary>
+            Detailed information about a chess game.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGameDetails.Representation">
+            <summary>
+            Gets or sets the current representation of a match and it's current state.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChessGameMoveRequestResultStatuses">
+            <summary>
+            Validation results for the chess move request.
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChessGameMoveRequestResultStatuses.Ok">
+            <summary>
+            Move is valid and applied.
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChessGameMoveRequestResultStatuses.WrongTurn">
+            <summary>
+            It's not your turn!
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChessGameMoveRequestResultStatuses.InvalidMove">
+            <summary>
+            Invalid move!
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChessGameMoveRequestResultStatuses.NoMatchFound">
+            <summary>
+            Couldn't find match!
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChessGameMoveRequestResultStatuses.MultipleMatchesFound">
+            <summary>
+            Multiple matches found. (DB error)
+            </summary>
+        </member>
+        <member name="F:Model.Api.ChessGamesControllerModels.ChessGameMoveRequestResultStatuses.GameHasAlreadyEnded">
+            <summary>
+            Game has already ended.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChessGameMoveResult">
+            <summary>
+            The result with additional result information.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGameMoveResult.MoveRequestResultStatus">
+            <summary>
+            The result of the addition.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGameMoveResult.NewState">
+            <summary>
+            The newly created entity if the result was ok.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChessGamePlayerDto">
+            <summary>
+            Represents the minimum required information about the player for the chess games list controller.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGamePlayerDto.Id">
+            <summary>
+            Gets or sets the id of the player user.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessGamePlayerDto.UserName">
+            <summary>
+            Gets or sets the name of the player user.
+            </summary>
+        </member>
+        <member name="T:Model.Api.ChessGamesControllerModels.ChessMoveApiModel">
+            <summary>
+            The model used by the client to the service which contains the chess move and some additional information.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessMoveApiModel.TargetGameId">
+            <summary>
+            Gets or sets the ID of the target game.
+            </summary>
+        </member>
+        <member name="P:Model.Api.ChessGamesControllerModels.ChessMoveApiModel.Move">
+            <summary>
+            Gets or sets the chess move.
+            </summary>
+        </member>
+        <member name="T:Model.Api.LadderControllerModels.LadderItem">
+            <summary>
+            Represents a row in the ladder.
+            </summary>
+        </member>
+        <member name="P:Model.Api.LadderControllerModels.LadderItem.Place">
+            <summary>
+            Gets or sets the place of the player in the ladder.
+            </summary>
+        </member>
+        <member name="P:Model.Api.LadderControllerModels.LadderItem.Name">
+            <summary>
+            Gets or sets the name of the player.
+            </summary>
+        </member>
+        <member name="P:Model.Api.LadderControllerModels.LadderItem.IsBot">
+            <summary>
+            Gets or sets a value indicating whether the player is a bot or not.
+            </summary>
+        </member>
+        <member name="P:Model.Api.LadderControllerModels.LadderItem.Points">
+            <summary>
+            Gets or sets the number of points the player has.
+            It contains the averages points gathered in a ply according to all the played matches.
+            </summary>
+        </member>
+        <member name="T:Model.Api.PlayerControllerModels.IPlayerModel">
+            <summary>
+            Interface of the player's model.
+            </summary>
+        </member>
+        <member name="P:Model.Api.PlayerControllerModels.IPlayerModel.IsBot">
+            <summary>
+            Gets or sets a value indicating whether the player is a bot or not.
+            </summary>
+        </member>
+        <member name="P:Model.Api.PlayerControllerModels.IPlayerModel.Name">
+            <summary>
+            Gets or sets the name of the player.
+            </summary>
+        </member>
+        <member name="T:Model.Api.PlayerControllerModels.Player">
+            <summary>
+            Represents a player information in the players' screen.
+            </summary>
+        </member>
+        <member name="P:Model.Api.PlayerControllerModels.Player.Name">
+            <summary>
+            Gets or sets the name of the player.
+            </summary>
+        </member>
+        <member name="P:Model.Api.PlayerControllerModels.Player.IsBot">
+            <summary>
+            Gets or sets a value indicating whether the player is a bot.
+            </summary>
+        </member>
+    </members>
+</doc>

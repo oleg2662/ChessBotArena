@@ -1,0 +1,401 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Game</name>
+    </assembly>
+    <members>
+        <member name="T:Game.Chess.ChessPlayer">
+            <summary>
+            The chess player colours.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.ChessPlayer.White">
+            <summary>
+            White player.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.ChessPlayer.Black">
+            <summary>
+            Black player.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.ChessRepresentation.Item(Game.Chess.Position)">
+            <summary>
+            Algebraic notation accessor.
+            </summary>
+            <param name="position">The position of the field in the board.</param>
+            <returns>The chess piece on the given field. Returns a null chess piece object if empty. Throws exception if column or row id isn't valid.</returns>
+        </member>
+        <member name="P:Game.Chess.ChessRepresentation.Item(System.Char,System.Int32)">
+            <summary>
+            Algebraic notation accessor.
+            </summary>
+            <param name="col">Character of the column. Can be A..H.</param>
+            <param name="row">The row number. Can be between 1..8.</param>
+            <returns>The chess piece on the given field. Returns a null chess piece object if empty. Throws exception if column or row id isn't valid.</returns>
+        </member>
+        <member name="P:Game.Chess.ChessRepresentation.Item(System.String)">
+            <summary>
+            Algebraic notation (string) accessor.
+            </summary>
+            <param name="algebraicNotation">Algebraic notation of the position. Example: "B3".</param>
+            <returns>The chess piece on the given field. Returns a null chess piece object if empty. Throws exception if column or row id isn't valid.</returns>
+        </member>
+        <member name="P:Game.Chess.ChessRepresentation.CurrentPlayer">
+            <summary>
+            Gets or sets the current player.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.ChessRepresentation.Players">
+            <summary>
+            Gets or sets the players playing the game.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.ChessRepresentation.History">
+            <summary>
+            Gets the history of the game.
+            </summary>
+        </member>
+        <member name="T:Game.Chess.Extensions.PieceKindExtensions">
+            <summary>
+            Contains extension methods of chess pieces
+            </summary>
+        </member>
+        <member name="M:Game.Chess.Extensions.PieceKindExtensions.ToFigure(Game.Chess.Pieces.PieceKind,Game.Chess.ChessPlayer)">
+            <summary>
+            Returns a string representation of the given chess piece.
+            </summary>
+            <param name="pieceKind">Type of the piece</param>
+            <param name="player">The owner player which defines the colour.</param>
+            <returns>The figure character of the chess piece.</returns>
+        </member>
+        <member name="M:Game.Chess.Extensions.PieceKindExtensions.ToFigure(System.Nullable{Game.Chess.Pieces.PieceKind},Game.Chess.ChessPlayer)">
+            <summary>
+            Returns a string representation of the given chess piece.
+            </summary>
+            <param name="pieceKind">Type of the piece</param>
+            <param name="player">The owner player which defines the colour.</param>
+            <returns>The figure character of the chess piece. If null, returns empty string.</returns>
+        </member>
+        <member name="M:Game.Chess.Extensions.PieceKindExtensions.ToFigure(Game.Chess.Pieces.ChessPiece)">
+            <summary>
+            Returns a string representation of the given chess piece.
+            </summary>
+            <param name="chessPiece">The chess piece.</param>
+            <returns>The figure character of the chess piece. If null, returns empty string.</returns>
+        </member>
+        <member name="M:Game.Chess.Extensions.PositionExtensions.ParsePostal(System.String)">
+            <summary>
+            Creates a position from it's postal notation.
+            </summary>
+            <param name="postalNotation">The position's postal notation.</param>
+            <returns>The position.</returns>
+        </member>
+        <member name="T:Game.Chess.GameState">
+            <summary>
+            Actual state of the game.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.GameState.InProgress">
+            <summary>
+            Game is ongoing.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.GameState.WhiteWon">
+            <summary>
+            White won.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.GameState.BlackWon">
+            <summary>
+            Black won.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.GameState.Draw">
+            <summary>
+            It was a draw.
+            </summary>
+        </member>
+        <member name="T:Game.Chess.Moves.CastlingType">
+            <summary>
+            The castling types.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Moves.CastlingType.Long">
+            <summary>
+            Long castling. (Queen side.)
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Moves.CastlingType.Short">
+            <summary>
+            Short castling. (King side.)
+            </summary>
+        </member>
+        <member name="T:Game.Chess.Moves.MessageType">
+            <summary>
+            Represents special moves.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Moves.MessageType.Resign">
+            <summary>
+            Resign. Game ends.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Moves.MessageType.DrawOffer">
+            <summary>
+            Offer a draw.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Moves.MessageType.DrawAccept">
+            <summary>
+            Accept a draw. Game ends.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Moves.MessageType.DrawDecline">
+            <summary>
+            Decline a draw. Game continues.
+            </summary>
+        </member>
+        <member name="T:Game.Chess.Pieces.ChessPiece">
+            <summary>
+            Base abstract class of a chess piece.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPiece.Owner">
+            <summary>
+            Gets the owner of the chess piece.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPiece.HasMoved">
+            <summary>
+            Gets or sets a value indicating whether the chess piece has already been  moved in the game.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPiece.Kind">
+            <summary>
+            Gets or sets the kind of the chess piece.
+            </summary>
+        </member>
+        <member name="T:Game.Chess.Pieces.ChessPieces">
+            <summary>
+            Shorthand for the creation of different chess pieces.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.WhiteBishop">
+            <summary>
+            Creates and returns a new white bishop.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.WhiteKing">
+            <summary>
+            Creates and returns a new white king.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.WhiteKnight">
+            <summary>
+            Creates and returns a new white Knight.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.WhitePawn">
+            <summary>
+            Creates and returns a new white Pawn.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.WhiteQueen">
+            <summary>
+            Creates and returns a new white Queen.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.WhiteRook">
+            <summary>
+            Creates and returns a new white Rook.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.BlackBishop">
+            <summary>
+            Creates and returns a new black bishop.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.BlackKing">
+            <summary>
+            Creates and returns a new black King.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.BlackKnight">
+            <summary>
+            Creates and returns a new black Knight.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.BlackPawn">
+            <summary>
+            Creates and returns a new black Pawn.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.BlackQueen">
+            <summary>
+            Creates and returns a new black Queen.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Pieces.ChessPieces.BlackRook">
+            <summary>
+            Creates and returns a new black Rook.
+            </summary>
+        </member>
+        <member name="M:Game.Chess.Pieces.ChessPieces.Bishop(Game.Chess.ChessPlayer,System.Boolean)">
+            <summary>
+            Creates and returns a new Bishop.
+            </summary>
+            <param name="player">The owner player.</param>
+            <param name="hasMoved">Sets whether the piece has been moved since it's creation.</param>
+        </member>
+        <member name="M:Game.Chess.Pieces.ChessPieces.King(Game.Chess.ChessPlayer,System.Boolean)">
+            <summary>
+            Creates and returns a new King.
+            </summary>
+            <param name="player">The owner player.</param>
+            <param name="hasMoved">Sets whether the piece has been moved since it's creation.</param>
+        </member>
+        <member name="M:Game.Chess.Pieces.ChessPieces.Knight(Game.Chess.ChessPlayer,System.Boolean)">
+            <summary>
+            Creates and returns a new Knight.
+            </summary>
+            <param name="player">The owner player.</param>
+            <param name="hasMoved">Sets whether the piece has been moved since it's creation.</param>
+        </member>
+        <member name="M:Game.Chess.Pieces.ChessPieces.Pawn(Game.Chess.ChessPlayer,System.Boolean)">
+            <summary>
+            Creates and returns a new Pawn.
+            </summary>
+            <param name="player">The owner player.</param>
+            <param name="hasMoved">Sets whether the piece has been moved since it's creation.</param>
+        </member>
+        <member name="M:Game.Chess.Pieces.ChessPieces.Queen(Game.Chess.ChessPlayer,System.Boolean)">
+            <summary>
+            Creates and returns a new Queen.
+            </summary>
+            <param name="player">The owner player.</param>
+            <param name="hasMoved">Sets whether the piece has been moved since it's creation.</param>
+        </member>
+        <member name="M:Game.Chess.Pieces.ChessPieces.Rook(Game.Chess.ChessPlayer,System.Boolean)">
+            <summary>
+            Creates and returns a new Rook.
+            </summary>
+            <param name="player">The owner player.</param>
+            <param name="hasMoved">Sets whether the piece has been moved since it's creation.</param>
+        </member>
+        <member name="T:Game.Chess.Pieces.PieceKind">
+            <summary>
+            The available kinds of the chess pieces.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Pieces.PieceKind.King">
+            <summary>
+            Represents the king.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Pieces.PieceKind.Queen">
+            <summary>
+            Represents the queen.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Pieces.PieceKind.Rook">
+            <summary>
+            Represents the rook.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Pieces.PieceKind.Bishop">
+            <summary>
+            Represents the bishop.
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Pieces.PieceKind.Knight">
+            <summary>
+            Represents the knight. 
+            </summary>
+        </member>
+        <member name="F:Game.Chess.Pieces.PieceKind.Pawn">
+            <summary>
+            Represents the pawn. 
+            </summary>
+        </member>
+        <member name="T:Game.Chess.Position">
+            <summary>
+            Represents a position in the chess board.
+            </summary>
+        </member>
+        <member name="M:Game.Chess.Position.#ctor(System.Char,System.Int32)">
+            <summary>
+            Initializes a new instance of the Position structure.
+            </summary>
+            <param name="column">The algebraic notation of the column. (A-H)</param>
+            <param name="row">The algebraic (1-based) notation of the row. (1-8)</param>
+        </member>
+        <member name="P:Game.Chess.Position.Column">
+            <summary>
+            Gets the column's algebraic notation.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Position.Row">
+            <summary>
+            Gets the row's algebraic (1-based) notation.
+            </summary>
+        </member>
+        <member name="P:Game.Chess.Position.BlackField">
+            <summary>
+            Gets a value indicating whether the position's colour is black or white in the chessboard.
+            </summary>
+        </member>
+        <member name="M:Game.Chess.Position.op_Equality(Game.Chess.Position,Game.Chess.Position)">
+            <summary>
+            Compares whether two positions are considered equal.
+            </summary>
+            <param name="x">One of the positions.</param>
+            <param name="y">The other position.</param>
+            <returns>True if the two positions are considered equal (by the position they represent.) Otherwise false.</returns>
+        </member>
+        <member name="M:Game.Chess.Position.op_Inequality(Game.Chess.Position,Game.Chess.Position)">
+            <summary>
+            Compares whether two positions are considered different.
+            </summary>
+            <param name="x">One of the positions.</param>
+            <param name="y">The other position.</param>
+            <returns>True if the two positions are considered different (they represent different positions on the chessboard.) Otherwise false.</returns>
+        </member>
+        <member name="M:Game.Chess.Position.op_Explicit(System.String)~Game.Chess.Position">
+            <summary>
+            Creates a position from it's algebraic notation.
+            </summary>
+            <param name="algebraicNotation">The position's algebraic notation.</param>
+        </member>
+        <member name="M:Game.Chess.Position.op_Explicit(System.Int32)~Game.Chess.Position">
+            <summary>
+            Creates a position from it's index in the array. Array starts from A8 and end with H1.
+            </summary>
+            <param name="index">The index of the position in the underlying array.</param>
+        </member>
+        <member name="M:Game.Chess.Position.op_Explicit(Game.Chess.Position)~System.Int32">
+            <summary>
+            Gets the array index of the given position.
+            </summary>
+            <param name="position">The position.</param>
+        </member>
+        <member name="M:Game.Chess.Position.op_Explicit(Game.Chess.Position)~System.String">
+            <summary>
+            Returns the algebraic representation of the position.
+            </summary>
+            <param name="position">The position.</param>
+        </member>
+        <member name="M:Game.Chess.Position.ToString">
+            <summary>
+            Returns the algebraic representation of the position.
+            </summary>
+            <returns>Algebraic representation of the position. Example: "B2".</returns>
+        </member>
+        <member name="M:Game.Chess.Position.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:Game.Chess.Position.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

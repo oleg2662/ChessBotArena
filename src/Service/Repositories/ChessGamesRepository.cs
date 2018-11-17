@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using BoardGame.Service.Data;
 using BoardGame.Service.Models.Converters;
 using BoardGame.Service.Models.Data;
-using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using BoardGame.Service.Extensions;
 using Game.Chess;
 using Game.Chess.Moves;
@@ -44,15 +43,15 @@ namespace BoardGame.Service.Repositories
         }
 
         /// <inheritdoc />
-        public ChessGameRepositoryAddResult Add(string participantPlayerName, Challenge challengeRequest)
+        public ChallengeRequestResult Add(string participantPlayerName, ChallengeRequest challengeRequest)
         {
             var initiatedBy = _dbContext.Users.SingleOrDefault(x => x.UserName == participantPlayerName);
 
             if(initiatedBy == null)
             {
-                return new ChessGameRepositoryAddResult
+                return new ChallengeRequestResult
                 {
-                    RequestResult = ChallengeRequestResults.InitiatedByUserNull,
+                    RequestResult = ChallengeRequestResultStatuses.InitiatedByUserNull,
                     NewlyCreatedGame = null
                 };
             }
@@ -61,9 +60,9 @@ namespace BoardGame.Service.Repositories
 
             if (opponent == null)
             {
-                return new ChessGameRepositoryAddResult
+                return new ChallengeRequestResult
                 {
-                    RequestResult = ChallengeRequestResults.OpponentNull,
+                    RequestResult = ChallengeRequestResultStatuses.OpponentNull,
                     NewlyCreatedGame = null
                 };
             }
@@ -90,9 +89,9 @@ namespace BoardGame.Service.Repositories
             var newEntity =_dbContext.Add(newGame).Entity;
             _dbContext.SaveChanges();
 
-            return new ChessGameRepositoryAddResult
+            return new ChallengeRequestResult
             {
-                RequestResult = ChallengeRequestResults.Ok,
+                RequestResult = ChallengeRequestResultStatuses.Ok,
                 NewlyCreatedGame = _chessGameConverter.ConvertToChessGameDetails(newEntity)
             };
         }
@@ -110,7 +109,7 @@ namespace BoardGame.Service.Repositories
         }
 
         /// <inheritdoc />
-        public ChessGameRepositoryMoveResult Move<T>(string participantPlayerName, Guid chessGameId, T move) where T : BaseMove
+        public ChessGameMoveResult Move<T>(string participantPlayerName, Guid chessGameId, T move) where T : BaseMove
         {
             var match = GetMainQuery(participantPlayerName)
                             .Include(x => x.History)
@@ -118,19 +117,14 @@ namespace BoardGame.Service.Repositories
 
             if(match is null)
             {
-                return new ChessGameRepositoryMoveResult
+                return new ChessGameMoveResult
                 {
                     NewState = null,
-                    RequestResult = MoveRequestResults.NoMatchFound
+                    MoveRequestResultStatus = ChessGameMoveRequestResultStatuses.NoMatchFound
                 };
             }
 
             var players = match.GetPlayerNames();
-
-            var history = match.History
-                               .OrderBy(x => x.CreatedAt)
-                               .Select(x => _chessGameConverter.CovertToChessMove(x))
-                               .ToArray();
 
             var oldChessGameDetails = _chessGameConverter.ConvertToChessGameDetails(match);
 
@@ -140,9 +134,9 @@ namespace BoardGame.Service.Repositories
             // Game has already ended, not accepting any more moves!
             if (gameMechanism.GetGameState(game) != GameState.InProgress)
             {
-                return new ChessGameRepositoryMoveResult
+                return new ChessGameMoveResult
                 {
-                    RequestResult = MoveRequestResults.GameHasAlreadyEnded,
+                    MoveRequestResultStatus = ChessGameMoveRequestResultStatuses.GameHasAlreadyEnded,
                     NewState = null
                 };
             }
@@ -151,9 +145,9 @@ namespace BoardGame.Service.Repositories
             var currentPlayerName = players[game.CurrentPlayer];
             if(currentPlayerName != participantPlayerName)
             {
-                return new ChessGameRepositoryMoveResult
+                return new ChessGameMoveResult
                 {
-                    RequestResult = MoveRequestResults.WrongTurn,
+                    MoveRequestResultStatus = ChessGameMoveRequestResultStatuses.WrongTurn,
                     NewState = null
                 };
             }
@@ -174,9 +168,9 @@ namespace BoardGame.Service.Repositories
                     Representation = game
                 };
 
-                return new ChessGameRepositoryMoveResult
+                return new ChessGameMoveResult
                 {
-                    RequestResult = MoveRequestResults.InvalidMove,
+                    MoveRequestResultStatus = ChessGameMoveRequestResultStatuses.InvalidMove,
                     NewState = previousState
                 };
             }
@@ -204,9 +198,9 @@ namespace BoardGame.Service.Repositories
             dbGame.History.Add(newDbMove);
             _dbContext.SaveChanges();
 
-            return new ChessGameRepositoryMoveResult
+            return new ChessGameMoveResult
             {
-                RequestResult = MoveRequestResults.Ok,
+                MoveRequestResultStatus = ChessGameMoveRequestResultStatuses.Ok,
                 NewState = result
             };
         }

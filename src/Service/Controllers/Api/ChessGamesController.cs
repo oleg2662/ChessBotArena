@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using BoardGame.Service.Models.Repositories.ChessGameRepository;
 using BoardGame.Service.Repositories;
 using Game.Chess.Moves;
 using Microsoft.AspNetCore.Authorization;
@@ -103,26 +102,26 @@ namespace BoardGame.Service.Controllers.Api
         /// <response code="401">If there is an authentication error.</response>
         /// <response code="500">If there is a server error.</response>
         [ProducesResponseType(typeof(ChessGame), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ChessGameRepositoryAddResult), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ChallengeRequestResult), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPost]
-        public IActionResult Challenge([FromBody]Challenge challenge)
+        public IActionResult Challenge([FromBody]ChallengeRequest challengeRequest)
         {
-            var result = _repository.Add(GetCurrentUser(), challenge);
+            var result = _repository.Add(GetCurrentUser(), challengeRequest);
 
             switch (result.RequestResult)
             {
-                case ChallengeRequestResults.Ok:
-                    _logger.LogInformation($"{GetCurrentUser()} has sent a challenge request to user with ID {challenge.Opponent}.");
+                case ChallengeRequestResultStatuses.Ok:
+                    _logger.LogInformation($"{GetCurrentUser()} has sent a challenge request to user with ID {challengeRequest.Opponent}.");
                     return Created(new Uri($"{Request.Path}{result.NewlyCreatedGame.Id}", UriKind.Relative), result.NewlyCreatedGame);
                 
-                case ChallengeRequestResults.InitiatedByUserNull:
+                case ChallengeRequestResultStatuses.InitiatedByUserNull:
                     _logger.LogError($"The challenger user ({GetCurrentUser()}) could not be found.");
                     return BadRequest(result);
 
-                case ChallengeRequestResults.OpponentNull:
-                    _logger.LogWarning($"{GetCurrentUser()} has sent a challenge request to user with ID {challenge.Opponent} but opponent couldn't be found.");
+                case ChallengeRequestResultStatuses.OpponentNull:
+                    _logger.LogWarning($"{GetCurrentUser()} has sent a challenge request to user with ID {challengeRequest.Opponent} but opponent couldn't be found.");
                     return BadRequest(result);
 
                 default:
@@ -140,8 +139,8 @@ namespace BoardGame.Service.Controllers.Api
         /// <response code="404">If the match couldn't be found.</response>
         /// <response code="409">If the move is an illegal move for any reasons.</response>
         /// <response code="500">If there is a server error.</response>
-        [ProducesResponseType(typeof(ChessGameRepositoryMoveResult), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ChessGameRepositoryMoveResult), (int)HttpStatusCode.Conflict)]
+        [ProducesResponseType(typeof(ChessGameMoveResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ChessGameMoveResult), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -158,25 +157,25 @@ namespace BoardGame.Service.Controllers.Api
 
             var result = _repository.Move(GetCurrentUser(), gid, move);
 
-            switch (result.RequestResult)
+            switch (result.MoveRequestResultStatus)
             {
-                case MoveRequestResults.Ok:
+                case ChessGameMoveRequestResultStatuses.Ok:
                     _logger.LogInformation($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString}.");
                     return Ok(result);
 
-                case MoveRequestResults.WrongTurn:
+                case ChessGameMoveRequestResultStatuses.WrongTurn:
                     _logger.LogInformation($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} in the wrong turn.");
                     return Forbidden(result);
 
-                case MoveRequestResults.InvalidMove:
+                case ChessGameMoveRequestResultStatuses.InvalidMove:
                     _logger.LogInformation($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} but it was an invalid move.");
                     return Forbidden(result);
 
-                case MoveRequestResults.NoMatchFound:
+                case ChessGameMoveRequestResultStatuses.NoMatchFound:
                     _logger.LogWarning($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} but the match was not found.");
                     return NotFound(gameIdString);
 
-                case MoveRequestResults.MultipleMatchesFound:
+                case ChessGameMoveRequestResultStatuses.MultipleMatchesFound:
                     _logger.LogError($"{GetCurrentUser()} has sent a move to the game with ID {gameIdString} but multiple matches were found.");
                     return Conflict(result);
 

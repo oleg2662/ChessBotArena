@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using Easy.Common.Extensions;
 using Game.Chess;
 using Game.Chess.Moves;
 using Model.Api.ChessGamesControllerModels;
@@ -19,9 +19,10 @@ namespace HumanClient
         private Guid? _selectedMatchId;
         private ChessServiceClientSession _client;
         private DateTime _lastUpdate = DateTime.MinValue;
+        private int _countDown = 10;
 
-        //private readonly string _baseUrl = "http://localhost/BoardGame.Service";
-        private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+        private readonly string _baseUrl = "http://localhost/BoardGame.Service";
+        //private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
 
         public MainForm()
         {
@@ -49,7 +50,6 @@ namespace HumanClient
                 return;
             }
 
-            tabPagePlayers.Enabled = false;
             var players = await _client.GetPlayers();
             if (players == null)
             {
@@ -58,6 +58,16 @@ namespace HumanClient
                 return;
             }
 
+            var newList = players.Select(x => x.Name).OrderBy(x => x).AsEnumerable();
+            var oldList = listViewPlayers.Items.OfType<ListViewItem>().Select(x => x.Text).OrderBy(x => x)
+                .AsEnumerable();
+
+            if (RandomOrderedSequelEquals(oldList, newList))
+            {
+                return;
+            }
+
+            tabPagePlayers.Enabled = false;
             listViewPlayers.Items.Clear();
 
             foreach (var player in players)
@@ -72,6 +82,13 @@ namespace HumanClient
             tabPagePlayers.Enabled = true;
         }
 
+        private static bool RandomOrderedSequelEquals<T>(IEnumerable<T> first, IEnumerable<T> second)
+        {
+            var firstSet = first?.ToHashSet() ?? new HashSet<T>();
+            var secondSet = second?.ToHashSet() ?? new HashSet<T>();
+            return firstSet.SetEquals(secondSet);
+        }
+
         private async void RefreshMatches()
         {
             if (await CheckSessionValidity() == false)
@@ -79,7 +96,6 @@ namespace HumanClient
                 return;
             }
 
-            tabPageMatches.Enabled = false;
             var matches = await _client.GetMatches();
             if (matches == null)
             {
@@ -88,6 +104,21 @@ namespace HumanClient
                 return;
             }
 
+            var oldList = listViewMatches.Items.OfType<ListViewItem>()
+                .Select(x => x.Tag as ChessGameDetails)
+                .Where(x => x != null)
+                .Select(x => x.Id)
+                .OrderBy(x => x)
+                .AsEnumerable();
+
+            var newList = matches.Select(x => x.Id).OrderBy(x => x).AsEnumerable();
+
+            if (RandomOrderedSequelEquals(oldList, newList))
+            {
+                return;
+            }
+
+            tabPageMatches.Enabled = false;
             listViewMatches.Items.Clear();
 
             foreach (var match in matches)
@@ -129,30 +160,52 @@ namespace HumanClient
             tabPageMatches.Enabled = true;
         }
 
-        private async void RefreshGame()
+        private async void RefreshGame(bool force = false)
         {
             if (await CheckSessionValidity() == false || !_selectedMatchId.HasValue)
             {
                 return;
             }
 
-            tabPageGame.Enabled = false;
             var details = await _client.GetMatch(_selectedMatchId.Value.ToString());
             if (details == null)
             {
                 MessageBox.Show("Couldn't load match details.");
+                chessBoardGamePanel1.Enabled = true;
                 tabPageGame.Enabled = true;
                 return;
             }
 
+            if (!force)
+            {
+                var newList = details.Representation.History.Select(x => x.ToString());
+                var oldList = listboxMoves.Items.OfType<string>();
+
+                if (RandomOrderedSequelEquals(newList, oldList))
+                {
+                    tabPageGame.Enabled = true;
+                    chessBoardGamePanel1.Enabled = true;
+                    return;
+                }
+            }
+
+            tabPageGame.Enabled = false;
+            chessBoardGamePanel1.Enabled = false;
+
             listboxMoves.Items.Clear();
+
+            var game = new ChessRepresentationInitializer().Create();
 
             foreach (var t in details.Representation.History)
             {
+                game = _mechanism.ApplyMove(game, t);
                 listboxMoves.Items.Add(t.ToString());
             }
 
-            chessBoardGamePanel1.ChessRepresentation = details.Representation;
+            chessBoardGamePanel1.ChessRepresentation = game;
+
+            var gameState = _mechanism.GetGameState(game);
+            labelGameState.Text = GameStateToString(gameState, game.CurrentPlayer);
 
             var isItMyTurn = IsItMyTurn(details);
 
@@ -163,11 +216,12 @@ namespace HumanClient
                 btnOfferDraw.Enabled = false;
                 btnResign.Enabled = false;
                 tabPageGame.Enabled = true;
+                chessBoardGamePanel1.Enabled = true;
                 return;
             }
 
             var myColor = MyColorInGame(details);
-            var possibleSpecialMoves = _mechanism.GenerateMoves(details.Representation).Where(x => x.Owner == myColor).OfType<SpecialMove>().ToList();
+            var possibleSpecialMoves = _mechanism.GenerateMoves(game).Where(x => x.Owner == myColor).OfType<SpecialMove>().ToList();
 
             btnAcceptDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawAccept);
             btnDeclineDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawDecline);
@@ -175,6 +229,24 @@ namespace HumanClient
             btnResign.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.Resign);
 
             tabPageGame.Enabled = true;
+        }
+
+        private static string GameStateToString(GameState state, ChessPlayer? nextPlayer = null)
+        {
+            switch (state)
+            {
+                case GameState.InProgress:
+                    switch (nextPlayer)
+                    {
+                        case ChessPlayer.White: return "Next: White";
+                        case ChessPlayer.Black: return "Next: Black";
+                        default: return "In progress";
+                    }
+                case GameState.WhiteWon: return "White won";
+                case GameState.BlackWon: return "Black won";
+                case GameState.Draw: return "Draw";
+                default: throw new ArgumentOutOfRangeException(nameof(state));
+            }
         }
 
         private void buttonLogin_Click(object sender, EventArgs e)
@@ -186,7 +258,7 @@ namespace HumanClient
         {
             _game = new ChessRepresentationInitializer().Create();
             _mechanism = new ChessMechanism();
-            var isSessionAlive = await CheckSessionValidity() == false;
+            var isSessionAlive = await CheckSessionValidity();
 
             panelLogin.Visible = !isSessionAlive;
             panelLogout.Visible = isSessionAlive;
@@ -201,17 +273,20 @@ namespace HumanClient
             {
                 MessageBox.Show("Login failed!", "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ToggleLoginControls();
+                timerRefresh.Enabled = false;
             }
             else
             {
                 labelLoginStatus.Text = $"{_client.LoginInformation.Username} logged in.";
                 RefreshAll();
                 ToggleLoginControls();
+                timerRefresh.Enabled = true;
             }
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
+            timerRefresh.Enabled = false;
             _client?.Dispose();
             _client = null;
             ToggleLoginControls();
@@ -260,7 +335,7 @@ namespace HumanClient
 
         private void RefreshAll(bool force = false)
         {
-            if (!force && DateTime.Now - _lastUpdate < TimeSpan.FromSeconds(30))
+            if (!force && DateTime.Now - _lastUpdate < TimeSpan.FromSeconds(10))
             {
                 return;
             }
@@ -320,6 +395,14 @@ namespace HumanClient
                 }
             }
             _selectedMatchId = details?.Id;
+
+            if (_selectedMatchId == null)
+            {
+                return;
+            }
+
+            RefreshGame();
+            //tabMain.SelectedTab = tabPageGame;
         }
 
         private void listViewMatches_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -331,8 +414,6 @@ namespace HumanClient
                 return;
             }
 
-            RefreshGame();
-            tabMain.SelectedTab = tabPageGame;
             tabPageGame.Show();
         }
 
@@ -406,16 +487,30 @@ namespace HumanClient
             }
 
             var result = await _client.SendMove(_selectedMatchId.Value, eventArg.Move);
+            listboxMoves.Items.Add(eventArg.Move.ToString());
 
             if (!result)
             {
                 MessageBox.Show("Couldn't send in move.");
+                RefreshGame(true);
             }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             RefreshAll(true);
+        }
+
+        private void timerRefresh_Tick(object sender, EventArgs e)
+        {
+            _countDown--;
+            btnSync.Text = $"Sync now (auto:{_countDown}s)";
+            if (_countDown <= 0)
+            {
+                btnSync.Text = $"Syncing...";
+                RefreshAll();
+                _countDown = 10;
+            }
         }
     }
 }

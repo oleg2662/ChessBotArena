@@ -5,6 +5,16 @@
     <AssemblyName>BoardGame.Model</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>G:\ChessBotArena\src\Model\BoardGame.Model.xml</DocumentationFile>
+    <OutputPath>G:\ChessBotArena\src\Service\bin\Release\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>G:\ChessBotArena\src\Model\BoardGame.Model.xml</DocumentationFile>
+    <OutputPath>G:\ChessBotArena\src\Service\bin\Debug\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Game\Game.csproj" />
   </ItemGroup>
