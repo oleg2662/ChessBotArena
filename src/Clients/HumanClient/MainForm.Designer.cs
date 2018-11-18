@@ -36,20 +36,25 @@ namespace BoardGame.HumanClient
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabPagePlayers = new System.Windows.Forms.TabPage();
             this.listViewPlayers = new System.Windows.Forms.ListView();
+            this.playerColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageListPlayers = new System.Windows.Forms.ImageList(this.components);
             this.tabPageMatches = new System.Windows.Forms.TabPage();
             this.listViewMatches = new System.Windows.Forms.ListView();
             this.columnHeaderMatchName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageListMatchStatuses = new System.Windows.Forms.ImageList(this.components);
             this.tabPageGame = new System.Windows.Forms.TabPage();
+            this.chessBoardGamePanel1 = new BoardGame.Tools.Common.ChessBoardGamePanel();
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.panelMatches = new System.Windows.Forms.Panel();
             this.labelMatchPreviewStatus = new System.Windows.Forms.Label();
+            this.chessBoardPreview = new BoardGame.Tools.Common.ChessBoardVisualizerPanel();
             this.panelPlayers = new System.Windows.Forms.Panel();
             this.btnChallenge = new System.Windows.Forms.Button();
             this.panelRefresh = new System.Windows.Forms.Panel();
             this.btnSync = new System.Windows.Forms.Button();
             this.panelGame = new System.Windows.Forms.Panel();
+            this.listboxMoves = new System.Windows.Forms.ListBox();
+            this.labelGameState = new System.Windows.Forms.Label();
             this.btnDeclineDraw = new System.Windows.Forms.Button();
             this.btnAcceptDraw = new System.Windows.Forms.Button();
             this.btnOfferDraw = new System.Windows.Forms.Button();
@@ -63,12 +68,15 @@ namespace BoardGame.HumanClient
             this.labelPassword = new System.Windows.Forms.Label();
             this.textboxUsername = new System.Windows.Forms.TextBox();
             this.labelUsername = new System.Windows.Forms.Label();
-            this.playerColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
-            this.chessBoardGamePanel1 = new Tools.Common.ChessBoardGamePanel();
-            this.chessBoardPreview = new Tools.Common.ChessBoardVisualizerPanel();
-            this.labelGameState = new System.Windows.Forms.Label();
-            this.listboxMoves = new System.Windows.Forms.ListBox();
+            this.tabLadder = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.checkboxShowHumans = new System.Windows.Forms.CheckBox();
+            this.checkboxShowBots = new System.Windows.Forms.CheckBox();
+            this.listviewLadder = new System.Windows.Forms.ListView();
+            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderPosition = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderPoints = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel1.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabPagePlayers.SuspendLayout();
@@ -81,6 +89,8 @@ namespace BoardGame.HumanClient
             this.panelGame.SuspendLayout();
             this.panelLogout.SuspendLayout();
             this.panelLogin.SuspendLayout();
+            this.tabLadder.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -104,6 +114,7 @@ namespace BoardGame.HumanClient
             this.tabMain.Controls.Add(this.tabPagePlayers);
             this.tabMain.Controls.Add(this.tabPageMatches);
             this.tabMain.Controls.Add(this.tabPageGame);
+            this.tabMain.Controls.Add(this.tabLadder);
             this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabMain.Location = new System.Drawing.Point(3, 3);
             this.tabMain.Name = "tabMain";
@@ -131,7 +142,7 @@ namespace BoardGame.HumanClient
             this.listViewPlayers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.playerColumnHeader});
             this.listViewPlayers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewPlayers.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listViewPlayers.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listViewPlayers.LargeImageList = this.imageListPlayers;
             this.listViewPlayers.Location = new System.Drawing.Point(3, 3);
             this.listViewPlayers.MultiSelect = false;
@@ -141,6 +152,11 @@ namespace BoardGame.HumanClient
             this.listViewPlayers.TabIndex = 0;
             this.listViewPlayers.UseCompatibleStateImageBehavior = false;
             this.listViewPlayers.View = System.Windows.Forms.View.Details;
+            // 
+            // playerColumnHeader
+            // 
+            this.playerColumnHeader.Text = "Players";
+            this.playerColumnHeader.Width = 620;
             // 
             // imageListPlayers
             // 
@@ -168,7 +184,7 @@ namespace BoardGame.HumanClient
             this.listViewMatches.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderMatchName});
             this.listViewMatches.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewMatches.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listViewMatches.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listViewMatches.LargeImageList = this.imageListMatchStatuses;
             this.listViewMatches.Location = new System.Drawing.Point(3, 3);
             this.listViewMatches.MultiSelect = false;
@@ -206,6 +222,19 @@ namespace BoardGame.HumanClient
             this.tabPageGame.Text = "Game";
             this.tabPageGame.UseVisualStyleBackColor = true;
             // 
+            // chessBoardGamePanel1
+            // 
+            this.chessBoardGamePanel1.Bevel = System.Drawing.Color.Brown;
+            this.chessBoardGamePanel1.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardGamePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chessBoardGamePanel1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.chessBoardGamePanel1.Location = new System.Drawing.Point(3, 3);
+            this.chessBoardGamePanel1.Name = "chessBoardGamePanel1";
+            this.chessBoardGamePanel1.Size = new System.Drawing.Size(620, 620);
+            this.chessBoardGamePanel1.TabIndex = 0;
+            this.chessBoardGamePanel1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
+            this.chessBoardGamePanel1.OnValidMoveSelected += new BoardGame.Tools.Common.ChessBoardMoveSelectedEventHandler(this.chessBoardGamePanel1_OnValidMoveSelected);
+            // 
             // panelSidebar
             // 
             this.panelSidebar.Controls.Add(this.panelMatches);
@@ -242,6 +271,18 @@ namespace BoardGame.HumanClient
             this.labelMatchPreviewStatus.TabIndex = 1;
             this.labelMatchPreviewStatus.Text = "STATUS";
             this.labelMatchPreviewStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // chessBoardPreview
+            // 
+            this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
+            this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
+            this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+            this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
+            this.chessBoardPreview.Name = "chessBoardPreview";
+            this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
+            this.chessBoardPreview.TabIndex = 0;
+            this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // panelPlayers
             // 
@@ -301,6 +342,26 @@ namespace BoardGame.HumanClient
             this.panelGame.Size = new System.Drawing.Size(194, 352);
             this.panelGame.TabIndex = 15;
             this.panelGame.Visible = false;
+            // 
+            // listboxMoves
+            // 
+            this.listboxMoves.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listboxMoves.FormattingEnabled = true;
+            this.listboxMoves.Location = new System.Drawing.Point(4, 148);
+            this.listboxMoves.Name = "listboxMoves";
+            this.listboxMoves.Size = new System.Drawing.Size(186, 167);
+            this.listboxMoves.TabIndex = 6;
+            // 
+            // labelGameState
+            // 
+            this.labelGameState.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelGameState.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelGameState.Location = new System.Drawing.Point(4, 315);
+            this.labelGameState.Name = "labelGameState";
+            this.labelGameState.Size = new System.Drawing.Size(186, 33);
+            this.labelGameState.TabIndex = 5;
+            this.labelGameState.Text = "-";
+            this.labelGameState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnDeclineDraw
             // 
@@ -438,60 +499,97 @@ namespace BoardGame.HumanClient
             this.labelUsername.Text = "Username";
             this.labelUsername.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
-            // playerColumnHeader
-            // 
-            this.playerColumnHeader.Text = "Players";
-            this.playerColumnHeader.Width = 620;
-            // 
             // timerRefresh
             // 
             this.timerRefresh.Interval = 1000;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
-            // chessBoardGamePanel1
+            // tabLadder
             // 
-            this.chessBoardGamePanel1.Bevel = System.Drawing.Color.Brown;
-            this.chessBoardGamePanel1.BlackSquare = System.Drawing.Color.SandyBrown;
-            this.chessBoardGamePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chessBoardGamePanel1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.chessBoardGamePanel1.Location = new System.Drawing.Point(3, 3);
-            this.chessBoardGamePanel1.Name = "chessBoardGamePanel1";
-            this.chessBoardGamePanel1.Size = new System.Drawing.Size(620, 620);
-            this.chessBoardGamePanel1.TabIndex = 0;
-            this.chessBoardGamePanel1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
-            this.chessBoardGamePanel1.OnValidMoveSelected += new Tools.Common.ChessBoardMoveSelectedEventHandler(this.chessBoardGamePanel1_OnValidMoveSelected);
+            this.tabLadder.Controls.Add(this.listviewLadder);
+            this.tabLadder.Controls.Add(this.panel1);
+            this.tabLadder.Location = new System.Drawing.Point(4, 22);
+            this.tabLadder.Name = "tabLadder";
+            this.tabLadder.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLadder.Size = new System.Drawing.Size(626, 626);
+            this.tabLadder.TabIndex = 3;
+            this.tabLadder.Text = "Ladder";
+            this.tabLadder.UseVisualStyleBackColor = true;
+            this.tabLadder.Enter += new System.EventHandler(this.tabLadder_Enter);
             // 
-            // chessBoardPreview
+            // panel1
             // 
-            this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
-            this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
-            this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
-            this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
-            this.chessBoardPreview.Name = "chessBoardPreview";
-            this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
-            this.chessBoardPreview.TabIndex = 0;
-            this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
+            this.panel1.Controls.Add(this.checkboxShowBots);
+            this.panel1.Controls.Add(this.checkboxShowHumans);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(620, 39);
+            this.panel1.TabIndex = 2;
             // 
-            // labelGameState
+            // checkboxShowHumans
             // 
-            this.labelGameState.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelGameState.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelGameState.Location = new System.Drawing.Point(4, 315);
-            this.labelGameState.Name = "labelGameState";
-            this.labelGameState.Size = new System.Drawing.Size(186, 33);
-            this.labelGameState.TabIndex = 5;
-            this.labelGameState.Text = "-";
-            this.labelGameState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkboxShowHumans.AutoSize = true;
+            this.checkboxShowHumans.Checked = true;
+            this.checkboxShowHumans.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkboxShowHumans.Dock = System.Windows.Forms.DockStyle.Left;
+            this.checkboxShowHumans.Location = new System.Drawing.Point(0, 0);
+            this.checkboxShowHumans.Name = "checkboxShowHumans";
+            this.checkboxShowHumans.Padding = new System.Windows.Forms.Padding(5);
+            this.checkboxShowHumans.Size = new System.Drawing.Size(142, 39);
+            this.checkboxShowHumans.TabIndex = 0;
+            this.checkboxShowHumans.Text = "Include human players";
+            this.checkboxShowHumans.UseVisualStyleBackColor = true;
             // 
-            // listboxMoves
+            // checkboxShowBots
             // 
-            this.listboxMoves.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listboxMoves.FormattingEnabled = true;
-            this.listboxMoves.Location = new System.Drawing.Point(4, 148);
-            this.listboxMoves.Name = "listboxMoves";
-            this.listboxMoves.Size = new System.Drawing.Size(186, 167);
-            this.listboxMoves.TabIndex = 6;
+            this.checkboxShowBots.AutoSize = true;
+            this.checkboxShowBots.Checked = true;
+            this.checkboxShowBots.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkboxShowBots.Dock = System.Windows.Forms.DockStyle.Left;
+            this.checkboxShowBots.Location = new System.Drawing.Point(142, 0);
+            this.checkboxShowBots.Name = "checkboxShowBots";
+            this.checkboxShowBots.Padding = new System.Windows.Forms.Padding(5);
+            this.checkboxShowBots.Size = new System.Drawing.Size(94, 39);
+            this.checkboxShowBots.TabIndex = 1;
+            this.checkboxShowBots.Text = "Include bots";
+            this.checkboxShowBots.UseVisualStyleBackColor = true;
+            // 
+            // listviewLadder
+            // 
+            this.listviewLadder.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listviewLadder.AutoArrange = false;
+            this.listviewLadder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listviewLadder.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderPosition,
+            this.columnHeaderName,
+            this.columnHeaderPoints});
+            this.listviewLadder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listviewLadder.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listviewLadder.LargeImageList = this.imageListPlayers;
+            this.listviewLadder.Location = new System.Drawing.Point(3, 42);
+            this.listviewLadder.MultiSelect = false;
+            this.listviewLadder.Name = "listviewLadder";
+            this.listviewLadder.Size = new System.Drawing.Size(620, 581);
+            this.listviewLadder.SmallImageList = this.imageListPlayers;
+            this.listviewLadder.TabIndex = 3;
+            this.listviewLadder.UseCompatibleStateImageBehavior = false;
+            this.listviewLadder.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderName
+            // 
+            this.columnHeaderName.Text = "Name";
+            this.columnHeaderName.Width = 390;
+            // 
+            // columnHeaderPosition
+            // 
+            this.columnHeaderPosition.Text = "#";
+            this.columnHeaderPosition.Width = 80;
+            // 
+            // columnHeaderPoints
+            // 
+            this.columnHeaderPoints.Text = "Avg/Ply";
+            this.columnHeaderPoints.Width = 120;
             // 
             // MainForm
             // 
@@ -502,6 +600,7 @@ namespace BoardGame.HumanClient
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.IsMdiContainer = true;
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Chess Client";
@@ -519,6 +618,9 @@ namespace BoardGame.HumanClient
             this.panelLogout.ResumeLayout(false);
             this.panelLogin.ResumeLayout(false);
             this.panelLogin.PerformLayout();
+            this.tabLadder.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -562,6 +664,14 @@ namespace BoardGame.HumanClient
         private System.Windows.Forms.Timer timerRefresh;
         private System.Windows.Forms.ListBox listboxMoves;
         private System.Windows.Forms.Label labelGameState;
+        private System.Windows.Forms.TabPage tabLadder;
+        private System.Windows.Forms.ListView listviewLadder;
+        private System.Windows.Forms.ColumnHeader columnHeaderName;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox checkboxShowBots;
+        private System.Windows.Forms.CheckBox checkboxShowHumans;
+        private System.Windows.Forms.ColumnHeader columnHeaderPosition;
+        private System.Windows.Forms.ColumnHeader columnHeaderPoints;
     }
 }
 

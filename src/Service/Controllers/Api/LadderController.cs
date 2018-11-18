@@ -53,7 +53,7 @@ namespace BoardGame.Service.Controllers.Api
         /// </summary>
         /// <returns>The version information of the service.</returns>
         [ProducesResponseType(typeof(IEnumerable<LadderItem>), (int)HttpStatusCode.OK)]
-        [HttpGet("human")]
+        [HttpGet("humans")]
         public IActionResult GetHumanPlayerLadder()
         {
             var result = _repository.GetHumanLadder();

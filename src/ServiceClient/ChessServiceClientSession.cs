@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.ChessGamesControllerModels;
+using BoardGame.Model.Api.LadderControllerModels;
 using BoardGame.Model.Api.PlayerControllerModels;
 
 namespace BoardGame.ServiceClient
 {
     public class ChessServiceClientSession : IDisposable
     {
-        private readonly string _username;
-        private readonly string _password;
+        private string _username;
+        private string _password;
         private ChessServiceClient _client;
 
         public ChessServiceClientSession(string baseUrl, string username, string password)
@@ -19,6 +20,24 @@ namespace BoardGame.ServiceClient
             _password = password;
             BaseUrl = baseUrl;
             _client = new ChessServiceClient(BaseUrl);
+        }
+
+        public ChessServiceClientSession(string baseUrl)
+            : this(baseUrl, string.Empty, string.Empty)
+        {
+        }
+
+        public async Task<bool> Login(string userName, string password)
+        {
+            _username = userName;
+            _password = password;
+
+            return await Login();
+        }
+
+        public void Logout()
+        {
+            LoginInformation = null;
         }
 
         public string BaseUrl { get; }
@@ -31,14 +50,14 @@ namespace BoardGame.ServiceClient
         {
             if (IsLoggedIn) return true;
             if (LoginInformation == null || string.IsNullOrWhiteSpace(_username)) return false;
-            return await Initialize();
+            return await Login();
         }
 
         public LoginResult LoginInformation { get; private set; }
 
         private string JwtToken => LoginInformation?.TokenString;
 
-        public async Task<bool> Initialize()
+        public async Task<bool> Login()
         {
             if (!IsLoggedIn)
             {
@@ -50,25 +69,25 @@ namespace BoardGame.ServiceClient
 
         public async Task<ChessGame> ChallengePlayer(string username)
         {
-            await Initialize();
+            await Login();
             return await _client.ChallengePlayer(JwtToken, username);
         }
 
         public async Task<ChessGameDetails> GetMatch(string id)
         {
-            await Initialize();
+            await Login();
             return await _client.GetMatch(JwtToken, id);
         }
 
         public async Task<IEnumerable<ChessGame>> GetMatches()
         {
-            await Initialize();
+            await Login();
             return await _client.GetMatches(JwtToken);
         }
 
         public async Task<IEnumerable<Player>> GetPlayers()
         {
-            await Initialize();
+            await Login();
             return await _client.GetPlayers(JwtToken);
         }
 
@@ -80,6 +99,20 @@ namespace BoardGame.ServiceClient
         public async Task<string> GetVersion()
         {
             return await _client.GetVersion();
+        }
+
+        /// <summary>
+        /// Gets the ladder.
+        /// </summary>
+        /// <param name="botsLadder">
+        /// If true, it will return the bots' ladder.
+        /// If false, it will return the human players' ladder.
+        /// If not set (default) it will return the combined ladder.
+        /// </param>
+        /// <returns>The ladder list. If there was an error, it returns null.</returns>
+        public virtual async Task<IEnumerable<LadderItem>> GetLadder(bool? botsLadder = null)
+        {
+            return await _client.GetLadder(botsLadder);
         }
 
         public void Dispose()

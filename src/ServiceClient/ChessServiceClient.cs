@@ -10,6 +10,7 @@ using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.AccountControllerModels;
 using BoardGame.Model.Api.ChessGamesControllerModels;
+using BoardGame.Model.Api.LadderControllerModels;
 using BoardGame.Model.Api.PlayerControllerModels;
 using Easy.Common;
 using Easy.Common.Extensions;
@@ -29,6 +30,9 @@ namespace BoardGame.ServiceClient
         private Uri AccountControllerUri => new Uri($"{_baseUrl}/api/account");
         private Uri PlayersControllerUri => new Uri($"{_baseUrl}/api/players");
         private Uri GamesControllerUri => new Uri(GamesControllerUrl);
+        private Uri LadderControllerUri => new Uri($"{_baseUrl}/api/ladder");
+        private Uri LadderHumansControllerUri => new Uri($"{_baseUrl}/api/ladder/humans");
+        private Uri LadderBotsControllerUri => new Uri($"{_baseUrl}/api/ladder/bots");
 
         public ChessServiceClient(string baseUrl)
         {
@@ -223,6 +227,44 @@ namespace BoardGame.ServiceClient
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets the ladder.
+        /// </summary>
+        /// <param name="botsLadder">
+        /// If true, it will return the bots' ladder.
+        /// If false, it will return the human players' ladder.
+        /// If not set (default) it will return the combined ladder.
+        /// </param>
+        /// <returns>The ladder list. If there was an error, it returns null.</returns>
+        public virtual async Task<IEnumerable<LadderItem>> GetLadder(bool? botsLadder = null)
+        {
+            HttpRequestMessage message;
+
+            if (!botsLadder.HasValue)
+            {
+                message = new HttpRequestMessage(HttpMethod.Get, LadderControllerUri);
+            }
+            else
+            {
+                message = botsLadder.Value
+                    ? new HttpRequestMessage(HttpMethod.Get, LadderBotsControllerUri)
+                    : new HttpRequestMessage(HttpMethod.Get, LadderHumansControllerUri);
+            }
+
+            var resultMessage = await _client.SendAsync(message);
+
+            if (!resultMessage.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var resultJson = await resultMessage.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<IEnumerable<LadderItem>>(resultJson);
+
+            return result;
         }
 
         public void Dispose()

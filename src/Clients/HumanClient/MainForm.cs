@@ -22,8 +22,8 @@ namespace BoardGame.HumanClient
         private DateTime _lastUpdate = DateTime.MinValue;
         private int _countDown = 10;
 
-        private readonly string _baseUrl = "http://localhost/BoardGame.Service";
-        //private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+        //private readonly string _baseUrl = "http://localhost/BoardGame.Service";
+        private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
 
         public MainForm()
         {
@@ -31,6 +31,7 @@ namespace BoardGame.HumanClient
             tabPageGame.Tag = Tabs.GamePage;
             tabPageMatches.Tag = Tabs.MatchesPage;
             tabPagePlayers.Tag = Tabs.PlayersPage;
+            _client = new ChessServiceClientSession(_baseUrl);
         }
 
         private void tabMain_Selected(object sender, TabControlEventArgs e)
@@ -267,8 +268,7 @@ namespace BoardGame.HumanClient
 
         private async void Login()
         {
-            _client = new ChessServiceClientSession(_baseUrl, textboxUsername.Text, textboxPassword.Text);
-            var success = await _client.Initialize();
+            var success = await _client.Login(textboxUsername.Text, textboxPassword.Text);
 
             if (!success)
             {
@@ -513,6 +513,47 @@ namespace BoardGame.HumanClient
                 btnSync.Text = $"Syncing...";
                 RefreshAll();
                 _countDown = 10;
+            }
+        }
+
+        private void tabLadder_Enter(object sender, EventArgs e)
+        {
+            RefreshLadder();
+        }
+
+        private async void RefreshLadder()
+        {
+            bool? parameter = null;
+            if (checkboxShowBots.Checked && !checkboxShowHumans.Checked)
+            {
+                parameter = true;
+            }
+            else if (!checkboxShowBots.Checked && checkboxShowHumans.Checked)
+            {
+                parameter = false;
+            }
+
+            var result = await _client.GetLadder(parameter);
+
+            if (result == null)
+            {
+                MessageBox.Show("Couldn't get ladder.");
+                return;
+            }
+
+            listviewLadder.Items.Clear();
+
+            foreach (var ladderItem in result.OrderBy(x => x.Place))
+            {
+                listviewLadder.Items.Add(new ListViewItem()
+                {
+                    Text = $"{ladderItem.Place}",
+                    SubItems =
+                    {
+                        ladderItem.Name,
+                        $"{ladderItem.Points:F}"
+                    }
+                });
             }
         }
     }
