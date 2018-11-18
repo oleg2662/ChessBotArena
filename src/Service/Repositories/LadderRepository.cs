@@ -71,7 +71,7 @@ namespace BoardGame.Service.Repositories
                 .Select((x, i) => new
                 {
                     x.Key,
-                    Position = i,
+                    Position = i+1,
                     Players = x.Select(y => new { y.Username, y.IsBot })
                 })
                 .ToList();
