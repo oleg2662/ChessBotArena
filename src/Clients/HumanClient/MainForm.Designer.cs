@@ -44,6 +44,14 @@ namespace BoardGame.HumanClient
             this.imageListMatchStatuses = new System.Windows.Forms.ImageList(this.components);
             this.tabPageGame = new System.Windows.Forms.TabPage();
             this.chessBoardGamePanel1 = new BoardGame.Tools.Common.ChessBoardGamePanel();
+            this.tabLadder = new System.Windows.Forms.TabPage();
+            this.listviewLadder = new System.Windows.Forms.ListView();
+            this.columnHeaderPosition = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderPoints = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.checkboxShowBots = new System.Windows.Forms.CheckBox();
+            this.checkboxShowHumans = new System.Windows.Forms.CheckBox();
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.panelMatches = new System.Windows.Forms.Panel();
             this.labelMatchPreviewStatus = new System.Windows.Forms.Label();
@@ -69,19 +77,13 @@ namespace BoardGame.HumanClient
             this.textboxUsername = new System.Windows.Forms.TextBox();
             this.labelUsername = new System.Windows.Forms.Label();
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
-            this.tabLadder = new System.Windows.Forms.TabPage();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.checkboxShowHumans = new System.Windows.Forms.CheckBox();
-            this.checkboxShowBots = new System.Windows.Forms.CheckBox();
-            this.listviewLadder = new System.Windows.Forms.ListView();
-            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderPosition = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderPoints = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel1.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabPagePlayers.SuspendLayout();
             this.tabPageMatches.SuspendLayout();
             this.tabPageGame.SuspendLayout();
+            this.tabLadder.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.panelSidebar.SuspendLayout();
             this.panelMatches.SuspendLayout();
             this.panelPlayers.SuspendLayout();
@@ -89,8 +91,6 @@ namespace BoardGame.HumanClient
             this.panelGame.SuspendLayout();
             this.panelLogout.SuspendLayout();
             this.panelLogin.SuspendLayout();
-            this.tabLadder.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -234,6 +234,95 @@ namespace BoardGame.HumanClient
             this.chessBoardGamePanel1.TabIndex = 0;
             this.chessBoardGamePanel1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             this.chessBoardGamePanel1.OnValidMoveSelected += new BoardGame.Tools.Common.ChessBoardMoveSelectedEventHandler(this.chessBoardGamePanel1_OnValidMoveSelected);
+            // 
+            // tabLadder
+            // 
+            this.tabLadder.Controls.Add(this.listviewLadder);
+            this.tabLadder.Controls.Add(this.panel1);
+            this.tabLadder.Location = new System.Drawing.Point(4, 22);
+            this.tabLadder.Name = "tabLadder";
+            this.tabLadder.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLadder.Size = new System.Drawing.Size(626, 626);
+            this.tabLadder.TabIndex = 3;
+            this.tabLadder.Text = "Ladder";
+            this.tabLadder.UseVisualStyleBackColor = true;
+            this.tabLadder.Enter += new System.EventHandler(this.tabLadder_Enter);
+            // 
+            // listviewLadder
+            // 
+            this.listviewLadder.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listviewLadder.AutoArrange = false;
+            this.listviewLadder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listviewLadder.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderPosition,
+            this.columnHeaderName,
+            this.columnHeaderPoints});
+            this.listviewLadder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listviewLadder.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listviewLadder.LargeImageList = this.imageListPlayers;
+            this.listviewLadder.Location = new System.Drawing.Point(3, 42);
+            this.listviewLadder.MultiSelect = false;
+            this.listviewLadder.Name = "listviewLadder";
+            this.listviewLadder.Size = new System.Drawing.Size(620, 581);
+            this.listviewLadder.SmallImageList = this.imageListPlayers;
+            this.listviewLadder.TabIndex = 3;
+            this.listviewLadder.UseCompatibleStateImageBehavior = false;
+            this.listviewLadder.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderPosition
+            // 
+            this.columnHeaderPosition.Text = "#";
+            this.columnHeaderPosition.Width = 80;
+            // 
+            // columnHeaderName
+            // 
+            this.columnHeaderName.Text = "Name";
+            this.columnHeaderName.Width = 390;
+            // 
+            // columnHeaderPoints
+            // 
+            this.columnHeaderPoints.Text = "Avg/Ply";
+            this.columnHeaderPoints.Width = 120;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.checkboxShowBots);
+            this.panel1.Controls.Add(this.checkboxShowHumans);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(620, 39);
+            this.panel1.TabIndex = 2;
+            // 
+            // checkboxShowBots
+            // 
+            this.checkboxShowBots.AutoSize = true;
+            this.checkboxShowBots.Checked = true;
+            this.checkboxShowBots.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkboxShowBots.Dock = System.Windows.Forms.DockStyle.Left;
+            this.checkboxShowBots.Location = new System.Drawing.Point(142, 0);
+            this.checkboxShowBots.Name = "checkboxShowBots";
+            this.checkboxShowBots.Padding = new System.Windows.Forms.Padding(5);
+            this.checkboxShowBots.Size = new System.Drawing.Size(94, 39);
+            this.checkboxShowBots.TabIndex = 1;
+            this.checkboxShowBots.Text = "Include bots";
+            this.checkboxShowBots.UseVisualStyleBackColor = true;
+            this.checkboxShowBots.CheckedChanged += new System.EventHandler(this.checkboxShowBots_CheckedChanged);
+            // 
+            // checkboxShowHumans
+            // 
+            this.checkboxShowHumans.AutoSize = true;
+            this.checkboxShowHumans.Checked = true;
+            this.checkboxShowHumans.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkboxShowHumans.Dock = System.Windows.Forms.DockStyle.Left;
+            this.checkboxShowHumans.Location = new System.Drawing.Point(0, 0);
+            this.checkboxShowHumans.Name = "checkboxShowHumans";
+            this.checkboxShowHumans.Padding = new System.Windows.Forms.Padding(5);
+            this.checkboxShowHumans.Size = new System.Drawing.Size(142, 39);
+            this.checkboxShowHumans.TabIndex = 0;
+            this.checkboxShowHumans.Text = "Include human players";
+            this.checkboxShowHumans.UseVisualStyleBackColor = true;
+            this.checkboxShowHumans.CheckedChanged += new System.EventHandler(this.checkboxShowHumans_CheckedChanged);
             // 
             // panelSidebar
             // 
@@ -504,93 +593,6 @@ namespace BoardGame.HumanClient
             this.timerRefresh.Interval = 1000;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
-            // tabLadder
-            // 
-            this.tabLadder.Controls.Add(this.listviewLadder);
-            this.tabLadder.Controls.Add(this.panel1);
-            this.tabLadder.Location = new System.Drawing.Point(4, 22);
-            this.tabLadder.Name = "tabLadder";
-            this.tabLadder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLadder.Size = new System.Drawing.Size(626, 626);
-            this.tabLadder.TabIndex = 3;
-            this.tabLadder.Text = "Ladder";
-            this.tabLadder.UseVisualStyleBackColor = true;
-            this.tabLadder.Enter += new System.EventHandler(this.tabLadder_Enter);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.checkboxShowBots);
-            this.panel1.Controls.Add(this.checkboxShowHumans);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(620, 39);
-            this.panel1.TabIndex = 2;
-            // 
-            // checkboxShowHumans
-            // 
-            this.checkboxShowHumans.AutoSize = true;
-            this.checkboxShowHumans.Checked = true;
-            this.checkboxShowHumans.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkboxShowHumans.Dock = System.Windows.Forms.DockStyle.Left;
-            this.checkboxShowHumans.Location = new System.Drawing.Point(0, 0);
-            this.checkboxShowHumans.Name = "checkboxShowHumans";
-            this.checkboxShowHumans.Padding = new System.Windows.Forms.Padding(5);
-            this.checkboxShowHumans.Size = new System.Drawing.Size(142, 39);
-            this.checkboxShowHumans.TabIndex = 0;
-            this.checkboxShowHumans.Text = "Include human players";
-            this.checkboxShowHumans.UseVisualStyleBackColor = true;
-            // 
-            // checkboxShowBots
-            // 
-            this.checkboxShowBots.AutoSize = true;
-            this.checkboxShowBots.Checked = true;
-            this.checkboxShowBots.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkboxShowBots.Dock = System.Windows.Forms.DockStyle.Left;
-            this.checkboxShowBots.Location = new System.Drawing.Point(142, 0);
-            this.checkboxShowBots.Name = "checkboxShowBots";
-            this.checkboxShowBots.Padding = new System.Windows.Forms.Padding(5);
-            this.checkboxShowBots.Size = new System.Drawing.Size(94, 39);
-            this.checkboxShowBots.TabIndex = 1;
-            this.checkboxShowBots.Text = "Include bots";
-            this.checkboxShowBots.UseVisualStyleBackColor = true;
-            // 
-            // listviewLadder
-            // 
-            this.listviewLadder.Activation = System.Windows.Forms.ItemActivation.OneClick;
-            this.listviewLadder.AutoArrange = false;
-            this.listviewLadder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listviewLadder.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderPosition,
-            this.columnHeaderName,
-            this.columnHeaderPoints});
-            this.listviewLadder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listviewLadder.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listviewLadder.LargeImageList = this.imageListPlayers;
-            this.listviewLadder.Location = new System.Drawing.Point(3, 42);
-            this.listviewLadder.MultiSelect = false;
-            this.listviewLadder.Name = "listviewLadder";
-            this.listviewLadder.Size = new System.Drawing.Size(620, 581);
-            this.listviewLadder.SmallImageList = this.imageListPlayers;
-            this.listviewLadder.TabIndex = 3;
-            this.listviewLadder.UseCompatibleStateImageBehavior = false;
-            this.listviewLadder.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeaderName
-            // 
-            this.columnHeaderName.Text = "Name";
-            this.columnHeaderName.Width = 390;
-            // 
-            // columnHeaderPosition
-            // 
-            this.columnHeaderPosition.Text = "#";
-            this.columnHeaderPosition.Width = 80;
-            // 
-            // columnHeaderPoints
-            // 
-            this.columnHeaderPoints.Text = "Avg/Ply";
-            this.columnHeaderPoints.Width = 120;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -610,6 +612,9 @@ namespace BoardGame.HumanClient
             this.tabPagePlayers.ResumeLayout(false);
             this.tabPageMatches.ResumeLayout(false);
             this.tabPageGame.ResumeLayout(false);
+            this.tabLadder.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.panelSidebar.ResumeLayout(false);
             this.panelMatches.ResumeLayout(false);
             this.panelPlayers.ResumeLayout(false);
@@ -618,9 +623,6 @@ namespace BoardGame.HumanClient
             this.panelLogout.ResumeLayout(false);
             this.panelLogin.ResumeLayout(false);
             this.panelLogin.PerformLayout();
-            this.tabLadder.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }

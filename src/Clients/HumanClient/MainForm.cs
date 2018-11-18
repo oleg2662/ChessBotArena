@@ -548,6 +548,7 @@ namespace BoardGame.HumanClient
                 listviewLadder.Items.Add(new ListViewItem()
                 {
                     Text = $"{ladderItem.Place}",
+                    ImageKey = ladderItem.IsBot ? "Robot" : "Brain",
                     SubItems =
                     {
                         ladderItem.Name,
@@ -555,6 +556,16 @@ namespace BoardGame.HumanClient
                     }
                 });
             }
+        }
+
+        private void checkboxShowHumans_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshLadder();
+        }
+
+        private void checkboxShowBots_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshLadder();
         }
     }
 }
