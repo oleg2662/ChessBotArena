@@ -22,8 +22,11 @@ namespace BoardGame.HumanClient
         private DateTime _lastUpdate = DateTime.MinValue;
         private int _countDown = 10;
 
+#if DEBUG
         private readonly string _baseUrl = "http://localhost/BoardGame.Service";
-        //private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+#else
+        private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+#endif
 
         public MainForm()
         {

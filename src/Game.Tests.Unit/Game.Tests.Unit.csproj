@@ -8,6 +8,8 @@
     <AssemblyName>BoardGame.Game.Tests.Unit</AssemblyName>
 
     <RootNamespace>BoardGame.Game.Tests.Unit</RootNamespace>
+
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

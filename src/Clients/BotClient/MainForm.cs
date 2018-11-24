@@ -34,8 +34,11 @@ namespace BoardGame.BotClient
         private int _round = 1;
         private bool _isRobotThinking = false;
         private int _maxNumberOfMatches = 5;
+#if DEBUG
         private readonly string _baseUrl = "http://localhost/BoardGame.Service";
-        //private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+#else
+        private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+#endif
 
         private void ChangeAlgorithm()
         {

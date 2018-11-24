@@ -13,8 +13,11 @@ namespace BoardGame.ChessServiceTestApp
 
         private string _jwtToken;
 
-        private readonly string _baseUrl = "http://localhost/BoardGame.Service";
-        //private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+#if DEBUG
+        private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+#else
+        private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+#endif
 
         public MainForm()
         {
@@ -53,7 +56,7 @@ namespace BoardGame.ChessServiceTestApp
                 var password = textboxPassword.Text;
                 result = await _client.Login(username, password).ConfigureAwait(true);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show("Service seems down.");
                 labelStatus.Text = string.Empty;
