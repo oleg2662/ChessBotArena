@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BoardGame.ChessboardVisualizer</RootNamespace>
     <AssemblyName>BoardGame.ChessboardVisualizer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -79,4 +79,16 @@
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>@echo off
+
+setlocal EnableDelayedExpansion 
+
+set VisualizersDir="%25USERPROFILE%25\Documents\Visual Studio 2017\Visualizers\BoardGame.ChessboardVisualizer.dll"
+
+:build
+echo Using visualizer dir: %25VisualizersDir%25
+
+"$(SolutionDir)ILMerge\ILMerge.exe" /ndebug /copyattrs /targetplatform:4.0 /out:%25VisualizersDir%25 "$(TargetDir)BoardGame.ChessboardVisualizer.dll" "$(TargetDir)Microsoft.Extensions.Caching.Abstractions.dll" "$(TargetDir)Microsoft.Extensions.Caching.Memory.dll" "$(TargetDir)Microsoft.Extensions.Options.dll" "$(TargetDir)BoardGame.Tools.Common.dll"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

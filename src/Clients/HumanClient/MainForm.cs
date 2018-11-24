@@ -9,7 +9,7 @@ using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.ChessGamesControllerModels;
 using BoardGame.ServiceClient;
 using BoardGame.Tools.Common;
-using Easy.Common.Extensions;
+//using Easy.Common.Extensions;
 
 namespace BoardGame.HumanClient
 {
