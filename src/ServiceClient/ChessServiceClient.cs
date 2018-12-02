@@ -33,6 +33,7 @@ namespace BoardGame.ServiceClient
         private Uri LadderControllerUri => new Uri($"{_baseUrl}/api/ladder");
         private Uri LadderHumansControllerUri => new Uri($"{_baseUrl}/api/ladder/humans");
         private Uri LadderBotsControllerUri => new Uri($"{_baseUrl}/api/ladder/bots");
+        private Uri TokenControllerUri => new Uri($"{_baseUrl}/api/token");
 
         public ChessServiceClient(string baseUrl)
         {
@@ -58,7 +59,7 @@ namespace BoardGame.ServiceClient
                                .ConnectionLeaseTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
         }
 
-        public virtual async Task<string> GetVersion()
+        public virtual async Task<string> GetVersionAsync()
         {
             var message = new HttpRequestMessage(HttpMethod.Get, HealthControllerUri);
 
@@ -71,7 +72,7 @@ namespace BoardGame.ServiceClient
             return version;
         }
 
-        public virtual async Task<LoginResult> Login(string username, string password)
+        public virtual async Task<LoginResult> LoginAsync(string username, string password)
         {
             var loginModel = new LoginModel
             {
@@ -111,7 +112,7 @@ namespace BoardGame.ServiceClient
             return result;
         }
 
-        public virtual async Task<IEnumerable<Player>> GetPlayers(string token)
+        public virtual async Task<IEnumerable<Player>> GetPlayersAsync(string token)
         {
             var message = new HttpRequestMessage(HttpMethod.Get, PlayersControllerUri);
 
@@ -130,7 +131,7 @@ namespace BoardGame.ServiceClient
             return result;
         }
 
-        public virtual async Task<IEnumerable<ChessGame>> GetMatches(string token)
+        public virtual async Task<IEnumerable<ChessGame>> GetMatchesAsync(string token)
         {
             var message = new HttpRequestMessage(HttpMethod.Get, GamesControllerUri);
 
@@ -149,7 +150,12 @@ namespace BoardGame.ServiceClient
             return result;
         }
 
-        public virtual async Task<ChessGameDetails> GetMatch(string token, string id)
+        public virtual async Task<ChessGameDetails> GetMatchAsync(string token, Guid id)
+        {
+            return await GetMatchAsync(token, id.ToString());
+        }
+
+        public virtual async Task<ChessGameDetails> GetMatchAsync(string token, string id)
         {
             var url = $"{GamesControllerUri.AbsoluteUri}/{id}";
             var uri = new Uri(url);
@@ -179,7 +185,7 @@ namespace BoardGame.ServiceClient
             return result;
         }
 
-        public virtual async Task<ChessGame> ChallengePlayer(string token, string username)
+        public virtual async Task<ChessGame> ChallengePlayerAsync(string token, string username)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, GamesControllerUri);
 
@@ -206,7 +212,12 @@ namespace BoardGame.ServiceClient
             return result;
         }
 
-        public virtual async Task<bool> SendMove<T>(string token, Guid matchId, T move) where T : BaseMove
+        public virtual async Task<bool> SendMoveAsync<T>(string token, Guid matchId, T move) where T : BaseMove
+        {
+            return await SendMoveAsync(token, matchId.ToString(), move);
+        }
+
+        public virtual async Task<bool> SendMoveAsync<T>(string token, string matchId, T move) where T : BaseMove
         {
             var url = $"{GamesControllerUri.AbsoluteUri}/{matchId}";
             var uri = new Uri(url);
@@ -215,7 +226,7 @@ namespace BoardGame.ServiceClient
             message.Headers.Add("Authorization", $"Bearer {token}");
             message.Headers.Add("Accept", $"application/json");
 
-            var moveString = JsonConvert.SerializeObject(move/*, GetJsonSettings()*/);
+            var moveString = JsonConvert.SerializeObject(move);
 
             message.Content = new StringContent(moveString, Encoding.UTF8, "application/json");
 
@@ -229,6 +240,26 @@ namespace BoardGame.ServiceClient
             return true;
         }
 
+        public async Task<string> ProlongToken(string token)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, TokenControllerUri);
+
+            message.Headers.Add("Authorization", $"Bearer {token}");
+
+            message.Content = new StringContent(token, Encoding.UTF8, "application/json");
+
+            var resultMessage = await _client.SendAsync(message);
+
+            if (!resultMessage.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var result = await resultMessage.Content.ReadAsStringAsync();
+
+            return result;
+        }
+
         /// <summary>
         /// Gets the ladder.
         /// </summary>
@@ -238,7 +269,7 @@ namespace BoardGame.ServiceClient
         /// If not set (default) it will return the combined ladder.
         /// </param>
         /// <returns>The ladder list. If there was an error, it returns null.</returns>
-        public virtual async Task<IEnumerable<LadderItem>> GetLadder(bool? botsLadder = null)
+        public virtual async Task<IEnumerable<LadderItem>> GetLadderAsync(bool? botsLadder = null)
         {
             HttpRequestMessage message;
 

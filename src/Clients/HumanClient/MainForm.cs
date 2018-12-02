@@ -48,7 +48,7 @@ namespace BoardGame.HumanClient
             RefreshAll();
         }
 
-        private async void RefreshPlayers()
+        private async Task RefreshPlayers()
         {
             if (await CheckSessionValidity() == false)
             {
@@ -94,7 +94,7 @@ namespace BoardGame.HumanClient
             return firstSet.SetEquals(secondSet);
         }
 
-        private async void RefreshMatches()
+        private async Task RefreshMatches()
         {
             if (await CheckSessionValidity() == false)
             {
@@ -165,7 +165,7 @@ namespace BoardGame.HumanClient
             tabPageMatches.Enabled = true;
         }
 
-        private async void RefreshGame(bool force = false)
+        private async Task RefreshGame(bool force = false)
         {
             if (await CheckSessionValidity() == false || !_selectedMatchId.HasValue)
             {
@@ -254,12 +254,12 @@ namespace BoardGame.HumanClient
             }
         }
 
-        private void buttonLogin_Click(object sender, EventArgs e)
+        private async void buttonLogin_Click(object sender, EventArgs e)
         {
-            Login();
+            await Login();
         }
 
-        private async void ToggleLoginControls()
+        private async Task ToggleLoginControls()
         {
             _game = new ChessRepresentationInitializer().Create();
             _mechanism = new ChessMechanism();
@@ -269,21 +269,21 @@ namespace BoardGame.HumanClient
             panelLogout.Visible = isSessionAlive;
         }
 
-        private async void Login()
+        private async Task Login()
         {
             var success = await _client.Login(textboxUsername.Text, textboxPassword.Text);
 
             if (!success)
             {
                 MessageBox.Show("Login failed!", "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ToggleLoginControls();
+                await ToggleLoginControls();
                 timerRefresh.Enabled = false;
             }
             else
             {
                 labelLoginStatus.Text = $"{_client.LoginInformation.Username} logged in.";
                 RefreshAll();
-                ToggleLoginControls();
+                await ToggleLoginControls();
                 timerRefresh.Enabled = true;
             }
         }
@@ -498,7 +498,7 @@ namespace BoardGame.HumanClient
             if (!result)
             {
                 MessageBox.Show("Couldn't send in move.");
-                RefreshGame(true);
+                await RefreshGame(true);
             }
         }
 
@@ -524,7 +524,7 @@ namespace BoardGame.HumanClient
             RefreshLadder();
         }
 
-        private async void RefreshLadder()
+        private async Task RefreshLadder()
         {
             bool? parameter = null;
             if (checkboxShowBots.Checked && !checkboxShowHumans.Checked)
@@ -561,14 +561,14 @@ namespace BoardGame.HumanClient
             }
         }
 
-        private void checkboxShowHumans_CheckedChanged(object sender, EventArgs e)
+        private async void checkboxShowHumans_CheckedChanged(object sender, EventArgs e)
         {
-            RefreshLadder();
+            await RefreshLadder();
         }
 
-        private void checkboxShowBots_CheckedChanged(object sender, EventArgs e)
+        private async void checkboxShowBots_CheckedChanged(object sender, EventArgs e)
         {
-            RefreshLadder();
+            await RefreshLadder();
         }
     }
 }

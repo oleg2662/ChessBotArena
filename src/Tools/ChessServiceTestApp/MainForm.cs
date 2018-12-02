@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
@@ -32,7 +33,7 @@ namespace BoardGame.ChessServiceTestApp
             tableLayoutMain.Enabled = false;
             try
             {
-                result = await _client.GetVersion().ConfigureAwait(true);
+                result = await _client.GetVersionAsync();
             }
             catch (Exception)
             {
@@ -54,7 +55,7 @@ namespace BoardGame.ChessServiceTestApp
             {
                 var username = textboxUsername.Text;
                 var password = textboxPassword.Text;
-                result = await _client.Login(username, password).ConfigureAwait(true);
+                result = await _client.LoginAsync(username, password);
             }
             catch (Exception ex)
             {
@@ -84,10 +85,10 @@ namespace BoardGame.ChessServiceTestApp
             RefreshLists();
         }
 
-        private async void RefreshLists()
+        private async Task RefreshLists()
         {
             labelStatus.Text = "Getting list of matches...";
-            var matches = await _client.GetMatches(_jwtToken);
+            var matches = await _client.GetMatchesAsync(_jwtToken);
             listboxMatches.Items.Clear();
 
             if (matches == null)
@@ -126,7 +127,7 @@ namespace BoardGame.ChessServiceTestApp
             }
 
             labelStatus.Text = $"Getting details of selected match... ({match.Name})";
-            var details = await _client.GetMatch(_jwtToken, match.Id.ToString());
+            var details = await _client.GetMatchAsync(_jwtToken, match.Id.ToString());
             listboxGameHistory.Items.Clear();
 
             if (details?.Representation?.History == null)

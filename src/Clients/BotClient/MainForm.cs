@@ -160,7 +160,7 @@ namespace BoardGame.BotClient
             UpdateLog("Reading list of matches which are in progress...", 1);
 
             UpdateLog("Getting list of matches...", 2);
-            var matches = Client.GetMatches(_jwtToken).Result;
+            var matches = Client.GetMatchesAsync(_jwtToken).Result;
             if (matches == null)
             {
                 UpdateLog("ERROR: Couldn't get list of matches. (Maybe unauthorized?)", 2);
@@ -174,7 +174,7 @@ namespace BoardGame.BotClient
             foreach (var chessGame in inProgressMatches)
             {
                 UpdateLog($"Getting details of {chessGame.Name} ({chessGame.Id})...", 3);
-                var details = Client.GetMatch(_jwtToken, chessGame.Id.ToString()).Result;
+                var details = Client.GetMatchAsync(_jwtToken, chessGame.Id.ToString()).Result;
                 if (details == null)
                 {
                     UpdateLog($"ERROR: Couldn't query data of match with name {chessGame.Name} ({chessGame.Id})!", 3);
@@ -207,7 +207,7 @@ namespace BoardGame.BotClient
                 stopWatch.Stop();
                 UpdateLog($"Algorithm finished in {stopWatch.Elapsed.TotalSeconds:F} seconds and generated move: {move}", 2);
                 UpdateLog($"Sending it in...", 2);
-                var isMoveSuccess = Client.SendMove(_jwtToken, chessGameDetails.Id, move).Result;
+                var isMoveSuccess = Client.SendMoveAsync(_jwtToken, chessGameDetails.Id, move).Result;
 
                 UpdateLog(
                     isMoveSuccess
@@ -224,7 +224,7 @@ namespace BoardGame.BotClient
             }
 
             UpdateLog("Challenging users if possible...", 1);
-            var players = Client.GetPlayers(_jwtToken).Result;
+            var players = Client.GetPlayersAsync(_jwtToken).Result;
             if (players == null)
             {
                 UpdateLog("ERROR: Couldn't get list of players.", 2);
@@ -247,7 +247,7 @@ namespace BoardGame.BotClient
 
             UpdateLog($"Challenging {nonChallengedPlayer}...", 2);
 
-            var newGame = Client.ChallengePlayer(_jwtToken, nonChallengedPlayer).Result;
+            var newGame = Client.ChallengePlayerAsync(_jwtToken, nonChallengedPlayer).Result;
             if (newGame == null)
             {
                 UpdateLog($"ERROR: Failed...", 3);
@@ -277,19 +277,19 @@ namespace BoardGame.BotClient
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
-            Reconnect();
+            await Reconnect();
         }
 
-        private async void Reconnect()
+        private async Task Reconnect()
         {
             labelStatus.Text = "Connecting to server...";
             string result;
 
             try
             {
-                result = await Client.GetVersion().ConfigureAwait(true);
+                result = await Client.GetVersionAsync();
             }
             catch (Exception)
             {
@@ -311,14 +311,14 @@ namespace BoardGame.BotClient
             StartPlaying();
         }
 
-        private async void RefreshLoginToken(string username, string password)
+        private async Task RefreshLoginToken(string username, string password)
         {
             labelStatus.Text = "Logging in...";
             LoginResult result;
 
             try
             {
-                result = await Client.Login(username, password).ConfigureAwait(true);
+                result = await Client.LoginAsync(username, password);
             }
             catch (Exception)
             {

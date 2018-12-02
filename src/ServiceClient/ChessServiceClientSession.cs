@@ -61,7 +61,7 @@ namespace BoardGame.ServiceClient
         {
             if (!IsLoggedIn)
             {
-                LoginInformation = await _client.Login(_username, _password);
+                LoginInformation = await _client.LoginAsync(_username, _password);
             }
 
             return IsLoggedIn;
@@ -70,35 +70,35 @@ namespace BoardGame.ServiceClient
         public async Task<ChessGame> ChallengePlayer(string username)
         {
             await Login();
-            return await _client.ChallengePlayer(JwtToken, username);
+            return await _client.ChallengePlayerAsync(JwtToken, username);
         }
 
         public async Task<ChessGameDetails> GetMatch(string id)
         {
             await Login();
-            return await _client.GetMatch(JwtToken, id);
+            return await _client.GetMatchAsync(JwtToken, id);
         }
 
         public async Task<IEnumerable<ChessGame>> GetMatches()
         {
             await Login();
-            return await _client.GetMatches(JwtToken);
+            return await _client.GetMatchesAsync(JwtToken);
         }
 
         public async Task<IEnumerable<Player>> GetPlayers()
         {
             await Login();
-            return await _client.GetPlayers(JwtToken);
+            return await _client.GetPlayersAsync(JwtToken);
         }
 
         public virtual async Task<bool> SendMove<T>(Guid matchId, T move) where T : BaseMove
         {
-            return await _client.SendMove(JwtToken, matchId, move);
+            return await _client.SendMoveAsync(JwtToken, matchId, move);
         }
 
         public async Task<string> GetVersion()
         {
-            return await _client.GetVersion();
+            return await _client.GetVersionAsync();
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace BoardGame.ServiceClient
         /// <returns>The ladder list. If there was an error, it returns null.</returns>
         public virtual async Task<IEnumerable<LadderItem>> GetLadder(bool? botsLadder = null)
         {
-            return await _client.GetLadder(botsLadder);
+            return await _client.GetLadderAsync(botsLadder);
         }
 
         public void Dispose()
