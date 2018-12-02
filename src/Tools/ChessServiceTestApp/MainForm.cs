@@ -77,12 +77,12 @@ namespace BoardGame.ChessServiceTestApp
             labelLoginStatus.Text = result.Username;
             labelStatus.Text = string.Empty;
 
-            RefreshLists();
+            await RefreshLists();
         }
 
-        private void buttonRefresh_Click(object sender, EventArgs e)
+        private async void buttonRefresh_Click(object sender, EventArgs e)
         {
-            RefreshLists();
+            await RefreshLists();
         }
 
         private async Task RefreshLists()
@@ -159,9 +159,8 @@ namespace BoardGame.ChessServiceTestApp
 
         private void listboxGameHistory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var item = listboxGameHistory.SelectedItem as ChessRepresentationStage;
 
-            if (item == null)
+            if (!(listboxGameHistory.SelectedItem is ChessRepresentationStage item))
             {
                 return;
             }

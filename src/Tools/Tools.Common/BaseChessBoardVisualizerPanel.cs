@@ -56,6 +56,11 @@ namespace BoardGame.Tools.Common
                 return;
             }
 
+            if (!ThreatenedPositions.Contains(HoverPosition) && ChessRepresentation[HoverPosition] == null)
+            {
+                return;
+            }
+
             var mechanism = new ChessMechanism();
             SelectedPosition = HoverPosition;
             var selectedPositionOwner = _chessRepresentation[SelectedPosition]?.Owner;

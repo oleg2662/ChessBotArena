@@ -13,13 +13,15 @@ namespace BoardGame.ServiceClient
     /// <summary>
     /// Used to manage and maintain a connection to the chess service.
     /// </summary>
-    public class ServiceConnection
+    public class ServiceConnection : IDisposable
     {
         private int _pollTimeout = 10000;
         private bool _pauseRefresh = false;
         private string _token;
         private ChessServiceClient _client;
         private readonly Task _refreshTask;
+        private readonly object _lock;
+        private bool _disposed;
 
         /// <summary>
         /// Creates an instance of the service connection class.
@@ -27,6 +29,7 @@ namespace BoardGame.ServiceClient
         /// <param name="baseUrl">The base URL of the service the client connects to.</param>
         public ServiceConnection(string baseUrl)
         {
+            _lock = new object();
             _client = new ChessServiceClient(baseUrl);
             _refreshTask = new Task(async () =>
             {
@@ -75,6 +78,20 @@ namespace BoardGame.ServiceClient
         public ChessGame CurrentGame { get; set; }
 
         /// <summary>
+        /// Gets a value indicating whether the object is disposed.
+        /// </summary>
+        public bool Disposed
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _disposed;
+                }
+            }
+        }
+
+        /// <summary>
         /// Tries to login.
         /// </summary>
         /// <param name="username">The username.</param>
@@ -82,6 +99,7 @@ namespace BoardGame.ServiceClient
         /// <returns>True if the login is successful. Otherwise false.</returns>
         public async Task<bool> LoginAsync(string username, string password)
         {
+            DisposeGuard();
             OnLoginStarted(ServiceConnectionEventArgs.Ok());
 
             LoginResult result;
@@ -96,10 +114,7 @@ namespace BoardGame.ServiceClient
                 return false;
             }
 
-            _token = result?.TokenString;
-            TokenValidTo = result?.ValidTo.ToLocalTime();
-            LoggedInUser = result?.Username;
-            IsBotLoggedIn = result?.IsBot;
+            SetSessionData(result);
 
             var success = string.IsNullOrWhiteSpace(_token);
 
@@ -121,6 +136,7 @@ namespace BoardGame.ServiceClient
         /// <returns>The ladder with bot and human players.</returns>
         public async Task<ICollection<LadderItem>> GetLadder()
         {
+            DisposeGuard();
             var ladder = await _client.GetLadderAsync(null);
             return ladder.ToList().AsReadOnly();
         }
@@ -133,6 +149,7 @@ namespace BoardGame.ServiceClient
         /// <returns>True if successful. Otherwise false.</returns>
         public async Task<bool> SendMoveAsync<T>(T move) where T : BaseMove
         {
+            DisposeGuard();
             var result = await _client.SendMoveAsync(_token, CurrentGame.Id, move);
             if (result)
             {
@@ -149,6 +166,7 @@ namespace BoardGame.ServiceClient
         /// <returns>The newly created details of the match. Null if unsuccessful.</returns>
         public async Task<ChessGame> ChallengePlayerAsync(string username)
         {
+            DisposeGuard();
             var chessGame = await _client.ChallengePlayerAsync(_token, username);
             if (chessGame != null)
             {
@@ -156,6 +174,15 @@ namespace BoardGame.ServiceClient
             }
 
             return chessGame;
+        }
+
+        /// <summary>
+        /// Disposes the object.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -199,6 +226,33 @@ namespace BoardGame.ServiceClient
         /// </summary>
         public event EventHandler<ServiceConnectionEventArgs> LoginFinished;
 
+        /// <summary>
+        /// Disposes the object in a safe way.
+        /// Used internally! Do not use directly!
+        /// </summary>
+        /// <param name="disposing">Is disposing?</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            lock (_lock)
+            {
+                if (_disposed) return;
+                if (!disposing) return;
+                if (_client == null) return;
+
+                _client.Dispose();
+                _client = null;
+                _disposed = true;
+            }
+        }
+
+        private void SetSessionData(LoginResult loginResult)
+        {
+            _token = loginResult?.TokenString;
+            TokenValidTo = loginResult?.ValidTo.ToLocalTime();
+            LoggedInUser = loginResult?.Username;
+            IsBotLoggedIn = loginResult?.IsBot;
+        }
+
         private void OnPlayersListChanged(ServiceConnectionEventArgs e)
         {
             PlayersListChanged?.Invoke(this, e);
@@ -235,8 +289,14 @@ namespace BoardGame.ServiceClient
             LoginFinished?.Invoke(this, e);
         }
 
+        private void OnTokenExpired(EventArgs e)
+        {
+            TokenExpired?.Invoke(this, e);
+        }
+
         private async Task PollAsync()
         {
+            DisposeGuard();
             OnPollStarted(ServiceConnectionEventArgs.Ok());
 
             var serverAlive = await CheckIfServerAliveAsync();
@@ -270,6 +330,7 @@ namespace BoardGame.ServiceClient
         {
             try
             {
+                DisposeGuard();
                 await _client.GetVersionAsync();
             }
             catch (Exception e)
@@ -282,12 +343,47 @@ namespace BoardGame.ServiceClient
 
         private async Task<bool> RefreshTokenAsync()
         {
-            _token = await _client.ProlongToken(_token);
-            return !string.IsNullOrWhiteSpace(_token);
+            DisposeGuard();
+
+            if (_token == null)
+            {
+                return false;
+            }
+
+            if (TokenValidTo < DateTime.Now)
+            {
+                OnTokenExpired(EventArgs.Empty);
+                return false;
+            }
+
+            var loginResult = await _client.ProlongToken(_token);
+            var success = loginResult != null;
+            var previousTokenValid = TokenValidTo > DateTime.Now;
+
+            // If it's succesfull, then set session data and return true.
+            if (success)
+            {
+                SetSessionData(loginResult);
+                return true;
+            }
+
+            // If we couldn't prolong the token then we check if the previous one is still valid.
+            // if no, then we logout (reset the logged in information) and return false...
+            if (!success && !previousTokenValid)
+            {
+                OnTokenExpired(EventArgs.Empty);
+                SetSessionData(null);
+                return false;
+            }
+
+            // Otherwise we return true
+            // (This will happen until the previous token is valid...)
+            return true;
         }
 
         private async Task RefreshPlayersListAsync()
         {
+            DisposeGuard();
             var players = await _client.GetPlayersAsync(_token);
             var oldPlayers = Players.Select(x => x.Name);
             var newPlayers = players.Select(x => x.Name);
@@ -301,6 +397,7 @@ namespace BoardGame.ServiceClient
 
         private async Task RefreshMatchesListAsync()
         {
+            DisposeGuard();
             var matches = await _client.GetMatchesAsync(_token);
 
             var oldMatches = Matches.Select(x => x.Id);
@@ -315,6 +412,8 @@ namespace BoardGame.ServiceClient
 
         private async Task RefreshCurrentMatchAsync()
         {
+            DisposeGuard();
+
             if (CurrentGame == null)
             {
                 return;
@@ -327,6 +426,22 @@ namespace BoardGame.ServiceClient
                 OnCurrentGameChanged(ServiceConnectionEventArgs.Ok());
                 CurrentGame = match;
             }
+        }
+
+        private void DisposeGuard()
+        {
+            if (this.Disposed)
+            {
+                throw new ObjectDisposedException("Object is already disposed");
+            }
+        }
+
+        /// <summary>
+        /// Destructor of the class.
+        /// </summary>
+        ~ServiceConnection()
+        {
+            this.Dispose(false);
         }
     }
 }

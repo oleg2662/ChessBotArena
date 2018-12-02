@@ -302,11 +302,11 @@ namespace BoardGame.BotClient
             labelStatus.Text = string.Empty;
         }
 
-        private void buttonLogin_Click(object sender, EventArgs e)
+        private async void buttonLogin_Click(object sender, EventArgs e)
         {
             StopPlaying();
 
-            RefreshLoginToken();
+            await RefreshLoginToken();
 
             StartPlaying();
         }
@@ -342,12 +342,12 @@ namespace BoardGame.BotClient
             labelStatus.Text = string.Empty;
         }
 
-        private void RefreshLoginToken()
+        private async Task RefreshLoginToken()
         {
             var username = textboxUsername.Text;
             var password = textboxPassword.Text;
 
-            RefreshLoginToken(username, password);
+            await RefreshLoginToken(username, password);
         }
 
         private void StartPlaying()
@@ -360,9 +360,9 @@ namespace BoardGame.BotClient
             _isActive = false;
         }
 
-        private void buttonReconnect_Click(object sender, EventArgs e)
+        private async void buttonReconnect_Click(object sender, EventArgs e)
         {
-            Reconnect();
+            await Reconnect();
         }
 
         private void buttonLogout_Click(object sender, EventArgs e)

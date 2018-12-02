@@ -79,8 +79,6 @@ namespace BoardGame.HumanClient
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.tabcontrolMain = new System.Windows.Forms.TabControl();
             this.tabpageMultiplayer = new System.Windows.Forms.TabPage();
-            this.tabpageSinglePlayer = new System.Windows.Forms.TabPage();
-            this.tabpageConsole = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelMultiplayer.SuspendLayout();
             this.tabMain.SuspendLayout();
             this.tabPagePlayers.SuspendLayout();
@@ -111,8 +109,8 @@ namespace BoardGame.HumanClient
             this.tableLayoutPanelMultiplayer.Name = "tableLayoutPanelMultiplayer";
             this.tableLayoutPanelMultiplayer.RowCount = 1;
             this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 658F));
-            this.tableLayoutPanelMultiplayer.Size = new System.Drawing.Size(684, 441);
+            this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 441F));
+            this.tableLayoutPanelMultiplayer.Size = new System.Drawing.Size(973, 685);
             this.tableLayoutPanelMultiplayer.TabIndex = 0;
             // 
             // tabMain
@@ -125,7 +123,7 @@ namespace BoardGame.HumanClient
             this.tabMain.Location = new System.Drawing.Point(3, 3);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(478, 435);
+            this.tabMain.Size = new System.Drawing.Size(767, 679);
             this.tabMain.TabIndex = 0;
             this.tabMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabMain_Selected);
             // 
@@ -135,7 +133,7 @@ namespace BoardGame.HumanClient
             this.tabPagePlayers.Location = new System.Drawing.Point(4, 22);
             this.tabPagePlayers.Name = "tabPagePlayers";
             this.tabPagePlayers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayers.Size = new System.Drawing.Size(470, 409);
+            this.tabPagePlayers.Size = new System.Drawing.Size(759, 653);
             this.tabPagePlayers.TabIndex = 0;
             this.tabPagePlayers.Text = "Players";
             this.tabPagePlayers.UseVisualStyleBackColor = true;
@@ -153,7 +151,7 @@ namespace BoardGame.HumanClient
             this.listViewPlayers.Location = new System.Drawing.Point(3, 3);
             this.listViewPlayers.MultiSelect = false;
             this.listViewPlayers.Name = "listViewPlayers";
-            this.listViewPlayers.Size = new System.Drawing.Size(464, 403);
+            this.listViewPlayers.Size = new System.Drawing.Size(753, 647);
             this.listViewPlayers.SmallImageList = this.imageListPlayers;
             this.listViewPlayers.TabIndex = 0;
             this.listViewPlayers.UseCompatibleStateImageBehavior = false;
@@ -177,7 +175,7 @@ namespace BoardGame.HumanClient
             this.tabPageMatches.Location = new System.Drawing.Point(4, 22);
             this.tabPageMatches.Name = "tabPageMatches";
             this.tabPageMatches.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMatches.Size = new System.Drawing.Size(835, 652);
+            this.tabPageMatches.Size = new System.Drawing.Size(759, 653);
             this.tabPageMatches.TabIndex = 1;
             this.tabPageMatches.Text = "Matches";
             this.tabPageMatches.UseVisualStyleBackColor = true;
@@ -195,7 +193,7 @@ namespace BoardGame.HumanClient
             this.listViewMatches.Location = new System.Drawing.Point(3, 3);
             this.listViewMatches.MultiSelect = false;
             this.listViewMatches.Name = "listViewMatches";
-            this.listViewMatches.Size = new System.Drawing.Size(829, 646);
+            this.listViewMatches.Size = new System.Drawing.Size(753, 647);
             this.listViewMatches.SmallImageList = this.imageListMatchStatuses;
             this.listViewMatches.TabIndex = 1;
             this.listViewMatches.UseCompatibleStateImageBehavior = false;
@@ -223,7 +221,7 @@ namespace BoardGame.HumanClient
             this.tabPageGame.Location = new System.Drawing.Point(4, 22);
             this.tabPageGame.Name = "tabPageGame";
             this.tabPageGame.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGame.Size = new System.Drawing.Size(835, 652);
+            this.tabPageGame.Size = new System.Drawing.Size(759, 653);
             this.tabPageGame.TabIndex = 2;
             this.tabPageGame.Text = "Game";
             this.tabPageGame.UseVisualStyleBackColor = true;
@@ -236,7 +234,7 @@ namespace BoardGame.HumanClient
             this.chessBoardGamePanel1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.chessBoardGamePanel1.Location = new System.Drawing.Point(3, 3);
             this.chessBoardGamePanel1.Name = "chessBoardGamePanel1";
-            this.chessBoardGamePanel1.Size = new System.Drawing.Size(829, 646);
+            this.chessBoardGamePanel1.Size = new System.Drawing.Size(753, 647);
             this.chessBoardGamePanel1.TabIndex = 0;
             this.chessBoardGamePanel1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             this.chessBoardGamePanel1.OnValidMoveSelected += new BoardGame.Tools.Common.ChessBoardMoveSelectedEventHandler(this.chessBoardGamePanel1_OnValidMoveSelected);
@@ -248,7 +246,7 @@ namespace BoardGame.HumanClient
             this.tabLadder.Location = new System.Drawing.Point(4, 22);
             this.tabLadder.Name = "tabLadder";
             this.tabLadder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLadder.Size = new System.Drawing.Size(835, 652);
+            this.tabLadder.Size = new System.Drawing.Size(759, 653);
             this.tabLadder.TabIndex = 3;
             this.tabLadder.Text = "Ladder";
             this.tabLadder.UseVisualStyleBackColor = true;
@@ -269,7 +267,7 @@ namespace BoardGame.HumanClient
             this.listviewLadder.Location = new System.Drawing.Point(3, 42);
             this.listviewLadder.MultiSelect = false;
             this.listviewLadder.Name = "listviewLadder";
-            this.listviewLadder.Size = new System.Drawing.Size(829, 607);
+            this.listviewLadder.Size = new System.Drawing.Size(753, 608);
             this.listviewLadder.SmallImageList = this.imageListPlayers;
             this.listviewLadder.TabIndex = 3;
             this.listviewLadder.UseCompatibleStateImageBehavior = false;
@@ -297,7 +295,7 @@ namespace BoardGame.HumanClient
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(829, 39);
+            this.panel1.Size = new System.Drawing.Size(753, 39);
             this.panel1.TabIndex = 2;
             // 
             // checkboxShowBots
@@ -339,9 +337,9 @@ namespace BoardGame.HumanClient
             this.panelSidebar.Controls.Add(this.panelLogout);
             this.panelSidebar.Controls.Add(this.panelLogin);
             this.panelSidebar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSidebar.Location = new System.Drawing.Point(487, 3);
+            this.panelSidebar.Location = new System.Drawing.Point(776, 3);
             this.panelSidebar.Name = "panelSidebar";
-            this.panelSidebar.Size = new System.Drawing.Size(194, 435);
+            this.panelSidebar.Size = new System.Drawing.Size(194, 679);
             this.panelSidebar.TabIndex = 1;
             // 
             // panelMatches
@@ -405,7 +403,7 @@ namespace BoardGame.HumanClient
             // 
             this.panelRefresh.Controls.Add(this.btnSync);
             this.panelRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelRefresh.Location = new System.Drawing.Point(0, 390);
+            this.panelRefresh.Location = new System.Drawing.Point(0, 634);
             this.panelRefresh.Name = "panelRefresh";
             this.panelRefresh.Padding = new System.Windows.Forms.Padding(4);
             this.panelRefresh.Size = new System.Drawing.Size(194, 45);
@@ -603,14 +601,12 @@ namespace BoardGame.HumanClient
             // 
             this.tabcontrolMain.Alignment = System.Windows.Forms.TabAlignment.Bottom;
             this.tabcontrolMain.Controls.Add(this.tabpageMultiplayer);
-            this.tabcontrolMain.Controls.Add(this.tabpageSinglePlayer);
-            this.tabcontrolMain.Controls.Add(this.tabpageConsole);
             this.tabcontrolMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabcontrolMain.Location = new System.Drawing.Point(0, 0);
             this.tabcontrolMain.Multiline = true;
             this.tabcontrolMain.Name = "tabcontrolMain";
             this.tabcontrolMain.SelectedIndex = 0;
-            this.tabcontrolMain.Size = new System.Drawing.Size(698, 473);
+            this.tabcontrolMain.Size = new System.Drawing.Size(987, 717);
             this.tabcontrolMain.TabIndex = 2;
             // 
             // tabpageMultiplayer
@@ -619,35 +615,16 @@ namespace BoardGame.HumanClient
             this.tabpageMultiplayer.Location = new System.Drawing.Point(4, 4);
             this.tabpageMultiplayer.Name = "tabpageMultiplayer";
             this.tabpageMultiplayer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabpageMultiplayer.Size = new System.Drawing.Size(690, 447);
+            this.tabpageMultiplayer.Size = new System.Drawing.Size(979, 691);
             this.tabpageMultiplayer.TabIndex = 0;
             this.tabpageMultiplayer.Text = "Multiplayer";
             this.tabpageMultiplayer.UseVisualStyleBackColor = true;
-            // 
-            // tabpageSinglePlayer
-            // 
-            this.tabpageSinglePlayer.Location = new System.Drawing.Point(4, 4);
-            this.tabpageSinglePlayer.Name = "tabpageSinglePlayer";
-            this.tabpageSinglePlayer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabpageSinglePlayer.Size = new System.Drawing.Size(690, 447);
-            this.tabpageSinglePlayer.TabIndex = 1;
-            this.tabpageSinglePlayer.Text = "Single Player";
-            this.tabpageSinglePlayer.UseVisualStyleBackColor = true;
-            // 
-            // tabpageConsole
-            // 
-            this.tabpageConsole.Location = new System.Drawing.Point(4, 4);
-            this.tabpageConsole.Name = "tabpageConsole";
-            this.tabpageConsole.Size = new System.Drawing.Size(690, 447);
-            this.tabpageConsole.TabIndex = 2;
-            this.tabpageConsole.Text = "Console";
-            this.tabpageConsole.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(698, 473);
+            this.ClientSize = new System.Drawing.Size(987, 717);
             this.Controls.Add(this.tabcontrolMain);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -728,8 +705,6 @@ namespace BoardGame.HumanClient
         private System.Windows.Forms.ColumnHeader columnHeaderPoints;
         private System.Windows.Forms.TabControl tabcontrolMain;
         private System.Windows.Forms.TabPage tabpageMultiplayer;
-        private System.Windows.Forms.TabPage tabpageSinglePlayer;
-        private System.Windows.Forms.TabPage tabpageConsole;
     }
 }
 

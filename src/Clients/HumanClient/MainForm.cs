@@ -37,7 +37,7 @@ namespace BoardGame.HumanClient
             _client = new ChessServiceClientSession(_baseUrl);
         }
 
-        private void tabMain_Selected(object sender, TabControlEventArgs e)
+        private async void tabMain_Selected(object sender, TabControlEventArgs e)
         {
             var page = (Tabs?) e.TabPage.Tag;
 
@@ -45,7 +45,7 @@ namespace BoardGame.HumanClient
             panelPlayers.Visible = page == Tabs.PlayersPage;
             panelMatches.Visible = page == Tabs.MatchesPage;
 
-            RefreshAll();
+            await RefreshAll();
         }
 
         private async Task RefreshPlayers()
@@ -282,18 +282,17 @@ namespace BoardGame.HumanClient
             else
             {
                 labelLoginStatus.Text = $"{_client.LoginInformation.Username} logged in.";
-                RefreshAll();
+                await RefreshAll();
                 await ToggleLoginControls();
                 timerRefresh.Enabled = true;
             }
         }
 
-        private void btnLogout_Click(object sender, EventArgs e)
+        private async void btnLogout_Click(object sender, EventArgs e)
         {
             timerRefresh.Enabled = false;
-            _client?.Dispose();
-            _client = null;
-            ToggleLoginControls();
+            _client.Logout();
+            await ToggleLoginControls();
         }
 
         private void MainForm_Move(object sender, EventArgs e)
@@ -337,21 +336,21 @@ namespace BoardGame.HumanClient
             tabPageMatches.Select();
         }
 
-        private void RefreshAll(bool force = false)
+        private async Task RefreshAll(bool force = false)
         {
             if (!force && DateTime.Now - _lastUpdate < TimeSpan.FromSeconds(10))
             {
                 return;
             }
 
-            RefreshMatches();
-            RefreshPlayers();
-            RefreshGame();
+            await RefreshMatches();
+            await RefreshPlayers();
+            await RefreshGame();
 
             _lastUpdate = DateTime.Now;
         }
 
-        private void listViewMatches_ItemActivate(object sender, EventArgs e)
+        private async void listViewMatches_ItemActivate(object sender, EventArgs e)
         {
             var listView = (sender as ListView);
 
@@ -405,7 +404,7 @@ namespace BoardGame.HumanClient
                 return;
             }
 
-            RefreshGame();
+            await RefreshGame();
             //tabMain.SelectedTab = tabPageGame;
         }
 
@@ -493,35 +492,33 @@ namespace BoardGame.HumanClient
             }
 
             var result = await _client.SendMove(_selectedMatchId.Value, eventArg.Move);
-            listboxMoves.Items.Add(eventArg.Move.ToString());
-
+            await RefreshGame(true);
             if (!result)
             {
                 MessageBox.Show("Couldn't send in move.");
-                await RefreshGame(true);
             }
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private async void btnRefresh_Click(object sender, EventArgs e)
         {
-            RefreshAll(true);
+            await RefreshAll(true);
         }
 
-        private void timerRefresh_Tick(object sender, EventArgs e)
+        private async void timerRefresh_Tick(object sender, EventArgs e)
         {
             _countDown--;
             btnSync.Text = $"Sync now (auto:{_countDown}s)";
             if (_countDown <= 0)
             {
                 btnSync.Text = $"Syncing...";
-                RefreshAll();
+                await RefreshAll();
                 _countDown = 10;
             }
         }
 
-        private void tabLadder_Enter(object sender, EventArgs e)
+        private async void tabLadder_Enter(object sender, EventArgs e)
         {
-            RefreshLadder();
+            await RefreshLadder();
         }
 
         private async Task RefreshLadder()

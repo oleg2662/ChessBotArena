@@ -240,7 +240,7 @@ namespace BoardGame.ServiceClient
             return true;
         }
 
-        public async Task<string> ProlongToken(string token)
+        public async Task<LoginResult> ProlongToken(string token)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, TokenControllerUri);
 
@@ -255,7 +255,18 @@ namespace BoardGame.ServiceClient
                 return null;
             }
 
-            var result = await resultMessage.Content.ReadAsStringAsync();
+            var resultString = await resultMessage.Content.ReadAsStringAsync();
+            var newToken = JsonConvert.DeserializeObject<JwtTokenApiModel>(resultString);
+            var jwt = new JwtSecurityToken(newToken.Token);
+
+            var result = new LoginResult()
+            {
+                TokenString = jwt.RawData,
+                ValidTo = jwt.ValidTo,
+                Username = (string)jwt.Payload[ClaimTypes.Name],
+                EmailAddress = (string)jwt.Payload[ClaimTypes.Email],
+                IsBot = (string)jwt.Payload["IsBot"] == "True"
+            };
 
             return result;
         }
