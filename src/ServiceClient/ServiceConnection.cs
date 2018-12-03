@@ -15,13 +15,13 @@ namespace BoardGame.ServiceClient
     /// </summary>
     public class ServiceConnection : IDisposable
     {
-        private int _pollTimeout = 10000;
-        private bool _pauseRefresh = false;
+        //private int _pollTimeout = 10000;
+        //private bool _pauseRefresh = false;
         private string _token;
         private ChessServiceClient _client;
-        private readonly Task _refreshTask;
         private readonly object _lock;
         private bool _disposed;
+        //private bool _cancelRefresh = false;
 
         /// <summary>
         /// Creates an instance of the service connection class.
@@ -31,15 +31,30 @@ namespace BoardGame.ServiceClient
         {
             _lock = new object();
             _client = new ChessServiceClient(baseUrl);
-            _refreshTask = new Task(async () =>
-            {
-                if (!_pauseRefresh)
-                {
-                    await PollAsync();
-                }
 
-                Thread.Sleep(_pollTimeout);
-            });
+            Players = new List<Player>();
+            Matches = new List<ChessGameDetails>();
+            CurrentGame = null;
+
+            //var refreshTask = new Task(async () =>
+            //{
+            //    do
+            //    {
+            //        if (_cancelRefresh)
+            //        {
+            //            return;
+            //        }
+
+            //        if (!_pauseRefresh)
+            //        {
+            //            await PollAsync();
+            //        }
+
+            //        Thread.Sleep(_pollTimeout);
+            //    } while (true);
+            //});
+
+            //refreshTask.Start();
         }
 
         /// <summary>
@@ -58,6 +73,15 @@ namespace BoardGame.ServiceClient
         public string LoggedInUser { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether the client is in "anonymous" mode.
+        /// (No valid login detected.)
+        /// </summary>
+        public bool IsAnonymous
+        {
+            get => LoggedInUser == null;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the logged in user is a bot. If no user is logged in returns null.
         /// </summary>
         public bool? IsBotLoggedIn { get; private set; }
@@ -70,12 +94,52 @@ namespace BoardGame.ServiceClient
         /// <summary>
         /// Gets the list of matches
         /// </summary>
-        public ICollection<ChessGame> Matches { get; set; }
+        public ICollection<ChessGameDetails> Matches { get; set; }
 
         /// <summary>
         /// Gets or sets the currently selected match. Null if no game is selected.
         /// </summary>
-        public ChessGame CurrentGame { get; set; }
+        public ChessGameDetails CurrentGame { get; set; }
+
+        /// <summary>
+        /// Makes the given match the current one and causes a revalidation.
+        /// </summary>
+        /// <param name="matchId">The ID of the match.</param>
+        public async Task MakeCurrentMatchAsync(Guid? matchId)
+        {
+            if (!matchId.HasValue)
+            {
+                CurrentGame = null;
+            }
+            else
+            {
+                var match = Matches.FirstOrDefault(x => x.Id == matchId);
+                CurrentGame = match ?? throw new ArgumentException("Given match ID cannot be found.", nameof(matchId));
+            }
+
+            await PollAsync();
+        }
+
+        public async Task Refresh()
+        {
+            await PollAsync();
+        }
+
+        ///// <summary>
+        ///// Pauses the automatic refresh.
+        ///// </summary>
+        //public void PauseRefresh()
+        //{
+        //    _pauseRefresh = true;
+        //}
+
+        ///// <summary>
+        ///// Continues the background refresh.
+        ///// </summary>
+        //public void ContinueRefresh()
+        //{
+        //    _pauseRefresh = false;
+        //}
 
         /// <summary>
         /// Gets a value indicating whether the object is disposed.
@@ -110,24 +174,30 @@ namespace BoardGame.ServiceClient
             }
             catch (Exception e)
             {
-                OnPollFinished(ServiceConnectionEventArgs.Error(e));
+                OnLoginFinished(ServiceConnectionEventArgs.Error(e));
                 return false;
             }
 
             SetSessionData(result);
 
-            var success = string.IsNullOrWhiteSpace(_token);
+            var success = !string.IsNullOrWhiteSpace(_token);
 
-            if (success)
-            {
-                OnPollFinished(ServiceConnectionEventArgs.Ok($"Logged in: {LoggedInUser}."));
-            }
-            else
-            {
-                OnPollFinished(ServiceConnectionEventArgs.Ok("Couldn't log in."));
-            }
+            OnLoginFinished(success
+                ? ServiceConnectionEventArgs.Ok($"Logged in: {LoggedInUser}.")
+                : ServiceConnectionEventArgs.Ok("Couldn't log in."));
+
+            await PollAsync();
 
             return success;
+        }
+
+        /// <summary>
+        /// Logs out the current user.
+        /// </summary>
+        public async Task Logout()
+        {
+            _token = null;
+            await PollAsync();
         }
 
         /// <summary>
@@ -150,6 +220,12 @@ namespace BoardGame.ServiceClient
         public async Task<bool> SendMoveAsync<T>(T move) where T : BaseMove
         {
             DisposeGuard();
+
+            if (CurrentGame == null)
+            {
+                return false;
+            }
+
             var result = await _client.SendMoveAsync(_token, CurrentGame.Id, move);
             if (result)
             {
@@ -239,6 +315,9 @@ namespace BoardGame.ServiceClient
                 if (!disposing) return;
                 if (_client == null) return;
 
+                //_pauseRefresh = true;
+                //_cancelRefresh = true;
+
                 _client.Dispose();
                 _client = null;
                 _disposed = true;
@@ -299,6 +378,14 @@ namespace BoardGame.ServiceClient
             DisposeGuard();
             OnPollStarted(ServiceConnectionEventArgs.Ok());
 
+            if (_token == null)
+            {
+                await RefreshPlayersListAsync();
+                await RefreshMatchesListAsync();
+                await RefreshCurrentMatchAsync();
+                return;
+            }
+
             var serverAlive = await CheckIfServerAliveAsync();
             if (!serverAlive)
             {
@@ -341,7 +428,7 @@ namespace BoardGame.ServiceClient
             return true;
         }
 
-        private async Task<bool> RefreshTokenAsync()
+        private async Task<bool> RefreshTokenAsync(bool individualCall = false)
         {
             DisposeGuard();
 
@@ -360,7 +447,7 @@ namespace BoardGame.ServiceClient
             var success = loginResult != null;
             var previousTokenValid = TokenValidTo > DateTime.Now;
 
-            // If it's succesfull, then set session data and return true.
+            // If it's successful, then set session data and return true.
             if (success)
             {
                 SetSessionData(loginResult);
@@ -369,68 +456,96 @@ namespace BoardGame.ServiceClient
 
             // If we couldn't prolong the token then we check if the previous one is still valid.
             // if no, then we logout (reset the logged in information) and return false...
-            if (!success && !previousTokenValid)
-            {
-                OnTokenExpired(EventArgs.Empty);
-                SetSessionData(null);
-                return false;
-            }
-
             // Otherwise we return true
             // (This will happen until the previous token is valid...)
-            return true;
+            if (previousTokenValid) return true;
+
+            SetSessionData(null);
+            if (individualCall)
+            {
+                OnTokenExpired(EventArgs.Empty);
+            }
+
+            return false;
         }
 
         private async Task RefreshPlayersListAsync()
         {
             DisposeGuard();
-            var players = await _client.GetPlayersAsync(_token);
-            var oldPlayers = Players.Select(x => x.Name);
+
+            ICollection<Player> players = IsAnonymous
+                ? new List<Player>()
+                : (await _client.GetPlayersAsync(_token)).ToList();
+
+            var oldPlayers = Players?.Select(x => x.Name);
             var newPlayers = players.Select(x => x.Name);
 
-            if (!oldPlayers.SequenceEqual(newPlayers))
+            if (oldPlayers.SequenceEqual(newPlayers))
             {
-                OnPlayersListChanged(ServiceConnectionEventArgs.Ok());
-                Players = players.ToList().AsReadOnly();
+                return;
             }
+
+            Players = players.ToList().AsReadOnly();
+            OnPlayersListChanged(ServiceConnectionEventArgs.Ok());
         }
 
         private async Task RefreshMatchesListAsync()
         {
             DisposeGuard();
-            var matches = await _client.GetMatchesAsync(_token);
 
-            var oldMatches = Matches.Select(x => x.Id);
-            var newMatches = matches.Select(x => x.Id);
+            ICollection<ChessGame> matches = IsAnonymous
+                ? new List<ChessGame>()
+                : (await _client.GetMatchesAsync(_token)).ToList();
 
-            if (!oldMatches.SequenceEqual(newMatches))
+            var oldMatches = Matches.Select(x => x.Id).ToList();
+            var newMatches = matches.Select(x => x.Id).ToList();
+
+            if (oldMatches.SequenceEqual(newMatches))
             {
-                OnMatchesListChanged(ServiceConnectionEventArgs.Ok());
-                Matches = matches.ToList().AsReadOnly();
+                return;
             }
+
+            Matches.Clear();
+
+            foreach (var matchId in newMatches)
+            {
+                var matchDetails = await _client.GetMatchAsync(_token, matchId);
+                Matches.Add(matchDetails);
+            }
+
+            OnMatchesListChanged(ServiceConnectionEventArgs.Ok());
         }
 
         private async Task RefreshCurrentMatchAsync()
         {
             DisposeGuard();
 
+            if (IsAnonymous)
+            {
+                CurrentGame = null;
+            }
+
             if (CurrentGame == null)
             {
+                OnCurrentGameChanged(ServiceConnectionEventArgs.Ok());
                 return;
             }
 
             var match = await _client.GetMatchAsync(_token, CurrentGame.Id);
 
-            if (!match.Equals(CurrentGame))
+            if (match.Equals(CurrentGame))
             {
-                OnCurrentGameChanged(ServiceConnectionEventArgs.Ok());
-                CurrentGame = match;
+                return;
             }
+
+            CurrentGame = match;
+
+            OnCurrentGameChanged(ServiceConnectionEventArgs.Ok());
         }
 
         private void DisposeGuard()
         {
-            if (this.Disposed)
+            if (Disposed)
             {
                 throw new ObjectDisposedException("Object is already disposed");
             }
@@ -441,7 +556,7 @@ namespace BoardGame.ServiceClient
         /// </summary>
         ~ServiceConnection()
         {
-            this.Dispose(false);
+            Dispose(false);
         }
     }
 }
