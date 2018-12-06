@@ -16,7 +16,6 @@ namespace BoardGame.HumanClient
     public partial class MainForm : Form
     {
         private readonly ChessMechanism _mechanism;
-
         private readonly ServiceConnection _client;
 
 #if DEBUG
@@ -86,7 +85,6 @@ namespace BoardGame.HumanClient
             this.InvokeIfRequired(() =>
             {
                 LogError($"({e.CallerMemberName}){e.Message}", e.Exception);
-                RefreshAll();
             });
         }
 
@@ -125,13 +123,6 @@ namespace BoardGame.HumanClient
                     Text = player.Name,
                 });
             }
-        }
-
-        private static bool RandomOrderedSequelEquals<T>(IEnumerable<T> first, IEnumerable<T> second)
-        {
-            var firstSet = first?.ToHashSet() ?? new HashSet<T>();
-            var secondSet = second?.ToHashSet() ?? new HashSet<T>();
-            return firstSet.SetEquals(secondSet);
         }
 
         private async Task RefreshClient()
@@ -244,7 +235,6 @@ namespace BoardGame.HumanClient
                 btnOfferDraw.Enabled = false;
                 btnResign.Enabled = false;
                 chessBoardGamePanel1.Enabled = false;
-                chessBoardGamePanel1.Refresh();
             }
             else
             {
@@ -256,8 +246,9 @@ namespace BoardGame.HumanClient
                 btnOfferDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawOffer);
                 btnResign.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.Resign);
                 chessBoardGamePanel1.Enabled = true;
-                chessBoardGamePanel1.Refresh();
             }
+
+            chessBoardGamePanel1.Refresh();
         }
 
         private void ToggleLoginControls()
@@ -301,7 +292,7 @@ namespace BoardGame.HumanClient
             ToggleLoginControls();
             btnLogin.Enabled = true;
 
-            RefreshAll();
+            await RefreshAll();
         }
 
         private async Task Logout()
@@ -314,7 +305,6 @@ namespace BoardGame.HumanClient
 
         private async Task RefreshAll()
         {
-            Enabled = false;
             try
             {
                 await RefreshClient();
@@ -326,70 +316,6 @@ namespace BoardGame.HumanClient
             {
                 LogError(nameof(RefreshAll), ex);
             }
-            finally
-            {
-                Enabled = true;
-            }
-        }
-
-        private bool IsItMyTurn(ChessGameDetails details)
-        {
-            var representation = details.Representation;
-            var state = _mechanism.GetGameState(details.Representation);
-
-            if (state != GameState.InProgress)
-            {
-                return false;
-            }
-
-            switch (representation.CurrentPlayer)
-            {
-                case ChessPlayer.White:
-                    if (details.WhitePlayer.UserName == _client.LoggedInUser)
-                    {
-                        return true;
-                    }
-                    break;
-
-                case ChessPlayer.Black:
-                    if (details.WhitePlayer.UserName == _client.LoggedInUser)
-                    {
-                        return true;
-                    }
-                    break;
-            }
-
-            return false;
-        }
-
-        private ChessPlayer MyColorInGame(ChessGameDetails details)
-        {
-            var representation = details.Representation;
-
-            switch (representation.CurrentPlayer)
-            {
-                case ChessPlayer.White:
-                    if (details.WhitePlayer.UserName == _client.LoggedInUser)
-                    {
-                        return ChessPlayer.White;
-                    }
-                    else
-                    {
-                        return ChessPlayer.Black;
-                    }
-
-                case ChessPlayer.Black:
-                    if (details.WhitePlayer.UserName == _client.LoggedInUser)
-                    {
-                        return ChessPlayer.Black;
-                    }
-                    else
-                    {
-                        return ChessPlayer.White;
-                    }
-            }
-
-            throw new ArgumentOutOfRangeException();
         }
 
         private async Task RefreshLadder()
@@ -493,11 +419,10 @@ namespace BoardGame.HumanClient
             }
             catch (Exception ex)
             {
-                chessBoardGamePanel1.ChessRepresentation = _client.CurrentGame.Representation;
-                chessBoardGamePanel1.Refresh();
                 LogError(nameof(chessBoardGamePanel1_OnValidMoveSelected), ex);
-                throw;
             }
+
+            RefreshGame();
 
             chessBoardGamePanel1.ChessRepresentation = _client.CurrentGame.Representation;
             chessBoardGamePanel1.Refresh();
@@ -544,6 +469,7 @@ namespace BoardGame.HumanClient
 
             try
             {
+                btnChallenge.Enabled = false;
                 var newGame = await _client.ChallengePlayerAsync(selectedPlayer);
                 if (newGame == null)
                 {
@@ -551,7 +477,7 @@ namespace BoardGame.HumanClient
                     btnChallenge.Enabled = true;
                     return;
                 }
-                _client.MakeCurrentMatchAsync(newGame.Id);
+                _client.SetCurrentMatchById(newGame.Id);
                 tabPageMatches.Select();
             }
             finally
@@ -614,7 +540,7 @@ namespace BoardGame.HumanClient
                 chessBoardPreview.ChessRepresentation = new ChessRepresentation();
                 return;
             }
-            _client.MakeCurrentMatchAsync(details.Id);
+            _client.SetCurrentMatchById(details.Id);
             labelMatchPreviewStatus.Text = GetStatusLabelText();
             chessBoardPreview.ChessRepresentation = details.Representation;
         }

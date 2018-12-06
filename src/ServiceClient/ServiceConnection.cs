@@ -154,10 +154,10 @@ namespace BoardGame.ServiceClient
         }
 
         /// <summary>
-        /// Makes the given match the current one and causes a revalidation.
+        /// Makes the given match the current one.
         /// </summary>
         /// <param name="matchId">The ID of the match.</param>
-        public void MakeCurrentMatchAsync(Guid? matchId)
+        public void SetCurrentMatchById(Guid? matchId)
         {
             DisposeGuard();
 
