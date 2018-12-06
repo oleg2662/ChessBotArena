@@ -242,11 +242,14 @@ namespace BoardGame.ServiceClient
 
         public async Task<LoginResult> ProlongToken(string token)
         {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return null;
+            }
+
             var message = new HttpRequestMessage(HttpMethod.Post, TokenControllerUri);
 
             message.Headers.Add("Authorization", $"Bearer {token}");
-
-            message.Content = new StringContent(token, Encoding.UTF8, "application/json");
 
             var resultMessage = await _client.SendAsync(message);
 

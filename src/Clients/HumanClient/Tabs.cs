@@ -4,6 +4,7 @@
     {
         PlayersPage,
         MatchesPage,
-        GamePage
+        GamePage,
+        LogPage
     }
 }

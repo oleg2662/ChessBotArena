@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace BoardGame.ServiceClient
 {
     public class ServiceConnectionEventArgs
     {
-        protected ServiceConnectionEventArgs(bool isError = false)
+        protected ServiceConnectionEventArgs(bool isError = false, [CallerMemberName] string callerMemberName = "")
         {
             IsError = isError;
+            CallerMemberName = callerMemberName;
         }
 
         public bool IsError { get; }
@@ -17,25 +19,19 @@ namespace BoardGame.ServiceClient
 
         public Exception Exception { get; set; }
 
-        public static ServiceConnectionEventArgs Ok() => new ServiceConnectionEventArgs(false);
+        public string CallerMemberName { get; set; }
 
-        public static ServiceConnectionEventArgs Ok(string message) => new ServiceConnectionEventArgs(false)
+        public static ServiceConnectionEventArgs Ok(string message = "", [CallerMemberName] string callerMemberName = "") => new ServiceConnectionEventArgs(false, callerMemberName)
         {
             Message = message
         };
 
-        public static ServiceConnectionEventArgs Error(string message) => new ServiceConnectionEventArgs(true)
+        public static ServiceConnectionEventArgs Error(Exception exception = null, [CallerMemberName] string callerMemberName = "") => new ServiceConnectionEventArgs(true, callerMemberName)
         {
-            Message = message
-        };
-
-        public static ServiceConnectionEventArgs Error(Exception exception) => new ServiceConnectionEventArgs(true)
-        {
-            Message = exception.Message,
             Exception = exception
         };
 
-        public static ServiceConnectionEventArgs Error(string message, Exception exception) => new ServiceConnectionEventArgs(true)
+        public static ServiceConnectionEventArgs Error(string message = "", Exception exception = null, [CallerMemberName] string callerMemberName = "") => new ServiceConnectionEventArgs(true, callerMemberName)
         {
             Message = message,
             Exception = exception
