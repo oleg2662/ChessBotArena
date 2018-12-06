@@ -45,9 +45,29 @@ namespace BoardGame.Service.Controllers.Api
         [HttpGet]
         public IActionResult GetChessGames()
         {
-            var chessGames = _repository.Get(GetCurrentUser());
+            var chessGames = _repository.GetList(GetCurrentUser());
 
             _logger.LogInformation($"{GetCurrentUser()} queried a list of chess games and found {chessGames.Count}.");
+
+            return Ok(chessGames);
+        }
+
+        /// <summary>
+        /// Returns the list of chess games for the current user.
+        /// </summary>
+        /// <returns>List of games (with details) for the current user.</returns>
+        /// <response code="200">Returns the list of games of the current user..</response>
+        /// <response code="401">If there is an authentication error.</response>
+        /// <response code="500">If there is a server error.</response>
+        [ProducesResponseType(typeof(IEnumerable<ChessGameDetails>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [HttpGet("detailed")]
+        public IActionResult GetChessGamesWithDetails()
+        {
+            var chessGames = _repository.GetListWithDetails(GetCurrentUser());
+
+            _logger.LogInformation($"{GetCurrentUser()} queried a list of chess games (with details) and found {chessGames.Count}.");
 
             return Ok(chessGames);
         }
@@ -75,22 +95,16 @@ namespace BoardGame.Service.Controllers.Api
                 return BadRequest();
             }
 
-            var chessGameDetails = _repository.GetDetails(GetCurrentUser(), x => x.Id == gid);
+            var chessGameDetails = _repository.GetDetails(GetCurrentUser(), gid);
 
-            if (chessGameDetails.Count < 1)
+            if (chessGameDetails == null)
             {
                 _logger.LogWarning($"{GetCurrentUser()} queried the game with id {id} but no game was found.");
                 return NotFound();
             }
 
-            if (chessGameDetails.Count > 1)
-            {
-                _logger.LogError($"{GetCurrentUser()} queried the game with id {id} but multiple games were found.");
-                return Conflict("Multiple chess games with same id detected!");
-            }
-
             _logger.LogInformation($"{GetCurrentUser()} queried the details for game with id {id}.");
-            return Ok(chessGameDetails.First());
+            return Ok(chessGameDetails);
         }
 
         /// <summary>

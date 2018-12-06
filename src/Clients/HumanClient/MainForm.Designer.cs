@@ -36,6 +36,8 @@ namespace BoardGame.HumanClient
             this.imageListMatchStatuses = new System.Windows.Forms.ImageList(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.tableLayoutPanelMultiplayer = new System.Windows.Forms.TableLayoutPanel();
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.panelMatches = new System.Windows.Forms.Panel();
@@ -79,8 +81,6 @@ namespace BoardGame.HumanClient
             this.checkboxShowHumans = new System.Windows.Forms.CheckBox();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textboxLog = new System.Windows.Forms.RichTextBox();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.statusStrip1.SuspendLayout();
             this.tableLayoutPanelMultiplayer.SuspendLayout();
             this.panelSidebar.SuspendLayout();
@@ -134,6 +134,25 @@ namespace BoardGame.HumanClient
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             this.toolStripProgressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.toolStripProgressBar1.Visible = false;
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(756, 17);
+            this.toolStripStatusLabel1.Spring = true;
+            this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // toolStripSplitButton1
+            // 
+            this.toolStripSplitButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSplitButton1.DropDownButtonWidth = 0;
+            this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
+            this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.toolStripSplitButton1.Name = "toolStripSplitButton1";
+            this.toolStripSplitButton1.Size = new System.Drawing.Size(21, 20);
+            this.toolStripSplitButton1.Text = "Refresh";
+            this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.toolStripSplitButton1_ButtonClick);
             // 
             // tableLayoutPanelMultiplayer
             // 
@@ -192,6 +211,7 @@ namespace BoardGame.HumanClient
             // 
             this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
             this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardPreview.ChessRepresentation = ((BoardGame.Game.Chess.ChessRepresentation)(resources.GetObject("chessBoardPreview.ChessRepresentation")));
             this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
             this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
             this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
@@ -512,6 +532,7 @@ namespace BoardGame.HumanClient
             // 
             this.chessBoardGamePanel1.Bevel = System.Drawing.Color.Brown;
             this.chessBoardGamePanel1.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardGamePanel1.ChessRepresentation = ((BoardGame.Game.Chess.ChessRepresentation)(resources.GetObject("chessBoardGamePanel1.ChessRepresentation")));
             this.chessBoardGamePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chessBoardGamePanel1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.chessBoardGamePanel1.Location = new System.Drawing.Point(3, 3);
@@ -616,7 +637,7 @@ namespace BoardGame.HumanClient
             this.tabPageLog.Location = new System.Drawing.Point(4, 22);
             this.tabPageLog.Name = "tabPageLog";
             this.tabPageLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLog.Size = new System.Drawing.Size(1084, 799);
+            this.tabPageLog.Size = new System.Drawing.Size(711, 630);
             this.tabPageLog.TabIndex = 4;
             this.tabPageLog.Text = "Log";
             this.tabPageLog.UseVisualStyleBackColor = true;
@@ -629,28 +650,9 @@ namespace BoardGame.HumanClient
             this.textboxLog.Name = "textboxLog";
             this.textboxLog.ReadOnly = true;
             this.textboxLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.textboxLog.Size = new System.Drawing.Size(1078, 793);
+            this.textboxLog.Size = new System.Drawing.Size(705, 624);
             this.textboxLog.TabIndex = 0;
             this.textboxLog.Text = "";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(756, 17);
-            this.toolStripStatusLabel1.Spring = true;
-            this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // toolStripSplitButton1
-            // 
-            this.toolStripSplitButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripSplitButton1.DropDownButtonWidth = 0;
-            this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
-            this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Transparent;
-            this.toolStripSplitButton1.Name = "toolStripSplitButton1";
-            this.toolStripSplitButton1.Size = new System.Drawing.Size(21, 20);
-            this.toolStripSplitButton1.Text = "Refresh";
-            this.toolStripSplitButton1.ButtonClick += new System.EventHandler(this.toolStripSplitButton1_ButtonClick);
             // 
             // MainForm
             // 

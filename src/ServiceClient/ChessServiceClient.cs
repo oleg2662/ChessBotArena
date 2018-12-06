@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -29,7 +30,8 @@ namespace BoardGame.ServiceClient
         private Uri HealthControllerUri => new Uri($"{_baseUrl}/api/health");
         private Uri AccountControllerUri => new Uri($"{_baseUrl}/api/account");
         private Uri PlayersControllerUri => new Uri($"{_baseUrl}/api/players");
-        private Uri GamesControllerUri => new Uri(GamesControllerUrl);
+        private Uri GamesControllerUri => new Uri($"{_baseUrl}/api/games");
+        private Uri GamesListDetailedControllerUri => new Uri($"{_baseUrl}/api/games/detailed");
         private Uri LadderControllerUri => new Uri($"{_baseUrl}/api/ladder");
         private Uri LadderHumansControllerUri => new Uri($"{_baseUrl}/api/ladder/humans");
         private Uri LadderBotsControllerUri => new Uri($"{_baseUrl}/api/ladder/bots");
@@ -146,6 +148,37 @@ namespace BoardGame.ServiceClient
 
             var resultString = await resultMessage.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<IEnumerable<ChessGame>>(resultString);
+
+            return result;
+        }
+
+        public virtual async Task<IEnumerable<ChessGameDetails>> GetMatchesWithDetailsAsync(string token)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Get, GamesListDetailedControllerUri);
+
+            message.Headers.Add("Authorization", $"Bearer {token}");
+
+            var resultMessage = await _client.SendAsync(message);
+
+            if (!resultMessage.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var resultString = await resultMessage.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<IEnumerable<ChessGameDetails>>(resultString).ToList();
+            var mechanism = new ChessMechanism();
+            foreach (var chessGameDetails in result)
+            {
+                var history = chessGameDetails.Representation.History;
+
+                chessGameDetails.Representation = new ChessRepresentationInitializer().Create();
+                
+                foreach (var baseMove in history)
+                {
+                    chessGameDetails.Representation = mechanism.ApplyMove(chessGameDetails.Representation, baseMove);
+                }
+            }
 
             return result;
         }

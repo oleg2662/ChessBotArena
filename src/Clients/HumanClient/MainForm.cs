@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BoardGame.Game.Chess;
@@ -105,27 +104,17 @@ namespace BoardGame.HumanClient
         {
             if (_client.IsAnonymous)
             {
+                listViewPlayers.Items.Clear();
                 return;
             }
 
             var players = _client.Players;
             if (players == null)
             {
-                tabPagePlayers.Enabled = true;
-                MessageBox.Show("Couldn't get list of players.");
+                LogError("Couldn't get list of players.");
                 return;
             }
 
-            var newList = players.Select(x => x.Name).OrderBy(x => x).AsEnumerable();
-            var oldList = listViewPlayers.Items.OfType<ListViewItem>().Select(x => x.Text).OrderBy(x => x)
-                .AsEnumerable();
-
-            if (RandomOrderedSequelEquals(oldList, newList))
-            {
-                return;
-            }
-
-            tabPagePlayers.Enabled = false;
             listViewPlayers.Items.Clear();
 
             foreach (var player in players)
@@ -136,8 +125,6 @@ namespace BoardGame.HumanClient
                     Text = player.Name,
                 });
             }
-
-            tabPagePlayers.Enabled = true;
         }
 
         private static bool RandomOrderedSequelEquals<T>(IEnumerable<T> first, IEnumerable<T> second)
@@ -147,40 +134,41 @@ namespace BoardGame.HumanClient
             return firstSet.SetEquals(secondSet);
         }
 
+        private async Task RefreshClient()
+        {
+            try
+            {
+                await _client.Refresh();
+            }
+            catch (Exception ex)
+            {
+                LogError(nameof(RefreshMatches), ex);
+            }
+        }
+
         private void RefreshMatches()
         {
             if (_client.IsAnonymous)
             {
+                listViewMatches.Items.Clear();
                 return;
             }
 
+            listViewMatches.Enabled = false;
             var matches = _client.Matches;
             if (matches == null)
             {
-                tabPageMatches.Enabled = true;
-                MessageBox.Show("Couldn't get list of matches.");
+                listViewMatches.Enabled = true;
+                LogError("Couldn't get list of matches.");
                 return;
             }
 
-            var oldList = listViewMatches.Items.OfType<ListViewItem>()
-                .Select(x => x.Tag as ChessGameDetails)
-                .Where(x => x != null)
-                .Select(x => x.Id)
-                .OrderBy(x => x)
-                .AsEnumerable();
+            var selectedMatch = listViewMatches?.SelectedItems.Count > 0
+                ? (ChessGameDetails) listViewMatches.SelectedItems[0].Tag
+                : null;
 
-            var selectedMatchId = listViewMatches?.SelectedItems.Count > 0
-                                    ? ((ChessGameDetails)listViewMatches.SelectedItems[0].Tag)?.Id
-                                    : null;
+            var selectedMatchId = selectedMatch?.Id;
 
-            var newList = matches.Select(x => x.Id).OrderBy(x => x).AsEnumerable();
-
-            if (RandomOrderedSequelEquals(oldList, newList))
-            {
-                return;
-            }
-
-            tabPageMatches.Enabled = false;
             listViewMatches.Items.Clear();
 
             foreach (var match in matches)
@@ -218,40 +206,21 @@ namespace BoardGame.HumanClient
                 });
             }
 
-            tabPageMatches.Enabled = true;
+            RefreshMatchPreview();
+            listViewMatches.Enabled = true;
         }
 
         private void RefreshGame()
         {
-            if (_client.IsAnonymous || _client.CurrentGame == null)
+            if (_client.IsAnonymous || _client.CurrentGame?.Representation == null)
             {
+                chessBoardGamePanel1.ChessRepresentation = new ChessRepresentation();
+                chessBoardGamePanel1.Enabled = false;
+                chessBoardGamePanel1.Refresh();
                 return;
             }
 
             var details = _client.CurrentGame;
-            if (details == null)
-            {
-                chessBoardGamePanel1.Enabled = false;
-                return;
-            }
-            else
-            {
-                chessBoardGamePanel1.Enabled = true;
-            }
-
-            var newList = details.Representation.History.Select(x => x.ToString());
-            var oldList = listboxMoves.Items.OfType<string>();
-
-            if (RandomOrderedSequelEquals(newList, oldList))
-            {
-                tabPageGame.Enabled = true;
-                chessBoardGamePanel1.Enabled = true;
-                return;
-            }
-
-            tabPageGame.Enabled = false;
-            chessBoardGamePanel1.Enabled = false;
-
             listboxMoves.Items.Clear();
 
             var game = new ChessRepresentationInitializer().Create();
@@ -264,10 +233,9 @@ namespace BoardGame.HumanClient
 
             chessBoardGamePanel1.ChessRepresentation = game;
 
-            var gameState = _mechanism.GetGameState(game);
-            labelGameState.Text = GameStateToString(gameState, game.CurrentPlayer);
+            labelGameState.Text = GetStatusLabelText();
 
-            var isItMyTurn = IsItMyTurn(details);
+            var isItMyTurn = _client.IsItMyTurn ?? false;
 
             if (!isItMyTurn)
             {
@@ -275,20 +243,21 @@ namespace BoardGame.HumanClient
                 btnDeclineDraw.Enabled = false;
                 btnOfferDraw.Enabled = false;
                 btnResign.Enabled = false;
-                tabPageGame.Enabled = true;
-                chessBoardGamePanel1.Enabled = true;
-                return;
+                chessBoardGamePanel1.Enabled = false;
+                chessBoardGamePanel1.Refresh();
             }
+            else
+            {
+                var myColor = _client.CurrentGame.Representation.CurrentPlayer;
+                var possibleSpecialMoves = _mechanism.GenerateMoves(game).Where(x => x.Owner == myColor).OfType<SpecialMove>().ToList();
 
-            var myColor = MyColorInGame(details);
-            var possibleSpecialMoves = _mechanism.GenerateMoves(game).Where(x => x.Owner == myColor).OfType<SpecialMove>().ToList();
-
-            btnAcceptDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawAccept);
-            btnDeclineDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawDecline);
-            btnOfferDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawOffer);
-            btnResign.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.Resign);
-
-            tabPageGame.Enabled = true;
+                btnAcceptDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawAccept);
+                btnDeclineDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawDecline);
+                btnOfferDraw.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.DrawOffer);
+                btnResign.Enabled = possibleSpecialMoves.Any(x => x.Message == MessageType.Resign);
+                chessBoardGamePanel1.Enabled = true;
+                chessBoardGamePanel1.Refresh();
+            }
         }
 
         private void ToggleLoginControls()
@@ -307,6 +276,10 @@ namespace BoardGame.HumanClient
             try
             {
                 success = await _client.LoginAsync(textboxUsername.Text, textboxPassword.Text);
+                if (success)
+                {
+                    await _client.Refresh();
+                }
             }
             catch (Exception e)
             {
@@ -323,7 +296,6 @@ namespace BoardGame.HumanClient
             {
                 labelLoginStatus.Text = $"{_client.LoggedInUser} logged in.";
                 LogNotification($"Successful login: {_client.LoggedInUser}");
-                _client.StartAutoRefresh();
             }
 
             ToggleLoginControls();
@@ -336,14 +308,28 @@ namespace BoardGame.HumanClient
         {
             _client.StopAutoRefresh();
             await _client.Logout();
+            await RefreshAll();
             ToggleLoginControls();
         }
 
-        private void RefreshAll()
+        private async Task RefreshAll()
         {
-            RefreshMatches();
-            RefreshPlayers();
-            RefreshGame();
+            Enabled = false;
+            try
+            {
+                await RefreshClient();
+                RefreshPlayers();
+                RefreshMatches();
+                RefreshGame();
+            }
+            catch (Exception ex)
+            {
+                LogError(nameof(RefreshAll), ex);
+            }
+            finally
+            {
+                Enabled = true;
+            }
         }
 
         private bool IsItMyTurn(ChessGameDetails details)
@@ -408,15 +394,23 @@ namespace BoardGame.HumanClient
 
         private async Task RefreshLadder()
         {
-            var result = await _client.GetLadder();
+            listviewLadder.Items.Clear();
+            ICollection<LadderItem> result = null;
+
+            try
+            {
+                result = await _client.GetLadder();
+            }
+            catch (Exception ex)
+            {
+                LogError(nameof(RefreshLadder), ex);
+            }
 
             if (result == null)
             {
-                MessageBox.Show("Couldn't get ladder.");
+                LogError("Couldn't get ladder.");
                 return;
             }
-
-            listviewLadder.Items.Clear();
 
             var ordering = new List<LadderItem>();
 
@@ -445,12 +439,40 @@ namespace BoardGame.HumanClient
             }
         }
 
-        private void tabMain_Selected(object sender, TabControlEventArgs e)
+        private async void tabMain_Selected(object sender, TabControlEventArgs e)
         {
             var page = (Tabs?)e.TabPage.Tag;
             panelGame.Visible = page == Tabs.GamePage;
             panelPlayers.Visible = page == Tabs.PlayersPage;
             panelMatches.Visible = page == Tabs.MatchesPage;
+
+            switch (page)
+            {
+                case Tabs.PlayersPage:
+                    await RefreshClient();
+                    RefreshPlayers();
+                    break;
+
+                case Tabs.MatchesPage:
+                    await RefreshClient();
+                    RefreshMatches();
+                    break;
+
+                case Tabs.GamePage:
+                    await RefreshClient();
+                    RefreshGame();
+                    break;
+
+                case Tabs.LadderPage:
+                    await RefreshClient();
+                    await RefreshLadder();
+                    break;
+
+                case Tabs.LogPage:
+                    textboxLog.SelectionStart = textboxLog.TextLength;
+                    textboxLog.ScrollToCaret();
+                    break;
+            }
         }
 
         private async void buttonLogin_Click(object sender, EventArgs e)
@@ -465,23 +487,20 @@ namespace BoardGame.HumanClient
                 return;
             }
 
-            var originalState = chessBoardGamePanel1.ChessRepresentation;
-
-            bool result;
             try
             {
                 await _client.SendMoveAsync(eventArg.Move);
             }
             catch (Exception ex)
             {
+                chessBoardGamePanel1.ChessRepresentation = _client.CurrentGame.Representation;
+                chessBoardGamePanel1.Refresh();
                 LogError(nameof(chessBoardGamePanel1_OnValidMoveSelected), ex);
                 throw;
             }
 
-            await _client.Refresh();
             chessBoardGamePanel1.ChessRepresentation = _client.CurrentGame.Representation;
             chessBoardGamePanel1.Refresh();
-            RefreshAll();
         }
 
         private async void tabLadder_Enter(object sender, EventArgs e)
@@ -501,11 +520,7 @@ namespace BoardGame.HumanClient
 
         private async void toolStripSplitButton1_ButtonClick(object sender, EventArgs e)
         {
-            var needRefresh = await _client.Refresh();
-            if (needRefresh)
-            {
-                RefreshAll();
-            }
+            await RefreshAll();
         }
 
         private async void btnLogout_Click(object sender, EventArgs e)
@@ -527,89 +542,81 @@ namespace BoardGame.HumanClient
 
             var selectedPlayer = listViewPlayers.SelectedItems[0].Text;
 
-            var newGame = await _client.ChallengePlayerAsync(selectedPlayer);
-
-            if (newGame == null)
+            try
             {
-                MessageBox.Show("Couldn't send challenge.");
-                return;
+                var newGame = await _client.ChallengePlayerAsync(selectedPlayer);
+                if (newGame == null)
+                {
+                    LogError("Couldn't send challenge.");
+                    btnChallenge.Enabled = true;
+                    return;
+                }
+                _client.MakeCurrentMatchAsync(newGame.Id);
+                tabPageMatches.Select();
             }
-
-            await _client.MakeCurrentMatchAsync(newGame.Id);
-            tabPageMatches.Select();
+            finally
+            {
+                btnChallenge.Enabled = true;
+            }
         }
 
-        private async void listViewMatches_ItemActivate(object sender, EventArgs e)
+        private string GetStatusLabelText()
         {
-            var listView = (sender as ListView);
+            var gameState = _client.CurrentGameState;
+            var isItMyTurn = _client.IsItMyTurn;
 
-            if (listView == null)
+            if (!isItMyTurn.HasValue)
+            {
+                return string.Empty;
+            }
+
+            switch (gameState)
+            {
+                case GameState.InProgress:
+                    var currentPlayer = _client.CurrentGame.Representation.CurrentPlayer.ToString();
+                    return isItMyTurn.Value
+                        ? $"{currentPlayer} (you!)"
+                        : $"{currentPlayer}";
+
+                case GameState.WhiteWon:
+                    return isItMyTurn.Value ? "White won! (You!)" : "White won!";
+
+                case GameState.BlackWon:
+                    return isItMyTurn.Value ? "Black won! (You!)" : "Black won!";
+
+                case GameState.Draw:
+                    return "Draw!";
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void listViewMatches_ItemActivate(object sender, EventArgs e)
+        {
+            RefreshMatchPreview();
+        }
+
+        private void RefreshMatchPreview()
+        {
+            if (listViewMatches == null)
             {
                 LogError("Couldn't find list view of matches.");
                 return;
             }
 
-            var item = (listView?.SelectedItems.Count ?? 0) > 0 ? listView.SelectedItems[0] : null;
+            var item = (listViewMatches?.SelectedItems.Count ?? 0) > 0 ? listViewMatches.SelectedItems[0] : null;
 
             var details = (ChessGameDetails)item?.Tag;
-            var representation = details?.Representation;
-
-            labelMatchPreviewStatus.Text = string.Empty;
-
-            if (representation != null)
+            if (details == null)
             {
-                chessBoardPreview.ChessRepresentation = representation;
-                var state = _mechanism.GetGameState(representation);
-                if (state == GameState.InProgress)
-                {
-                    var sb = new StringBuilder();
-
-                    sb.Append($"Next: {representation.CurrentPlayer}");
-                    switch (representation.CurrentPlayer)
-                    {
-                        case ChessPlayer.White:
-                            if (details.WhitePlayer.UserName == _client.LoggedInUser)
-                            {
-                                sb.Append(" (You)");
-                            }
-                            break;
-                        case ChessPlayer.Black:
-                            if (details.BlackPlayer.UserName == _client.LoggedInUser)
-                            {
-                                sb.Append(" (You)");
-                            }
-                            break;
-
-                        default:
-                            break;
-                    }
-
-                    labelMatchPreviewStatus.Text = sb.ToString();
-                }
-                else
-                {
-                    labelMatchPreviewStatus.Text = state.ToString();
-                }
+                labelMatchPreviewStatus.Text = "-";
+                chessBoardPreview.ChessRepresentation = new ChessRepresentation();
+                return;
             }
-
-            try
-            {
-                listView.Enabled = false;
-                await _client.MakeCurrentMatchAsync(details?.Id);
-                RefreshGame();
-            }
-            catch (Exception ex)
-            {
-                LogError(nameof(listViewMatches), ex);
-            }
-            finally
-            {
-                listView.Enabled = true;
-                if (item != null)
-                {
-                    item.Selected = true;
-                }
-            }
+            _client.MakeCurrentMatchAsync(details.Id);
+            labelMatchPreviewStatus.Text = GetStatusLabelText();
+            chessBoardPreview.ChessRepresentation = details.Representation;
         }
 
         private void btnResign_Click(object sender, EventArgs e)
@@ -651,7 +658,6 @@ namespace BoardGame.HumanClient
             this.InvokeIfRequired(() =>
             {
                 LogNotification($"[POLLEND]({e.CallerMemberName}){e.Message}");
-                RefreshAll();
                 HideToolstripProgressBar();
             });
         }
@@ -659,24 +665,6 @@ namespace BoardGame.HumanClient
         private void MainForm_Move(object sender, EventArgs e)
         {
             chessBoardGamePanel1.Refresh();
-        }
-
-        private static string GameStateToString(GameState state, ChessPlayer? nextPlayer = null)
-        {
-            switch (state)
-            {
-                case GameState.InProgress:
-                    switch (nextPlayer)
-                    {
-                        case ChessPlayer.White: return "Next: White";
-                        case ChessPlayer.Black: return "Next: Black";
-                        default: return "In progress";
-                    }
-                case GameState.WhiteWon: return "White won";
-                case GameState.BlackWon: return "Black won";
-                case GameState.Draw: return "Draw";
-                default: throw new ArgumentOutOfRangeException(nameof(state));
-            }
         }
     }
 }

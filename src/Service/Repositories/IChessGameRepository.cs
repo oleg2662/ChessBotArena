@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.ChessGamesControllerModels;
-using BoardGame.Service.Models.Data;
 
 namespace BoardGame.Service.Repositories
 {
@@ -12,20 +11,26 @@ namespace BoardGame.Service.Repositories
     public interface IChessGameRepository
     {
         /// <summary>
-        /// Gets the list of chess games according to the given predicate.
+        /// Gets the list of chess games for the specified player.
         /// </summary>
         /// <param name="participantPlayerName">Username of the participant (either sides) to filter for.</param>
-        /// <param name="predicate">Predicate for additional filtering if needed.</param>
         /// <returns>List of chess games.</returns>
-        IReadOnlyList<ChessGame> Get(string participantPlayerName, Func<DbChessGame, bool> predicate = null);
+        IReadOnlyList<ChessGame> GetList(string participantPlayerName);
 
         /// <summary>
-        /// Gets the list of chess game details according to the given predicate.
+        /// Gets the list of chess games (with details) for the specified player.
         /// </summary>
         /// <param name="participantPlayerName">Username of the participant (either sides) to filter for.</param>
-        /// <param name="predicate">Predicate for additional filtering if needed.</param>
+        /// <returns>List of chess games.</returns>
+        IReadOnlyList<ChessGameDetails> GetListWithDetails(string participantPlayerName);
+
+        /// <summary>
+        /// Gets the selected chess game details.
+        /// </summary>
+        /// <param name="participantPlayerName">Username of the participant (either sides) to filter for.</param>
+        /// <param name="chessGameId">ID of the game.</param>
         /// <returns>List of detailed chess games.</returns>
-        IReadOnlyList<ChessGameDetails> GetDetails(string participantPlayerName, Func<DbChessGame, bool> predicate = null);
+        ChessGameDetails GetDetails(string participantPlayerName, Guid chessGameId);
 
         /// <summary>
         /// Validates and saves a new game party according to the supplied challenge request.

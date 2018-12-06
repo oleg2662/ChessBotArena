@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-
+using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.ChessGamesControllerModels;
 using BoardGame.Model.Api.LadderControllerModels;
 using BoardGame.Model.Api.PlayerControllerModels;
+using Timer = System.Timers.Timer;
 
 namespace BoardGame.ServiceClient
 {
@@ -21,6 +24,7 @@ namespace BoardGame.ServiceClient
         private readonly object _lock;
         private bool _disposed;
         private LoginResult _loginResult;
+        private readonly ChessMechanism _mechanism;
 
         private Timer _tokenRefreshTimer;
         private Timer _stateRefreshTimer;
@@ -29,6 +33,8 @@ namespace BoardGame.ServiceClient
         private readonly List<ChessGameDetails> _matches;
 
         private readonly ConcurrentHashSet<string> _runningMethods;
+
+        private static readonly SemaphoreSlim _pollSemaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Creates an instance of the service connection class.
@@ -39,6 +45,7 @@ namespace BoardGame.ServiceClient
             _lock = new object();
             _client = new ChessServiceClient(baseUrl);
             _runningMethods = new ConcurrentHashSet<string>();
+            _mechanism = new ChessMechanism();
 
             _players = new List<Player>();
             _matches = new List<ChessGameDetails>();
@@ -46,8 +53,6 @@ namespace BoardGame.ServiceClient
 
             InitTokenRefreshTimer();
             InitStateRefreshTimer();
-
-            StartAutoRefresh();
         }
 
         /// <summary>
@@ -75,6 +80,49 @@ namespace BoardGame.ServiceClient
         /// Gets a value indicating whether the logged in user is a bot. If no user is logged in returns null.
         /// </summary>
         public bool? IsBotLoggedIn => _loginResult?.IsBot;
+
+        /// <summary>
+        /// Gets a value indicating whether it's the logged in user's turn in the current game.
+        /// If no one is logged in or there is no current game selected the property returns null.
+        /// </summary>
+        public bool? IsItMyTurn
+        {
+            get
+            {
+                if (CurrentGame == null || IsAnonymous)
+                {
+                    return null;
+                }
+
+                var representation = CurrentGame.Representation;
+
+                switch (representation.CurrentPlayer)
+                {
+                    case ChessPlayer.White:
+                        if (CurrentGame.WhitePlayer.UserName == LoggedInUser)
+                        {
+                            return true;
+                        }
+                        break;
+                    case ChessPlayer.Black:
+                        if (CurrentGame.BlackPlayer.UserName == LoggedInUser)
+                        {
+                            return true;
+                        }
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(representation.CurrentPlayer));
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current state of the current game. Null if there is no selected game.
+        /// </summary>
+        public GameState? CurrentGameState => CurrentGame?.Representation == null ? null : (GameState?)_mechanism.GetGameState(CurrentGame.Representation);
 
         /// <summary>
         /// Gets the list of players.
@@ -109,7 +157,7 @@ namespace BoardGame.ServiceClient
         /// Makes the given match the current one and causes a revalidation.
         /// </summary>
         /// <param name="matchId">The ID of the match.</param>
-        public async Task MakeCurrentMatchAsync(Guid? matchId)
+        public void MakeCurrentMatchAsync(Guid? matchId)
         {
             DisposeGuard();
 
@@ -122,8 +170,6 @@ namespace BoardGame.ServiceClient
                 var match = Matches.FirstOrDefault(x => x.Id == matchId);
                 CurrentGame = match ?? throw new ArgumentException("Given match ID cannot be found.", nameof(matchId));
             }
-
-            await PollAsync();
         }
 
         /// <summary>
@@ -131,7 +177,6 @@ namespace BoardGame.ServiceClient
         /// </summary>
         public void StopAutoRefresh()
         {
-            _tokenRefreshTimer.Stop();
             _stateRefreshTimer.Stop();
         }
 
@@ -140,7 +185,6 @@ namespace BoardGame.ServiceClient
         /// </summary>
         public void StartAutoRefresh()
         {
-            _tokenRefreshTimer.Start();
             _stateRefreshTimer.Start();
         }
 
@@ -176,22 +220,17 @@ namespace BoardGame.ServiceClient
             }
             catch (Exception e)
             {
+                await PollAsync();
                 TryEndInvoke();
                 OnBackgroundError(ServiceConnectionEventArgs.Error(e));
                 return false;
             }
 
-            if (result == null)
-            {
-                TryEndInvoke();
-                return false;
-            }
-
             SetSessionData(result);
-
+            await PollAsync();
             TryEndInvoke();
 
-            return true;
+            return result != null;
         }
 
         /// <summary>
@@ -360,7 +399,8 @@ namespace BoardGame.ServiceClient
         {
             _tokenRefreshTimer = new Timer(600000)
             {
-                AutoReset = false
+                AutoReset = false,
+                Enabled = true
             };
             _tokenRefreshTimer.Elapsed += TokenRefreshTimerOnElapsed;
         }
@@ -369,7 +409,8 @@ namespace BoardGame.ServiceClient
         {
             _stateRefreshTimer = new Timer(5000)
             {
-                AutoReset = false
+                AutoReset = false,
+                Enabled = false
             };
             _stateRefreshTimer.Elapsed += StateRefreshTimerOnElapsed;
         }
@@ -401,48 +442,54 @@ namespace BoardGame.ServiceClient
             BackgroundError?.Invoke(this, e);
         }
 
-        private async Task<bool> PollAsync()
+        private async Task<bool> PollAsync([CallerMemberName] string callerMemberName = nameof(PollAsync))
         {
             DisposeGuard();
-            if (!TryBeginInvoke())
-            {
-                return false;
-            }
-
+            await _pollSemaphore.WaitAsync();
             var result = false;
-            OnPollStarted(ServiceConnectionEventArgs.Ok(nameof(PollAsync)));
 
-            var serverAlive = await CheckIfServerAliveAsync();
-            if (!serverAlive)
+            try
             {
-                LastUpdate = DateTime.Now;
-                TryEndInvoke();
-                OnPollFinished(ServiceConnectionEventArgs.Error("Server is down."));
-                return false;
-            }
+                OnPollStarted(ServiceConnectionEventArgs.Ok(callerMemberName));
 
-            var tokenRefreshSuccess = await RefreshTokenAsync();
-
-            if (tokenRefreshSuccess)
-            {
-                try
-                {
-                    result |= await RefreshPlayersListAsync();
-                    result |= await RefreshMatchesListAsync();
-                    result |= await RefreshCurrentMatchAsync();
-                }
-                catch (Exception e)
+                var serverAlive = await CheckIfServerAliveAsync();
+                if (!serverAlive)
                 {
                     LastUpdate = DateTime.Now;
-                    TryEndInvoke();
-                    OnPollFinished(ServiceConnectionEventArgs.Error(e));
-                    return result;
+                    OnPollFinished(ServiceConnectionEventArgs.Error("Server is down."));
+                    return false;
                 }
-            }
 
-            LastUpdate = DateTime.Now;
-            TryEndInvoke();
-            OnPollFinished(ServiceConnectionEventArgs.Ok());
+                var tokenRefreshSuccess = await RefreshTokenAsync();
+
+                if (tokenRefreshSuccess)
+                {
+                    try
+                    {
+                        result |= await RefreshPlayersListAsync();
+                        result |= await RefreshMatchesListAsync();
+                        result |= await RefreshCurrentMatchAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        LastUpdate = DateTime.Now;
+                        OnPollFinished(ServiceConnectionEventArgs.Error(e, callerMemberName));
+                        return result;
+                    }
+                }
+
+                LastUpdate = DateTime.Now;
+                TryEndInvoke();
+                OnPollFinished(ServiceConnectionEventArgs.Ok(callerMemberName: callerMemberName));
+            }
+            catch (Exception e)
+            {
+                OnBackgroundError(ServiceConnectionEventArgs.Error(e, callerMemberName));
+            }
+            finally
+            {
+                _pollSemaphore.Release();
+            }
 
             return result;
         }
@@ -525,13 +572,13 @@ namespace BoardGame.ServiceClient
         {
             DisposeGuard();
 
-            ICollection<ChessGame> matches;
+            ICollection<ChessGameDetails> matches;
 
             try
             {
                 matches = IsAnonymous
-                        ? new List<ChessGame>()
-                        : (await _client.GetMatchesAsync(_loginResult?.TokenString)).ToList();
+                        ? new List<ChessGameDetails>()
+                        : (await _client.GetMatchesWithDetailsAsync(_loginResult?.TokenString)).ToList();
             }
             catch (Exception e)
             {
@@ -542,20 +589,10 @@ namespace BoardGame.ServiceClient
             var oldMatches = Matches.Select(x => x.Id).ToList();
             var newMatches = matches.Select(x => x.Id).ToList();
 
-            if (oldMatches.SequenceEqual(newMatches))
-            {
-                return false;
-            }
-
             _matches.Clear();
+            _matches.AddRange(matches);
 
-            foreach (var matchId in newMatches)
-            {
-                var matchDetails = await _client.GetMatchAsync(_loginResult?.TokenString, matchId);
-                _matches.Add(matchDetails);
-            }
-
-            return true;
+            return !oldMatches.SequenceEqual(newMatches);
         }
 
         private async Task<bool> RefreshCurrentMatchAsync()
