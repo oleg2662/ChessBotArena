@@ -32,12 +32,25 @@ namespace BoardGame.Service.Repositories
         }
 
         /// <inheritdoc />
-        public IReadOnlyList<ChessGame> Get(string participantPlayerName, Func<DbChessGame, bool> predicate = null)
+        public IReadOnlyList<ChessGame> GetList(string participantPlayerName)
         {
-            var result = GetMainQuery(participantPlayerName, predicate)
-                            .Select(x => _chessGameConverter.ConvertToChessGame(x))
-                            .ToList()
-                            .AsReadOnly();
+            var result = GetMainQuery(participantPlayerName)
+                .Select(x => _chessGameConverter.ConvertToChessGame(x))
+                .ToList()
+                .AsReadOnly();
+
+            return result;
+        }
+
+
+        /// <inheritdoc />
+        public IReadOnlyList<ChessGameDetails> GetListWithDetails(string participantPlayerName)
+        {
+            var result = GetMainQuery(participantPlayerName)
+                .Include(x => x.History)
+                .Select(x => _chessGameConverter.ConvertToChessGameDetails(x))
+                .ToList()
+                .AsReadOnly();
 
             return result;
         }
@@ -47,7 +60,7 @@ namespace BoardGame.Service.Repositories
         {
             var initiatedBy = _dbContext.Users.SingleOrDefault(x => x.UserName == participantPlayerName);
 
-            if(initiatedBy == null)
+            if (initiatedBy == null)
             {
                 return new ChallengeRequestResult
                 {
@@ -86,7 +99,7 @@ namespace BoardGame.Service.Repositories
                 Status = GameState.InProgress
             };
 
-            var newEntity =_dbContext.Add(newGame).Entity;
+            var newEntity = _dbContext.Add(newGame).Entity;
             _dbContext.SaveChanges();
 
             return new ChallengeRequestResult
@@ -97,13 +110,13 @@ namespace BoardGame.Service.Repositories
         }
 
         /// <inheritdoc />
-        public IReadOnlyList<ChessGameDetails> GetDetails(string participantPlayerName, Func<DbChessGame, bool> predicate = null)
+        public ChessGameDetails GetDetails(string participantPlayerName, Guid chessGameId)
         {
-            var result = GetMainQuery(participantPlayerName, predicate)
-                            .Include(x => x.History)
-                            .Select(x => _chessGameConverter.ConvertToChessGameDetails(x))
-                            .ToList()
-                            .AsReadOnly();
+            var result = GetMainQuery(participantPlayerName)
+                .Where(x => x.Id == chessGameId)
+                .Include(x => x.History)
+                .Select(x => _chessGameConverter.ConvertToChessGameDetails(x))
+                .FirstOrDefault();
 
             return result;
         }
@@ -115,7 +128,7 @@ namespace BoardGame.Service.Repositories
                             .Include(x => x.History)
                             .FirstOrDefault(x => x.Id == chessGameId);
 
-            if(match is null)
+            if (match is null)
             {
                 return new ChessGameMoveResult
                 {
@@ -143,7 +156,7 @@ namespace BoardGame.Service.Repositories
 
             // Checking if the current player tries to move.
             var currentPlayerName = players[game.CurrentPlayer];
-            if(currentPlayerName != participantPlayerName)
+            if (currentPlayerName != participantPlayerName)
             {
                 return new ChessGameMoveResult
                 {
@@ -153,7 +166,7 @@ namespace BoardGame.Service.Repositories
             }
 
             // Validating move...
-            if(!gameMechanism.ValidateMove(game, move))
+            if (!gameMechanism.ValidateMove(game, move))
             {
                 var previousState = new ChessGameDetails
                 {
@@ -205,18 +218,13 @@ namespace BoardGame.Service.Repositories
             };
         }
 
-        private IQueryable<DbChessGame> GetMainQuery(string participantPlayerName, Func<DbChessGame, bool> predicate = null)
+        private IQueryable<DbChessGame> GetMainQuery(string participantPlayerName)
         {
             var query = _dbContext.ChessGames
                 .Include(x => x.InitiatedBy)
                 .Include(x => x.Opponent)
                 .Where(x => x.InitiatedBy != null && x.InitiatedBy.UserName == participantPlayerName
                             || x.Opponent != null && x.Opponent.UserName == participantPlayerName);
-
-            if (predicate != null)
-            {
-                query = query.Where(x => predicate(x));
-            }
 
             return query;
         }

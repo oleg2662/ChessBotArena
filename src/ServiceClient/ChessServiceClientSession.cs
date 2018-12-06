@@ -85,6 +85,12 @@ namespace BoardGame.ServiceClient
             return await _client.GetMatchesAsync(JwtToken);
         }
 
+        public async Task<IEnumerable<ChessGame>> GetMatchesWithDetails()
+        {
+            await Login();
+            return await _client.GetMatchesWithDetailsAsync(JwtToken);
+        }
+
         public async Task<IEnumerable<Player>> GetPlayers()
         {
             await Login();

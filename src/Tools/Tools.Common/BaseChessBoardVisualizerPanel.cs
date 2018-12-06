@@ -126,7 +126,7 @@ namespace BoardGame.Tools.Common
         private ChessRepresentation _chessRepresentation;
         public ChessRepresentation ChessRepresentation
         {
-            protected get => _chessRepresentation;
+            get => _chessRepresentation;
             set
             {
                 _chessRepresentation = value;

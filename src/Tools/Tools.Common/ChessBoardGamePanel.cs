@@ -50,8 +50,11 @@ namespace BoardGame.Tools.Common
                     return;
                 }
 
-                ChessRepresentation = _mechanism.ApplyMove(ChessRepresentation, move);
-                OnValidMoveSelected?.Invoke(this, new ChessboardMoveSelectedEventArg(move, ChessRepresentation.CurrentPlayer));
+                if (Enabled)
+                {
+                    ChessRepresentation = _mechanism.ApplyMove(ChessRepresentation, move);
+                    OnValidMoveSelected?.Invoke(this, new ChessboardMoveSelectedEventArg(move, ChessRepresentation.CurrentPlayer));
+                }
             }
         }
 

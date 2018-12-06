@@ -46,19 +46,22 @@ namespace BoardGame.Service.Controllers.Api
         }
 
         /// <summary>
-        /// Prolongs the given token.
+        /// Prolongs the current token.
         /// </summary>
-        /// <param name="tokenString">The token string.</param>
         /// <returns>A prolonged JSON token.</returns>
         /// <response code="200">If it's successful with a prolonged JWT token.</response>
+        /// <response code="400">If there is an authentication error.</response>
         /// <response code="401">If there is an authentication error.</response>
         /// <response code="500">If there is a server error.</response>
         [ProducesResponseType(typeof(JwtSecurityToken), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
-        public IActionResult ProlongToken([FromBody] string tokenString)
+        public IActionResult ProlongToken()
         {
+            var tokenString = Request.Headers["Authorization"].FirstOrDefault()?.Remove(0, 7);
+
             var token = new JwtSecurityToken(tokenString);
 
             var originallyIssuedAtTicksList = token.Claims

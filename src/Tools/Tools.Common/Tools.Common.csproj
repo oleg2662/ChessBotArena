@@ -57,6 +57,7 @@
     <Compile Include="ChessBoardVisualizerPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ControlExtensions.cs" />
     <Compile Include="PromotionForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -16,6 +16,7 @@ using BoardGame.Model.Minimax;
 using BoardGame.Model.MinimaxAverage;
 using BoardGame.ServiceClient;
 
+
 namespace BoardGame.BotClient
 {
     public partial class MainForm : Form
