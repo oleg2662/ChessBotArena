@@ -37,9 +37,17 @@ namespace BoardGame.HumanClient
             _client.PollFinished += ClientOnPollFinished;
             _client.PollStarted += ClientOnPollStarted;
             _client.BackgroundError += ClientOnBackgroundError;
+
+#if DEBUG
+            textboxUsername.Text = "testUser1@testUser1.com";
+            textboxPassword.Text = "testUser1@testUser1.com";
+#else
+            textboxUsername.Text = string.Empty;
+            textboxPassword.Text = string.Empty;
+#endif
         }
 
-        private void LogNotification(string text)
+    private void LogNotification(string text)
         {
             textboxLog.DeselectAll();
             textboxLog.AppendText(Environment.NewLine);
