@@ -13,6 +13,9 @@ using BoardGame.Tools.Common;
 
 namespace BoardGame.HumanClient
 {
+    /// <summary>
+    /// The main form's UI logic.
+    /// </summary>
     public partial class MainForm : Form
     {
         private readonly ChessMechanism _mechanism;
@@ -47,7 +50,7 @@ namespace BoardGame.HumanClient
 #endif
         }
 
-    private void LogNotification(string text)
+        private void LogNotification(string text)
         {
             textboxLog.DeselectAll();
             textboxLog.AppendText(Environment.NewLine);
@@ -163,7 +166,7 @@ namespace BoardGame.HumanClient
             }
 
             var selectedMatch = listViewMatches?.SelectedItems.Count > 0
-                ? (ChessGameDetails) listViewMatches.SelectedItems[0].Tag
+                ? (ChessGameDetails)listViewMatches.SelectedItems[0].Tag
                 : null;
 
             var selectedMatchId = selectedMatch?.Id;
@@ -261,7 +264,7 @@ namespace BoardGame.HumanClient
 
         private void ToggleLoginControls()
         {
-            
+
             var isSessionAlive = !_client.IsAnonymous;
 
             panelLogin.Visible = !isSessionAlive;

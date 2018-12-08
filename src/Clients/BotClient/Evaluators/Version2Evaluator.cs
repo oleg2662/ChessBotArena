@@ -1,17 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Pieces;
 using BoardGame.Model.Abstractions.Interfaces;
 
-namespace BoardGame.BotClient
+namespace BoardGame.BotClient.Evaluators
 {
-    internal class Evaluator : IEvaluator<ChessRepresentation>
+    internal class Version2Evaluator : IEvaluator<ChessRepresentation>
     {
         private readonly ChessMechanism _mechanism;
 
-        public Evaluator(ChessMechanism mechanism)
+        public Version2Evaluator(ChessMechanism mechanism)
         {
             _mechanism = mechanism;
         }
@@ -23,12 +23,12 @@ namespace BoardGame.BotClient
 
         private static readonly Dictionary<PieceKind, int> ChessPieceValues = new Dictionary<PieceKind, int>()
         {
-            [PieceKind.Pawn] = 1,
-            [PieceKind.Knight] = 6,
-            [PieceKind.Bishop] = 6,
-            [PieceKind.Rook] = 10,
-            [PieceKind.Queen] = 20,
-            [PieceKind.King] = 8,
+            [PieceKind.Pawn] = 3,
+            [PieceKind.Knight] = 12,
+            [PieceKind.Bishop] = 20,
+            [PieceKind.Rook] = 20,
+            [PieceKind.Queen] = 60,
+            [PieceKind.King] = 30,
         };
 
         public int Evaluate(ChessRepresentation state)
@@ -133,12 +133,12 @@ namespace BoardGame.BotClient
 
             if (kingPosition.Column == 'G' && rookPosition.Any(x => x.Position.Column == 'F'))
             {
-                return 200;
+                return 400;
             }
 
             if (kingPosition.Column == 'C' && rookPosition.Any(x => x.Position.Column == 'D'))
             {
-                return 200;
+                return 800;
             }
 
             return 0;
