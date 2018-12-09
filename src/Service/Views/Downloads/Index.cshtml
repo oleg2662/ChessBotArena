@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model BoardGame.Service.Models.Web.DownloadsViewModels.IndexViewModel
+@{
+    ViewData["Title"] = "Downloads";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>You can find the clients here:</h3>
+<p>Human Client (without installer): <a href='@Url.Content("~/dl/BoardGame.HumanClient.zip")' target="_blank">Human Client (Without Installer)</a>
+<p>Human Client (with installer): <a href='@Url.Content("~/dl/BoardGame.HumanClient.Installer.zip")' target="_blank">Human Client (With Installer)</a>
+<p>Bot Client (without installer): <a href='@Url.Content("~/dl/BoardGame.BotClient.zip")' target="_blank">Bot Client (Without Installer)</a>
+<p>Bot Client (with installer): <a href='@Url.Content("~/dl/BoardGame.BotClient.Installer.zip")' target="_blank">Bot Client (With Installer)</a>
+
+<h3>Notes about the clients</h3>
+<p>The client may be slow at first try because the service may be turned off and needs to restart.</p>
+<p>Switching between the tabs will force a refresh. You can see if any operation happens in the background in the bottom-left side progressbar.</p>
+<p>You can manually force a refresh in the bottom-right corner with the refresh button.</p>

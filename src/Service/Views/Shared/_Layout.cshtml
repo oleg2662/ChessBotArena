@@ -28,10 +28,10 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Chess Arena</a>
+                <a asp-area="" asp-controller="Downloads" asp-action="Index" class="navbar-brand">Downloads</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="@Context.Request.GetDisplayUrl()downloads/BoardGame.HumanClient.zip" target="_blank">Download</a></li>
                     <li><a href="@Context.Request.GetDisplayUrl()swagger" target="_blank">Documentation</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
@@ -43,6 +43,10 @@
         <hr />
         <footer>
             <p>&copy; 2018 - Chess Arena</p>
+            <h3 style="color: red; font-weight: bold">Warning!</h3>
+            <p style="font-weight: bold">Please note that this isn't a production ready product and is not intended for the public, it's just a test project.</p>
+            <p style="font-weight: bold">You can try it on your own risk!</p>
+            <p style="font-weight: bold">Please note that there is no HTTPS connection yet so your communication with the server isn't encrypted. Use a password which you don't use elsewhere!</p>
         </footer>
     </div>
 

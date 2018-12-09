@@ -15,6 +15,8 @@ using BoardGame.Service.Models;
 using BoardGame.Service.Models.Converters;
 using BoardGame.Service.Repositories;
 using BoardGame.Service.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace BoardGame.Service
@@ -126,6 +128,18 @@ namespace BoardGame.Service
             // TODO : SSL later...
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // This will add 'downloads' as another valid static content location
+            var downloadsFolder = Path.Combine(Directory.GetCurrentDirectory(), @"downloads");
+            if (Directory.Exists(downloadsFolder))
+            {
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider(downloadsFolder),
+                    RequestPath = new PathString("/dl")
+                });
+            }
+
             app.UseCookiePolicy();
             app.UseAuthentication();
 
