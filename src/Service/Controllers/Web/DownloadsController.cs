@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using BoardGame.Service.Models.Web;
 using BoardGame.Service.Models.Web.DownloadsViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
