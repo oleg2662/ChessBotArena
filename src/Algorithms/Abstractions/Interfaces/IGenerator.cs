@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BoardGame.Model.Abstractions.Interfaces
+namespace BoardGame.Algorithms.Abstractions.Interfaces
 {
     /// <summary>
     /// Generator used to get all the possible (and/or significant) transitions from a given state.

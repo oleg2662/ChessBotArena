@@ -1,4 +1,4 @@
-﻿namespace BoardGame.Model.Abstractions.Interfaces
+﻿namespace BoardGame.Algorithms.Abstractions.Interfaces
 {
     /// <summary>
     /// Interface to the evaluator of the supplied states.

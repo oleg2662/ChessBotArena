@@ -1,6 +1,6 @@
-﻿using BoardGame.Game.Chess;
+﻿using BoardGame.Algorithms.Abstractions.Interfaces;
+using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
-using BoardGame.Model.Abstractions.Interfaces;
 
 namespace BoardGame.BotClient
 {

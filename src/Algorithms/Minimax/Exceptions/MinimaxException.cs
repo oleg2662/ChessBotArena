@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using BoardGame.Model.Abstractions.Exceptions;
+using BoardGame.Algorithms.Abstractions.Exceptions;
 
-namespace BoardGame.Model.Minimax.Exceptions
+namespace BoardGame.Algorithms.Minimax.Exceptions
 {
     public abstract class MinimaxException : AlgorithmException
     {

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
-using BoardGame.Model.Abstractions.Interfaces;
+﻿using System.Linq;
+using BoardGame.Algorithms.Abstractions.Interfaces;
 
-namespace BoardGame.Model.Dumb
+namespace BoardGame.Algorithms.Random
 {
     /// <summary>
     /// The random-algorithm.Tries to impress you with it's speed, but is working only randomly.
@@ -10,12 +9,12 @@ namespace BoardGame.Model.Dumb
     /// </summary>
     /// <typeparam name="TState">Type of the states.</typeparam>
     /// <typeparam name="TMove">Type of the moves.</typeparam>
-    public class DumbAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
+    public class RandomAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
         where TMove : class
     {
         private readonly IGenerator<TState, TMove> _moveGenerator;
 
-        public DumbAlgorithm(IGenerator<TState, TMove> moveGenerator)
+        public RandomAlgorithm(IGenerator<TState, TMove> moveGenerator)
         {
             _moveGenerator = moveGenerator;
         }
@@ -30,7 +29,7 @@ namespace BoardGame.Model.Dumb
                 return null;
             }
 
-            Random rnd = new Random();
+            System.Random rnd = new System.Random();
             var randomMove = moves.OrderBy(x => rnd.Next()).First();
 
             return randomMove;

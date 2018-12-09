@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using BoardGame.Model.Abstractions.Interfaces;
-using BoardGame.Model.Minimax.Exceptions;
+using BoardGame.Algorithms.Abstractions.Interfaces;
+using BoardGame.Algorithms.Minimax.Exceptions;
 
-namespace BoardGame.Model.AlphaBeta
+namespace BoardGame.Algorithms.AlphaBeta
 {
     /// <summary>
     /// The alpha-beta algorithm implementation.

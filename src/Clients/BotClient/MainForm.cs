@@ -1,379 +1,700 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BoardGame.Algorithms.Abstractions.Interfaces;
+using BoardGame.Algorithms.AlphaBeta;
+using BoardGame.Algorithms.Greedy;
+using BoardGame.Algorithms.Minimax;
+using BoardGame.Algorithms.MinimaxAverage;
+using BoardGame.Algorithms.Random;
+using BoardGame.BotClient.Evaluators;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
-using BoardGame.Model.Abstractions.Interfaces;
-using BoardGame.Model.AlphaBeta;
 using BoardGame.Model.Api.ChessGamesControllerModels;
-using BoardGame.Model.Dumb;
-using BoardGame.Model.Greedy;
-using BoardGame.Model.Minimax;
-using BoardGame.Model.MinimaxAverage;
 using BoardGame.ServiceClient;
-
+using BoardGame.Tools.Common;
 
 namespace BoardGame.BotClient
 {
     public partial class MainForm : Form
     {
-        private ChessServiceClient Client;
+        private readonly ChessMechanism _mechanism;
+        private readonly ServiceConnection _client;
 
-        private readonly IEvaluator<ChessRepresentation> _evaluator;
-        private readonly IGenerator<ChessRepresentation, BaseMove> _generator;
-        private readonly IApplier<ChessRepresentation, BaseMove> _applier;
+        private static readonly SemaphoreSlim RefreshSemaphore = new SemaphoreSlim(1, 1);
 
-        private IAlgorithm<ChessRepresentation, BaseMove> _algorithm;
-        private static readonly Random Randomizer = new Random();
-        private string _jwtToken;
-        private bool _isActive = false;
-        private string _username;
-        private int _round = 1;
-        private bool _isRobotThinking = false;
-        private int _maxNumberOfMatches = 5;
 #if DEBUG
         private readonly string _baseUrl = "http://localhost/BoardGame.Service";
 #else
         private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
 #endif
 
-        private void ChangeAlgorithm()
-        {
-            Algorithms selectedAlgorithm = Algorithms.Minimax;
-            int maxDepth = 2;
-
-            InvokeIfRequired(listboxAlgorithms, () => selectedAlgorithm = (Algorithms)listboxAlgorithms.SelectedItem);
-            InvokeIfRequired(numericMaxDepth, () => maxDepth = (int)numericMaxDepth.Value);
-
-            switch (selectedAlgorithm)
-            {
-                case Algorithms.Minimax:
-                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier)
-                    {
-                        MaxDepth = maxDepth
-                    };
-                    break;
-
-                case Algorithms.MinimaxAverage:
-                    _algorithm = new MinimaxAverageAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier)
-                    {
-                        MaxDepth = maxDepth
-                    };
-                    break;
-
-                case Algorithms.AlphaBeta:
-                    _algorithm = new AlphaBetaAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier)
-                    {
-                        MaxDepth = maxDepth
-                    };
-                    break;
-
-                case Algorithms.Random:
-                    _algorithm = new DumbAlgorithm<ChessRepresentation, BaseMove>(_generator);
-                    break;
-
-                case Algorithms.Greedy:
-                    _algorithm = new GreedyAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier);
-                    break;
-
-                default:
-                    _algorithm = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier);
-                    break;
-            }
-        }
-
-        internal enum Algorithms
-        {
-            Minimax,
-            MinimaxAverage,
-            AlphaBeta,
-            Random,
-            Greedy
-        }
-
         public MainForm()
         {
-            Client = new ChessServiceClient(_baseUrl);
-            var mechanism = new ChessMechanism();
-            _evaluator = new Evaluator(mechanism);
-            _generator = new MoveGenerator(mechanism);
-            _applier = new MoveApplier(mechanism);
-
-            var task = new Task(() =>
-            {
-                do
-                {
-                    if (!_isActive)
-                    {
-                        InvokeIfRequired(progressbarBotActive, () =>
-                        {
-                            progressbarBotActive.MarqueeAnimationSpeed = 0;
-                        });
-
-                        // Not doing anything, checking in every second...
-                        Thread.Sleep(1000);
-                        continue;
-                    }
-
-                    InvokeIfRequired(progressbarBotActive, () =>
-                    {
-                        if (progressbarBotActive.MarqueeAnimationSpeed != 10)
-                        {
-                            progressbarBotActive.MarqueeAnimationSpeed = 10;
-                        }
-                    });
-
-                    DoRobotWork();
-
-                    Thread.Sleep(1000);
-
-                } while (true);
-            });
-
             InitializeComponent();
+            tabPageGame.Tag = Tabs.GamePage;
+            tabPageMatches.Tag = Tabs.MatchesPage;
+            tabPagePlayers.Tag = Tabs.PlayersPage;
+            tabPageLog.Tag = Tabs.LogPage;
+            _mechanism = new ChessMechanism();
 
-            listboxAlgorithms.Items.Add(Algorithms.Minimax);
-            listboxAlgorithms.Items.Add(Algorithms.MinimaxAverage);
-            listboxAlgorithms.Items.Add(Algorithms.AlphaBeta);
-            listboxAlgorithms.Items.Add(Algorithms.Greedy);
-            listboxAlgorithms.Items.Add(Algorithms.Random);
-            listboxAlgorithms.SelectedIndex = Randomizer.Next(0, listboxAlgorithms.Items.Count - 1);
+            _client = new ServiceConnection(_baseUrl);
+            _client.PollFinished += ClientOnPollFinished;
+            _client.PollStarted += ClientOnPollStarted;
+            _client.BackgroundError += ClientOnBackgroundError;
 
-            task.Start();
+            comboboxAlgorithms.Items.Add(new AlgorithmItem("Minimax", typeof(MinimaxAlgorithm<ChessRepresentation, BaseMove>)));
+            comboboxAlgorithms.Items.Add(new AlgorithmItem("Minimax Average", typeof(MinimaxAverageAlgorithm<ChessRepresentation, BaseMove>)));
+            comboboxAlgorithms.Items.Add(new AlgorithmItem("Alpha Beta", typeof(AlphaBetaAlgorithm<ChessRepresentation, BaseMove>)));
+            comboboxAlgorithms.Items.Add(new AlgorithmItem("Greedy", typeof(GreedyAlgorithm<ChessRepresentation, BaseMove>)));
+            comboboxAlgorithms.Items.Add(new AlgorithmItem("Random", typeof(RandomAlgorithm<ChessRepresentation, BaseMove>)));
+
+            comboboxEvaluators.Items.Add(new EvaluatorItem("Version 1", typeof(Version1Evaluator)));
+            comboboxEvaluators.Items.Add(new EvaluatorItem("Version 2", typeof(Version1Evaluator)));
+
+            comboboxAlgorithms.SelectedIndex = 0;
+            comboboxEvaluators.SelectedIndex = 0;
+
+            textboxLog.SelectionFont = new Font(FontFamily.GenericMonospace, 8.25f);
+            textboxBotLog.SelectionFont = new Font(FontFamily.GenericMonospace, 8.25f);
+
+            textboxReadme.Rtf = BotClientResources.BotClientDoc;
+
+#if DEBUG
+            textboxUsername.Text = "testBot1@testBot1.com";
+            textboxPassword.Text = "testBot1@testBot1.com";
+#else
+            textboxUsername.Text = string.Empty;
+            textboxPassword.Text = string.Empty;
+#endif
         }
 
-        private void DoRobotWork()
+        private void LogNotification(string text)
         {
-            if (_isRobotThinking)
+            textboxLog.InvokeIfRequired(() => 
             {
-                return;
-            }
+                textboxLog.DeselectAll();
+                textboxLog.AppendText(Environment.NewLine);
+                textboxLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Regular);
+                textboxLog.SelectionColor = Color.Black;
+                textboxLog.AppendText(DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'"));
 
-            ChangeAlgorithm();
+                textboxLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Regular);
+                textboxLog.SelectionColor = Color.DarkGreen;
+                textboxLog.AppendText(text);
 
-            _isRobotThinking = true;
-            UpdateLog($" == ROUND {_round} =================================================================== ");
+                // set the current caret position to the end
+                textboxLog.SelectionStart = textboxLog.Text.Length;
+                // scroll it automatically
+                textboxLog.ScrollToCaret();
+            });
+        }
 
-            UpdateLog("Reading list of matches which are in progress...", 1);
-
-            UpdateLog("Getting list of matches...", 2);
-            var matches = Client.GetMatchesAsync(_jwtToken).Result;
-            if (matches == null)
+        private void LogError(string text, Exception ex = null)
+        {
+            textboxLog.InvokeIfRequired(() =>
             {
-                UpdateLog("ERROR: Couldn't get list of matches. (Maybe unauthorized?)", 2);
-                _isRobotThinking = false;
-                _round++;
-                return;
-            }
+                textboxLog.DeselectAll();
+                textboxLog.AppendText(Environment.NewLine);
+                textboxLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Bold);
+                textboxLog.SelectionColor = Color.Black;
+                textboxLog.AppendText(DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'"));
 
-            var playableMatches = new List<ChessGameDetails>();
-            var inProgressMatches = matches.Where(x => x.Outcome == GameState.InProgress).ToList();
-            foreach (var chessGame in inProgressMatches)
-            {
-                UpdateLog($"Getting details of {chessGame.Name} ({chessGame.Id})...", 3);
-                var details = Client.GetMatchAsync(_jwtToken, chessGame.Id.ToString()).Result;
-                if (details == null)
+                textboxLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Bold);
+                textboxLog.SelectionColor = Color.DarkRed;
+                textboxLog.AppendText(text);
+
+                if (ex == null)
                 {
-                    UpdateLog($"ERROR: Couldn't query data of match with name {chessGame.Name} ({chessGame.Id})!", 3);
-                    continue;
+                    // set the current caret position to the end
+                    textboxLog.SelectionStart = textboxLog.Text.Length;
+                    // scroll it automatically
+                    textboxLog.ScrollToCaret();
+
+                    return;
                 }
 
-                var myColour = details.BlackPlayer.UserName == _username
-                    ? ChessPlayer.Black
-                    : ChessPlayer.White;
+                textboxLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Regular);
+                textboxLog.SelectionColor = Color.DarkOrange;
+                textboxLog.AppendText(Environment.NewLine);
+                textboxLog.AppendText(ex.Source);
+                textboxLog.AppendText(Environment.NewLine);
+                textboxLog.AppendText(ex.Message);
+                textboxLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Italic);
+                textboxLog.AppendText(Environment.NewLine);
+                textboxLog.AppendText(ex.StackTrace);
 
-                if (details.Representation.CurrentPlayer == myColour)
-                {
-                    playableMatches.Add(details);
-                }
-            }
+                // set the current caret position to the end
+                textboxLog.SelectionStart = textboxLog.Text.Length;
+                // scroll it automatically
+                textboxLog.ScrollToCaret();
+            });
+        }
 
-            // Replying to matches where possible
-            UpdateLog($"Replying to matches where possible...({playableMatches.Count})", 1);
-
-            var stopWatch = new Stopwatch();
-            foreach (var chessGameDetails in playableMatches)
+        /// <summary>
+        /// Used by the bot's task to log what she is doing. Second parameter defines if it's a normal, warning or error message.
+        /// </summary>
+        /// <param name="text">The text to be logged.</param>
+        /// <param name="isError">
+        /// If NULL (default) then it's a normal message (green).
+        /// If it's false, then it's an warning (orange).
+        /// If it's true then it's an error message (red).
+        /// </param>
+        private void LogBotWork(string text, bool? isError = null)
+        {
+            textboxLog.InvokeIfRequired(() =>
             {
-                stopWatch.Reset();
-                stopWatch.Start();
-                UpdateLog($"Running algorithm for game {chessGameDetails.Name} ({chessGameDetails.Id}...", 2);
-                InvokeIfRequired(progressbarAlgorithm, () => progressbarAlgorithm.MarqueeAnimationSpeed = 10);
-                var representation = chessGameDetails.Representation;
-                var move = _algorithm.Calculate(representation);
-                InvokeIfRequired(progressbarAlgorithm, () => progressbarAlgorithm.MarqueeAnimationSpeed = 0);
-                stopWatch.Stop();
-                UpdateLog($"Algorithm finished in {stopWatch.Elapsed.TotalSeconds:F} seconds and generated move: {move}", 2);
-                UpdateLog($"Sending it in...", 2);
-                var isMoveSuccess = Client.SendMoveAsync(_jwtToken, chessGameDetails.Id, move).Result;
+                var colour = !isError.HasValue
+                    ? Color.Green
+                    : isError.Value
+                        ? Color.Red
+                        : Color.Orange;
 
-                UpdateLog(
-                    isMoveSuccess
-                        ? $"Successfully updated match {chessGameDetails.Name} ({chessGameDetails.Id})."
-                        : $"ERROR: Couldn't update match with calculated move.", 2);
-            }
+                textboxBotLog.DeselectAll();
+                textboxBotLog.AppendText(Environment.NewLine);
+                textboxBotLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Bold);
+                textboxBotLog.SelectionColor = Color.Black;
+                textboxBotLog.AppendText(DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'"));
 
-            // Checking whether there is place for a new match and challenges a random player with no active match
-            if (playableMatches.Count > _maxNumberOfMatches)
+                textboxBotLog.SelectionFont = new Font(textboxLog.SelectionFont, FontStyle.Bold);
+                textboxBotLog.SelectionColor = colour;
+                textboxBotLog.AppendText(text);
+
+                // set the current caret position to the end
+                textboxBotLog.SelectionStart = textboxBotLog.Text.Length;
+                // scroll it automatically
+                textboxBotLog.ScrollToCaret();
+            });
+        }
+
+        private void ClientOnBackgroundError(object sender, ServiceConnectionEventArgs e)
+        {
+            this.InvokeIfRequired(() =>
             {
-                _isRobotThinking = false;
-                _round++;
+                LogError($"({e.CallerMemberName}){e.Message}", e.Exception);
+            });
+        }
+
+        private void ShowToolstripProgressBar()
+        {
+            toolStripProgressBar1.Visible = true;
+        }
+
+        private void HideToolstripProgressBar()
+        {
+            toolStripProgressBar1.Visible = false;
+        }
+
+        private void RefreshPlayers()
+        {
+            if (_client.IsAnonymous)
+            {
+                listViewPlayers.Items.Clear();
                 return;
             }
 
-            UpdateLog("Challenging users if possible...", 1);
-            var players = Client.GetPlayersAsync(_jwtToken).Result;
+            var players = _client.Players;
             if (players == null)
             {
-                UpdateLog("ERROR: Couldn't get list of players.", 2);
+                LogError("Couldn't get list of players.");
                 return;
             }
 
-            var nonChallengedPlayer = players.Where(x =>
-                !inProgressMatches.Any(y => y.InitiatedBy.UserName == x.Name || y.Opponent.UserName == x.Name))
-                .Select(x => x.Name)
-                .OrderBy(x => Guid.NewGuid())
-                .FirstOrDefault();
+            listViewPlayers.Items.Clear();
 
-            if (nonChallengedPlayer == null)
+            foreach (var player in players)
             {
-                UpdateLog($"Found no one to challenge. :(", 2);
-                _isRobotThinking = false;
-                _round++;
+                listViewPlayers.Items.Add(new ListViewItem()
+                {
+                    ImageKey = player.IsBot ? "Robot" : "Brain",
+                    Text = player.Name,
+                });
+            }
+        }
+
+        private async Task RefreshClient()
+        {
+            try
+            {
+                await _client.Refresh();
+            }
+            catch (Exception ex)
+            {
+                LogError(nameof(RefreshMatches), ex);
+            }
+        }
+
+        private void RefreshMatches()
+        {
+            if (_client.IsAnonymous)
+            {
+                listViewMatches.Items.Clear();
                 return;
             }
 
-            UpdateLog($"Challenging {nonChallengedPlayer}...", 2);
-
-            var newGame = Client.ChallengePlayerAsync(_jwtToken, nonChallengedPlayer).Result;
-            if (newGame == null)
+            listViewMatches.Enabled = false;
+            var matches = _client.Matches;
+            if (matches == null)
             {
-                UpdateLog($"ERROR: Failed...", 3);
-                _isRobotThinking = false;
-                _round++;
+                listViewMatches.Enabled = true;
+                LogError("Couldn't get list of matches.");
+                return;
             }
 
-            _isRobotThinking = false;
-            _round++;
-        }
+            var selectedMatch = listViewMatches?.SelectedItems.Count > 0
+                ? (ChessGameDetails)listViewMatches.SelectedItems[0].Tag
+                : null;
 
-        private void UpdateLog(string message, int level = 0)
-        {
-            var spacing = new string(' ', level);
-            InvokeIfRequired(textboxBotMessages, () => textboxBotMessages.AppendText(spacing + message + Environment.NewLine));
-        }
+            var selectedMatchId = selectedMatch?.Id;
 
-        public static void InvokeIfRequired(Control control, MethodInvoker action)
-        {
-            if (control.InvokeRequired)
+            listViewMatches.Items.Clear();
+
+            foreach (var match in matches)
             {
-                control.Invoke(action);
+                string imageKey;
+                switch (match.Outcome)
+                {
+                    case GameState.InProgress:
+                        imageKey = "InProgress";
+                        break;
+
+                    case GameState.WhiteWon:
+                        imageKey = "WhiteWon";
+                        break;
+
+                    case GameState.BlackWon:
+                        imageKey = "BlackWon";
+                        break;
+
+                    case GameState.Draw:
+                        imageKey = "Draw";
+                        break;
+
+                    default:
+                        imageKey = string.Empty;
+                        break;
+                }
+
+                listViewMatches.Items.Add(new ListViewItem()
+                {
+                    ImageKey = imageKey,
+                    Text = match.Name,
+                    Tag = match,
+                    Selected = match.Id.Equals(selectedMatchId)
+                });
+            }
+
+            RefreshMatchPreview();
+            listViewMatches.Enabled = true;
+        }
+
+        private void ToggleLoginControls()
+        {
+
+            var isSessionAlive = !_client.IsAnonymous;
+
+            panelLogin.Visible = !isSessionAlive;
+            panelLogout.Visible = isSessionAlive;
+        }
+
+        private async Task Login()
+        {
+            btnLogin.Enabled = false;
+            bool success = false;
+            try
+            {
+                success = await _client.LoginAsync(textboxUsername.Text, textboxPassword.Text);
+                if (success)
+                {
+                    await _client.Refresh();
+                }
+            }
+            catch (Exception e)
+            {
+                LogError("Error at login.", e);
+                success = false;
+            }
+
+            if (!success)
+            {
+                MessageBox.Show("Login failed!", "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogError($"Unsuccessful login for {textboxUsername.Text}.");
             }
             else
             {
-                action();
+                labelLoginStatus.Text = $"{_client.LoggedInUser} logged in.";
+                LogNotification($"Successful login: {_client.LoggedInUser}");
             }
+
+            ToggleLoginControls();
+            btnLogin.Enabled = true;
+
+            await RefreshAll();
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private async Task Logout()
         {
-            await Reconnect();
+            _client.StopAutoRefresh();
+            await _client.Logout();
+            await RefreshAll();
+            ToggleLoginControls();
         }
 
-        private async Task Reconnect()
+        private async Task RefreshAll()
         {
-            labelStatus.Text = "Connecting to server...";
-            string result;
-
+            await RefreshSemaphore.WaitAsync();
             try
             {
-                result = await Client.GetVersionAsync();
+                await RefreshClient();
+                RefreshPlayers();
+                RefreshMatches();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Service seems down");
-                return;
+                LogError(nameof(RefreshAll), ex);
             }
+            finally
+            {
+                RefreshSemaphore.Release(1);
+            }
+        }
 
-            Text = $"Bot (Server version: v{result})";
+        private async void tabMain_Selected(object sender, TabControlEventArgs e)
+        {
+            var page = (Tabs?)e.TabPage.Tag;
+            panelGame.Visible = page == Tabs.GamePage;
+            panelPlayers.Visible = page == Tabs.PlayersPage;
+            panelMatches.Visible = page == Tabs.MatchesPage;
 
-            labelStatus.Text = string.Empty;
+            switch (page)
+            {
+                case Tabs.PlayersPage:
+                    await RefreshClient();
+                    RefreshPlayers();
+                    break;
+
+                case Tabs.MatchesPage:
+                    await RefreshClient();
+                    RefreshMatches();
+                    break;
+
+                case Tabs.GamePage:
+                    await RefreshClient();
+                    break;
+
+                case Tabs.ReadmePage:
+                    break;
+
+                case Tabs.LogPage:
+                    textboxLog.SelectionStart = textboxLog.TextLength;
+                    textboxLog.ScrollToCaret();
+                    break;
+            }
         }
 
         private async void buttonLogin_Click(object sender, EventArgs e)
         {
-            StopPlaying();
-
-            await RefreshLoginToken();
-
-            StartPlaying();
+            await Login();
         }
 
-        private async Task RefreshLoginToken(string username, string password)
+        private async void toolStripSplitButton1_ButtonClick(object sender, EventArgs e)
         {
-            labelStatus.Text = "Logging in...";
-            LoginResult result;
+            await RefreshAll();
+        }
+
+        private async void btnLogout_Click(object sender, EventArgs e)
+        {
+            await Logout();
+        }
+
+        private async void btnChallenge_Click(object sender, EventArgs e)
+        {
+            if (_client.IsAnonymous)
+            {
+                return;
+            }
+
+            if (listViewPlayers.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            var selectedPlayer = listViewPlayers.SelectedItems[0].Text;
 
             try
             {
-                result = await Client.LoginAsync(username, password);
+                btnChallenge.Enabled = false;
+                var newGame = await _client.ChallengePlayerAsync(selectedPlayer);
+                if (newGame == null)
+                {
+                    LogError("Couldn't send challenge.");
+                    btnChallenge.Enabled = true;
+                    return;
+                }
+                _client.SetCurrentMatchById(newGame.Id);
+                tabPageMatches.Select();
             }
-            catch (Exception)
+            finally
             {
-                MessageBox.Show("Service seems down.");
-                labelStatus.Text = string.Empty;
+                btnChallenge.Enabled = true;
+            }
+        }
+
+        private string GetStatusLabelText()
+        {
+            var gameState = _client.CurrentGameState;
+            var isItMyTurn = _client.IsItMyTurn;
+
+            if (!isItMyTurn.HasValue)
+            {
+                return string.Empty;
+            }
+
+            switch (gameState)
+            {
+                case GameState.InProgress:
+                    var currentPlayer = _client.CurrentGame.Representation.CurrentPlayer.ToString();
+                    return isItMyTurn.Value
+                        ? $"{currentPlayer} (you!)"
+                        : $"{currentPlayer}";
+
+                case GameState.WhiteWon:
+                    return isItMyTurn.Value ? "White won! (You!)" : "White won!";
+
+                case GameState.BlackWon:
+                    return isItMyTurn.Value ? "Black won! (You!)" : "Black won!";
+
+                case GameState.Draw:
+                    return "Draw!";
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void listViewMatches_ItemActivate(object sender, EventArgs e)
+        {
+            RefreshMatchPreview();
+        }
+
+        private void RefreshMatchPreview()
+        {
+            if (listViewMatches == null)
+            {
+                LogError("Couldn't find list view of matches.");
                 return;
             }
 
-            if (result == null)
+            var item = (listViewMatches?.SelectedItems.Count ?? 0) > 0 ? listViewMatches.SelectedItems[0] : null;
+
+            var details = (ChessGameDetails)item?.Tag;
+            if (details == null)
             {
-                labelLoginStatus.Text = "Unauthorized";
-                _jwtToken = null;
-                labelStatus.Text = string.Empty;
+                labelMatchPreviewStatus.Text = "-";
+                chessBoardPreview.ChessRepresentation = new ChessRepresentation();
+                return;
+            }
+            _client.SetCurrentMatchById(details.Id);
+            labelMatchPreviewStatus.Text = GetStatusLabelText();
+            chessBoardPreview.ChessRepresentation = details.Representation;
+        }
+
+        private async Task DoBotWork()
+        {
+            await RefreshAll();
+            await RefreshSemaphore.WaitAsync();
+            try
+            {
+                var matches = _client.Matches
+                    .Where(x => x?.Representation?.CurrentPlayer != null)
+                    .Where(x => _mechanism.GetGameState(x.Representation) == GameState.InProgress)
+                    .ToArray();
+
+                if (!matches.Any())
+                {
+                    //LogNotification($"{nameof(DoBotWork)}: No match found to answer to.");
+                    //LogBotWork("No match found to answer to.", false);
+                    return;
+                }
+
+                foreach (var match in matches)
+                {
+                    if (match?.Outcome != GameState.InProgress)
+                    {
+                        continue;
+                    }
+
+                    var myColour = match?.BlackPlayer?.UserName == _client.LoggedInUser
+                        ? ChessPlayer.Black
+                        : ChessPlayer.White;
+
+                    if (match?.Representation?.CurrentPlayer != myColour)
+                    {
+                        continue;
+                    }
+
+                    _client.SetCurrentMatchById(match.Id);
+
+                    var algoItem = (AlgorithmItem)comboboxAlgorithms.SelectedItem;
+                    var evaulatorItem = (EvaluatorItem)comboboxEvaluators.SelectedItem;
+                    if (algoItem == null || evaulatorItem == null)
+                    {
+                        LogError($"{nameof(DoBotWork)}: No algorithm or evaluator selected!");
+                        LogBotWork("No algorithm or evaluator selected!", true);
+                        continue;
+                    }
+
+                    // Running algorithm...
+                    var algorithm = GetAlgorithm(algoItem.AlgorithmType, evaulatorItem.EvaluatorType);
+                    var start = DateTime.Now;
+                    LogBotWork($"Generating answer for match '{match.Name}'.{Environment.NewLine}{match.Id}");
+                    var algoTask = Task.Run(() => { return algorithm.Calculate(match.Representation); });
+                    var move = await algoTask;
+                    var duration = (DateTime.Now - start).TotalSeconds;
+                    LogBotWork($"Generated move: {duration} sec.");
+                    if (move != null)
+                    {
+                        _client.SetCurrentMatchById(match.Id);
+                        await _client.SendMoveAsync(move);
+                        LogBotWork($"Generated move:{Environment.NewLine}{move.ToString()}{Environment.NewLine}{Environment.NewLine}");
+                    }
+                    else
+                    {
+                        LogBotWork($"NULL move returned!", true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(nameof(DoBotWork), ex);
+            }
+            finally
+            {
+                if (!timerRefresh.Enabled)
+                {
+                    btnCalculate.InvokeIfRequired(() =>
+                    {
+                        btnCalculate.Enabled = true;
+                        btnCalculate.Text = "Start";
+                    });
+                }
+                else
+                {
+                    btnCalculate.InvokeIfRequired(() =>
+                    {
+                        HideToolstripProgressBar();
+                        btnCalculate.Enabled = true;
+                        btnCalculate.Text = "Stop";
+                    });
+                }
+                RefreshSemaphore.Release(1);
+            }
+        }
+
+        private IAlgorithm<ChessRepresentation, BaseMove> GetAlgorithm(Type algorithmType, Type evaluatorType)
+        {
+            var generator = new MoveGenerator(_mechanism);
+            var applier = new MoveApplier(_mechanism);
+            var evaluator = (IEvaluator<ChessRepresentation>) Activator.CreateInstance(evaluatorType, new[] {_mechanism});
+            
+            // TODO : A bit hacky, refactor later!
+            if (algorithmType == typeof(MinimaxAlgorithm<ChessRepresentation, BaseMove>))
+            {
+                var minimax = new MinimaxAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                {
+                    MaxDepth = (int) numericUpDown1.Value
+                };
+                return minimax;
+            }
+
+            if (algorithmType == typeof(AlphaBetaAlgorithm<ChessRepresentation, BaseMove>))
+            {
+                var ab = new AlphaBetaAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                {
+                    MaxDepth = (int) numericUpDown1.Value
+                };
+                return ab;
+            }
+
+            if (algorithmType == typeof(MinimaxAverageAlgorithm<ChessRepresentation, BaseMove>))
+            {
+                var minimaxAvg = new MinimaxAverageAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier)
+                {
+                    MaxDepth = (int) numericUpDown1.Value
+                };
+                return minimaxAvg;
+            }
+
+            if (algorithmType == typeof(GreedyAlgorithm<ChessRepresentation, BaseMove>))
+            {
+                var greedy = new GreedyAlgorithm<ChessRepresentation, BaseMove>(evaluator, generator, applier);
+                return greedy;
+            }
+
+            if (algorithmType == typeof(RandomAlgorithm<ChessRepresentation, BaseMove>))
+            {
+                var randomAlgorithm = new RandomAlgorithm<ChessRepresentation, BaseMove>(generator);
+                return randomAlgorithm;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(algorithmType));
+        }
+
+        private void btnCalculate_Click(object sender, EventArgs e)
+        {
+            if (_client.IsAnonymous)
+            {
                 return;
             }
 
-            _jwtToken = result.TokenString;
-            _username = result.Username;
-
-            labelLoginStatus.Text = $"({username}) logged in.";
-            labelStatus.Text = string.Empty;
+            if (RefreshSemaphore.CurrentCount > 0)
+            {
+                btnCalculate.Text = "Stop";
+                btnCalculate.Enabled = true;
+                timerRefresh.Enabled = true;
+            }
+            else
+            {
+                btnCalculate.Text = "Stopping...";
+                btnCalculate.Enabled = false;
+                timerRefresh.Enabled = false;
+            }
         }
 
-        private async Task RefreshLoginToken()
+        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            var username = textboxUsername.Text;
-            var password = textboxPassword.Text;
 
-            await RefreshLoginToken(username, password);
         }
 
-        private void StartPlaying()
+        private void ClientOnPollStarted(object sender, ServiceConnectionEventArgs e)
         {
-            _isActive = true;
+            this.InvokeIfRequired(() =>
+            {
+                ShowToolstripProgressBar();
+                LogNotification($"[POLLSTART]({e.CallerMemberName}){e.Message}");
+            });
         }
 
-        private void StopPlaying()
+        private void ClientOnPollFinished(object sender, ServiceConnectionEventArgs e)
         {
-            _isActive = false;
+            this.InvokeIfRequired(() =>
+            {
+                LogNotification($"[POLLEND]({e.CallerMemberName}){e.Message}");
+                HideToolstripProgressBar();
+            });
         }
 
-        private async void buttonReconnect_Click(object sender, EventArgs e)
+        private async void timerRefresh_Tick(object sender, EventArgs e)
         {
-            await Reconnect();
-        }
+            if (RefreshSemaphore.CurrentCount == 0)
+            {
+                return;
+            }
 
-        private void buttonLogout_Click(object sender, EventArgs e)
-        {
-            _jwtToken = null;
-            labelLoginStatus.Text = $"({_username}) logged out.";
-            _username = null;
-
-            StopPlaying();
+            await DoBotWork();
         }
     }
-
 }

@@ -1,5 +1,5 @@
-﻿using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
-using BoardGame.Model.Greedy;
+﻿using BoardGame.Algorithms.Greedy;
+using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
 using Xunit;
 
 namespace BoardGame.Algorithms.Tests.Unit

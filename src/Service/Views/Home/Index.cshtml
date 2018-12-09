@@ -1,4 +1,5 @@
-﻿@model BoardGame.Service.Models.Web.HomeViewModels.IndexViewModel
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model BoardGame.Service.Models.Web.HomeViewModels.IndexViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -6,10 +7,17 @@
 <h2>@ViewData["Title"]</h2>
 
 <h3>Welcome to the Chess Bot Arena.</h3>
-
 <p>Here you can register and edit your accounts used in the application.</p>
+<p>You can get the application from here: <a href="@Context.Request.GetDisplayUrl()downloads/BoardGame.HumanClient.zip" target="_blank">Human Client</a></p>
+@*<a href="@(Model.BaseUrl)/downloads/BoardGame.BotClient.zip" target="_blank">Bot Client</a>*@
+<p>You can get the API documentation from here: <a href="@Context.Request.GetDisplayUrl()swagger" target="_blank">Swagger documentation</a></p>
 
-<p>You can get the application from here:</p>
-<a href="#">APPLICATION URL</a>
-<p>You can get the API documentation from here:</p>
-<a href="@(Model.BaseUrl)/swagger" target="_blank">Chess Arena Documentation with Swagger</a>
+<h3>Notes about the human client</h3>
+<p>The client may be slow at first try because the service may be turned off and needs to restart.</p>
+<p>Switching between the tabs will force a refresh. You can see if any operation happens in the background in the bottom-left side progressbar.</p>
+<p>You can manually force a refresh in the bottom-right corner with the refresh button.</p>
+
+<h3 style="color: red; font-weight: bold">Warning!</h3>
+<p style="font-weight: bold">Please note that this isn't a production ready product and is not intended for the public, it's just a test project.</p>
+<p style="font-weight: bold">You can try it on your own risk!</p>
+<p style="font-weight: bold">Please note that there is no HTTPS connection yet so your communication with the server isn't encrypted. Use a password which you don't use elsewhere!</p>

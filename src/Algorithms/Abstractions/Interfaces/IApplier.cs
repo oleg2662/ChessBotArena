@@ -1,4 +1,4 @@
-﻿namespace BoardGame.Model.Abstractions.Interfaces
+﻿namespace BoardGame.Algorithms.Abstractions.Interfaces
 {
     public interface IApplier<TState, in TMove>
     {

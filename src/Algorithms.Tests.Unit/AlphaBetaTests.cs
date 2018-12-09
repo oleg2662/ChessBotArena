@@ -1,6 +1,6 @@
 ﻿using System.Text;
+using BoardGame.Algorithms.AlphaBeta;
 using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
-using BoardGame.Model.AlphaBeta;
 using Xunit;
 
 namespace BoardGame.Algorithms.Tests.Unit

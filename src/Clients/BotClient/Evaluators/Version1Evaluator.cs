@@ -5,13 +5,13 @@ using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Pieces;
 
-namespace BoardGame.AlgorithmOfflineTester
+namespace BoardGame.BotClient.Evaluators
 {
-    internal class Evaluator : IEvaluator<ChessRepresentation>
+    internal class Version1Evaluator : IEvaluator<ChessRepresentation>
     {
         private readonly ChessMechanism _mechanism;
 
-        public Evaluator(ChessMechanism mechanism)
+        public Version1Evaluator(ChessMechanism mechanism)
         {
             _mechanism = mechanism;
         }
@@ -110,7 +110,7 @@ namespace BoardGame.AlgorithmOfflineTester
             var expectedRow = state.CurrentPlayer == ChessPlayer.White ? 1 : 8;
 
             var kingPosition = Positions.PositionList
-                .Select(x => new {Position = x, Piece = state[x]})
+                .Select(x => new { Position = x, Piece = state[x] })
                 .Where(x => x.Piece != null)
                 .Where(x => x.Piece.Owner == state.CurrentPlayer)
                 .Where(x => x.Position.Row == expectedRow)
@@ -119,7 +119,7 @@ namespace BoardGame.AlgorithmOfflineTester
                 .FirstOrDefault();
 
             var rookPosition = Positions.PositionList
-                .Select(x => new {Position = x, Piece = state[x]})
+                .Select(x => new { Position = x, Piece = state[x] })
                 .Where(x => x.Piece != null)
                 .Where(x => x.Piece.Owner == state.CurrentPlayer)
                 .Where(x => x.Position.Row == expectedRow)

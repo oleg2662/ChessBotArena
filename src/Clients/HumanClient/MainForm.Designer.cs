@@ -81,6 +81,9 @@ namespace BoardGame.HumanClient
             this.checkboxShowHumans = new System.Windows.Forms.CheckBox();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textboxLog = new System.Windows.Forms.RichTextBox();
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
+            this.tabPageReadme = new System.Windows.Forms.TabPage();
+            this.textboxReadme = new System.Windows.Forms.RichTextBox();
             this.statusStrip1.SuspendLayout();
             this.tableLayoutPanelMultiplayer.SuspendLayout();
             this.panelSidebar.SuspendLayout();
@@ -96,6 +99,7 @@ namespace BoardGame.HumanClient
             this.tabLadder.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabPageLog.SuspendLayout();
+            this.tabPageReadme.SuspendLayout();
             this.SuspendLayout();
             // 
             // imageListPlayers
@@ -138,7 +142,7 @@ namespace BoardGame.HumanClient
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(756, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(889, 17);
             this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -436,6 +440,7 @@ namespace BoardGame.HumanClient
             this.tabMain.Controls.Add(this.tabPageGame);
             this.tabMain.Controls.Add(this.tabLadder);
             this.tabMain.Controls.Add(this.tabPageLog);
+            this.tabMain.Controls.Add(this.tabPageReadme);
             this.tabMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabMain.Location = new System.Drawing.Point(3, 3);
             this.tabMain.Name = "tabMain";
@@ -654,6 +659,33 @@ namespace BoardGame.HumanClient
             this.textboxLog.TabIndex = 0;
             this.textboxLog.Text = "";
             // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Enabled = true;
+            this.timerRefresh.Interval = 15000;
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
+            // 
+            // tabPageReadme
+            // 
+            this.tabPageReadme.Controls.Add(this.textboxReadme);
+            this.tabPageReadme.Location = new System.Drawing.Point(4, 22);
+            this.tabPageReadme.Name = "tabPageReadme";
+            this.tabPageReadme.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageReadme.Size = new System.Drawing.Size(711, 630);
+            this.tabPageReadme.TabIndex = 5;
+            this.tabPageReadme.Text = "Read me!";
+            this.tabPageReadme.UseVisualStyleBackColor = true;
+            // 
+            // textboxReadme
+            // 
+            this.textboxReadme.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textboxReadme.Location = new System.Drawing.Point(3, 3);
+            this.textboxReadme.Name = "textboxReadme";
+            this.textboxReadme.ReadOnly = true;
+            this.textboxReadme.Size = new System.Drawing.Size(705, 624);
+            this.textboxReadme.TabIndex = 0;
+            this.textboxReadme.Text = "";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -687,6 +719,7 @@ namespace BoardGame.HumanClient
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tabPageLog.ResumeLayout(false);
+            this.tabPageReadme.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -742,6 +775,9 @@ namespace BoardGame.HumanClient
         private System.Windows.Forms.RichTextBox textboxLog;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
+        private System.Windows.Forms.Timer timerRefresh;
+        private System.Windows.Forms.TabPage tabPageReadme;
+        private System.Windows.Forms.RichTextBox textboxReadme;
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using BoardGame.Model.Abstractions.Interfaces;
+using BoardGame.Algorithms.Abstractions.Interfaces;
 
 namespace BoardGame.Algorithms.Tests.Unit.TestCaseClasses
 {

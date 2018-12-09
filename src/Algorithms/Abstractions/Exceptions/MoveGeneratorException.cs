@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BoardGame.Model.Abstractions.Exceptions
+namespace BoardGame.Algorithms.Abstractions.Exceptions
 {
     public abstract class MoveGeneratorException : Exception
     {

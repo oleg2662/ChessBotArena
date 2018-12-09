@@ -1,12 +1,11 @@
-﻿namespace BoardGame.HumanClient
+﻿namespace BoardGame.BotClient
 {
     internal enum Tabs
     {
         PlayersPage,
         MatchesPage,
         GamePage,
-        LadderPage,
-        LogPage,
-        ReadmePage
+        ReadmePage,
+        LogPage
     }
 }

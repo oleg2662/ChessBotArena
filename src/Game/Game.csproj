@@ -5,7 +5,8 @@
     <LangVersion>latest</LangVersion>
     <AssemblyName>BoardGame.Game</AssemblyName>
     <RootNamespace>BoardGame.Game</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>1.0.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
