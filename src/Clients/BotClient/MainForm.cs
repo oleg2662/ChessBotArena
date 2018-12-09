@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -15,7 +14,6 @@ using BoardGame.BotClient.Evaluators;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.ChessGamesControllerModels;
-using BoardGame.Model.Api.LadderControllerModels;
 using BoardGame.ServiceClient;
 using BoardGame.Tools.Common;
 
@@ -62,6 +60,8 @@ namespace BoardGame.BotClient
 
             textboxLog.SelectionFont = new Font(FontFamily.GenericMonospace, 8.25f);
             textboxBotLog.SelectionFont = new Font(FontFamily.GenericMonospace, 8.25f);
+
+            textboxReadme.Rtf = BotClientResources.BotClientDoc;
 
 #if DEBUG
             textboxUsername.Text = "testBot1@testBot1.com";
@@ -362,53 +362,6 @@ namespace BoardGame.BotClient
             }
         }
 
-        private async Task RefreshLadder()
-        {
-            listviewLadder.Items.Clear();
-            ICollection<LadderItem> result = null;
-
-            try
-            {
-                result = await _client.GetLadder();
-            }
-            catch (Exception ex)
-            {
-                LogError(nameof(RefreshLadder), ex);
-            }
-
-            if (result == null)
-            {
-                LogError("Couldn't get ladder.");
-                return;
-            }
-
-            var ordering = new List<LadderItem>();
-
-            if (checkboxShowHumans.Checked)
-            {
-                ordering.AddRange(result.Where(x => !x.IsBot));
-            }
-
-            if (checkboxShowBots.Checked)
-            {
-                ordering.AddRange(result.Where(x => x.IsBot));
-            }
-
-            foreach (var ladderItem in ordering.OrderBy(x => x.Place))
-            {
-                listviewLadder.Items.Add(new ListViewItem()
-                {
-                    Text = $"{ladderItem.Place}",
-                    ImageKey = ladderItem.IsBot ? "Robot" : "Brain",
-                    SubItems =
-                    {
-                        ladderItem.Name,
-                        $"{ladderItem.Points:F}"
-                    }
-                });
-            }
-        }
-
         private async void tabMain_Selected(object sender, TabControlEventArgs e)
         {
             var page = (Tabs?)e.TabPage.Tag;
@@ -432,9 +385,7 @@ namespace BoardGame.BotClient
                     await RefreshClient();
                     break;
 
-                case Tabs.LadderPage:
-                    await RefreshClient();
-                    await RefreshLadder();
+                case Tabs.ReadmePage:
                     break;
 
                 case Tabs.LogPage:
@@ -447,21 +398,6 @@ namespace BoardGame.BotClient
         private async void buttonLogin_Click(object sender, EventArgs e)
         {
             await Login();
-        }
-
-        private async void tabLadder_Enter(object sender, EventArgs e)
-        {
-            await RefreshLadder();
-        }
-
-        private async void checkboxShowHumans_CheckedChanged(object sender, EventArgs e)
-        {
-            await RefreshLadder();
-        }
-
-        private async void checkboxShowBots_CheckedChanged(object sender, EventArgs e)
-        {
-            await RefreshLadder();
         }
 
         private async void toolStripSplitButton1_ButtonClick(object sender, EventArgs e)

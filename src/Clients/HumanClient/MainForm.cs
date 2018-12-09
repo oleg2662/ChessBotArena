@@ -36,12 +36,15 @@ namespace BoardGame.HumanClient
             tabPageMatches.Tag = Tabs.MatchesPage;
             tabPagePlayers.Tag = Tabs.PlayersPage;
             tabPageLog.Tag = Tabs.LogPage;
+            tabPageReadme.Tag = Tabs.ReadmePage;
             _mechanism = new ChessMechanism();
 
             _client = new ServiceConnection(_baseUrl);
             _client.PollFinished += ClientOnPollFinished;
             _client.PollStarted += ClientOnPollStarted;
             _client.BackgroundError += ClientOnBackgroundError;
+
+            textboxReadme.Rtf = HumanClientResources.HumanClientDoc;
 
 #if DEBUG
             textboxUsername.Text = "testUser1@testUser1.com";

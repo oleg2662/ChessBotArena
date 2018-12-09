@@ -5,7 +5,7 @@
         PlayersPage,
         MatchesPage,
         GamePage,
-        LadderPage,
+        ReadmePage,
         LogPage
     }
 }
