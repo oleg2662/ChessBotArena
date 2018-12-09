@@ -28,11 +28,11 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Chess Arena</a>
-                <a asp-area="" asp-controller="Downloads" asp-action="Index" class="navbar-brand">Downloads</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="@Context.Request.GetDisplayUrl()swagger" target="_blank">Documentation</a></li>
+                    <li><a asp-area="" asp-controller="Downloads" asp-action="Index">Downloads</a></li>
+                    <li><a href='@Url.Content("~/swagger")' target="_blank">Documentation</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
