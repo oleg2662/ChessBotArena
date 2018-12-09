@@ -456,7 +456,7 @@ namespace BoardGame.HumanClient
             }
             catch (Exception ex)
             {
-                LogError(nameof(chessBoardGamePanel1_OnValidMoveSelected), ex);
+                LogError(nameof(SendMove), ex);
             }
 
             RefreshGame();

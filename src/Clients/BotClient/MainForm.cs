@@ -571,6 +571,33 @@ namespace BoardGame.BotClient
             chessBoardPreview.ChessRepresentation = details.Representation;
         }
 
+        private async Task SendMove(BaseMove move)
+        {
+            if (_client.IsAnonymous || _client.CurrentGame == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await _client.SendMoveAsync(move);
+            }
+            catch (Exception ex)
+            {
+                LogError(nameof(SendMove), ex);
+            }
+
+            RefreshGame();
+
+            chessBoardGamePanel1.ChessRepresentation = _client.CurrentGame.Representation;
+            chessBoardGamePanel1.Refresh();
+        }
+
+        private async Task AnswerIncoming()
+        {
+
+        }
+
         //private BaseMove GenerateMove()
         //{
         //    IAlgorithm<ChessRepresentation, BaseMove> algorithm;
@@ -625,6 +652,11 @@ namespace BoardGame.BotClient
         private void MainForm_Move(object sender, EventArgs e)
         {
             chessBoardGamePanel1.Refresh();
+        }
+
+        private async void timerRefresh_Tick(object sender, EventArgs e)
+        {
+            await RefreshAll();
         }
     }
 }
