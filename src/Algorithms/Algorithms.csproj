@@ -5,6 +5,7 @@
     <AssemblyName>BoardGame.Algorithms</AssemblyName>
     <RootNamespace>BoardGame.Model</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <Version>1.1.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

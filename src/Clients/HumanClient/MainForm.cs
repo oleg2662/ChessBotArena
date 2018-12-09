@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BoardGame.Game.Chess;
@@ -20,6 +21,7 @@ namespace BoardGame.HumanClient
     {
         private readonly ChessMechanism _mechanism;
         private readonly ServiceConnection _client;
+        private static readonly SemaphoreSlim RefreshSemaphore = new SemaphoreSlim(1, 1);
 
 #if DEBUG
         private readonly string _baseUrl = "http://localhost/BoardGame.Service";
@@ -216,6 +218,7 @@ namespace BoardGame.HumanClient
         {
             if (_client.IsAnonymous || _client.CurrentGame?.Representation == null)
             {
+                listboxMoves.Items.Clear();
                 chessBoardGamePanel1.ChessRepresentation = new ChessRepresentation();
                 chessBoardGamePanel1.Enabled = false;
                 chessBoardGamePanel1.Refresh();
@@ -259,6 +262,11 @@ namespace BoardGame.HumanClient
                 chessBoardGamePanel1.Enabled = true;
             }
 
+            // Scroll into view the last item...
+            if (listboxMoves.Items.Count > 0)
+            {
+                listboxMoves.SelectedIndex = listboxMoves.Items.Count - 1;
+            }
             chessBoardGamePanel1.Refresh();
         }
 
@@ -316,6 +324,7 @@ namespace BoardGame.HumanClient
 
         private async Task RefreshAll()
         {
+            await RefreshSemaphore.WaitAsync();
             try
             {
                 await RefreshClient();
@@ -326,6 +335,10 @@ namespace BoardGame.HumanClient
             catch (Exception ex)
             {
                 LogError(nameof(RefreshAll), ex);
+            }
+            finally
+            {
+                RefreshSemaphore.Release(1);
             }
         }
 
@@ -376,6 +389,82 @@ namespace BoardGame.HumanClient
             }
         }
 
+        private string GetStatusLabelText()
+        {
+            var gameState = _client.CurrentGameState;
+            var isItMyTurn = _client.IsItMyTurn;
+
+            if (!isItMyTurn.HasValue)
+            {
+                return string.Empty;
+            }
+
+            switch (gameState)
+            {
+                case GameState.InProgress:
+                    var currentPlayer = _client.CurrentGame.Representation.CurrentPlayer.ToString();
+                    return isItMyTurn.Value
+                        ? $"{currentPlayer} (you!)"
+                        : $"{currentPlayer}";
+
+                case GameState.WhiteWon:
+                    return isItMyTurn.Value ? "White won! (You!)" : "White won!";
+
+                case GameState.BlackWon:
+                    return isItMyTurn.Value ? "Black won! (You!)" : "Black won!";
+
+                case GameState.Draw:
+                    return "Draw!";
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void RefreshMatchPreview()
+        {
+            if (listViewMatches == null)
+            {
+                LogError("Couldn't find list view of matches.");
+                return;
+            }
+
+            var item = (listViewMatches?.SelectedItems.Count ?? 0) > 0 ? listViewMatches.SelectedItems[0] : null;
+
+            var details = (ChessGameDetails)item?.Tag;
+            if (details == null)
+            {
+                labelMatchPreviewStatus.Text = "-";
+                chessBoardPreview.ChessRepresentation = new ChessRepresentation();
+                return;
+            }
+            _client.SetCurrentMatchById(details.Id);
+            labelMatchPreviewStatus.Text = GetStatusLabelText();
+            chessBoardPreview.ChessRepresentation = details.Representation;
+        }
+
+        private async Task SendMove(BaseMove move)
+        {
+            if (_client.IsAnonymous || _client.CurrentGame == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await _client.SendMoveAsync(move);
+            }
+            catch (Exception ex)
+            {
+                LogError(nameof(chessBoardGamePanel1_OnValidMoveSelected), ex);
+            }
+
+            RefreshGame();
+
+            chessBoardGamePanel1.ChessRepresentation = _client.CurrentGame.Representation;
+            chessBoardGamePanel1.Refresh();
+        }
+
         private async void tabMain_Selected(object sender, TabControlEventArgs e)
         {
             var page = (Tabs?)e.TabPage.Tag;
@@ -419,24 +508,7 @@ namespace BoardGame.HumanClient
 
         private async void chessBoardGamePanel1_OnValidMoveSelected(object source, ChessboardMoveSelectedEventArg eventArg)
         {
-            if (_client.IsAnonymous || _client.CurrentGame == null)
-            {
-                return;
-            }
-
-            try
-            {
-                await _client.SendMoveAsync(eventArg.Move);
-            }
-            catch (Exception ex)
-            {
-                LogError(nameof(chessBoardGamePanel1_OnValidMoveSelected), ex);
-            }
-
-            RefreshGame();
-
-            chessBoardGamePanel1.ChessRepresentation = _client.CurrentGame.Representation;
-            chessBoardGamePanel1.Refresh();
+            await SendMove(eventArg.Move);
         }
 
         private async void tabLadder_Enter(object sender, EventArgs e)
@@ -497,83 +569,29 @@ namespace BoardGame.HumanClient
             }
         }
 
-        private string GetStatusLabelText()
-        {
-            var gameState = _client.CurrentGameState;
-            var isItMyTurn = _client.IsItMyTurn;
-
-            if (!isItMyTurn.HasValue)
-            {
-                return string.Empty;
-            }
-
-            switch (gameState)
-            {
-                case GameState.InProgress:
-                    var currentPlayer = _client.CurrentGame.Representation.CurrentPlayer.ToString();
-                    return isItMyTurn.Value
-                        ? $"{currentPlayer} (you!)"
-                        : $"{currentPlayer}";
-
-                case GameState.WhiteWon:
-                    return isItMyTurn.Value ? "White won! (You!)" : "White won!";
-
-                case GameState.BlackWon:
-                    return isItMyTurn.Value ? "Black won! (You!)" : "Black won!";
-
-                case GameState.Draw:
-                    return "Draw!";
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
         private void listViewMatches_ItemActivate(object sender, EventArgs e)
         {
             RefreshMatchPreview();
         }
 
-        private void RefreshMatchPreview()
+        private async void btnResign_Click(object sender, EventArgs e)
         {
-            if (listViewMatches == null)
-            {
-                LogError("Couldn't find list view of matches.");
-                return;
-            }
-
-            var item = (listViewMatches?.SelectedItems.Count ?? 0) > 0 ? listViewMatches.SelectedItems[0] : null;
-
-            var details = (ChessGameDetails)item?.Tag;
-            if (details == null)
-            {
-                labelMatchPreviewStatus.Text = "-";
-                chessBoardPreview.ChessRepresentation = new ChessRepresentation();
-                return;
-            }
-            _client.SetCurrentMatchById(details.Id);
-            labelMatchPreviewStatus.Text = GetStatusLabelText();
-            chessBoardPreview.ChessRepresentation = details.Representation;
+            await SendMove(new SpecialMove(_client.CurrentGame.Representation.CurrentPlayer, MessageType.Resign));
         }
 
-        private void btnResign_Click(object sender, EventArgs e)
+        private async void btnOfferDraw_Click(object sender, EventArgs e)
         {
-
+            await SendMove(new SpecialMove(_client.CurrentGame.Representation.CurrentPlayer, MessageType.DrawOffer));
         }
 
-        private void btnOfferDraw_Click(object sender, EventArgs e)
+        private async void btnAcceptDraw_Click(object sender, EventArgs e)
         {
-
+            await SendMove(new SpecialMove(_client.CurrentGame.Representation.CurrentPlayer, MessageType.DrawAccept));
         }
 
-        private void btnAcceptDraw_Click(object sender, EventArgs e)
+        private async void btnDeclineDraw_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void btnDeclineDraw_Click(object sender, EventArgs e)
-        {
-
+            await SendMove(new SpecialMove(_client.CurrentGame.Representation.CurrentPlayer, MessageType.DrawDecline));
         }
 
         private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -602,6 +620,11 @@ namespace BoardGame.HumanClient
         private void MainForm_Move(object sender, EventArgs e)
         {
             chessBoardGamePanel1.Refresh();
+        }
+
+        private async void timerRefresh_Tick(object sender, EventArgs e)
+        {
+            await RefreshAll();
         }
     }
 }

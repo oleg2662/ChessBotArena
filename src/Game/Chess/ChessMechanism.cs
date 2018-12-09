@@ -48,25 +48,19 @@ namespace BoardGame.Game.Chess
             switch (lastMove?.Message)
             {
                 case MessageType.Resign:
+                case MessageType.DrawAccept:
                     yield break;
 
                 case MessageType.DrawOffer:
                     yield return new SpecialMove(currentPlayer, MessageType.DrawAccept);
                     yield return new SpecialMove(currentPlayer, MessageType.DrawDecline);
                     yield break;
-
-                case MessageType.DrawAccept:
-                    yield break;
             }
 
-            // A bit simplified: draw offer only appears after 50 move-pairs (100 moves)
-            if (representation.History.Count > 100)
-            {
-                yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
-            }
+            yield return new SpecialMove(currentPlayer, MessageType.Resign);
 
-            // A bit simplified: resign offer only appears after 25 move-pairs (50 moves)
-            if (representation.History.Count > 50)
+            // A bit simplified: draw offer only appears after 15 move-pairs (30 moves)
+            if (representation.History.Count > 30)
             {
                 yield return new SpecialMove(currentPlayer, MessageType.DrawOffer);
             }
@@ -152,6 +146,12 @@ namespace BoardGame.Game.Chess
             if (specialMoves.Any(x => x.Message == MessageType.DrawAccept))
             {
                 return GameState.Draw;
+            }
+
+            // No draw accept (maybe just offer or there was decline... the game is in progress.)
+            if (specialMoves.Any(x => x.Message == MessageType.DrawOffer))
+            {
+                return GameState.InProgress;
             }
 
             // Check check-mate

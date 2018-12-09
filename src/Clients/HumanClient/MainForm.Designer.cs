@@ -81,6 +81,7 @@ namespace BoardGame.HumanClient
             this.checkboxShowHumans = new System.Windows.Forms.CheckBox();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textboxLog = new System.Windows.Forms.RichTextBox();
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.tableLayoutPanelMultiplayer.SuspendLayout();
             this.panelSidebar.SuspendLayout();
@@ -138,7 +139,7 @@ namespace BoardGame.HumanClient
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(756, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(889, 17);
             this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -654,6 +655,12 @@ namespace BoardGame.HumanClient
             this.textboxLog.TabIndex = 0;
             this.textboxLog.Text = "";
             // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Enabled = true;
+            this.timerRefresh.Interval = 15000;
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -742,6 +749,7 @@ namespace BoardGame.HumanClient
         private System.Windows.Forms.RichTextBox textboxLog;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
+        private System.Windows.Forms.Timer timerRefresh;
     }
 }
 

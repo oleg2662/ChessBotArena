@@ -6,9 +6,9 @@
     <ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
     <AssemblyName>Boardgame.Service</AssemblyName>
     <RootNamespace>BoardGame.Service</RootNamespace>
-    <FileVersion>1.0.0.1</FileVersion>
-    <Version>1.0.0.1</Version>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.1.0.1</FileVersion>
+    <Version>1.1.0.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <SignAssembly>false</SignAssembly>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>

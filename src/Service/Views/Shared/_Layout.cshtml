@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http.Extensions
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -29,7 +30,10 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Chess Arena</a>
             </div>
             <div class="navbar-collapse collapse">
-                <!-- PLACE OF MENU -->
+                <ul class="nav navbar-nav">
+                    <li><a href="@Context.Request.GetDisplayUrl()downloads/BoardGame.HumanClient.zip" target="_blank">Download</a></li>
+                    <li><a href="@Context.Request.GetDisplayUrl()swagger" target="_blank">Documentation</a></li>
+                </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
