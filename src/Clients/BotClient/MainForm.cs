@@ -31,36 +31,6 @@ namespace BoardGame.BotClient
         private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
 #endif
 
-        public class AlgorithmItem
-        {
-            public AlgorithmItem(string name, Type algorithmType)
-            {
-                Name = name;
-                AlgorithmType = algorithmType;
-            }
-
-            public string Name { get; set; }
-
-            public Type AlgorithmType { get; set; }
-
-            public override string ToString() => Name;
-        }
-
-        public class EvaluatorItem
-        {
-            public EvaluatorItem(string name, Type evaluatorType)
-            {
-                Name = name;
-                EvaluatorType = evaluatorType;
-            }
-
-            public string Name { get; set; }
-
-            public Type EvaluatorType { get; set; }
-
-            public override string ToString() => Name;
-        }
-
         public MainForm()
         {
             InitializeComponent();

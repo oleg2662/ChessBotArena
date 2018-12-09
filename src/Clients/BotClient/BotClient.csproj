@@ -63,6 +63,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlgorithmItem.cs" />
+    <Compile Include="EvaluatorItem.cs" />
     <Compile Include="Evaluators\Version1Evaluator.cs" />
     <Compile Include="Evaluators\Version2Evaluator.cs" />
     <Compile Include="MainForm.cs">
