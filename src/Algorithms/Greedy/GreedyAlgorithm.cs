@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using BoardGame.Model.Abstractions.Interfaces;
+using BoardGame.Algorithms.Abstractions.Interfaces;
 
-namespace BoardGame.Model.Greedy
+namespace BoardGame.Algorithms.Greedy
 {
     /// <summary>
     /// The greedy-algorithm. Tries to ruin your day by always choosing that move which minimizes your next state.

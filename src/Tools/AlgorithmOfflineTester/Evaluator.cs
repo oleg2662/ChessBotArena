@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Pieces;
-using BoardGame.Model.Abstractions.Interfaces;
 
 namespace BoardGame.AlgorithmOfflineTester
 {

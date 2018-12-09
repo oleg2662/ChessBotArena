@@ -1,5 +1,5 @@
+using BoardGame.Algorithms.Minimax;
 using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
-using BoardGame.Model.Minimax;
 using Xunit;
 
 namespace BoardGame.Algorithms.Tests.Unit

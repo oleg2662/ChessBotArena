@@ -1,5 +1,5 @@
-﻿using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
-using BoardGame.Model.Dumb;
+﻿using BoardGame.Algorithms.Random;
+using BoardGame.Algorithms.Tests.Unit.TestCaseClasses;
 using Xunit;
 
 namespace BoardGame.Algorithms.Tests.Unit
@@ -11,7 +11,7 @@ namespace BoardGame.Algorithms.Tests.Unit
         {
             var generator = new TestCase1.Generator();
             var applier = new TestCase1.Applier();
-            var algorithm = new DumbAlgorithm<TestCase1.State, TestCase1.Move>(generator);
+            var algorithm = new RandomAlgorithm<TestCase1.State, TestCase1.Move>(generator);
 
             var initState = new TestCase1.State(0, 0);
             var move1 = algorithm.Calculate(initState);

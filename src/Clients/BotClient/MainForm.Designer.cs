@@ -40,14 +40,12 @@
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.panelMatches = new System.Windows.Forms.Panel();
             this.labelMatchPreviewStatus = new System.Windows.Forms.Label();
-            this.chessBoardPreview = new BoardGame.Tools.Common.ChessBoardVisualizerPanel();
             this.panelPlayers = new System.Windows.Forms.Panel();
             this.btnChallenge = new System.Windows.Forms.Button();
             this.panelRefresh = new System.Windows.Forms.Panel();
             this.panelGame = new System.Windows.Forms.Panel();
+            this.btnCalculate = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.labelGameState = new System.Windows.Forms.Label();
-            this.listboxMoves = new System.Windows.Forms.ListBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.comboboxEvaluators = new System.Windows.Forms.ComboBox();
@@ -71,7 +69,6 @@
             this.listViewMatches = new System.Windows.Forms.ListView();
             this.columnHeaderMatchName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPageGame = new System.Windows.Forms.TabPage();
-            this.chessBoardGamePanel1 = new BoardGame.Tools.Common.ChessBoardVisualizerPanel();
             this.tabLadder = new System.Windows.Forms.TabPage();
             this.listviewLadder = new System.Windows.Forms.ListView();
             this.columnHeaderPosition = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -82,7 +79,9 @@
             this.checkboxShowHumans = new System.Windows.Forms.CheckBox();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textboxLog = new System.Windows.Forms.RichTextBox();
-            this.btnCalculate = new System.Windows.Forms.Button();
+            this.textboxBotLog = new System.Windows.Forms.RichTextBox();
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
+            this.chessBoardPreview = new BoardGame.Tools.Common.ChessBoardVisualizerPanel();
             this.statusStrip1.SuspendLayout();
             this.tableLayoutPanelMultiplayer.SuspendLayout();
             this.panelSidebar.SuspendLayout();
@@ -124,9 +123,9 @@
             this.toolStripProgressBar1,
             this.toolStripStatusLabel1,
             this.toolStripSplitButton1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 1039);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 651);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(925, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1167, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
@@ -142,7 +141,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(889, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(1131, 17);
             this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -170,8 +169,8 @@
             this.tableLayoutPanelMultiplayer.Name = "tableLayoutPanelMultiplayer";
             this.tableLayoutPanelMultiplayer.RowCount = 1;
             this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 662F));
-            this.tableLayoutPanelMultiplayer.Size = new System.Drawing.Size(925, 1039);
+            this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 651F));
+            this.tableLayoutPanelMultiplayer.Size = new System.Drawing.Size(1167, 651);
             this.tableLayoutPanelMultiplayer.TabIndex = 5;
             // 
             // panelSidebar
@@ -183,9 +182,9 @@
             this.panelSidebar.Controls.Add(this.panelLogout);
             this.panelSidebar.Controls.Add(this.panelLogin);
             this.panelSidebar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSidebar.Location = new System.Drawing.Point(728, 3);
+            this.panelSidebar.Location = new System.Drawing.Point(970, 3);
             this.panelSidebar.Name = "panelSidebar";
-            this.panelSidebar.Size = new System.Drawing.Size(194, 1033);
+            this.panelSidebar.Size = new System.Drawing.Size(194, 645);
             this.panelSidebar.TabIndex = 1;
             // 
             // panelMatches
@@ -210,19 +209,6 @@
             this.labelMatchPreviewStatus.TabIndex = 1;
             this.labelMatchPreviewStatus.Text = "STATUS";
             this.labelMatchPreviewStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // chessBoardPreview
-            // 
-            this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
-            this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
-            this.chessBoardPreview.ChessRepresentation = ((BoardGame.Game.Chess.ChessRepresentation)(resources.GetObject("chessBoardPreview.ChessRepresentation")));
-            this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
-            this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
-            this.chessBoardPreview.Name = "chessBoardPreview";
-            this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
-            this.chessBoardPreview.TabIndex = 0;
-            this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // panelPlayers
             // 
@@ -249,7 +235,7 @@
             // panelRefresh
             // 
             this.panelRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelRefresh.Location = new System.Drawing.Point(0, 988);
+            this.panelRefresh.Location = new System.Drawing.Point(0, 600);
             this.panelRefresh.Name = "panelRefresh";
             this.panelRefresh.Padding = new System.Windows.Forms.Padding(4);
             this.panelRefresh.Size = new System.Drawing.Size(194, 45);
@@ -259,8 +245,6 @@
             // 
             this.panelGame.Controls.Add(this.btnCalculate);
             this.panelGame.Controls.Add(this.pictureBox1);
-            this.panelGame.Controls.Add(this.labelGameState);
-            this.panelGame.Controls.Add(this.listboxMoves);
             this.panelGame.Controls.Add(this.numericUpDown1);
             this.panelGame.Controls.Add(this.label3);
             this.panelGame.Controls.Add(this.comboboxEvaluators);
@@ -275,6 +259,19 @@
             this.panelGame.TabIndex = 15;
             this.panelGame.Visible = false;
             // 
+            // btnCalculate
+            // 
+            this.btnCalculate.Dock = System.Windows.Forms.DockStyle.Top;
+            this.btnCalculate.Font = new System.Drawing.Font("Consolas", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCalculate.Location = new System.Drawing.Point(4, 123);
+            this.btnCalculate.Name = "btnCalculate";
+            this.btnCalculate.Padding = new System.Windows.Forms.Padding(3);
+            this.btnCalculate.Size = new System.Drawing.Size(186, 53);
+            this.btnCalculate.TabIndex = 18;
+            this.btnCalculate.Text = "Start";
+            this.btnCalculate.UseVisualStyleBackColor = true;
+            this.btnCalculate.Click += new System.EventHandler(this.btnCalculate_Click);
+            // 
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -285,26 +282,6 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 17;
             this.pictureBox1.TabStop = false;
-            // 
-            // labelGameState
-            // 
-            this.labelGameState.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelGameState.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelGameState.Location = new System.Drawing.Point(4, 283);
-            this.labelGameState.Name = "labelGameState";
-            this.labelGameState.Size = new System.Drawing.Size(186, 33);
-            this.labelGameState.TabIndex = 16;
-            this.labelGameState.Text = "-";
-            this.labelGameState.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // listboxMoves
-            // 
-            this.listboxMoves.Dock = System.Windows.Forms.DockStyle.Top;
-            this.listboxMoves.FormattingEnabled = true;
-            this.listboxMoves.Location = new System.Drawing.Point(4, 123);
-            this.listboxMoves.Name = "listboxMoves";
-            this.listboxMoves.Size = new System.Drawing.Size(186, 160);
-            this.listboxMoves.TabIndex = 15;
             // 
             // numericUpDown1
             // 
@@ -335,9 +312,10 @@
             this.label3.TabIndex = 12;
             this.label3.Text = "Max depth";
             // 
-            // comboBox2
+            // comboboxEvaluators
             // 
             this.comboboxEvaluators.Dock = System.Windows.Forms.DockStyle.Top;
+            this.comboboxEvaluators.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboboxEvaluators.FormattingEnabled = true;
             this.comboboxEvaluators.Location = new System.Drawing.Point(4, 63);
             this.comboboxEvaluators.Name = "comboboxEvaluators";
@@ -354,9 +332,10 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Evaulator";
             // 
-            // comboBox1
+            // comboboxAlgorithms
             // 
             this.comboboxAlgorithms.Dock = System.Windows.Forms.DockStyle.Top;
+            this.comboboxAlgorithms.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboboxAlgorithms.FormattingEnabled = true;
             this.comboboxAlgorithms.Location = new System.Drawing.Point(4, 23);
             this.comboboxAlgorithms.Name = "comboboxAlgorithms";
@@ -482,7 +461,7 @@
             this.tabMain.Location = new System.Drawing.Point(3, 3);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(719, 1033);
+            this.tabMain.Size = new System.Drawing.Size(961, 645);
             this.tabMain.TabIndex = 0;
             this.tabMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabMain_Selected);
             // 
@@ -492,7 +471,7 @@
             this.tabPagePlayers.Location = new System.Drawing.Point(4, 22);
             this.tabPagePlayers.Name = "tabPagePlayers";
             this.tabPagePlayers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayers.Size = new System.Drawing.Size(711, 1007);
+            this.tabPagePlayers.Size = new System.Drawing.Size(953, 619);
             this.tabPagePlayers.TabIndex = 0;
             this.tabPagePlayers.Text = "Players";
             this.tabPagePlayers.UseVisualStyleBackColor = true;
@@ -511,7 +490,7 @@
             this.listViewPlayers.Location = new System.Drawing.Point(3, 3);
             this.listViewPlayers.MultiSelect = false;
             this.listViewPlayers.Name = "listViewPlayers";
-            this.listViewPlayers.Size = new System.Drawing.Size(705, 1001);
+            this.listViewPlayers.Size = new System.Drawing.Size(947, 613);
             this.listViewPlayers.SmallImageList = this.imageListPlayers;
             this.listViewPlayers.TabIndex = 0;
             this.listViewPlayers.UseCompatibleStateImageBehavior = false;
@@ -528,7 +507,7 @@
             this.tabPageMatches.Location = new System.Drawing.Point(4, 22);
             this.tabPageMatches.Name = "tabPageMatches";
             this.tabPageMatches.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMatches.Size = new System.Drawing.Size(711, 1007);
+            this.tabPageMatches.Size = new System.Drawing.Size(953, 619);
             this.tabPageMatches.TabIndex = 1;
             this.tabPageMatches.Text = "Matches";
             this.tabPageMatches.UseVisualStyleBackColor = true;
@@ -547,7 +526,7 @@
             this.listViewMatches.Location = new System.Drawing.Point(3, 3);
             this.listViewMatches.MultiSelect = false;
             this.listViewMatches.Name = "listViewMatches";
-            this.listViewMatches.Size = new System.Drawing.Size(705, 1001);
+            this.listViewMatches.Size = new System.Drawing.Size(947, 613);
             this.listViewMatches.SmallImageList = this.imageListMatchStatuses;
             this.listViewMatches.TabIndex = 1;
             this.listViewMatches.UseCompatibleStateImageBehavior = false;
@@ -561,27 +540,14 @@
             // 
             // tabPageGame
             // 
-            this.tabPageGame.Controls.Add(this.chessBoardGamePanel1);
+            this.tabPageGame.Controls.Add(this.textboxBotLog);
             this.tabPageGame.Location = new System.Drawing.Point(4, 22);
             this.tabPageGame.Name = "tabPageGame";
             this.tabPageGame.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGame.Size = new System.Drawing.Size(711, 1007);
+            this.tabPageGame.Size = new System.Drawing.Size(953, 619);
             this.tabPageGame.TabIndex = 2;
             this.tabPageGame.Text = "Game";
             this.tabPageGame.UseVisualStyleBackColor = true;
-            // 
-            // chessBoardGamePanel1
-            // 
-            this.chessBoardGamePanel1.Bevel = System.Drawing.Color.Brown;
-            this.chessBoardGamePanel1.BlackSquare = System.Drawing.Color.SandyBrown;
-            this.chessBoardGamePanel1.ChessRepresentation = ((BoardGame.Game.Chess.ChessRepresentation)(resources.GetObject("chessBoardGamePanel1.ChessRepresentation")));
-            this.chessBoardGamePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chessBoardGamePanel1.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.chessBoardGamePanel1.Location = new System.Drawing.Point(3, 3);
-            this.chessBoardGamePanel1.Name = "chessBoardGamePanel1";
-            this.chessBoardGamePanel1.Size = new System.Drawing.Size(705, 1001);
-            this.chessBoardGamePanel1.TabIndex = 0;
-            this.chessBoardGamePanel1.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // tabLadder
             // 
@@ -590,7 +556,7 @@
             this.tabLadder.Location = new System.Drawing.Point(4, 22);
             this.tabLadder.Name = "tabLadder";
             this.tabLadder.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLadder.Size = new System.Drawing.Size(711, 1007);
+            this.tabLadder.Size = new System.Drawing.Size(953, 619);
             this.tabLadder.TabIndex = 3;
             this.tabLadder.Text = "Ladder";
             this.tabLadder.UseVisualStyleBackColor = true;
@@ -611,7 +577,7 @@
             this.listviewLadder.Location = new System.Drawing.Point(3, 42);
             this.listviewLadder.MultiSelect = false;
             this.listviewLadder.Name = "listviewLadder";
-            this.listviewLadder.Size = new System.Drawing.Size(705, 962);
+            this.listviewLadder.Size = new System.Drawing.Size(947, 574);
             this.listviewLadder.SmallImageList = this.imageListPlayers;
             this.listviewLadder.TabIndex = 3;
             this.listviewLadder.UseCompatibleStateImageBehavior = false;
@@ -639,7 +605,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(705, 39);
+            this.panel1.Size = new System.Drawing.Size(947, 39);
             this.panel1.TabIndex = 2;
             // 
             // checkboxShowBots
@@ -678,7 +644,7 @@
             this.tabPageLog.Location = new System.Drawing.Point(4, 22);
             this.tabPageLog.Name = "tabPageLog";
             this.tabPageLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLog.Size = new System.Drawing.Size(711, 1007);
+            this.tabPageLog.Size = new System.Drawing.Size(953, 619);
             this.tabPageLog.TabIndex = 4;
             this.tabPageLog.Text = "Log";
             this.tabPageLog.UseVisualStyleBackColor = true;
@@ -687,41 +653,59 @@
             // 
             this.textboxLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textboxLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textboxLog.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textboxLog.Location = new System.Drawing.Point(3, 3);
             this.textboxLog.Name = "textboxLog";
             this.textboxLog.ReadOnly = true;
             this.textboxLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.textboxLog.Size = new System.Drawing.Size(705, 1001);
+            this.textboxLog.Size = new System.Drawing.Size(947, 613);
             this.textboxLog.TabIndex = 0;
             this.textboxLog.Text = "";
             // 
-            // btnCalculate
+            // textboxBotLog
             // 
-            this.btnCalculate.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnCalculate.Font = new System.Drawing.Font("OCR A Extended", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCalculate.Location = new System.Drawing.Point(4, 316);
-            this.btnCalculate.Name = "btnCalculate";
-            this.btnCalculate.Padding = new System.Windows.Forms.Padding(3);
-            this.btnCalculate.Size = new System.Drawing.Size(186, 53);
-            this.btnCalculate.TabIndex = 18;
-            this.btnCalculate.Text = "Calculate";
-            this.btnCalculate.UseVisualStyleBackColor = true;
+            this.textboxBotLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textboxBotLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textboxBotLog.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textboxBotLog.Location = new System.Drawing.Point(3, 3);
+            this.textboxBotLog.Name = "textboxBotLog";
+            this.textboxBotLog.ReadOnly = true;
+            this.textboxBotLog.ShowSelectionMargin = true;
+            this.textboxBotLog.Size = new System.Drawing.Size(947, 613);
+            this.textboxBotLog.TabIndex = 1;
+            this.textboxBotLog.Text = "";
+            // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
+            this.timerRefresh.Interval = 15000;
+            // 
+            // chessBoardPreview
+            // 
+            this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
+            this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardPreview.ChessRepresentation = ((BoardGame.Game.Chess.ChessRepresentation)(resources.GetObject("chessBoardPreview.ChessRepresentation")));
+            this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
+            this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+            this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
+            this.chessBoardPreview.Name = "chessBoardPreview";
+            this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
+            this.chessBoardPreview.TabIndex = 0;
+            this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(925, 1061);
+            this.ClientSize = new System.Drawing.Size(1167, 673);
             this.Controls.Add(this.tableLayoutPanelMultiplayer);
             this.Controls.Add(this.statusStrip1);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Chess Bot Client";
-            this.Move += new System.EventHandler(this.MainForm_Move);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.tableLayoutPanelMultiplayer.ResumeLayout(false);
@@ -778,7 +762,6 @@
         private System.Windows.Forms.ListView listViewMatches;
         private System.Windows.Forms.ColumnHeader columnHeaderMatchName;
         private System.Windows.Forms.TabPage tabPageGame;
-        private Tools.Common.ChessBoardVisualizerPanel chessBoardGamePanel1;
         private System.Windows.Forms.TabPage tabLadder;
         private System.Windows.Forms.ListView listviewLadder;
         private System.Windows.Forms.ColumnHeader columnHeaderPosition;
@@ -792,8 +775,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label labelGameState;
-        private System.Windows.Forms.ListBox listboxMoves;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox comboboxEvaluators;
@@ -801,6 +782,8 @@
         private System.Windows.Forms.ComboBox comboboxAlgorithms;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnCalculate;
+        private System.Windows.Forms.RichTextBox textboxBotLog;
+        private System.Windows.Forms.Timer timerRefresh;
     }
 }
 

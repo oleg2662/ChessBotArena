@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace BoardGame.Model.Abstractions.Exceptions
+namespace BoardGame.Algorithms.Abstractions.Exceptions
 {
     public abstract class AlgorithmException : Exception
     {

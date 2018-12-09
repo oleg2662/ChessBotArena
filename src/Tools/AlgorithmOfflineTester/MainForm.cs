@@ -3,14 +3,14 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BoardGame.Algorithms.Abstractions.Interfaces;
+using BoardGame.Algorithms.AlphaBeta;
+using BoardGame.Algorithms.Greedy;
+using BoardGame.Algorithms.Minimax;
+using BoardGame.Algorithms.MinimaxAverage;
+using BoardGame.Algorithms.Random;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
-using BoardGame.Model.Abstractions.Interfaces;
-using BoardGame.Model.AlphaBeta;
-using BoardGame.Model.Dumb;
-using BoardGame.Model.Greedy;
-using BoardGame.Model.Minimax;
-using BoardGame.Model.MinimaxAverage;
 
 namespace BoardGame.AlgorithmOfflineTester
 {
@@ -49,7 +49,7 @@ namespace BoardGame.AlgorithmOfflineTester
                     };
 
                 case Algorithms.Random:
-                    return new DumbAlgorithm<ChessRepresentation, BaseMove>(_generator);
+                    return new RandomAlgorithm<ChessRepresentation, BaseMove>(_generator);
 
                 case Algorithms.Greedy:
                     return new GreedyAlgorithm<ChessRepresentation, BaseMove>(_evaluator, _generator, _applier);
