@@ -310,11 +310,10 @@ namespace BoardGame.HumanClient
                 labelLoginStatus.Text = $"{_client.LoggedInUser} logged in.";
                 LogNotification($"Successful login: {_client.LoggedInUser}");
             }
-
-            ToggleLoginControls();
             btnLogin.Enabled = true;
-
             await RefreshAll();
+            ActivateSelectedTab();
+            ToggleLoginControls();
         }
 
         private async Task Logout()
@@ -322,6 +321,7 @@ namespace BoardGame.HumanClient
             _client.StopAutoRefresh();
             await _client.Logout();
             await RefreshAll();
+            ActivateSelectedTab();
             ToggleLoginControls();
         }
 
@@ -468,12 +468,21 @@ namespace BoardGame.HumanClient
             chessBoardGamePanel1.Refresh();
         }
 
+        private void ActivateSelectedTab()
+        {
+            tabMain.InvokeIfRequired(() =>
+            {
+                var page = (Tabs?) tabMain.SelectedTab.Tag;
+                panelGame.Visible = page == Tabs.GamePage && !_client.IsAnonymous && _client.CurrentGame != null;
+                panelPlayers.Visible = page == Tabs.PlayersPage && !_client.IsAnonymous;
+                panelMatches.Visible = page == Tabs.MatchesPage && !_client.IsAnonymous;
+            });
+        }
+
         private async void tabMain_Selected(object sender, TabControlEventArgs e)
         {
             var page = (Tabs?)e.TabPage.Tag;
-            panelGame.Visible = page == Tabs.GamePage;
-            panelPlayers.Visible = page == Tabs.PlayersPage;
-            panelMatches.Visible = page == Tabs.MatchesPage;
+            ActivateSelectedTab();
 
             switch (page)
             {

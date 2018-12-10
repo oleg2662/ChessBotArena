@@ -73,9 +73,9 @@
             this.textboxBotLog = new System.Windows.Forms.RichTextBox();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.textboxLog = new System.Windows.Forms.RichTextBox();
-            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.tabPageReadme = new System.Windows.Forms.TabPage();
             this.textboxReadme = new System.Windows.Forms.RichTextBox();
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.tableLayoutPanelMultiplayer.SuspendLayout();
             this.panelSidebar.SuspendLayout();
@@ -299,11 +299,16 @@
             0,
             0,
             0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(186, 20);
             this.numericUpDown1.TabIndex = 13;
             this.numericUpDown1.Value = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});
@@ -513,7 +518,7 @@
             this.tabPageMatches.Location = new System.Drawing.Point(4, 22);
             this.tabPageMatches.Name = "tabPageMatches";
             this.tabPageMatches.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMatches.Size = new System.Drawing.Size(953, 619);
+            this.tabPageMatches.Size = new System.Drawing.Size(868, 568);
             this.tabPageMatches.TabIndex = 1;
             this.tabPageMatches.Text = "Matches";
             this.tabPageMatches.UseVisualStyleBackColor = true;
@@ -532,7 +537,7 @@
             this.listViewMatches.Location = new System.Drawing.Point(3, 3);
             this.listViewMatches.MultiSelect = false;
             this.listViewMatches.Name = "listViewMatches";
-            this.listViewMatches.Size = new System.Drawing.Size(947, 613);
+            this.listViewMatches.Size = new System.Drawing.Size(862, 562);
             this.listViewMatches.SmallImageList = this.imageListMatchStatuses;
             this.listViewMatches.TabIndex = 1;
             this.listViewMatches.UseCompatibleStateImageBehavior = false;
@@ -592,11 +597,6 @@
             this.textboxLog.TabIndex = 0;
             this.textboxLog.Text = "";
             // 
-            // timerRefresh
-            // 
-            this.timerRefresh.Interval = 15000;
-            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
-            // 
             // tabPageReadme
             // 
             this.tabPageReadme.Controls.Add(this.textboxReadme);
@@ -616,6 +616,11 @@
             this.textboxReadme.Size = new System.Drawing.Size(862, 562);
             this.textboxReadme.TabIndex = 0;
             this.textboxReadme.Text = resources.GetString("textboxReadme.Text");
+            // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Interval = 15000;
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
             // MainForm
             // 

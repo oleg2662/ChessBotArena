@@ -22,28 +22,6 @@ namespace BoardGame.Game.Tests.Unit.Chess
         }
 
         [Fact]
-        public void CachePerformanceTest_SecondSameMoveGenerationIsFaster()
-        {
-            var m = new ChessMechanism();
-            var g1 = new ChessRepresentationInitializer().Create();
-
-            var start1 = DateTime.Now;
-            m.GenerateMoves(g1);
-            var end1 = DateTime.Now;
-
-            var start2 = DateTime.Now;
-            m.GenerateMoves(g1);
-            var end2 = DateTime.Now;
-
-            var time1 = end1 - start1;
-            var time2 = end2 - start2;
-
-            var quicker = time2 < time1;
-
-            Assert.True(quicker);
-        }
-
-        [Fact]
         public void ChessRepresentation_GetHashCodeTest_AreEqual()
         {
             var representation1 = new ChessRepresentationInitializer().Create();

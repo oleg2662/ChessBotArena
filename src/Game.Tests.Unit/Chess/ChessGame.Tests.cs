@@ -14,7 +14,7 @@ namespace BoardGame.Game.Tests.Unit.Chess
         [Fact]
         public void GenerateMovesTest_Initial_AppropriateMovesReturned()
         {
-            var expected = 20;
+            var expected = 21;
 
             var representation = new ChessRepresentationInitializer().Create();
             
@@ -146,7 +146,6 @@ namespace BoardGame.Game.Tests.Unit.Chess
             var expectedKnightMoves = new BaseMove[]
             {
                 new SpecialMove(ChessPlayer.White, MessageType.Resign),
-                new SpecialMove(ChessPlayer.White, MessageType.DrawOffer),
                 new ChessMove(ChessPlayer.White, Positions.C4, Positions.E2),
                 new ChessMove(ChessPlayer.White, Positions.G2, Positions.G3),
                 new ChessMove(ChessPlayer.White, Positions.G2, Positions.G1),
@@ -417,48 +416,6 @@ namespace BoardGame.Game.Tests.Unit.Chess
             var mechanism = new ChessMechanism();
 
             Assert.Throws<ChessIllegalMoveException>(() => { mechanism.ApplyMove(game, move); });
-        }
-
-        [Fact]
-        public void PerformanceCheck()
-        {
-            var mechanism = new ChessMechanism();
-            var numberOfTries = 10;
-            var times = new List<double>(numberOfTries);
-
-            while(times.Count < numberOfTries)
-            {
-                var game = new ChessRepresentationInitializer().Create();
-                var count = 0;
-                var start = DateTime.Now;
-                while (true)
-                {
-                    count++;
-                    var move = mechanism.GenerateMoves(game)
-                                        .OfType<BaseChessMove>()
-                                        .OrderBy(x => Guid.NewGuid())
-                                        .FirstOrDefault();
-
-                    if (move == null || count > 100)
-                    {
-                        break;
-                    }
-
-                    game = mechanism.ApplyMove(game, move);
-                }
-
-                var end = DateTime.Now;
-                var time = (end - start).TotalSeconds;
-                if (count >= 100)
-                {
-                    times.Add(time);
-                }
-            }
-
-            var timeAverage = times.Average();
-            var quick = timeAverage < TimeSpan.FromSeconds(1.5d).TotalSeconds;
-
-            Assert.True(quick, $"Average time was greater than 1 sec. Min: {times.Min()}, Max:{times.Max()}, Avg:{timeAverage}");
         }
 
         public static IEnumerable<object[]> InvalidMovesTestData =>

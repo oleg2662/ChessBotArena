@@ -19,7 +19,7 @@ namespace BoardGame.Algorithms.Tests.Unit
 
             var move1 = algorithm.Calculate(initState);
 
-            Assert.Equal('b', move1.Label);
+            Assert.Equal('a', move1.Label);
         }
     }
 }

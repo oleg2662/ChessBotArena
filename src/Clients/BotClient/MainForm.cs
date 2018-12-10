@@ -293,11 +293,13 @@ namespace BoardGame.BotClient
 
         private void ToggleLoginControls()
         {
+            this.InvokeIfRequired(() =>
+            {
+                var isSessionAlive = !_client.IsAnonymous;
 
-            var isSessionAlive = !_client.IsAnonymous;
-
-            panelLogin.Visible = !isSessionAlive;
-            panelLogout.Visible = isSessionAlive;
+                panelLogin.Visible = !isSessionAlive;
+                panelLogout.Visible = isSessionAlive;
+            });
         }
 
         private async Task Login()
@@ -329,10 +331,10 @@ namespace BoardGame.BotClient
                 LogNotification($"Successful login: {_client.LoggedInUser}");
             }
 
-            ToggleLoginControls();
             btnLogin.Enabled = true;
-
             await RefreshAll();
+            ToggleLoginControls();
+            ActivateSelectedTab();
         }
 
         private async Task Logout()
@@ -341,6 +343,7 @@ namespace BoardGame.BotClient
             await _client.Logout();
             await RefreshAll();
             ToggleLoginControls();
+            ActivateSelectedTab();
         }
 
         private async Task RefreshAll()
@@ -362,13 +365,21 @@ namespace BoardGame.BotClient
             }
         }
 
+        private void ActivateSelectedTab()
+        {
+            tabMain.InvokeIfRequired(() =>
+            {
+                var page = (Tabs?)tabMain.SelectedTab.Tag;
+                panelGame.Visible = page == Tabs.GamePage && !_client.IsAnonymous;
+                panelPlayers.Visible = page == Tabs.PlayersPage && !_client.IsAnonymous;
+                panelMatches.Visible = page == Tabs.MatchesPage && !_client.IsAnonymous;
+            });
+        }
+
         private async void tabMain_Selected(object sender, TabControlEventArgs e)
         {
-            var page = (Tabs?)e.TabPage.Tag;
-            panelGame.Visible = page == Tabs.GamePage;
-            panelPlayers.Visible = page == Tabs.PlayersPage;
-            panelMatches.Visible = page == Tabs.MatchesPage;
-
+            var page = (Tabs?)tabMain.SelectedTab.Tag;
+            ActivateSelectedTab();
             switch (page)
             {
                 case Tabs.PlayersPage:
