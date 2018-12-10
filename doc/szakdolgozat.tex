@@ -212,6 +212,161 @@ A dolgozat végén kiegészítésként a függelék tartalmaz néhány a megért
 
 
 
+% ============================================================================================================
+% === FELHASZNÁLÓI DOKUMENTÁCIÓ ==============================================================================
+% ============================================================================================================
+\newpage
+\part{Felhasználói Dokumentáció}
+
+\section{Szerver}
+\subsection{Telepítés}
+A kiszolgáló telepítéséhez Windows környezetben a következő előfeltételek szükségesek:
+\begin{itemize}
+	\item Telepített IIS,
+	\item Telepített .NET Core 2.1 runtime,
+	\item Telepített .NET Core Hosting Bundle,
+	\item MSSQL adatbázis,
+	\item A klienseknek pedig .NET framework 4.7.2, ami be van építve a telepítőjükbe.
+\end{itemize}
+Ezen előfeltételek telepítéséről további információk a \href{https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/iis/?view=aspnetcore-2.2}{Microsoft oldalán} található.
+\subsubsection{Fejlesztéshez, lokálisan}
+\noindent Lokális telepítés lépései Visual Studio-ban: \\
+\noindent \textbf{1.} Solution megnyitása Visual Studio-ban majd "Service" projekt startup projektként való beállítása: \\
+\includegraphics[width=0.8\textwidth]{img/server_dev_run_1.png} \\
+
+\noindent \textbf{2.} Build. \\
+Ekkor a Visual Studio létrehozza a site-os az IIS-ben. \\
+
+\noindent \textbf{3.} Application pool létrehozása ("Core") a .NET core-os projekthez. A beállításokat a kép mutatja: \\
+\includegraphics[width=0.8\textwidth]{img/server_dev_run_2.png} \\
+
+\noindent \textbf{4.} Site application pool-jának beállítása az újonnan létrehozottra.
+\includegraphics[width=0.8\textwidth]{img/server_dev_run_3.png} \\
+
+\noindent \textbf{5.} Környezeti változók beállítása \\
+A projektben találhatók példa konfigurációs file-ok, mint például a \texttt{appsettings.json} file. Ezekbe behelyettesíthető például az adatbázis connection string, de ez esetben fennáll a veszélye annak, hogy véletlen bekerülnek a jelszavaink egy GIT repository-ba. Ezért tanácsos helyi környezeti változókba menteni. Példa:
+\includegraphics[width=0.8\textwidth]{img/server_dev_run_4.png}
+\begin{itemize}
+	\item \textbf{TheTurkEngineService\_\_BaseUrl} Ide kerül a szerver címe.
+	\item \textbf{TheTurkEngineService\_\_ConnectionStrings\_\_Main} Ide kerül a connection string.
+	\item \textbf{TheTurkEngineService\_\_SecurityKey} Ide kerül a privát kulcs, amivel aláírja a szervíz a JWT tokeneket.
+\end{itemize}
+
+\noindent \textbf{6.} Build és futtatás \\
+Ha minden jól megy, akkor a böngészőben meg kell jelennie a frontend-nek: \\
+\includegraphics[width=0.8\textwidth]{img/server_dev_run_5.png} \\
+
+\noindent \textbf{7.} Hiba esetén ellenőrizendő:
+\begin{itemize}
+	\item IIS-ben megfelelő application pool van-e beállítva?
+	\item IISRESET futtatása adminisztátori parancssorban
+	\item Windows Event Viewer tartalmazhat információt a hiba forrásáról
+\end{itemize}
+
+
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.8\textwidth]{img/server_dev_run_1.png}
+%	\caption{Service startup projektként beállítása.}
+%	\label{fig:server_dev_run_1}
+%\end{figure}
+
+
+
+\subsubsection{Távoli szerverre}
+\noindent \textbf{1.} Solution megnyitása Visual Studio-ban \\
+
+\noindent \textbf{2.} Jobb klikk a Service projekten, majd "Publish" kiválasztása. \\
+
+\noindent \textbf{3.} Publish ablakban szervernek megfelelő beállítások kiválasztása. Példa: \\
+\includegraphics[width=0.8\textwidth]{img/server_prod_run_6.png} \\
+
+\noindent \textbf{4.} Publish futtatása \\
+
+\noindent \textbf{5.} Belépés szerverre, web.config és appsettings.json ellenőrzése. \\
+Ezek módosítása ha szükséges, vagy környezeti változók használata. (Ekkor appsettings.json file törlése.)
+
+\noindent \textbf{6.} Ha szükséges, site újraindítása. \\
+
+\noindent \textbf{7.} Hiba esetén ellenőrizendő:
+\begin{itemize}
+	\item Távoli IIS-ben megfelelő application pool van-e beállítva?
+	\item Távoli gépen IISRESET futtatása adminisztátori parancssorban
+	\item Távoli Windows Event Viewer tartalmazhat információt a hiba forrásáról
+\end{itemize}
+
+\subsection{Használat}
+A használati útmutató már nem csak rendszergazdáknak és a fejlesztőknek, hanem az átlagfelhasználóknak is szól.
+\subsubsection{Regisztráció}
+Az alkalmazást nem lehet regisztráció nélkül használni. Regisztráció lépései:\\
+
+\noindent \textbf{1.} Register gombra kattintás, majd adatok megadása \\
+\includegraphics[width=0.8\textwidth]{img/service_register.png} \\
+A jelszónak tartalmaznia kell kis és nagy betűt, egy számot és valamilyen jelet.\\
+A "Bot account" alatti checkbox akkor használandó, ha egy olyan felhasználót akarunk regisztrálni, amely botként lesz használva. A jelszónak tartalmaznia kell kis és nagy betűt, egy számot és valamilyen jelet. \\
+Ha minden rendben volt, akkor a rendszer bejelentkezteti az új felhasználót és a saját adatainak oldalára visz: \\
+\includegraphics[width=0.8\textwidth]{img/service_account.png} \\
+Ezen a képernyőn lehet módosítani a jelszót, e-mail címet, illetve azt, hogy a felhasználó robot-e.
+
+\section{Játékkliens}
+\subsection{Telepítés}
+\noindent \textbf{1.} A weboldalon kattintás "Downloads" gombra, majd a megfelelő verzió letöltése \\
+\includegraphics[width=0.8\textwidth]{img/service_downloads.png} \\
+\noindent \textbf{2.} A "Without Installer" verzióban csak a futáshoz szükséges file-ok vannak betömörítve. Ezt a ZIP file-t letöltve és kitömörítve el lehet indítani a klienst. \\
+A "With Installer" verzió tartalmazza a telepítőt, amelybe installálja a .NET Framework 4.7.2-es verzióját, ha az nincs még telepítve. Ehhez csak ki kell tömöríteni a file-t és a Setup.exe-t elindítani és követni az utasításokat.
+\subsection{Használat}
+
+\subsection{Hibaelhárítás}
+asdf
+
+\section{Botkliens}
+asdf
+\subsection{Telepítés}
+qwer
+\subsection{Használat}
+asdf
+\subsection{Hibaelhárítás}
+asdf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % ============================================================================================================
 % === FEJLESZTŐI DOKUMENTÁCIÓ ================================================================================
@@ -1837,7 +1992,7 @@ Az infrastruktúra tesztelésekor önmagát is tesztelte. Ugyanazon aspektusokb�
 \end{itemize}
 
 \subsubsection{Megfigyelések}
-Egy idő után lehetetlenné vált a tesztelés a lokális gépen, mert a sok bot kliens, a service, az adatbázis szerver illetve a Visual Studio együttesen már annyira leterhelte a gépet, hogy lehetetlenné vált minden a gépen. Ezért lett a project publikálva egy külső szerverre.
+Egy idő után lehetetlenné vált a tesztelés a lokális gépen, mert a sok bot kliens, a service, az adatbázis szerver illetve a Visual Studio együttesen már annyira leterhelte a gépet, hogy lehetetlenné vált minden a munka a gépen. Ezért lett a project publikálva egy külső szerverre.
 
 
 
@@ -1876,24 +2031,7 @@ Egy idő után lehetetlenné vált a tesztelés a lokális gépen, mert a sok bo
 
 
 
-% ============================================================================================================
-% === FELHASZNÁLÓI DOKUMENTÁCIÓ ==============================================================================
-% ============================================================================================================
-\newpage
-\part{Felhasználói Dokumentáció}
-\section{Szerver}
-\subsection{Telepítés}
-\lipsum[6-7]
-\subsection{Használat}
-\lipsum[6-7]
-\newpage
-\section{Kliensek}
-\subsection{Játékkliens}
-\lipsum[1-2]
-\subsection{Bot kliens}
-\lipsum[1-2]
-\section{Hibakeresés}
-\lipsum[1-2]
+
 
 
 
