@@ -1,6 +1,6 @@
-% -------------------------------------------------------------------------------------------------------------
-% --- PREAMBLE ------------------------------------------------------------------------------------------------
-% -------------------------------------------------------------------------------------------------------------
+% =============================================================================================================
+% === PREAMBLE ================================================================================================
+% =============================================================================================================
 
 \documentclass[twoside, a4paper, 12pt]{article}
 \usepackage{arabtex}
@@ -76,9 +76,6 @@
 
 % --- Code listing def (END) --------------------------------------------------------------
 
-
-
-
 \input{meta/metadata}
 \lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
 \title{\THESISTITLE}
@@ -112,11 +109,52 @@
 \pagestyle{plain}
 \setcounter{page}{1}
 
-\newpage
 
-% -------------------------------------------------------------------------------------------------------------
-% --- ÖSSZEFOGLALÁS -------------------------------------------------------------------------------------------
-% ------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ============================================================================================================
+% === ÖSSZEFOGLALÁS ==========================================================================================
+% ============================================================================================================
+\newpage
 \part{Bevezető}
 \section{A dolgozatról}
 \subsection{A dolgozat célja}
@@ -124,126 +162,94 @@ A dolgozat célja a mesterséges intelligencia kurzuson bemutatott \textbf{„k�
 
 E célból a (normál) sakkot vesszük alapul, mely elég bonyolult ahhoz, hogy látványos eredményeket láthassunk, a legtöbben ismerik a szabályait, illetve egy klasszikus példája a fent nevezett játékok halmazának.
 
-A dolgozat "mellékterméke" egy olyan \textit{API interface}, melyhez kapcsolódva nem csak mesterséges intelligenciát megvalósító programok, hanem "sima", emberi játékosok által is használható kliens is írható, így a téma iránt nem érdeklődők is kipróbálhatják magukat például egy mobilalkalmazás vagy egy asztali Windows / Linux alapú kliens megírásában.
+A dolgozat "mellékterméke" egy olyan \textit{API interface}, melyhez kapcsolódva nem csak mesterséges intelligenciát megvalósító programok, hanem "sima", emberi játékosok által is használható kliens is írható, így a téma iránt nem érdeklődők is kipróbálhatják magukat például egy mobilalkalmazás vagy egy asztali Windows / Linux alapú kliens megírásában, illetve tapasztalatra tehetnek szert az elosztott rendszerek működésében és az aszinkron programozás felettéb érdekes és néha nagy fejfájást okozó működésében is.
 
 \subsection{A dolgozat felépítése}
-A dolgozat három részből áll: jelen bevezető, a fejlesztői- és a felhasználói dokumentáció. Mivel a dolgozat tárgya egy programcsomag, mind a fejlesztői, mind a felhasználói dokumentációban külön kezeljük őket. A fejlesztői dokumentációban minden modulnak van "elemzés", "tervezés", "megvalósítás" és "tesztelés" része, illetve saját szekciójuk a felhasználói dokumentációban. Így reményeim szerint jobban követhető lesz egy-egy modul fejlődése és rá is mutat arra a tervezéskor egyébként szerintem fontos hozzáállásra, hogy minden modul önmagában legyen teljes, ne függjön a többitől, önmagában is értelmes egészet alkosson, így könnyítve meg a tesztelést, felhasználást más területen is, illetve a későbbi továbbfejlesztést.
+A dolgozat három fő részből áll: jelen bevezető, a fejlesztői és a felhasználói dokumentáció.
+A fejlesztői dokumentáció négy fő részre tagozódik: \textbf{"elemzés"}, \textbf{"tervezés"}, \textbf{"megvalósítás"} és \textbf{"tesztelés"} - míg a felhasználói dokumentáció a programcsomag alkalmazásai mentén van szétvágva, és mindegyiknél szót ejt a \textbf{telepítésről}, \textbf{használatról} illetve a \textbf{karbantartásról}.
+A dolgozat végén kiegészítésként a függelék tartalmaz néhány a megértést segítő információt a dolgozattal kapcsolatban, illetve néhány érdekességet, tapasztalatokat.
 
-\subsection{Játékok osztályozása}
-A \textbf{„kétszemélyes, teljes információjú, diszkrét, véges és determinisztikus, zéró-összegű, játékok”} definíciója egy kis magyarázatot érdemel. A játékokat a kövektező szempontok alapján lehet osztályozni:
 
-\begin{itemize}
-	\item \textbf{Játékosok száma} \\
-	Ez lehet egy, kettő, vagy n.
 
-	\item \textbf{Elérhető információ mennyisége} \\
-	A játékosok számára mennyi információ érhető el? Minden információ birtokában vannak-e (pédlául sakk), vagy nem (például egy kártyajáték, ahol nem látják egymás lapjait.)
 
-	\item \textbf{Körökre-osztott-e vagy sem?} \\
-	Lépések diszkrét sorozatából áll-e a játék vagy folyamatos.
-	
-	\item \textbf{Lehetséges lépések száma} \\
-	Diszkrét esetben a különböző állapotokban lehetséges lépések száma véges vagy végtelen? A játék véges sok lépésben végetér?
-	
-	\item \textbf{Véletlen-faktor} \\
-	A véletlennek van-e szerepe a játékban? Ha nincs, akkor a játékot \textit{determinisztikusnak} hívjuk.
-	
-	\item \textbf{Játékosok nyereségeinek összege} \\
-	Ha a játékosok nyereségeinek összege 0 (amennyit nyer az egyik, annyit veszít a másik), akkor \textit{zérusösszegű} a játék.
-\end{itemize}
 
-Ez alapján a sakk egy:
-\begin{itemize}
-	\item \textbf{Kétszemélyes}
-	
-	\item \textbf{Tejes információjú} \\
-	Ránézve a sakktáblára és a játéklépések jegyzékére minden játékos tudja a pontos állást.
-	
-	\item \textbf{Diszkrét} \\
-	Mert diszkrét lépések sorozata egy játék.
-	
-	\item \textbf{Véges} \\
-	Mivel véges sok lépésben végetér a játék és az állapotokból lehetséges lépések száma is véges.
-	
-	\item \textbf{Determinisztikus} \\
-	Mivel a szerencsének nincs szerepe a játékban.
-	
-	\item \textbf{Zéró-összegű} \\
-	A szerzett pontok száma mindig egy: győztes játékos 1 pontot kap, a vesztes 0-t, döntetlen esetén 0.5-0.5 pontot kapnak a felek.
-\end{itemize}
-játék.
 
-\section{A sakkról}
 
-\subsection{Története}
-A játék neve a perzsa „shāh” szóból ered, amely uralkodót jelent.\footnote{A "sakk-matt" kifejezés pedig a perzsa „Shāh Māt" kifejezésből származik, amelynek jelentése: "a királyt lerohanták” vagy "védtelen”, "legyőzött”.\cite{ChessMateHu}\cite{ChessMateEn}} Története a legendák világába nyúlik vissza. Egy ismert mese szerint egy brahmin találta ki a sakkot. Jutalmul a rádzsától első hallásra jelentéktelennek tűnő fizetséget kért, mindössze annyi búzaszemet, amennyi a sakktábla kockáira a következő szabály szerint képletesen rátehető: az első kockára egy, a másodikra kettő, a harmadikra négy, vagyis az előzőnek mindig duplája. Hamar kiderült, hogy ennyi búza nem terem a Földön, sőt az emberiség egész történelme alatt nem termelt ennyit.
 
-Az első ismert változata valószínűleg Indiában alakult ki. A maihoz képest egyszerűbb volt, de ugyanakkora táblán és ugyanazokkal a bábukkal játszották, a lépések viszont különböztek. 
 
-Indiából először Perzsiába jutott el. Amikor az arabok elfoglalták Perzsiát, a muszlim világ átvette és ennek következményeként el is terjesztette a játékot Dél-Európában. A sakk mai formáját körülbelül a XV.-ik században érte el.
 
-Keleti terjedése már kissé bizonytalan: először Kínába majd Japánba jutott el és közben sokkal nagyobb változásokon ment keresztül.
-\textit{Egy kevésbé elfogadott elmélet szerint eredetileg Kínából származik és terjedt el.}\cite{HistoryOfChessHu}\cite{HistoryOfChessEn}
 
-\subsection{A sakk érdekesebb szabályai}
-A sakk szabályait nem részleteznénk, ismertnek tételezzük fel, illetve az interneten könnyen hozzáférhető, mint például a \url{http://www.sakk.hu/help/sakk_szabalyok.html} ~\cite{chessrulessakkhu} oldalon. Néhány fontos dolog azért megjegyzendő, amely kissé megbonyolítja a sakk szabályait.
 
-\textit{Egy volt munkahelyemen dekoráció gyanánt ki volt rakva egy sakktábla bábukkal. Ezt az emberek elkezdték használni: kinyomtattak egy papírt, egyik oldalára azt, hogy "fehér jön" a másik oldalára pedig azt, hogy "fekete jön". Ha valakinek volt kedve és ideje, odamehetett, elgondolkodhatott a lépésen, majd miután lépett, megfordította a papírt és várták, hogy valaki lépjen.}
 
-A kérdés az: a meccs "történetének" ismerete nélkül vajon csak a tábla ismeretével kiszámítható-e az összes lehetséges lépés? Ha valaki odalép ehhez a táblához, meg tudja-e mondani az összes lehetséges lépést? A válasz: \textbf{nem}. Vannak különleges lépések, amelyekhez kell ismerni a parti addigi alakulását is. (Sáncolás, en passant)
 
-\section{Sakkozó gépek}
-\subsection{Egy "gondolkodó gép": a Török}
-\begin{wrapfigure}{l}{5cm}
-	\caption{Kempelen Farkas - A Török}
-	\label{fig:the_turk}
-	\includegraphics[width=5.0cm]{img/the_turk}
-\end{wrapfigure}
-A Török Kempelen Farkas álatal 1769-ben alkotott legendás sakkozógép volt, melyet arra épített, hogy elkápráztassa vele Mária Teréziát. A gép sakkpartikat játszott és nyert. Végül végigtúrázta Európát és Észak-Amerikát míg 1854-ben Philadelphiában egy tűzben meg nem semmisült. 
 
-A gép titka nem egy zseniális korát meghaladó "mechanikus mesterséges intelligencia" volt, hanem egy benne elrejtőző emberi kezelő. Ez a gyanú többször is felvetődött, de Kempelen a játszmák előtt felnyitva a gépet mutatta be, hogy nincs senki a gépben. Valójában az eléggé apró termetű kezelő el tudott bújni, amíg elöl illetve hátul is kinyitották a szerkezetet, hogy belenézhessenek. A gépet végül 1857-ben leplezte le nyíltan a The Chess Monthly című amerikai sakklap.\cite{MechanicalTurkHu}\cite{MechanicalTurkEn}
 
-\subsection{Kaissa}
-Az 1950-es évektől kezdődően egyre több, egyre erősebb sakkprogramot írtak. 1947-ben készült el a világ első sakk-komputer programja, amelyet Alan Turing írt. 1974-ben volt az első sakkprogram-világbajnokság, ahol a győztes a szovjet Kaissza nevű program volt, amely 1974 és 1977 között uralta a nemzetközi számítógépes sakkot.\cite{chessProgramsHu}
 
-1990-ben elkészíteték PC-s verzióját, amely a londoni számítógépes olimpián negyedik helyezett lett.\cite{KaissaEn}
 
-\subsection{Deep Blue}
-\begin{wrapfigure}{r}{4cm}
-	\caption{Deep Blue}
-	\label{fig:deepblue}
-	\includegraphics[width=4.0cm]{img/deepblue.jpg}
-\end{wrapfigure}
-A Deep Blue az IBM által körülbelül 20 millió dolláros költséggel kifejlesztett számítógépe, amely sakkjátékban 1997-ben egy szabályszerű hatjátszmás páros mérkőzésen New Yorkban legyőzte Garri Kaszparovot, az emberi sakkozás akkori világbajnokát.
 
-Első meccs-győzelmét 1996 február 10.-én érte el a világbajnok ellen, de Kasparov három partit nyert és kettőt hozott ki döntetlenre, így 4-2-re győzött a számítógép ellen.
 
-Ezután Deep Blue-t továbbfejlesztették és ekkor már 3,5–2,5-re verte Kasparov-ot 1997 májusában, és ezzel az első számítógépes rendszer lett, amely meg tudta verni az aktuális sakk-világbajnokot a sakkbajnokságokra jellemző időmegszorítás mellett. Kasparov csalást gyanított, és követelt egy visszavágót, ám ebbe az IBM nem ment bele. \cite{DeepBlueHu}\cite{DeepBlueEn}
 
-% -------------------------------------------------------------------------------------------------------------
-% --- FEJLESZTŐI DOKUMENTÁCIÓ ---------------------------------------------------------------------------------
-% -------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ============================================================================================================
+% === FEJLESZTŐI DOKUMENTÁCIÓ ================================================================================
+% ============================================================================================================
 \newpage
 \part{Fejlesztői Dokumentáció}
-\subsection{Bevezető}
+\section{Elemzés}
 
-A programcsomag három fontos területet fed le, felelősségeik a következők:
+Az architektúra alapja egy sima szerver-kliens kapcsolat: (\ref{fig:highLevelArchitecture} ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/highLevelArchitecture.png}
+	\caption{Magas-szintű architektúra}
+	\label{fig:highLevelArchitecture}
+\end{figure}
+
+A játék jellegéből adódóan nem kell valósidejűnek lenni, a levelezési-sakk logikáját követjük: a szerver egy \textbf{RESTful} szolgáltatást nyújthat a kliensek felé. Ez azt jelenti, hogy a szerver nem tárol információt a klienssel fennálló kapcsolatról, a kliens elegendő információt kell hogy küldjön a szervernek ahhoz, hogy az válaszolni tudjon. A kliens lekérdezi, hogy milyen partijai vannak, és ha van olyan, amelyre tud (és akar) válaszolni, akkor válaszol.
+
+A klienseket ketté lehet bontani az alapján, hogy ki hozza a döntéseket. Ezek szerint lesz az "emberi" kliens, ahol emberi játékosok tudnak játszani, illetve lesznek a "bot" kliensek, melyek minimális vagy semmilyen emberi beavatkozással tudnak válaszolni a bejövő kérésekre.
+
+Továbbá mivel az is a dolgozat célja, hogy megkönnyítse a jövőbeli bot- vagy kliensfejlesztők munkáját és ne kelljen a sakk szabályaival, reprezentációjával foglalkozniuk, ezért kellenek ezek, mint könyvtárak: külön egy általános algoritmus- és külön egy reprezentáció-könyvtár.
+
+Így körülbelül össze is állt a kép, a programcsomag a következő részekből fog állni:
 
 \begin{itemize}
 	
-	\item \textbf{Játék-reprezentáció}
+	\item \textbf{Játék-reprezentáció} (könyvtár)
 	\begin{itemize}
 		\item Definiálja a reprezentációhoz szükséges interface-eket.
 		\item Implementálja a sakk reprezentációját és mechanikáját.
 		\item Könnyen használható és kiterjeszthető más alkalmazásokban.
 	\end{itemize}
 
-	\item \textbf{Algoritmusok}
+	\item \textbf{Algoritmusok} (könyvtár)
 	\begin{itemize}
 		\item Definiál egy interface-t
 		\item Tartalmazza néhány algoritmus általános implementációját:
 		\begin{itemize}
-			\item Minimax
+			\item Minimax, átlagoló minimax
 			\item Alfa-béta
 			\item Egyéb egyszerűbb példák (random, mohó)
 		\end{itemize}
@@ -252,7 +258,6 @@ A programcsomag három fontos területet fed le, felelősségeik a következők:
 
 	\item \textbf{Infrastruktúra}
 	\begin{itemize}
-		
 		\item \textbf{Szerver}
 		\begin{itemize}
 			\item Felhasználó regisztrációja / hitelesítése / nyomonkövetése.
@@ -275,8 +280,7 @@ A programcsomag három fontos területet fed le, felelősségeik a következők:
 \end{itemize}
 
 \newpage
-\section{Játék-reprezentáció}
-\subsection{Elemzés}
+\subsection{Játék-reprezentáció}
 A bevezetőben láthattuk, hogy a következő lehetséges lépések megállapításához nem elég a "táblát látni", kell hozzá még néhány többletinformáció. Ilyen például a már említett bábuk cimkézése illetve ezt helyettesítve (vagy ezzel együtt alkalmazva) a játszma addigi lépéseinek nyilvántartása.
 
 A triviális lépésektől eltekintve problémába merülhet fel, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa a kevésbé ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csakis a következő) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg előre. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg. Ezekben az esetekben adódik az ötlet: rakjunk jelzéseket a bábukra: jelezzük, ha már elmozdultak az eredeti helyükhöz képest vagy például a gyalogot megjelölhetjük, hogy "en passant" üthető. (Ez utóbbi jelzőt viszont a következő körben le is kell venni róla.)
@@ -286,6 +290,341 @@ Másik érdekes (és versenyeken alkalmazott) szabály az, hogy ha többször fo
 Ezekből a példákból látszik, hogy nem elég a tábla aktuális állapotának ismerete, ahhoz kell még extra információ is például a bábukról (elmozdult? en passant üthető?) ami mondjuk egy a bábukra tett jelöléssel megoldható lenne, viszont a legutóbb emlegetett problémára nem megoldás: ahhoz kell az előző lépések listája is.
 
 Megjegyzés: \textit{Ennek egyébként egy érdekes hatása lesz majd az alkalmazott reprezentációra: ha a lehetséges lépések kiszámításához elég lenne "ránézni" a táblára, akkor a játékot reprezentáló gráfunk nem lenne fa, hiszen egy bizonyos állapotba több úton is eljuthatunk. Ha azonban belevesszük egy játékállás reprezentációjához a parti addigi történelmét is, akkor az állások egyediek lesznek és a gráfunk fa-szerű lesz.}
+
+
+\subsection{Algoritmusok}
+\subsubsection{A probléma komplexitása}
+A sakk reprezentációja tehát már látható. Fogalmazzuk meg a problémát: szeretnénk egy olyan programot, amely legyőzi a másik játékost (vagy legalábbis nem veszít), ami ekvivalens azzal, hogy minden egyes lépésnél a legoptimálisabb lépést választja.
+
+Tekintsük egy sakkjátszmát: egy átlagos meccs 35-40 fordulós~\cite{averageLengthOfChessGame}\cite{averageLengthOfChessGame2}\cite{chessStatistics}, az átlagos lehetséges lépések száma egy adott állapotból 20\cite{shannonnumber}. Shannon adott egy alsó-korlátot a lehetséges játékok számára, amely $10^{120}$. \footnote{Összehasonlításképp: a világegyetemben levő atomok számát $10^{80}$ darabra teszik, a világegyetem pedig körülbelül $4.32 \times 10^{17}$ másodperce keletkezett, ami kevesebb, mint $10^{18}$-on, ami még így is sok nagyságrenddel kevesebb, mint a lehetséges játékok száma.} Ebből látható, hogy \textit{brute-force} technikával, a jelenlegi technikai háttérrel nem érdemes hozzákezdeni.
+
+Látható, hogy a probléma elég bonyolult és ezért egzakt megoldása nem létezik egyelőre, csak közelíteni tudjuk. A továbbiakban az algoritmus általánosan fogalmazzuk meg és formalizáljuk, de a sakkon keresztüli példákon mutatjuk be.
+
+\subsubsection{Egy általános táblás játékmenet}
+Egy játékot meghatározza a \textbf{kezdőállapota} és az állapotok közötti lehetséges \textbf{állapotátmenetek}. Egy állapot akkor érvényes, ha a kezdőállapotból bármilyen úton eljuthatunk a megadott állapotba. Ezután már adódik az ötlet: egy játékmenetet reprezentálhatunk egy \textbf{\textit{cimkézett}, irányított gráffal}, ahol a csomópontok a lehetséges állapotok, az élek pedig az átmenetek.
+
+\subsubsection{A probléma, mint útkeresési algoritmus}
+Láthatjuk, hogy így egy játékmenet egy irányított gráf bejárása lesz. A probléma pedig amit az algoritmussal meg szeretnénk oldani (vagy közelíteni) pedig az, hogy találjunk egy olyan útvonalat ebben a gráfban, amelyben az ellenfél nyereségét minimalizáljuk amellett, hogy feltételezzük: az ellenfél mindig a számára legoptimálisabb lépést fogja választani.
+
+A sakk nem más, mint egy körökre osztott két személyes táblás játék és a fenti analógia alkalmazható rá: Kezdetben van egy kezdőállapot. (Felállított bábúk a táblán, világos játékos kijelölve mint kezdőjátékos). Ezek után az állapotátmeneti függvény határozza meg a lehetséges lépések halmazát, amelyből egy irányt kiválasztva és követve egy új állapotba kerülünk, és így tovább. Ez lesz a játék \textbf{játékgráfja}.
+
+Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen előfordulhat, hogy más utakon is eljuthatunk ugyanazon csúcsba, tehát nagy valószínűség szerint nem fa. Ezt a problémát megszüntethetjük többféle módon, például: 
+
+\begin{itemize}
+	\item \textbf{Csomópont duplázással} \\
+	Ilyenkor az történik, hogy ha egy állapotba több úton is eljuthatunk, akkor ezeket a csúcsokat többszörözzük. \\
+	(Lásd.: \ref{fig:game-graph-transformation} ábra.)
+	
+	\item \textbf{Ügyes reprezentációval} \\
+	Ilyenkor azt tesszük, hogy elgondolkodunk: attól, hogy ugyanabba a csomópontba jutunk több úton, az nem jelenti-e esetleg azt, hogy a más úton elért csúcs már inkább egy másik csúcs. Sakkos példánál maradva: ezt úgy érhetjük el, hogy egy állapot reprezentációjába bevesszük az odavezető utakat. Például előállhat egy hasonló állapot, ha mi is és az ellenfél is előrelép majd vissza ugyanazzal a bábuval.
+\end{itemize}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/game-graph-transformation.png}
+	\caption{Általános irányított gráfból irányított fa konstruálása}
+	\label{fig:game-graph-transformation}
+\end{figure}
+
+\subsubsection{Nem is kell feltétlenül fa}
+Tegyük fel, hogy van egy algoritmusunk, amely kiszámítja a saját és az ellenfél legmegfelelőbb lépéseit a játék végéig. Így megkapjuk az utat ami a mi győzelmünkhöz vagyis legalább az éppen legjobb elérhető eredményhez vezet. Ez nem feltétlen célravezető, hiszen mi történik akkor, ha az ellenfél végül nem azt a lépést lépi valamilyen okból? (Lehet, hogy az ő algoritmusa jobb vagy rosszabb, mint a mienk. Lehet, hogy más kiértékelőfüggvényt használ, stb.) Ekkor azt látjuk, hogy a sok munka, amellyel felépítettük az utat, kárba vész. Ezért nem érdemes az egész utat felépíteni, elég csak annyit elvárni tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása. Mivel nem fogjuk bejárni az egész fát csak egy adott mélységig, ezért a lépések száma véges lesz, így már nem probléma ha a gráf nem fa (azaz van benne kör), így a probléma nem is biztos, hogy létezik.
+
+
+\subsection{Infrastruktúra}
+A bevezetőben már volt róla szó: mivel kérés-válasz párokra épül maga az eredeti játék is, ezért egy RESTful szolgáltatás építése tünik a legmegfelelőbbnek amely JSON-ban kommunikál. Ez azért is lesz jó, mivel így bármilyen platformon viszonylag könnyű lesz hozzá klienst írni illetve mivel iparági-sztenderd, így könnyű hozzá könyvtárakat letölteni és használni.
+
+
+
+
+\newpage
+\section{Tervezés}
+\subsection{Játék-reprezentáció}
+qwer
+\subsection{Algoritmusok}
+asdf
+\subsection{Infrastruktúra}
+\subsubsection{Szerver}
+
+
+
+\paragraph{Kommunikáció a szerver és a kliensek között} \mbox{} \\
+A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/clientServerCommunication.png}
+	\caption{Kliens - szerver közötti kommunikáció sémája}
+	\label{fig:clientServerCommunication}
+\end{figure}
+
+
+\subsubsection{Szerver}
+A szerver feladata a bejövő kérések kiszolgálása. Ő felel a felhasználók beléptetéséért, nyomonkövetéséért és a játékok kezeléséért. A legtöbb funkció kívülről egy nyílt API-n keresztül elérhető, kivétel a felhasználói regisztráció és adminisztráció,
+A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és felhasználói adatmódosítás elérhető, illetve innen lehet elérni különböző a játékkal kapcsolatos anyagokat is, mint például az API dokumentáció.
+
+\paragraph{A szerveroldali UI} minimalista, csak az előbb említet funkciókat kiszolgáló UI-t tartalmazza (\ref{fig:serverUiMainScreen}. ábra):
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/serverUiMainScreen.png}
+	\caption{Szerver fő felület}
+	\label{fig:serverUiMainScreen}
+\end{figure}
+
+A később részletezett open-API dokumentációját a swagger nevű generátorral oldottuk meg, amely felépítését mutatja a \ref{fig:serverUiDocumentation}. ábra.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/serverUiDocumentation.png}
+	\caption{Szerver - generált dokumentáció}
+	\label{fig:serverUiDocumentation}
+\end{figure}
+
+
+\paragraph{Publikus API}. A szerver a következő publikus szolgáltatásokat kell, hogy nyújtsa:
+
+% == Szerver - felhasználói fiókok =======================================================================================
+\begin{longtable}[c]{|c|p{14cm}|}
+	\hline
+	\rowcolor[HTML]{6665CD}
+	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szerver funkciói}}} \\ \hline
+	\endfirsthead
+	%
+	\multicolumn{2}{c}%
+	{{\bfseries Table \thetable\ folytatása az előző oldalról...}} \\
+	\hline
+	\rowcolor[HTML]{6665CD} 
+	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szerver funkciói}}} \\ \hline
+	\endhead
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{1}
+	&	Bejelentkezés
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	A szerver fut.
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy bejelentkezési kérés egy felhasználói névvel és jelszóval.
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	A szerver a felhasználói név és jelszó ellenőrzése után visszajelez a kliensnek.
+	Ha sikeres volt a belépés, akkor kap egy "token"-t. Más esetben hibajelzést kap.
+	\\
+	\hline
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{2}
+	&	Belépési token meghosszabbítása
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	A szerver fut.
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy kérés egy tokennel azzal a szándékkal, hogy az érvényessége meg legyen hosszabbítva.
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	A szerver leellenőrzi a token-t és ha még érvényes, akkor egy meghosszabbított token-t ad vissza. Egyébként hibát jelez.
+	\\
+	\hline
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{3}
+	&	Szerver-státusz lekérdezése ("Health-check")
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	-
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy kérés a szerverhez, amelyben a kliens érdeklődik a szerver státusza (fut-e?) iránt.
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	Ha a szerver fut, akkor visszaküldi a verziószámát. Egyébként nem válaszol.
+	\\
+	\hline
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{4}
+	&	Játékosok lekérdezése
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	A szerver fut, a kliens rendelkezik érvényes token-nel.
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri a játékosok listáját.
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	A szerver visszaküldi a játékosok listáját (ha érvényes volt a token).
+	\\
+	\hline
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{5}
+	&	Partik lekérdezése
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	A szerver fut, a kliens rendelkezik érvényes token-nel.
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri az aktuális játékos partijainak listáját.
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	A szerver visszaküldi a partik listáját (ha érvényes volt a token).
+	\\
+	\hline
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{6}
+	&	Lépés
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	A szerver fut, a kliens rendelkezik érvényes token-nel.
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy kérés a szerverhez, amelyben a kliens közli, hogy melyik partin milyen lépést szeretne kezdeményezni.
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	A szerver ellenőrzi, majd végrehajtja és lementi a lépést, erről visszaigazolást küld a legfrisebb állással (ha érvényes volt a token).
+	\\
+	\hline
+	
+	\caption{Szerver alapfunkciói - API}
+	\label{userStories:server:api}\\
+\end{longtable} 
+
+\paragraph{Dokumentáció}. Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
+
+A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
+
+\begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
+/// <summary>
+/// The health controller. Only used to return the version information.
+/// (Can only respond when the service is up and running.)
+/// </summary>
+[Route("api/Health")]
+public class HealthController : Controller
+{
+/// <summary>
+/// Health check. Returns the version number of the service.
+/// </summary>
+/// <returns>The version information of the service.</returns>
+[ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+[HttpGet]
+public async Task<IActionResult> Get()
+{
+var version = Microsoft.Extensions
+.PlatformAbstractions
+.PlatformServices
+.Default
+.Application
+.ApplicationVersion;
+
+return Ok(version);
+}
+}
+\end{lstlisting}
+
+A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
+	\caption{Absztrakt algoritmus interface és függőségei}
+	\label{fig:algorithmAbstractDiagram}
+\end{figure}
+
+A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
+
+\begin{itemize}
+	\item \textbf{Lépés-generátor} \\
+	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell megadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. \footnote{Olyan is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése, vagy diszkrét, de végtelen számosságú lehetséges lépése létezhet, tehát nem kigenerálható az összes. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.}
+	
+	\item \textbf{Kiértékelő} \\
+	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -551,112 +890,9 @@ A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szit
 
 
 \newpage
-\section{Algoritmusok}
-\subsection{Elemzés}
-\subsubsection{A probléma komplexitása}
-A sakk reprezentációja tehát már látható. Fogalmazzuk meg a problémát: szeretnénk egy olyan programot, amely legyőzi a másik játékost (vagy legalábbis nem veszít), ami ekvivalens azzal, hogy minden egyes lépésnél a legoptimálisabb lépést választja.
 
-Tekintsük egy sakkjátszmát: egy átlagos meccs 35-40 fordulós~\cite{averageLengthOfChessGame}\cite{averageLengthOfChessGame2}\cite{chessStatistics}, az átlagos lehetséges lépések száma egy adott állapotból 20\cite{shannonnumber}. Shannon adott egy alsó-korlátot a lehetséges játékok számára, amely $10^{120}$. \footnote{Összehasonlításképp: a világegyetemben levő atomok számát $10^{80}$ darabra teszik, a világegyetem pedig körülbelül $4.32 \times 10^{17}$ másodperce keletkezett, ami kevesebb, mint $10^{18}$-on, ami még így is sok nagyságrenddel kevesebb, mint a lehetséges játékok száma.} Ebből látható, hogy \textit{brute-force} technikával, a jelenlegi technikai háttérrel nem érdemes hozzákezdeni.
 
-Látható, hogy a probléma elég bonyolult és ezért egzakt megoldása nem létezik egyelőre, csak közelíteni tudjuk. A továbbiakban az algoritmus általánosan fogalmazzuk meg és formalizáljuk, de a sakkon keresztüli példákon mutatjuk be.
 
-\subsubsection{Egy általános táblás játékmenet}
-Egy játékot meghatározza a \textbf{kezdőállapota} és az állapotok közötti lehetséges \textbf{állapotátmenetek}. Egy állapot akkor érvényes, ha a kezdőállapotból bármilyen úton eljuthatunk a megadott állapotba. Ezután már adódik az ötlet: egy játékmenetet reprezentálhatunk egy \textbf{\textit{cimkézett}, irányított gráffal}, ahol a csomópontok a lehetséges állapotok, az élek pedig az átmenetek.
-
-\subsubsection{A probléma, mint útkeresési algoritmus}
-Láthatjuk, hogy így egy játékmenet egy irányított gráf bejárása lesz. A probléma pedig amit az algoritmussal meg szeretnénk oldani (vagy közelíteni) pedig az, hogy találjunk egy olyan útvonalat ebben a gráfban, amelyben az ellenfél nyereségét minimalizáljuk amellett, hogy feltételezzük: az ellenfél mindig a számára legoptimálisabb lépést fogja választani.
-
-A sakk nem más, mint egy körökre osztott két személyes táblás játék és a fenti analógia alkalmazható rá: Kezdetben van egy kezdőállapot. (Felállított bábúk a táblán, világos játékos kijelölve mint kezdőjátékos). Ezek után az állapotátmeneti függvény határozza meg a lehetséges lépések halmazát, amelyből egy irányt kiválasztva és követve egy új állapotba kerülünk, és így tovább. Ez lesz a játék \textbf{játékgráfja}.
-
-Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen előfordulhat, hogy más utakon is eljuthatunk ugyanazon csúcsba, tehát nagy valószínűség szerint nem fa. Ezt a problémát megszüntethetjük többféle módon, például: 
-
-\begin{itemize}
-	\item \textbf{Csomópont duplázással} \\
-	Ilyenkor az történik, hogy ha egy állapotba több úton is eljuthatunk, akkor ezeket a csúcsokat többszörözzük. \\
-	(Lásd.: \ref{fig:game-graph-transformation} ábra.)
-	
-	\item \textbf{Ügyes reprezentációval} \\
-	Ilyenkor azt tesszük, hogy elgondolkodunk: attól, hogy ugyanabba a csomópontba jutunk több úton, az nem jelenti-e esetleg azt, hogy a más úton elért csúcs már inkább egy másik csúcs. Sakkos példánál maradva: ezt úgy érhetjük el, hogy egy állapot reprezentációjába bevesszük az odavezető utakat. Például előállhat egy hasonló állapot, ha mi is és az ellenfél is előrelép majd vissza ugyanazzal a bábuval.
-\end{itemize}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/game-graph-transformation.png}
-	\caption{Általános irányított gráfból irányított fa konstruálása}
-	\label{fig:game-graph-transformation}
-\end{figure}
-
-\subsection{Tervezés}
-\subsubsection{Általános megfogalmazás}
-Tegyük fel, hogy van egy algoritmusunk, amely kiszámítja a saját és az ellenfél legmegfelelőbb lépéseit a játék végéig. Így megkapjuk az utat ami a mi győzelmünkhöz vagyis legalább az éppen legjobb elérhető eredményhez vezet. Ez nem feltétlen célravezető, hiszen mi történik akkor, ha az ellenfél végül nem azt a lépést lépi valamilyen okból? (Lehet, hogy az ő algoritmusa jobb vagy rosszabb, mint a mienk. Lehet, hogy más kiértékelőfüggvényt használ, stb.) Ekkor azt látjuk, hogy a sok munka, amellyel felépítettük az utat, kárba vész. Ezért nem érdemes az egész utat felépíteni, elég csak annyit elvárni tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása.
-
-Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
-	\caption{Absztrakt algoritmus interface és függőségei}
-	\label{fig:algorithmAbstractDiagram}
-\end{figure}
-
-A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
-
-\begin{itemize}
-	\item \textbf{Lépés-generátor} \\
-	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell megadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. \footnote{Olyan is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése, vagy diszkrét, de végtelen számosságú lehetséges lépése létezhet, tehát nem kigenerálható az összes. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.}
-	
-	\item \textbf{Kiértékelő} \\
-	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
-\end{itemize}
-
-Következzen néhány példa algoritmus ismertetése, amelyek szerepelnek a dolgozatban.
-
-\subsubsection{A Véletlenszerű algoritmus}
-Ez lesz a legegyszerűbb algoritmus, csak azért került be, hogy minél hamarabb lássunk egy egyszerű de működő példát és a koncepciókat a fejlesztés legelején ki lehessen próbálni.
-A kigenerált lépések közül választ egyet véletlenszerűen.
-
-\subsubsection{A mohó algoritmus}
-A mohó algoritmus sem sokkal tud többet a véletlenszerű algoritmusnál. Habár már van benne logika, az nem feltétlen célravezető. A lehetséges lépések közül azt választja, amelyik a legnagyobb veszteséget okozza a következő körben az ellenfél játékosának. A mohó algoritmus nagy hibája, hogy meg fog találni egy lokális maximumot, de nem feltétlen találja meg a globális maximumot.
-(Példát lásd \ref{fig:greedyAlgorithmExampleDangerous}. ábra.)
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{img/greedyAlgorithmExampleDangerous.png}
-	\caption{Mohó algoritmus működése és ahogy tévútra vezet a lokális maximum.}
-	\label{fig:greedyAlgorithmExampleDangerous}
-\end{figure}
-
-\subsubsection{A minimax-algoritmus}
-A minimax algoritmus lényege, hogy a legalsó szinten kiértékeli az állásokat, és ezeknek a maximumát illetve minimumát viszi tovább attól függően, hogy melyik szinten van. Első szint a MAX szint, ahol a következő szinten levő csomópontok közül abba az irányba indulunk el, amelyik a legkisebb, ezzel próbálva minimalizálni az ellenfél nyereségét. Következő szint a MIN szint lesz, ahonnan a legnagyobb értékű csomópont felé indulunk el, hogy maximalizáljuk a nyereséget. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
-\paragraph{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
-
-\subsubsection{Az átlagoló eljárás}
-A minimax algoritmus egy általánosítása. (Avagy a minimax algoritmus az átlagoló eljárás egy speciális esete.) A probléma a statikus kiértékelő-függvényekkel az, hogy lehetetlen olyat megadni, amely megbízhatóan értékeli ki az állásokat. Lehet, hogy egy nagyon jónak ígérkező állásról kiderül, hogy csak egy "csapda" volt és onnan nehezebb vagy lehetetlen megnyerni a meccset. Erre a problémára adhat egy jobb megoldást az átlagoló eljárás. Az ötlet mögötte az, hogy míg az eredeti Minimax algoritmus mindig az aktuális csúcsból elérhető csúcsok minimumát vagy maximumát veszi, addig az átlagoló eljárás a kiterjesztett csúcsok értékeinek MAX szinten az m legnagyobb átlagát, MIN szintjén az n legkisebb átlagát veszi. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{img/minimaxVsAverageExample.png}
-	\caption{Minimax és Átlagoló eljárás összehasonlítása\cite{bevMiHu}}
-	\label{fig:minimaxVsAverageExample}
-\end{figure}
-\paragraph{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
-
-\subsubsection{Az alfa-béta algoritmus}
-Az alfa-béta algoritmus a minimax egy továbbgondolása. Megpróbálja levágni azokat az ágakat, amelyeket nem érdemes már vizsgálni. Ez jól jön a számítási-igény csökkentésénél.
-
-\textbf{TODO: Algoritmus kicsit mélyebb elemzése!}
-
-\paragraph{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk.Ekkor a legrosszabb esetben, amikor nem tudunk vágni és ezért minden terminális csúcsot ki kell értékelni, az algoritmus műveletigénye megegyezik a minimax algoritmuséval: $ \mathcal{O}(x^d)$.
-Azonban legjobb esetben, ha minden egyes esetben a számítás szemszögéből legjobb csúccsal kezdjük a kiértékelést, ez a műveletigény lecsökken: $\mathcal{O}(\sqrt{x^d})$.
-A tapasztalat azt mutatja, hogy az alfa-béta algoritmus legtöbbször ugyanazt az eredményt adja rögzített mélység esetén, mint a minimax algoritmus. Viszont sokkal hatékonyabb, így ha a csúcsok a "megfelelő sorrendben érkeznek kiértékelésre", akkor a keresőfa mélysége akár meg is duplázható. \\ (Összehasonlító ábrát lásd: \ref{fig:alphabeta_examples}. ábra.)
-
-\textbf{TODO: Jobb példát találni erre!}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{img/alphabeta_examples.png}
-	\caption{Alfa-béta algoritmus számítási-igény változása a bejövő adatok sorrendjének függvényében.}
-	\label{fig:alphabeta_examples}
-\end{figure}
 
 \subsection{Megvalósítás}
 Ezek alapján már implementálhatóak az absztrakt algoritmusok. A dolgozatban négy algoritmus van implementálva:
@@ -883,234 +1119,24 @@ Unit-tesztekkel... \textbf{TODO: Esetek leírása.}
 
 
 \newpage
-\section{Infrastruktúra}
+\section{Megvalósítás}
+adfasdfasdf
+
+
+
+
+\newpage
+\section{Tesztelés}
+asdfadrqwertwrtwretwe
+
+
+
 \subsection{Elemzés}
 \lipsum[4]
 
 \subsection{Tervezés}
 
-\subsubsection{Architektúra}
-Az architektúra alapja egy sima szerver-kliens kapcsolat: (\ref{fig:highLevelArchitecture} ábra.)
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/highLevelArchitecture.png}
-	\caption{Magas-szintű architektúra}
-	\label{fig:highLevelArchitecture}
-\end{figure}
-
-A szerver egy \textbf{RESTful} szolgáltatást nyújt a kliensek felé.
-
-\paragraph{RESTful szolgáltatás.} Néhány szó a REST-ről, hivatkozással...
-
-\paragraph{Kommunikáció a szerver és a kliensek között} \mbox{} \\
-A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\textwidth]{img/clientServerCommunication.png}
-	\caption{Kliens - szerver közötti kommunikáció sémája}
-	\label{fig:clientServerCommunication}
-\end{figure}
-
-
-\subsubsection{Szerver}
-A szerver feladata a bejövő kérések kiszolgálása. Ő felel a felhasználók beléptetéséért, nyomonkövetéséért és a játékok kezeléséért. A legtöbb funkció kívülről egy nyílt API-n keresztül elérhető, kivétel a felhasználói regisztráció és adminisztráció,
-A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és felhasználói adatmódosítás elérhető, illetve innen lehet elérni különböző a játékkal kapcsolatos anyagokat is, mint például az API dokumentáció.
-
-\paragraph{A szerveroldali UI} minimalista, csak az előbb említet funkciókat kiszolgáló UI-t tartalmazza (\ref{fig:serverUiMainScreen}. ábra):
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/serverUiMainScreen.png}
-	\caption{Szerver fő felület}
-	\label{fig:serverUiMainScreen}
-\end{figure}
-
-A később részletezett open-API dokumentációját a swagger nevű generátorral oldottuk meg, amely felépítését mutatja a \ref{fig:serverUiDocumentation}. ábra.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/serverUiDocumentation.png}
-	\caption{Szerver - generált dokumentáció}
-	\label{fig:serverUiDocumentation}
-\end{figure}
-
-
-\paragraph{Publikus API}. A szerver a következő publikus szolgáltatásokat kell, hogy nyújtsa:
-
-% == Szerver - felhasználói fiókok =======================================================================================
-\begin{longtable}[c]{|c|p{14cm}|}
-	\hline
-	\rowcolor[HTML]{6665CD}
-	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szerver funkciói}}} \\ \hline
-	\endfirsthead
-	%
-	\multicolumn{2}{c}%
-	{{\bfseries Table \thetable\ folytatása az előző oldalról...}} \\
-	\hline
-	\rowcolor[HTML]{6665CD} 
-	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szerver funkciói}}} \\ \hline
-	\endhead
-	
-	% -----------------------------------------------------------------------------------------------------------------------
-	\rowcolor[HTML]{CBCEFB} 
-	\textbf{1}
-	&	Bejelentkezés
-	\\ \nobreakhline
-	
-	\textbf{GIVEN} &
-	A szerver fut.
-	\\ \nobreakhline
-	
-	\textbf{WHEN} &
-	Beérkezik egy bejelentkezési kérés egy felhasználói névvel és jelszóval.
-	\\
-	\nobreakhline
-	
-	\textbf{THEN} &
-	A szerver a felhasználói név és jelszó ellenőrzése után visszajelez a kliensnek.
-	Ha sikeres volt a belépés, akkor kap egy "token"-t. Más esetben hibajelzést kap.
-	\\
-	\hline
-	
-	% -----------------------------------------------------------------------------------------------------------------------
-	\rowcolor[HTML]{CBCEFB} 
-	\textbf{2}
-	&	Belépési token meghosszabbítása
-	\\ \nobreakhline
-	
-	\textbf{GIVEN} &
-	A szerver fut.
-	\\ \nobreakhline
-	
-	\textbf{WHEN} &
-	Beérkezik egy kérés egy tokennel azzal a szándékkal, hogy az érvényessége meg legyen hosszabbítva.
-	\\
-	\nobreakhline
-	
-	\textbf{THEN} &
-	A szerver leellenőrzi a token-t és ha még érvényes, akkor egy meghosszabbított token-t ad vissza. Egyébként hibát jelez.
-	\\
-	\hline
-	
-	% -----------------------------------------------------------------------------------------------------------------------
-	\rowcolor[HTML]{CBCEFB} 
-	\textbf{3}
-	&	Szerver-státusz lekérdezése ("Health-check")
-	\\ \nobreakhline
-	
-	\textbf{GIVEN} &
-	-
-	\\ \nobreakhline
-	
-	\textbf{WHEN} &
-	Beérkezik egy kérés a szerverhez, amelyben a kliens érdeklődik a szerver státusza (fut-e?) iránt.
-	\\
-	\nobreakhline
-	
-	\textbf{THEN} &
-	Ha a szerver fut, akkor visszaküldi a verziószámát. Egyébként nem válaszol.
-	\\
-	\hline
-	
-	% -----------------------------------------------------------------------------------------------------------------------
-	\rowcolor[HTML]{CBCEFB} 
-	\textbf{4}
-	&	Játékosok lekérdezése
-	\\ \nobreakhline
-	
-	\textbf{GIVEN} &
-	A szerver fut, a kliens rendelkezik érvényes token-nel.
-	\\ \nobreakhline
-	
-	\textbf{WHEN} &
-	Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri a játékosok listáját.
-	\\
-	\nobreakhline
-	
-	\textbf{THEN} &
-	A szerver visszaküldi a játékosok listáját (ha érvényes volt a token).
-	\\
-	\hline
-	
-	% -----------------------------------------------------------------------------------------------------------------------
-	\rowcolor[HTML]{CBCEFB} 
-	\textbf{5}
-	&	Partik lekérdezése
-	\\ \nobreakhline
-	
-	\textbf{GIVEN} &
-	A szerver fut, a kliens rendelkezik érvényes token-nel.
-	\\ \nobreakhline
-	
-	\textbf{WHEN} &
-	Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri az aktuális játékos partijainak listáját.
-	\\
-	\nobreakhline
-	
-	\textbf{THEN} &
-	A szerver visszaküldi a partik listáját (ha érvényes volt a token).
-	\\
-	\hline
-	
-	% -----------------------------------------------------------------------------------------------------------------------
-	\rowcolor[HTML]{CBCEFB} 
-	\textbf{6}
-	&	Lépés
-	\\ \nobreakhline
-	
-	\textbf{GIVEN} &
-	A szerver fut, a kliens rendelkezik érvényes token-nel.
-	\\ \nobreakhline
-	
-	\textbf{WHEN} &
-	Beérkezik egy kérés a szerverhez, amelyben a kliens közli, hogy melyik partin milyen lépést szeretne kezdeményezni.
-	\\
-	\nobreakhline
-	
-	\textbf{THEN} &
-	A szerver ellenőrzi, majd végrehajtja és lementi a lépést, erről visszaigazolást küld a legfrisebb állással (ha érvényes volt a token).
-	\\
-	\hline
-	
-	\caption{Szerver alapfunkciói - API}
-	\label{userStories:server:api}\\
-\end{longtable} 
-
-\paragraph{Dokumentáció}. Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
-
-A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
-
-\begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
-/// <summary>
-/// The health controller. Only used to return the version information.
-/// (Can only respond when the service is up and running.)
-/// </summary>
-[Route("api/Health")]
-public class HealthController : Controller
-{
-	/// <summary>
-	/// Health check. Returns the version number of the service.
-	/// </summary>
-	/// <returns>The version information of the service.</returns>
-	[ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-	[HttpGet]
-	public async Task<IActionResult> Get()
-	{
-		var version = Microsoft.Extensions
-	  						   .PlatformAbstractions
-							   .PlatformServices
-							   .Default
-							   .Application
-							   .ApplicationVersion;
-		
-		return Ok(version);
-	}
-}
-\end{lstlisting}
-
-A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.
 
 \subsubsection{A Kliens}
 
@@ -1528,9 +1554,44 @@ A játékkliens képernyőinek terveit lásd: \ref{fig:gameClientScreens} ábra.
 
 
 
-% -------------------------------------------------------------------------------------------------------------
-% --- FELHASZNÁLÓI DOKUMENTÁCIÓ -------------------------------------------------------------------------------
-% -------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ============================================================================================================
+% === FELHASZNÁLÓI DOKUMENTÁCIÓ ==============================================================================
+% ============================================================================================================
 \newpage
 \part{Felhasználói Dokumentáció}
 \section{Szerver}
@@ -1546,6 +1607,256 @@ A játékkliens képernyőinek terveit lásd: \ref{fig:gameClientScreens} ábra.
 \lipsum[1-2]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ============================================================================================================
+% === FÜGGELÉK ===============================================================================================
+% ============================================================================================================
+\newpage
+\part{Függelék}
+\section{A játékról}
+\subsection{Játékok osztályozása}
+A \textbf{„kétszemélyes, teljes információjú, diszkrét, véges és determinisztikus, zéró-összegű, játékok”} definíciója egy kis magyarázatot érdemel. A játékokat a kövektező szempontok alapján lehet osztályozni:
+
+\begin{itemize}
+	\item \textbf{Játékosok száma} \\
+	Ez lehet egy, kettő, vagy n.
+	
+	\item \textbf{Elérhető információ mennyisége} \\
+	A játékosok számára mennyi információ érhető el? Minden információ birtokában vannak-e (pédlául sakk), vagy nem (például egy kártyajáték, ahol nem látják egymás lapjait.)
+	
+	\item \textbf{Körökre-osztott-e vagy sem?} \\
+	Lépések diszkrét sorozatából áll-e a játék vagy folyamatos.
+	
+	\item \textbf{Lehetséges lépések száma} \\
+	Diszkrét esetben a különböző állapotokban lehetséges lépések száma véges vagy végtelen? A játék véges sok lépésben végetér?
+	
+	\item \textbf{Véletlen-faktor} \\
+	A véletlennek van-e szerepe a játékban? Ha nincs, akkor a játékot \textit{determinisztikusnak} hívjuk.
+	
+	\item \textbf{Játékosok nyereségeinek összege} \\
+	Ha a játékosok nyereségeinek összege 0 (amennyit nyer az egyik, annyit veszít a másik), akkor \textit{zérusösszegű} a játék.
+\end{itemize}
+
+Ez alapján a sakk egy:
+\begin{itemize}
+	\item \textbf{Kétszemélyes}
+	
+	\item \textbf{Tejes információjú} \\
+	Ránézve a sakktáblára és a játéklépések jegyzékére minden játékos tudja a pontos állást.
+	
+	\item \textbf{Diszkrét} \\
+	Mert diszkrét lépések sorozata egy játék.
+	
+	\item \textbf{Véges} \\
+	Mivel véges sok lépésben végetér a játék és az állapotokból lehetséges lépések száma is véges.
+	
+	\item \textbf{Determinisztikus} \\
+	Mivel a szerencsének nincs szerepe a játékban.
+	
+	\item \textbf{Zéró-összegű} \\
+	A szerzett pontok száma mindig egy: győztes játékos 1 pontot kap, a vesztes 0-t, döntetlen esetén 0.5-0.5 pontot kapnak a felek.
+\end{itemize}
+játék.
+
+\subsection{A sakkról}
+
+\subsubsection{Története}
+A játék neve a perzsa „shāh” szóból ered, amely uralkodót jelent.\footnote{A "sakk-matt" kifejezés pedig a perzsa „Shāh Māt" kifejezésből származik, amelynek jelentése: "a királyt lerohanták” vagy "védtelen”, "legyőzött”.\cite{ChessMateHu}\cite{ChessMateEn}} Története a legendák világába nyúlik vissza. Egy ismert mese szerint egy brahmin találta ki a sakkot. Jutalmul a rádzsától első hallásra jelentéktelennek tűnő fizetséget kért, mindössze annyi búzaszemet, amennyi a sakktábla kockáira a következő szabály szerint képletesen rátehető: az első kockára egy, a másodikra kettő, a harmadikra négy, vagyis az előzőnek mindig duplája. Hamar kiderült, hogy ennyi búza nem terem a Földön, sőt az emberiség egész történelme alatt nem termelt ennyit.
+
+Az első ismert változata valószínűleg Indiában alakult ki. A maihoz képest egyszerűbb volt, de ugyanakkora táblán és ugyanazokkal a bábukkal játszották, a lépések viszont különböztek. 
+
+Indiából először Perzsiába jutott el. Amikor az arabok elfoglalták Perzsiát, a muszlim világ átvette és ennek következményeként el is terjesztette a játékot Dél-Európában. A sakk mai formáját körülbelül a XV.-ik században érte el.
+
+Keleti terjedése már kissé bizonytalan: először Kínába majd Japánba jutott el és közben sokkal nagyobb változásokon ment keresztül.
+\textit{Egy kevésbé elfogadott elmélet szerint eredetileg Kínából származik és terjedt el.}\cite{HistoryOfChessHu}\cite{HistoryOfChessEn}
+
+\subsubsection{A sakk érdekesebb szabályai}
+A sakk szabályait nem részleteznénk, ismertnek tételezzük fel, illetve az interneten könnyen hozzáférhető, mint például a \url{http://www.sakk.hu/help/sakk_szabalyok.html} ~\cite{chessrulessakkhu} oldalon. Néhány fontos dolog azért megjegyzendő, amely kissé megbonyolítja a sakk szabályait.
+
+\textit{Egy volt munkahelyemen dekoráció gyanánt ki volt rakva egy sakktábla bábukkal. Ezt az emberek elkezdték használni: kinyomtattak egy papírt, egyik oldalára azt, hogy "fehér jön" a másik oldalára pedig azt, hogy "fekete jön". Ha valakinek volt kedve és ideje, odamehetett, elgondolkodhatott a lépésen, majd miután lépett, megfordította a papírt és várták, hogy valaki lépjen.}
+
+A kérdés az: a meccs "történetének" ismerete nélkül vajon csak a tábla ismeretével kiszámítható-e az összes lehetséges lépés? Ha valaki odalép ehhez a táblához, meg tudja-e mondani az összes lehetséges lépést? A válasz: \textbf{nem}. Vannak különleges lépések, amelyekhez kell ismerni a parti addigi alakulását is. (Sáncolás, en passant)
+
+\subsection{Sakkozó gépek}
+\subsubsection{Egy "gondolkodó gép": a Török}
+\begin{wrapfigure}{l}{5cm}
+	\caption{Kempelen Farkas - A Török}
+	\label{fig:the_turk}
+	\includegraphics[width=5.0cm]{img/the_turk}
+\end{wrapfigure}
+A Török Kempelen Farkas által 1769-ben alkotott legendás sakkozógép volt, melyet azért épített, hogy elkápráztassa vele Mária Teréziát. A gép sakkpartikat játszott és nyert. Végül végigtúrázta Európát és Észak-Amerikát míg 1854-ben Philadelphiában egy tűzben meg nem semmisült. 
+
+A gép titka nem egy zseniális korát meghaladó "mechanikus mesterséges intelligencia" volt, hanem egy benne elrejtőző emberi kezelő. Ez a gyanú többször is felvetődött, de Kempelen a játszmák előtt felnyitva a gépet mutatta be, hogy nincs senki a gépben. Valójában az eléggé apró termetű kezelő el tudott bújni, amíg elöl illetve hátul is kinyitották a szerkezetet, hogy belenézhessenek. A gépet végül 1857-ben leplezte le nyíltan a The Chess Monthly című amerikai sakklap.\cite{MechanicalTurkHu}\cite{MechanicalTurkEn}\cite{CsodakKonyveHu}
+
+\subsubsection{Kaissa}
+Az 1950-es évektől kezdődően egyre több, egyre erősebb sakkprogramot írtak. 1947-ben készült el a világ első sakk-komputer programja, amelyet Alan Turing írt. 1974-ben volt az első sakkprogram-világbajnokság, ahol a győztes a szovjet Kaissza nevű program volt, amely 1974 és 1977 között uralta a nemzetközi számítógépes sakkot.\cite{chessProgramsHu}
+
+1990-ben elkészíteték PC-s verzióját, amely a londoni számítógépes olimpián negyedik helyezett lett.\cite{KaissaEn}
+
+\subsubsection{Deep Blue}
+\begin{wrapfigure}{r}{4cm}
+	\caption{Deep Blue}
+	\label{fig:deepblue}
+	\includegraphics[width=4.0cm]{img/deepblue.jpg}
+\end{wrapfigure}
+A Deep Blue az IBM által körülbelül 20 millió dolláros költséggel kifejlesztett számítógépe, amely sakkjátékban 1997-ben egy szabályszerű hatjátszmás páros mérkőzésen New Yorkban legyőzte Garri Kaszparovot, az emberi sakkozás akkori világbajnokát.
+
+Első meccs-győzelmét 1996 február 10.-én érte el a világbajnok ellen, de Kasparov három partit nyert és kettőt hozott ki döntetlenre, így 4-2-re győzött a számítógép ellen.
+
+Ezután Deep Blue-t továbbfejlesztették és ekkor már 3,5–2,5-re verte Kasparov-ot 1997 májusában, és ezzel az első számítógépes rendszer lett, amely meg tudta verni az aktuális sakk-világbajnokot a sakkbajnokságokra jellemző időmegszorítás mellett. Kasparov csalást gyanított, és követelt egy visszavágót, ám ebbe az IBM nem ment bele. \cite{DeepBlueHu}\cite{DeepBlueEn}
+
+\section{Az algoritmusokról}
+
+\subsection{A Véletlenszerű algoritmus}
+Ez a legegyszerűbb algoritmus, csak azért került be, hogy minél hamarabb lássunk egy egyszerű de működő példát és a koncepciókat a fejlesztés legelején ki lehessen próbálni.
+A kigenerált lépések közül választ egyet véletlenszerűen.
+
+\subsection{A mohó algoritmus}
+A mohó algoritmusban habár már van logika, az nem feltétlen célravezető. A lehetséges lépések közül azt választja, amelyik a legnagyobb veszteséget okozza a következő körben az ellenfél játékosának. A mohó algoritmus nagy hibája, hogy meg fog találni egy lokális maximumot, de nem feltétlen találja meg a globális maximumot. Ezt egyébként onnan is lehet látni, hogy meglepően agresszíven játszik. Ha lehetséges, üt. Ha lehetséges, sakkot ad, és nem érdekli, hogy utána esetleg veszít egy tisztet.
+(Példát lásd \ref{fig:greedyAlgorithmExampleDangerous}. ábra.)
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/greedyAlgorithmExampleDangerous.png}
+	\caption{Mohó algoritmus működése és ahogy tévútra vezet a lokális maximum.}
+	\label{fig:greedyAlgorithmExampleDangerous}
+\end{figure}
+
+\subsection{A minimax-algoritmus}
+A minimax algoritmus lényege, hogy a legalsó szinten kiértékeli az állásokat, és ezeknek a maximumát illetve minimumát viszi tovább attól függően, hogy melyik szinten van. Első szint a MAX szint, ahol a következő szinten levő csomópontok közül abba az irányba indulunk el, amelyik a legkisebb, ezzel próbálva minimalizálni az ellenfél nyereségét. Következő szint a MIN szint lesz, ahonnan a legnagyobb értékű csomópont felé indulunk el, hogy maximalizáljuk a nyereséget. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
+\paragraph{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
+
+\subsection{Az átlagoló eljárás}
+A minimax algoritmus egy általánosítása. (Avagy a minimax algoritmus az átlagoló eljárás egy speciális esete.) A probléma a statikus kiértékelő-függvényekkel az, hogy lehetetlen olyat megadni, amely megbízhatóan értékeli ki az állásokat. Lehet, hogy egy nagyon jónak ígérkező állásról kiderül, hogy csak egy "csapda" volt és onnan nehezebb vagy lehetetlen megnyerni a meccset. Erre a problémára adhat egy jobb megoldást az átlagoló eljárás. Az ötlet mögötte az, hogy míg az eredeti Minimax algoritmus mindig az aktuális csúcsból elérhető csúcsok minimumát vagy maximumát veszi, addig az átlagoló eljárás a kiterjesztett csúcsok értékeinek MAX szinten az m legnagyobb átlagát, MIN szintjén az n legkisebb átlagát veszi. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/minimaxVsAverageExample.png}
+	\caption{Minimax és Átlagoló eljárás összehasonlítása\cite{bevMiHu}}
+	\label{fig:minimaxVsAverageExample}
+\end{figure}
+\subsubsection{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
+
+\subsection{Az alfa-béta algoritmus}
+Az alfa-béta algoritmus a minimax egy továbbgondolása. Megpróbálja levágni azokat az ágakat, amelyeket nem érdemes már vizsgálni. Ez jól jön a számítási-igény csökkentésénél.
+
+\textbf{TODO: Algoritmus kicsit mélyebb elemzése!}
+
+\subsubsection{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk.Ekkor a legrosszabb esetben, amikor nem tudunk vágni és ezért minden terminális csúcsot ki kell értékelni, az algoritmus műveletigénye megegyezik a minimax algoritmuséval: $ \mathcal{O}(x^d)$.
+Azonban legjobb esetben, ha minden egyes esetben a számítás szemszögéből legjobb csúccsal kezdjük a kiértékelést, ez a műveletigény lecsökken: $\mathcal{O}(\sqrt{x^d})$.
+A tapasztalat azt mutatja, hogy az alfa-béta algoritmus legtöbbször ugyanazt az eredményt adja rögzített mélység esetén, mint a minimax algoritmus. Viszont sokkal hatékonyabb, így ha a csúcsok a "megfelelő sorrendben érkeznek kiértékelésre", akkor a keresőfa mélysége akár meg is duplázható. \\ (Összehasonlító ábrát lásd: \ref{fig:alphabeta_examples}. ábra.)
+
+\textbf{TODO: Jobb példát találni erre!}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/alphabeta_examples.png}
+	\caption{Alfa-béta algoritmus számítási-igény változása a bejövő adatok sorrendjének függvényében.}
+	\label{fig:alphabeta_examples}
+\end{figure}
+
+\subsection{Egy érdekes végtelen ciklus}
+Vigyázni kell, mert az azonos kezdeti feltételek kombinálva azonos algoritmussal, max-mélységgel és kiértékelő függvénnyel egy végtelen játszmába vezethet. Előfordulhat, hogy a botok elkezdenek oda-vissza lépni és onnantól csak ezt a négy lépést ismételgetni. Ez a probléma a determenisztikus algoritmusoknál jöhet elő, mint például egy minimax-nál, ahol ugyanarra a bemenetre ugyanazzal a kiértékelő függvénnyel és mélységgel ugyanaz az eredmény fog kijönni a végén. Probléma lehet még például ha az egyik oldalon egy minimax, a másikon egy alfa-béta algoritmus fut, hiszen az esetek nagy többségében ezek az algoritmusok ugyanazt az eredményt adják, az alfa-béta csak a minimax egy gyorsítása.
+
+Tehát adott 3 paraméter: algoritmus, mélység, kiértékelő függvény. Ekkor hogy elkerüljük, a végtelen-csapdát a következőket tehetjük:
+\begin{itemize}
+	\item \textbf{Különnöző kiértékelő függvény} \\ 
+	Azonos algoritmus és mélység-beállítás esetén a két botnak különböző kiértékelő függvénye legyen
+	
+	\item \textbf{Különböző algoritmusok} \\
+	Azonos mélység-beállítás és kiértékelő függvény esetén a két botnak ne ekvivalensen determinisztikus algoritmusa legyen. (Például ne legyen minimax és alfa-béta párosítás, de például megy minimax-minimax átlagoló már működhet.)
+	
+	\item \textbf{Maximális mélység-beállítás legyen különböző} \\
+	Azonos algoritmus és kiértékelő függvény esetén a maximális mélység-beállítás legyen különböző
+	
+	\item \textbf{Nem-determinisztikussá tétel} \\
+	Ha mindhárom azonos, akkor pedig lehet egy kis véletlenszerűséget becsempészni akár az algoritmusba, akár a kiértékelő-függvénybe.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% =============================================================================================================
+% === IRODALOM- ÁBRAJEGYZÉK ===================================================================================
+% =============================================================================================================
 \newpage
 \bibliographystyle{unsrt}
 \part{\bibname}
@@ -1555,7 +1866,7 @@ A játékkliens képernyőinek terveit lásd: \ref{fig:gameClientScreens} ábra.
 %\newpage
 \listoffigures
 \listoftables
-\lstlistoflistings
+%\lstlistoflistings
 
 
 \end{document}
