@@ -315,21 +315,49 @@ Ezen a képernyőn lehet módosítani a jelszót, e-mail címet, illetve azt, ho
 \noindent \textbf{2.} A "Without Installer" verzióban csak a futáshoz szükséges file-ok vannak betömörítve. Ezt a ZIP file-t letöltve és kitömörítve el lehet indítani a klienst. \\
 A "With Installer" verzió tartalmazza a telepítőt, amelybe installálja a .NET Framework 4.7.2-es verzióját, ha az nincs még telepítve. Ehhez csak ki kell tömöríteni a file-t és a Setup.exe-t elindítani és követni az utasításokat.
 \subsection{Használat}
+\noindent \textbf{1.} Játékot elindítva a fő ablakba érkezünk, ahol be tudunk jelentkezni, majd a sikeres bejelentkezés után láthatjuk a játékosok listáját: \\
+\includegraphics[width=0.8\textwidth]{img/chessClient_1.png} \\
 
+\noindent \textbf{2.} A második tabra átkattintva láthatjuk a meccseink listáját. Ezekre rákattintva a jobb oldalon egy kis előnézeti ablakban láthatjuk az ottani állást, illetve ezzel aktiválunk egy meccset arra, hogy a következő tabon megnézzük vagy esetleg lépjünk: \\
+\includegraphics[width=0.8\textwidth]{img/chessClient_2.png} \\
+
+\noindent \textbf{3.} A harmadik oldal maga a játéktér. Először kiválasztjuk azt a bábut, amivel lépni szeretnénk, majd a megfelelő mezőre kattintva adjuk meg a lépést. A képernyő jobb oldalán látható lista tartalmazza az elmúlt lépéseket, illetve felette a speciális parancsokat.: \\
+\includegraphics[width=0.8\textwidth]{img/chessClient_3.png} \\
+
+\noindent \textbf{4.}A negyedik oldalon látható az eddigi toplista. Csak azok látszódnak, akiknek már van befejezett játékuk. Ez a képernyő elérhető bejelentkezés nélkül is: \\
+\includegraphics[width=0.8\textwidth]{img/chessClient_4.png} \\
 \subsection{Hibaelhárítás}
-asdf
+\begin{itemize}
+	\item Log fül tartalmaz minden kivétel szövegét, így innen esetlegesen meg lehet állapítani, mi romlott el.
+	\item Windows Event Viewer is tartalmazhaz információkat
+	\item Néha a szerver leáll ha sokáig nem érkezett kérés. Ekkor az első kérés eltarthat egy ideig. A kliensnek le kell kezelnie ezt a problémát. Ha mégsem sikerül, akkor később újra probálkozik a frissítéssel.
+	\item Ha végképp nem érkezik válasz, akkor érdemes megnyitni a szerver weboldalát. Ha az nem megy, akkor maga a szolgáltatás is áll.
+\end{itemize}
+	
 
 \section{Botkliens}
-asdf
 \subsection{Telepítés}
-qwer
+\noindent \textbf{1.} A weboldalon kattintás "Downloads" gombra, majd a megfelelő verzió letöltése \\
+\includegraphics[width=0.8\textwidth]{img/service_downloads.png} \\
+\noindent \textbf{2.} A "Without Installer" verzióban csak a futáshoz szükséges file-ok vannak betömörítve. Ezt a ZIP file-t letöltve és kitömörítve el lehet indítani a klienst. \\
+A "With Installer" verzió tartalmazza a telepítőt, amelybe installálja a .NET Framework 4.7.2-es verzióját, ha az nincs még telepítve. Ehhez csak ki kell tömöríteni a file-t és a Setup.exe-t elindítani és követni az utasításokat.
 \subsection{Használat}
-asdf
+\noindent \textbf{1.} Játékot elindítva a fő ablakba érkezünk, ahol be tudunk jelentkezni, majd a sikeres bejelentkezés után láthatjuk a játékosok listáját: \\
+\includegraphics[width=0.8\textwidth]{img/botClient_1.png} \\
+
+\noindent \textbf{2.} A második tabra átkattintva láthatjuk a bot meccseinek listáját. Ezekre rákattintva a jobb oldalon egy kis előnézeti ablakban láthatjuk az ottani állást \\
+\includegraphics[width=0.8\textwidth]{img/botClient_2.png} \\
+
+\noindent \textbf{3.} A harmadik oldal maga a bot vezérlőpultja. Itt állítható be, hogy milyen algoritmus, mely kiértékelő függvénnyel és milyen maximum mélységgel fusson. A tér nagy részét a bot üzeneteinek fenntartott szövegmező foglalja el. Itt látható, hogy épp mit csinál a bot. 15 másodpercenként lekéri a legfrisebb állást, majd azon meccseken, ahol ő következi és léphet, kigenerál egy lépést és elküldi. A Start/Stop gombbal indíthatjuk el / állíthatjuk le a botot. \\
+\includegraphics[width=0.8\textwidth]{img/botClient_3.png} \\
+
 \subsection{Hibaelhárítás}
-asdf
-
-
-
+\begin{itemize}
+	\item A Log és a Bot vül tartalmaz minden információt, amelyre szükség lehet a hiba felderítésekor.
+	\item Windows Event Viewer is tartalmazhaz információkat
+	\item Néha a szerver leáll ha sokáig nem érkezett kérés. Ekkor az első kérés eltarthat egy ideig. A kliensnek le kell kezelnie ezt a problémát. Ha mégsem sikerül, akkor később újra probálkozik a frissítéssel.
+	\item Ha végképp nem érkezik válasz, akkor érdemes megnyitni a szerver weboldalát. Ha az nem megy, akkor maga a szolgáltatás is áll.
+\end{itemize}
 
 
 
