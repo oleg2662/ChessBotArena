@@ -329,11 +329,15 @@ Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen
 \subsubsection{Nem is kell feltétlenül fa}
 Tegyük fel, hogy van egy algoritmusunk, amely kiszámítja a saját és az ellenfél legmegfelelőbb lépéseit a játék végéig. Így megkapjuk az utat ami a mi győzelmünkhöz vagyis legalább az éppen legjobb elérhető eredményhez vezet. Ez nem feltétlen célravezető, hiszen mi történik akkor, ha az ellenfél végül nem azt a lépést lépi valamilyen okból? (Lehet, hogy az ő algoritmusa jobb vagy rosszabb, mint a mienk. Lehet, hogy más kiértékelőfüggvényt használ, stb.) Ekkor azt látjuk, hogy a sok munka, amellyel felépítettük az utat, kárba vész. Ezért nem érdemes az egész utat felépíteni, elég csak annyit elvárni tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása. Mivel nem fogjuk bejárni az egész fát csak egy adott mélységig, ezért a lépések száma véges lesz, így már nem probléma ha a gráf nem fa (azaz van benne kör), így a probléma nem is biztos, hogy létezik.
 
-
 \subsection{Infrastruktúra}
 A bevezetőben már volt róla szó: mivel kérés-válasz párokra épül maga az eredeti játék is, ezért egy RESTful szolgáltatás építése tünik a legmegfelelőbbnek amely JSON-ban kommunikál. Ez azért is lesz jó, mivel így bármilyen platformon viszonylag könnyű lesz hozzá klienst írni illetve mivel iparági-sztenderd, így könnyű hozzá könyvtárakat letölteni és használni.
 
+\subsubsection{Szerver}
+A szerver feladata a bejövő kérések kiszolgálása. Ő felel a felhasználók beléptetéséért, nyomonkövetéséért és a játékok kezeléséért. A legtöbb funkció kívülről egy nyílt API-n keresztül elérhető, kivétel a felhasználói regisztráció és adminisztráció,
+A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és felhasználói adatmódosítás elérhető, illetve innen lehet elérni különböző a játékkal kapcsolatos anyagokat is, mint például az API dokumentáció.
 
+\subsubsection{Humán- és botkliens}
+A két fajta kliens nem tér el túlságosan, mindkettőben kell támogatni a beléptetést, nyomonkövetést, játékinformációk szinkronizációját. Amiben viszont eltérnek az, hogy mekkora önállóságuk van. A humánkliensnél a lépéseket az emberi felhasználó határozza meg, míg a botkliensnél egy algoritmus. Adódhat az ötlet, hogy a más felhasználók kihívását is automatizáljuk, de ezt előzetes próbálgatások alapján elég nehéz úgy beállítani, hogy ne árasszák el a botok játékkérésekkel a játékosokat, így ez a funkció is maradhat az emberi felhasználónál. A botkliensekből legyen lehetőség kézzel kihívni másokat, de ne tegye automatikusan. Természetesen emberi játékosok kihívhatják a botokat, azok onnantól kezdve automatikusan kell, hogy válaszoljanak a felkérésekre.
 
 
 \newpage
@@ -343,11 +347,7 @@ qwer
 \subsection{Algoritmusok}
 asdf
 \subsection{Infrastruktúra}
-\subsubsection{Szerver}
-
-
-
-\paragraph{Kommunikáció a szerver és a kliensek között} \mbox{} \\
+\subsubsection{Kommunikáció a szerver és a kliensek között}
 A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
 
 \begin{figure}[htbp]
@@ -357,34 +357,11 @@ A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP 
 	\label{fig:clientServerCommunication}
 \end{figure}
 
+\subsubsection{Publikus API}
+A RESTful szolgáltatások mintáját követve minden végpont egy-egy entitásra vonatkozó műveleteket végezhet el:
 
-\subsubsection{Szerver}
-A szerver feladata a bejövő kérések kiszolgálása. Ő felel a felhasználók beléptetéséért, nyomonkövetéséért és a játékok kezeléséért. A legtöbb funkció kívülről egy nyílt API-n keresztül elérhető, kivétel a felhasználói regisztráció és adminisztráció,
-A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és felhasználói adatmódosítás elérhető, illetve innen lehet elérni különböző a játékkal kapcsolatos anyagokat is, mint például az API dokumentáció.
-
-\paragraph{A szerveroldali UI} minimalista, csak az előbb említet funkciókat kiszolgáló UI-t tartalmazza (\ref{fig:serverUiMainScreen}. ábra):
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/serverUiMainScreen.png}
-	\caption{Szerver fő felület}
-	\label{fig:serverUiMainScreen}
-\end{figure}
-
-A később részletezett open-API dokumentációját a swagger nevű generátorral oldottuk meg, amely felépítését mutatja a \ref{fig:serverUiDocumentation}. ábra.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/serverUiDocumentation.png}
-	\caption{Szerver - generált dokumentáció}
-	\label{fig:serverUiDocumentation}
-\end{figure}
-
-
-\paragraph{Publikus API}. A szerver a következő publikus szolgáltatásokat kell, hogy nyújtsa:
-
-% == Szerver - felhasználói fiókok =======================================================================================
-\begin{longtable}[c]{|c|p{14cm}|}
+	% == Szerver - felhasználói fiókok ====================================================================================
+	\begin{longtable}[c]{|c|p{14cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szerver funkciói}}} \\ \hline
@@ -409,12 +386,14 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 	
 	\textbf{WHEN} &
 	Beérkezik egy bejelentkezési kérés egy felhasználói névvel és jelszóval.
-	\\
+	(ACCOUNT végpont, POST metódus)
+    \\
 	\nobreakhline
 	
 	\textbf{THEN} &
 	A szerver a felhasználói név és jelszó ellenőrzése után visszajelez a kliensnek.
-	Ha sikeres volt a belépés, akkor kap egy "token"-t. Más esetben hibajelzést kap.
+	Ha sikeres volt a belépés, akkor kap egy "JWT token"-t és 200OK üzenetet.
+	Autentikációs hiba esetén 401-es hibát jelez, egyéb probléma esetén 500-as hibát jelez.
 	\\
 	\hline
 	
@@ -430,11 +409,13 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 	
 	\textbf{WHEN} &
 	Beérkezik egy kérés egy tokennel azzal a szándékkal, hogy az érvényessége meg legyen hosszabbítva.
+    (TOKEN végpont, POST metódus)
 	\\
 	\nobreakhline
 	
 	\textbf{THEN} &
-	A szerver leellenőrzi a token-t és ha még érvényes, akkor egy meghosszabbított token-t ad vissza. Egyébként hibát jelez.
+	A szerver leellenőrzi a token-t és ha még érvényes, akkor egy meghosszabbított token-t ad vissza és 200OK-t.
+	Autentikációs hiba esetén 401-es hibát jelez, egyéb probléma esetén 500-as hibát jelez.
 	\\
 	\hline
 	
@@ -450,11 +431,13 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 	
 	\textbf{WHEN} &
 	Beérkezik egy kérés a szerverhez, amelyben a kliens érdeklődik a szerver státusza (fut-e?) iránt.
+	(HEALTH végpont, GET metódus)
 	\\
 	\nobreakhline
 	
 	\textbf{THEN} &
-	Ha a szerver fut, akkor visszaküldi a verziószámát. Egyébként nem válaszol.
+	Ha a szerver fut, akkor visszaküldi a verziószámát és 200OK státuszt.
+	Bármilyen hiba esetén 500-as státuszt küld, vagy nem válaszol.
 	\\
 	\hline
 	
@@ -470,11 +453,13 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 	
 	\textbf{WHEN} &
 	Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri a játékosok listáját.
+	(PLAYERS végpont, GET metódus)
 	\\
 	\nobreakhline
 	
 	\textbf{THEN} &
-	A szerver visszaküldi a játékosok listáját (ha érvényes volt a token).
+	A szerver visszaküldi a játékosok listáját (ha érvényes volt a token) egy 200OK státusz mellett.
+	Autentikációs hiba esetén 401-es hibát jelez, egyéb probléma esetén 500-as hibát jelez.
 	\\
 	\hline
 	
@@ -490,11 +475,14 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 	
 	\textbf{WHEN} &
 	Beérkezik egy kérés a szerverhez, amelyben a kliens lekéri az aktuális játékos partijainak listáját.
+	(CHESSGAMES végpont, GET metódus)
+	(CHESSGAMES/DETAILED végpont, GET metódus)
 	\\
 	\nobreakhline
 	
 	\textbf{THEN} &
-	A szerver visszaküldi a partik listáját (ha érvényes volt a token).
+	A szerver visszaküldi a partik listáját (illetve a részletes állásokat is, ha a CHESSGAMES/DETAILED végpontot hívta a kliens.) és 200Ok státuszt.
+	Autentikációs hiba esetén 401-es hibát jelez, egyéb probléma esetén 500-as hibát jelez.
 	\\
 	\hline
 	
@@ -505,22 +493,97 @@ A később részletezett open-API dokumentációját a swagger nevű generátorr
 	\\ \nobreakhline
 	
 	\textbf{GIVEN} &
-	A szerver fut, a kliens rendelkezik érvényes token-nel.
+	A szerver fut.
 	\\ \nobreakhline
 	
 	\textbf{WHEN} &
-	Beérkezik egy kérés a szerverhez, amelyben a kliens közli, hogy melyik partin milyen lépést szeretne kezdeményezni.
+	Beérkezik egy kérés a szerverhez, amelyben a kliens közli, hogy melyik partin milyen lépést szeretne kezdeményezni. (CHESSGAMES végpont, PUT metódus)
 	\\
 	\nobreakhline
 	
 	\textbf{THEN} &
-	A szerver ellenőrzi, majd végrehajtja és lementi a lépést, erről visszaigazolást küld a legfrisebb állással (ha érvényes volt a token).
+	A szerver ellenőrzi, majd végrehajtja és lementi a lépést, erről visszaigazolást küld a legfrisebb állással és 200OK státusszal.
+	Autentikációs hiba esetén 401-es hibát jelez, egyéb probléma esetén 500-as hibát jelez.
+	\\
+	\hline
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{7}
+	&	Kihívás
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	A szerver fut.
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy kérés a szerverhez, amelyben a kliens közli, hogy melyik felhasználót szeretné kihívni. (CHESSGAMES végpont, POST metódus)
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	A szerver ellenőrzi a kérést, majd ha rendben találja, kisorsolja hogy melyik játékos lesz a fehér, majd létrehozza a játékot és visszaküldi a meccs alapinformációit a kliensnek egy 200-as státusszal.
+	Autentikációs hiba esetén 401-es hibát jelez, egyéb probléma esetén 500-as hibát jelez.
+	\\
+	\hline
+	
+	% -----------------------------------------------------------------------------------------------------------------------
+	\rowcolor[HTML]{CBCEFB} 
+	\textbf{8}
+	&	Eredmények
+	\\ \nobreakhline
+	
+	\textbf{GIVEN} &
+	A szerver fut.
+	\\ \nobreakhline
+	
+	\textbf{WHEN} &
+	Beérkezik egy kérés a szerverhez, amelyben a kliens le akarja tölteni a felhasználók aktuális pontjait. (LADDER végpont, POST metódus)
+	\\
+	\nobreakhline
+	
+	\textbf{THEN} &
+	A szerver a befejezett játékok alapján kiszámolja és visszaküldi a felhasználók toplistáját 200OK státusszal.
 	\\
 	\hline
 	
 	\caption{Szerver alapfunkciói - API}
 	\label{userStories:server:api}\\
 \end{longtable} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+\paragraph{A szerveroldali UI} minimalista, csak az előbb említet funkciókat kiszolgáló UI-t tartalmazza (\ref{fig:serverUiMainScreen}. ábra):
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/serverUiMainScreen.png}
+	\caption{Szerver fő felület}
+	\label{fig:serverUiMainScreen}
+\end{figure}
+
+A később részletezett open-API dokumentációját a swagger nevű generátorral oldottuk meg, amely felépítését mutatja a \ref{fig:serverUiDocumentation}. ábra.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\textwidth]{img/serverUiDocumentation.png}
+	\caption{Szerver - generált dokumentáció}
+	\label{fig:serverUiDocumentation}
+\end{figure}
+
+
+
 
 \paragraph{Dokumentáció}. Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
 
