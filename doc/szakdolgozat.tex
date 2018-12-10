@@ -340,6 +340,8 @@ A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és 
 
 \subsubsection{Humán- és botkliens}
 A két fajta kliens nem tér el túlságosan, mindkettőben kell támogatni a beléptetést, nyomonkövetést, játékinformációk szinkronizációját. Amiben viszont eltérnek az, hogy mekkora önállóságuk van. A humánkliensnél a lépéseket az emberi felhasználó határozza meg, míg a botkliensnél egy algoritmus. Adódhat az ötlet, hogy a más felhasználók kihívását is automatizáljuk, de ezt előzetes próbálgatások alapján elég nehéz úgy beállítani, hogy ne árasszák el a botok játékkérésekkel a játékosokat, így ez a funkció is maradhat az emberi felhasználónál. A botkliensekből legyen lehetőség kézzel kihívni másokat, de ne tegye automatikusan. Természetesen emberi játékosok kihívhatják a botokat, azok onnantól kezdve automatikusan kell, hogy válaszoljanak a felkérésekre.
+Fontos kitétel a klienseknél, hogy nem szabad leállniuk egy-egy kérésnél. Minden folyamatnak aszinkron kell történnie.
+Másik fontos kitétel, hogy nem szabad a klienseknek kivételt dobniuk, hanem le kell tudniuk logolni.
 
 
 \newpage
@@ -702,8 +704,7 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	\textbf{THEN} &
 	A kilens elindul és:
 	\begin{itemize}
-		\item Ha a játékos már be van lépve, akkor belép a lobbiba.
-		\item Ha a játékos nincs belépve, akkor megjelenik a hitelesítési felület.
+		\item Megjelenik a felület a hitelesítési alfelülettel.
 	\end{itemize} 
 	\\
 	\hline
@@ -738,7 +739,7 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	\\ \nobreakhline
 	
 	\textbf{WHEN} &
-	Kilépési szándék jelzése majd annak pozitív megerősítése.
+	Kilépési szándék jelzése (majd annak pozitív megerősítése).
 	\\
 	\nobreakhline
 	
@@ -812,7 +813,7 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	\\ \nobreakhline
 	
 	\textbf{WHEN} &
-	Kilépési szándék, majd annak megerősítése.
+	Kilépési szándék (majd annak megerősítése).
 	\\
 	\nobreakhline
 	
@@ -837,7 +838,7 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	\nobreakhline
 	
 	\textbf{THEN} &
-	Új játék kezdeményezésére vonatkozó kérelem elküldése szervernek, majd partik listájának megjelenítése.
+	Új játék kezdeményezésére vonatkozó kérelem elküldése szervernek.
 	\\
 	\hline
 	
@@ -889,7 +890,7 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	\\ \nobreakhline
 	
 	\textbf{WHEN} &
-	Kilépési szándék, majd annak megerősítése.
+	Kilépési szándék (majd annak megerősítése).
 	\\
 	\nobreakhline
 	
@@ -900,32 +901,12 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	
 	% -----------------------------------------------------------------------------------------------------------------------
 	\rowcolor[HTML]{CBCEFB} 
-	\textbf{2}
-	&	Kihívás elfogadása / visszautasítása
-	\\ \nobreakhline
-	
-	\textbf{GIVEN} &
-	A felület aktív, partik listájában egy még nem elfogadott kérés van kiválasztva.
-	\\ \nobreakhline
-	
-	\textbf{WHEN} &
-	Kihívás elfogadása / visszautasítása.
-	\\
-	\nobreakhline
-	
-	\textbf{THEN} &
-	Kérés elküldése szervernek, partik listájának frissítése.
-	\\
-	\hline
-	
-	% -----------------------------------------------------------------------------------------------------------------------
-	\rowcolor[HTML]{CBCEFB} 
 	\textbf{3}
 	&	Kiválasztott játék megjelenítése
 	\\ \nobreakhline
 	
 	\textbf{GIVEN} &
-	A felület aktív, partik listájában egy már elfogadott játék van kiválasztva.
+	A felület aktív, partik listájában egy játék ki van választva.
 	\\ \nobreakhline
 	
 	\textbf{WHEN} &
@@ -966,7 +947,7 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	\\ \nobreakhline
 	
 	\textbf{WHEN} &
-	Kilépési szándék, majd annak megerősítése.
+	Kilépési szándék (majd annak megerősítése).
 	\\
 	\nobreakhline
 	
@@ -1000,46 +981,56 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 	\label{userStories:client:gameScreen}\\
 \end{longtable}
 
+\newpage
+\subsubsection{Működés}
+(A kliensek UI terveit lásd: \ref{fig:humanClient} és \ref{fig:botClient} ábra.)
+A képeken látszik, hogy a két kliens nagyon hasonlít egymáshoz hiszen funkcionalitásban is elég közel állnak egymáshoz.
 
-\subsubsection{Játékkliens UI tervei}
+A különböző tabok között szabadon válthat a felhasználó. Minden tabváltáskor történik egy frissítés, amely hatására az összes oldalon levő UI elem frissül. Természetesen a frissítés a háttérben kell, hogy történjen, a UI nem "fagyhat le".
 
-\begin{figure}[htbp]
+A terveken nincs kiemelve, de mindkét kliensben van egy \textbf{Log} és egy \textbf{Read me} tab. Előbbi hibakereséskor jön majd jól, ugyanis a klienseknek nem szabad semmilyen \textit{exception}-t dobni, viszont mindent le kell logolnia. A \textit{Read me} tab tartalmazza a klienshez a hasznos tudnivalókat, figyelmeztetéseket.
+
+\begin{figure*}
 	\centering
-	\includegraphics[width=1\textwidth]{img/humanClientLogin.png}
-	\caption{A játékkliens belépő képernyő}
-	\label{fig:humanClientLogin}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1\textwidth]{img/humanClientPlayers.png}
-	\caption{Játékosok listája}
-	\label{fig:humanClientPlayers}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1\textwidth]{img/humanClientMatches.png}
-	\caption{Partik listája}
-	\label{fig:humanClientMatches}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1\textwidth]{img/humanClientGame.png}
-	\caption{Játékfelület}
-	\label{fig:humanClientGame}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1\textwidth]{img/humanClientLadder.png}
-	\caption{Pontszámok}
+	\begin{subfigure}[b]{0.475\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/humanClientLogin.png}
+		\caption{Belépő képernyő}
+		\label{humanClientLogin}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.475\textwidth}  
+		\centering 
+		\includegraphics[width=\textwidth]{img/humanClientMatches.png}
+		\caption{Partik}
+		\label{fig:humanClientMatches}
+	\end{subfigure}
+	\vskip\baselineskip
+	\begin{subfigure}[b]{0.475\textwidth}   
+		\centering 
+		\includegraphics[width=\textwidth]{img/humanClientGame.png}
+		\caption{Bot vezérlése}
+		\label{fig:humanClientGame}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[b]{0.475\textwidth}   
+		\centering 
+		\includegraphics[width=\textwidth]{img/humanClientPlayers.png}
+		\caption{Játékosok listája}
+		\label{fig:humanClientPlayers}
+	\end{subfigure}
+	\vskip\baselineskip
+	\begin{subfigure}[b]{0.475\textwidth}   
+	\centering 
+	\includegraphics[width=\textwidth]{img/humanClientLadder.png}
+	\caption{Toplista}
 	\label{fig:humanClientLadder}
-\end{figure}
+	\end{subfigure}
 
-
-\subsubsection{Botkliens UI terve}
+	\caption[ Humánkliens UI terv ]
+	{\small Humánkliens UI terv}
+	\label{fig:humanClient}
+\end{figure*}
 
 
 \begin{figure*}
@@ -1111,24 +1102,6 @@ A klienseknek a következő alapfunkcionalitást kell minimum kiszolgálniuk:
 
 
 
-Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
-	\caption{Absztrakt algoritmus interface és függőségei}
-	\label{fig:algorithmAbstractDiagram}
-\end{figure}
-
-A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
-
-\begin{itemize}
-	\item \textbf{Lépés-generátor} \\
-	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell megadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. \footnote{Olyan is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése, vagy diszkrét, de végtelen számosságú lehetséges lépése létezhet, tehát nem kigenerálható az összes. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.}
-	
-	\item \textbf{Kiértékelő} \\
-	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
-\end{itemize}
 
 
 
@@ -1151,10 +1124,10 @@ A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok l
 
 
 
-
+\newpage
 \section{Megvalósítás}
 
-\subsubsection{Játék-reprezentáció}
+\subsection{Játék-reprezentáció}
 A sakktáblát reprezentáló \texttt{ChessBoard} osztály az előzőekben részletezett alapelveknek felel meg. (Lásd.: \ref{lst:chessboard_code} kódrészlet.)
 \begin{itemize}
 	\item \textbf{Reprezentálja a táblát.}
@@ -1356,20 +1329,36 @@ Az \texttt{ApplyMove} függvény végrehajtja a megfelelő módosításokat a t�
 
 
 \newpage
+\subsection{Algoritmusok}
+Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
+	\caption{Absztrakt algoritmus interface és függőségei}
+	\label{fig:algorithmAbstractDiagram}
+\end{figure}
 
+A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
 
+\begin{itemize}
+	\item \textbf{Lépés-generátor} \\
+	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell megadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. \footnote{Olyan is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése, vagy diszkrét, de végtelen számosságú lehetséges lépése létezhet, tehát nem kigenerálható az összes. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.}
+	
+	\item \textbf{Kiértékelő} \\
+	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
+\end{itemize}
 
-\subsection{Megvalósítás}
-Ezek alapján már implementálhatóak az absztrakt algoritmusok. A dolgozatban négy algoritmus van implementálva:
+Ezek alapján már implementálhatóak az absztrakt algoritmusok. A dolgozatban öt algoritmus van implementálva:
 \begin{itemize}
 	\item Random algoritmus
 	\item Minimax algoritmus
 	\item Alfa-béta algoritmus
 	\item Átlagoló-minimax algoritmus
+	\item Mohó algoritmus
 \end{itemize}
 
-Végül ezeket fogja egy-egy bot alkalmazni és ezeket felhasználva fognak egymás ellen sakkozni. Tegyék meg tétjeiket Uraim!
+Végül ezeket fogja egy-egy bot alkalmazni és ezeket felhasználva fognak egymás ellen sakkozni. \textit{Tegyék meg tétjeiket, Uraim!}
 
 \subsubsection{Előfeltételek}
 A \ref{fig:algorithmAbstractDiagram}. ábrán látott interfész elég egyszerű, de a megvalósítás szempontjából több kell. Például mindenképp kell egy generátor, amely kigenerálja a lehetséges lépéseket, és kell egy \textit{alkalmazó} osztály is, amely a megadott lépést alkalmazva az aktuális játékállásra kiad egy új, a szabályoknak és a lépésnek megfelelő új állapotot. Mivel az algoritmusokat a lehető legáltalánosabban akarjuk megírni, ezért ezek interface-ét is definiálni kell.
