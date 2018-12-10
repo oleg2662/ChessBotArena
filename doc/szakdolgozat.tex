@@ -483,7 +483,7 @@ public interface IEvaluator<TState>
 Az infrastruktúra (és az egész projekt) alapjául a .NET Core 2.1-es verzióját választottam. Ez azért tünt jó választásnak, mivel akár cross-platform is lehet, így például a szervert fel lehet telepíteni egy Linux-os környezetre is.
 
 \subsubsection{Adatbázis}
-Az adatbázis felhasználók regisztrációját és beléptetését kezelő része adott, hiszen része a Microsoft .NET Core MVC alapbeállításainak, így csak a hozzá kapcsolódó és magával a sakkal foglalkozó részt kell megtervezni. Ez EF Core használata miatt elég egyszerű, hiszen C# osztályokból épít sémát, amelyet ha módosítás történik, karban is tud tartani. A \ref{fig:dbdiagram} ábrán láthatók a táblák és kapcsolataik.
+Az adatbázis felhasználók regisztrációját és beléptetését kezelő része adott, hiszen része a Microsoft .NET Core MVC alapbeállításainak, így csak a hozzá kapcsolódó és magával a sakkal foglalkozó részt kell megtervezni. Ez EF Core használata miatt elég egyszerű, hiszen C$\sharp$ osztályokból épít sémát, amelyet ha módosítás történik, karban is tud tartani. A \ref{fig:dbdiagram} ábrán láthatók a táblák és kapcsolataik.
 
 \begin{figure}[htbp]
 	\centering
@@ -1687,6 +1687,27 @@ private int Calculate(TState state, int depth, int alpha, int beta, bool maximiz
 
 \newpage
 \section{Tesztelés}
+A tesztelésnek különböző szintjei vannak:
+\begin{itemize}
+	\item \textbf{Unit tesztek} \\
+	Egyszerű és gyors tesztek, általában egy kisebb egységet: metódust, függvényt tesztel. Ebben a szoftverben főleg a központi elemeket, a reprezentációt és a mechanizmust teszteli hiszen központi részei a dolgozatnak. Ha ezek nem működnek megfelelően, akkor az egész programcsomag nem működik megfelelően.
+	
+	\item \textbf{Integrációs tesztek} \\
+	A rendszer különböző komponenseinek együttműködését teszteli. Technológiai szemszögből néz a problémára: nem feladata a helyesség megállapítása, a komponensek közötti együttműködést vizsgálja. Könnyen elkészíthető, hiszen a .NET Core rendelkezésünkre bocsájt egy \texttt{TestServer} nevű osztályt, amely memóriában futva szimulálja az alrendszereket.
+	
+	\item \textbf{API tesztek} \\
+	Ettől a szinttől felfelé már a helyesség is fontos. A kiajánlott API tesztelésekor a publikus API felületet hívjuk meg előre definiált adatokkal és figyeljük a működést.
+	
+	\item \textbf{GUI tesztek}Ezek lehetnek automatikus vagy manuális tesztek. Többnyire utóbbit szokták választani, mert egy gyorsan változó környezetben nagyon nehéz a teszteket módosítani és validálni.
+	
+	\item \textbf{Teljesítmény-teszt}Automatikus teszt, ahol a rendszert hatalmas bejövő adatnak teszik ki és figyelik a viselkedését, különösképpen arra, hogy leáll-e, elfogy-e a CPU vagy a memória, esetleg megjelennek-e deadlock-ok, illetve okoz-e anomáliákat a többi rendszerben.
+	
+	\item \textbf{Rendszerteszt}Manuális teszt, ahol felállítanak egy tesztkörnyezetet és megpróbálják szimulálni a mindennapos használatot.
+	
+\end{itemize}
+
+Felülről lefelé haladva nő ezen tesztek ára és komplexitása. Jelen dolgozatban időhiány miatt csak unit és manuális tesztek vannak, de az automatikusan válaszoló botokkal a rendszert így is meg lehetett tesztelni (integrációs-, teljesítmény- és API teszt), amely fel is fedett jó néhány hibát.
+
 \subsection{Reprezentáció}
 A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Egy sakk-matt tesztelő példát láthatunk a \ref{lst:checkmate_test} kódrészletben.
 
@@ -1717,8 +1738,10 @@ public void GameStateCheck_CheckMateTest_BlackWins()
 	Assert.Equal(expected, actual);
 }
 \end{lstlisting}
+\subsubsection{Kiterjesztések}
+A sakktáblán való navigáláshoz készült sok segédfüggvény is, hogy könnyebben lehessen navigálni illetve egyik formátumból a másikba konvertálni, illetve az olyan segédfüggvényekhez is, mint az "északra kettőt", "lólépés" satöbbi.
 
-\subsection{Külön vizsgálandó esetek}
+\subsubsection{Külön vizsgálandó esetek}
 Főleg a különleges lépéseket kellett jól letesztelni. Például:
 \begin{itemize}
 	\item \textbf{Sáncolás} Nagyon szigorú szabályok vannak arra, mikor lehet sáncolni. Ezeket az eseteket végig kellett venni.
@@ -1733,7 +1756,7 @@ Főleg a különleges lépéseket kellett jól letesztelni. Például:
 \end{itemize}
 
 \subsubsection{Visual Studio Visualizer}
-A unit-tesztek írása közben sok hiba jött elő és sokat közülük nehéz volt kijavítani, mert nagyon nehéz elképzelni, hogy mi is történik éppen. Ezért ki lett fejlesztve egy \textbf{Visualizer} a \texttt{ChessRepresentation} osztályhoz, amely beépül a Visual Studio-ba és ott ha debug közben rávisszük a kurzort az objektumra, akkor megnézhetjük vizuálisan is a sakktáblát, illetve oda-vissza lépkedhetünk a történetében is. Ez a projekt része, habár fordítás után be kell másolni a \texttt{C:\textbackslash Users\textbackslash FELHASZNÁLÓNÉV\textbackslash Documents\textbackslash Visual Studio 2017\textbackslash Visualizers\textbackslash} könyvtárba és egy VS újraindítás után már használható is. Ez látszik a \ref{fig:visualizer} ábrán.
+A unit-tesztek írása közben sok hiba jött elő és sokat közülük nehéz volt kijavítani, mert nagyon nehéz elképzelni, hogy mi is történik éppen. Ezért ki lett fejlesztve egy \textbf{Visualizer} a \texttt{ChessRepresentation} osztályhoz, amely beépül a Visual Studio-ba és ott ha debug közben rávisszük a kurzort az objektumra, akkor megnézhetjük vizuálisan is a sakktáblát, illetve oda-vissza lépkedhetünk a történetében is. Ez a projekt része, habár fordítás után be kell másolni a \texttt{C:\textbackslash Users\textbackslash FELHASZNÁLÓNÉV\textbackslash Documents\textbackslash Visual Studio 2017\textbackslash Visualizers\textbackslash} könyvtárba és egy VS újraindítás után már használható. Ez látszik a \ref{fig:visualizer} ábrán.
 
 \begin{figure}[htbp]
 	\centering
@@ -1743,7 +1766,13 @@ A unit-tesztek írása közben sok hiba jött elő és sokat közülük nehéz v
 \end{figure}
 
 \subsubsection{Manuális tesztelés játék közben}
-Sok szituáció volt kipróbálva manuális játék közben is, ahol két klienst futtatva mindkettőbe bejelentkezve különböző szituációkat előidézbe teszteltem a játékot. Ezt end-to-end tesztnek is vehetjük, hiszen a játék-infrastruktúra minden elem le lett ezáltal tesztelve.
+Sok szituáció volt kipróbálva manuális játék közben is, ahol két klienst futtatva mindkettőbe bejelentkezve különböző szituációkat előidézbe teszteltem a játékot. Ezt end-to-end tesztnek is vehetjük, hiszen a játék-infrastruktúra minden elem le lett ezáltal tesztelve, illetve speciális helyzeteket előidézve a játéklogika is:
+\begin{itemize}
+	\item Sáncolás tesztelése,
+	\item En passant tesztelése,
+	\item Promóció minden bábutípusra, külön figyelve arra, hogy az átváltozás okoz-e sakkot,
+	\item Patt helyzet előállítása, a kód felismeri-e
+\end{itemize}
 
 \subsection{Algoritmusok}
 A tesztelés unit-teszteken keresztül történik, amelyben előre megadott adatokra azt kapjuk-e, amit elvárunk. Példa unit teszt látható a \ref{lst:greedy_test}. kódrészletben.
@@ -1772,24 +1801,43 @@ Ezekkel a tesztekkel viszont az a probléma, hogy nagyon nehéz őket összeáll
 Először a botokat eresztettem egymásnak és figyeltem, hogy lefagynak-e, rosszat lépnek-e, megeszik-e a memóriát és a CPU-t. Végül elkezdtem ellenük játszani és habár nem lettek túl jók, azért néha tudtak meglepetést okozni.
 
 \subsection{Infrastruktúra}
-Az infrastruktúra tesztelését manuális játékkal illetve a botok közötti játékkal oldottam meg. Erre volt jó például a véletlen-algoritmus és a mohó-algoritmus, hiszen nagyon gyorsak, így elég sok lépést meg tudnak tenni viszonylag rövid idő alatt.
+Az infrastruktúra tesztelését manuális játékkal illetve a botok közötti játékkal lehetett kvázi-automatikusan tesztelni. Erre volt jó például a véletlen-algoritmus és a mohó-algoritmus, hiszen nagyon gyorsak, így elég sok lépést meg tudnak tenni viszonylag rövid idő alatt.
 
 
 \subsubsection{API}
-A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
+POSTMAN használatával történt az API hívások tesztelése. Mivel HTTP-n keresztül, JSON-ben megy a kommunikáció, ezért könnyű volt a különböző eseteket összállítani és letesztelni minden esetet. (Bad request, autentikációs probléma, stb.) Később a botok egymás elleni játéka illetve emberi játékosok egymás és botok elleni játéka által is tesztelve volt az API és fel is derített néhány hibát.
 
 \subsubsection{Szerver UI}
-A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
+A szerver oldalon minimális UI van, ezért nincs szükség túl sok manuális tesztelésre. Amit meg kellett nézni:
+\begin{itemize}
+	\item Mi történik, ha nem megfelelő a megadott jelszó?
+	\item Mi történik, ha regisztrációkor az egyik megadott adat nem megfelelő?
+	\item elérhetők-e a letölthető file-ok és a dokumentáció?
+\end{itemize}
 
 \subsubsection{Humánkliens}
-A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
+Elejétől a végéig manuális teszteléssel.
+\begin{itemize}
+	\item Mi történik rossz jelszó megadásakor?
+	\item Mi történik, ha nem megy a szerver? Jól kezeli a kliens?
+	\item Mi történik, ha akkor próbálok lépni, amikor nem az én köröm van? Mi van, ha nem megengedett lépést akarok beküldeni?
+	\item Mi történik normál esetben?
+	\item Mi történik, ha a szerver leterhelt és lelassul?
+\end{itemize}
+
 
 \subsubsection{Botkliens}
-A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
+Az infrastruktúra tesztelésekor önmagát is tesztelte. Ugyanazon aspektusokból kellett tesztelni, mint a humánklienst.
+\begin{itemize}
+	\item Mi történik rossz jelszó megadásakor?
+	\item Mi történik, ha nem megy a szerver? Jól kezeli a kliens?
+	\item Mi történik, ha akkor próbálok lépni, amikor nem az én köröm van? Mi van, ha nem megengedett lépést akarok beküldeni?
+	\item Mi történik normál esetben?
+	\item Mi történik, ha a szerver leterhelt és lelassul?
+\end{itemize}
 
-
-
-
+\subsubsection{Megfigyelések}
+Egy idő után lehetetlenné vált a tesztelés a lokális gépen, mert a sok bot kliens, a service, az adatbázis szerver illetve a Visual Studio együttesen már annyira leterhelte a gépet, hogy lehetetlenné vált minden a gépen. Ezért lett a project publikálva egy külső szerverre.
 
 
 
