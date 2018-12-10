@@ -233,7 +233,7 @@ A játék jellegéből adódóan nem kell valósidejűnek lenni, a levelezési-s
 
 A klienseket ketté lehet bontani az alapján, hogy ki hozza a döntéseket. Ezek szerint lesz az "emberi" kliens, ahol emberi játékosok tudnak játszani, illetve lesznek a "bot" kliensek, melyek minimális vagy semmilyen emberi beavatkozással tudnak válaszolni a bejövő kérésekre.
 
-Továbbá mivel az is a dolgozat célja, hogy megkönnyítse a jövőbeli bot- vagy kliensfejlesztők munkáját és ne kelljen a sakk szabályaival, reprezentációjával foglalkozniuk, ezért kellenek ezek, mint könyvtárak: külön egy általános algoritmus- és külön egy reprezentáció-könyvtár.
+Továbbá mivel az is a dolgozat célja, hogy megkönnyítse a jövőbeli bot- vagy kliensfejlesztők munkáját és ne kelljen a sakk szabályaival, reprezentációjával foglalkozniuk, ezért külön kell választanunk pár könyvtárat: külön egy általános algoritmus- és külön egy reprezentáció-könyvtár.
 
 Így körülbelül össze is állt a kép, a programcsomag a következő részekből fog állni:
 
@@ -274,24 +274,34 @@ Továbbá mivel az is a dolgozat célja, hogy megkönnyítse a jövőbeli bot- v
 			\item A játékos döntéseit közvetíti a szerver felé.
 			\item Példakliensek implementálása:
 			\begin{itemize}
-				\item Android alkalmazás emberi játékosoknak.
-				\item MI bot alkalmazás / alkalmazások melyek különböző algoritmusokat használnak.
+				\item Humánkliens - Windows app.
+				\item MI bot alkalmazás mely különböző algoritmusokat tud használni.
 			\end{itemize}
 		\end{itemize}
 	\end{itemize}
 \end{itemize}
 
 \newpage
-\subsection{Játék-reprezentáció}
-A bevezetőben láthattuk, hogy a következő lehetséges lépések megállapításához nem elég a "táblát látni", kell hozzá még néhány többletinformáció. Ilyen például a már említett bábuk cimkézése illetve ezt helyettesítve (vagy ezzel együtt alkalmazva) a játszma addigi lépéseinek nyilvántartása.
+\subsection{Reprezentáció}
+A sakk reprezentációja adja magát: vegyünk egy mátrixot és helyezzük rá a bábukat. Innentől kezdve kiszámolhatjuk a lehetséges lépéseket. Ez sajnos nem így van.
 
-A triviális lépésektől eltekintve problémába merülhet fel, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa a kevésbé ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csakis a következő) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg előre. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg. Ezekben az esetekben adódik az ötlet: rakjunk jelzéseket a bábukra: jelezzük, ha már elmozdultak az eredeti helyükhöz képest vagy például a gyalogot megjelölhetjük, hogy "en passant" üthető. (Ez utóbbi jelzőt viszont a következő körben le is kell venni róla.)
+A lehetséges lépések megállapításához nem elég a "táblát látni", kell hozzá még néhány többletinformáció. Ilyen például a már bábuk cimkézése aszerint, hogy el lett-e már mozdítva, illetve ezt helyettesítve (vagy ezzel együtt alkalmazva) a játszma addigi lépéseinek nyilvántartása.
+
+Ugyanis a triviális lépésektől eltekintve problémába merülhet fel, ha például a sáncolást vesszük szemügyre: ahhoz, hogy sáncolhassunk, a benne résztvevő bábuknak nem elég a helyükön lenni, de az is elvárás tőlük, hogy nem is mozoghattak előtte. Azaz például a király vagy a bástya habár (miután elmozdult) visszaléphet az eredeti helyére, ám ekkor már nem lehetséges a sáncolás. Másik ilyen példa a kevésbé ismert "\textit{en passant}" ütés. Ez akkor következik be, amikor az ellenfél az egyik gyalogjával kettőt lép előre pont a mi gyalogunk mellé. Ebben az esetben a következő (és csakis a következő) körben leüthető úgy, mintha nem kettőt, csak egyet lépett volna eredetileg előre. Viszont fontos, hogy ha nem ütjük le, akkor a következő körben ezt már nem tehetjük meg. Ezekben az esetekben adódik az ötlet: rakjunk jelzéseket a bábukra: jelezzük, ha már elmozdultak az eredeti helyükhöz képest vagy például a gyalogot megjelölhetjük, hogy "en passant" üthető. (Ez utóbbi jelzőt viszont a következő körben le is kell venni róla.)
 
 Másik érdekes (és versenyeken alkalmazott) szabály az, hogy ha többször fordul elő ugyanaz az állapot, akkor a játékosok felajánlhatnak döntetlent a másiknak. Ehhez viszont ismerni kell az előző lépéseket, a táblára "simán csak ránézve" ezt a szabályt nem lehet alkalmazni.
 
-Ezekből a példákból látszik, hogy nem elég a tábla aktuális állapotának ismerete, ahhoz kell még extra információ is például a bábukról (elmozdult? en passant üthető?) ami mondjuk egy a bábukra tett jelöléssel megoldható lenne, viszont a legutóbb emlegetett problémára nem megoldás: ahhoz kell az előző lépések listája is.
+Ezekből a példákból látszik, hogy nem elég a tábla aktuális állapotának ismerete, ahhoz kell még több információ is például a bábukról (elmozdult? en passant üthető?) ami mondjuk egy a bábukra tett jelöléssel megoldható lenne, viszont a legutóbb emlegetett problémára nem megoldás: ahhoz kell az előző lépések listája is.
 
 Megjegyzés: \textit{Ennek egyébként egy érdekes hatása lesz majd az alkalmazott reprezentációra: ha a lehetséges lépések kiszámításához elég lenne "ránézni" a táblára, akkor a játékot reprezentáló gráfunk nem lenne fa, hiszen egy bizonyos állapotba több úton is eljuthatunk. Ha azonban belevesszük egy játékállás reprezentációjához a parti addigi történelmét is, akkor az állások egyediek lesznek és a gráfunk fa-szerű lesz.}
+
+Ezek alapján sejthető a lehetséges reprezentáció: egy sakk-állás leírásához a következő információk kellenek:
+\begin{itemize}
+	\item Tábla állapota
+	\item Következő játékos
+	\item Bábuk jelölése (elmozdult? en passant?)
+	\item Eddig megtett lépések listája
+\end{itemize}
 
 
 \subsection{Algoritmusok}
@@ -300,13 +310,13 @@ A sakk reprezentációja tehát már látható. Fogalmazzuk meg a problémát: s
 
 Tekintsük egy sakkjátszmát: egy átlagos meccs 35-40 fordulós~\cite{averageLengthOfChessGame}\cite{averageLengthOfChessGame2}\cite{chessStatistics}, az átlagos lehetséges lépések száma egy adott állapotból 20\cite{shannonnumber}. Shannon adott egy alsó-korlátot a lehetséges játékok számára, amely $10^{120}$. \footnote{Összehasonlításképp: a világegyetemben levő atomok számát $10^{80}$ darabra teszik, a világegyetem pedig körülbelül $4.32 \times 10^{17}$ másodperce keletkezett, ami kevesebb, mint $10^{18}$-on, ami még így is sok nagyságrenddel kevesebb, mint a lehetséges játékok száma.} Ebből látható, hogy \textit{brute-force} technikával, a jelenlegi technikai háttérrel nem érdemes hozzákezdeni.
 
-Látható, hogy a probléma elég bonyolult és ezért egzakt megoldása nem létezik egyelőre, csak közelíteni tudjuk. A továbbiakban az algoritmus általánosan fogalmazzuk meg és formalizáljuk, de a sakkon keresztüli példákon mutatjuk be.
+Így a probléma elég bonyolult és ezért egzakt megoldása nem létezik egyelőre, csak közelíteni tudjuk. A továbbiakban az algoritmus általánosan fogalmazzuk meg és formalizáljuk, de a sakkon keresztüli példákon mutatjuk be.
 
 \subsubsection{Egy általános táblás játékmenet}
 Egy játékot meghatározza a \textbf{kezdőállapota} és az állapotok közötti lehetséges \textbf{állapotátmenetek}. Egy állapot akkor érvényes, ha a kezdőállapotból bármilyen úton eljuthatunk a megadott állapotba. Ezután már adódik az ötlet: egy játékmenetet reprezentálhatunk egy \textbf{\textit{cimkézett}, irányított gráffal}, ahol a csomópontok a lehetséges állapotok, az élek pedig az átmenetek.
 
 \subsubsection{A probléma, mint útkeresési algoritmus}
-Láthatjuk, hogy így egy játékmenet egy irányított gráf bejárása lesz. A probléma pedig amit az algoritmussal meg szeretnénk oldani (vagy közelíteni) pedig az, hogy találjunk egy olyan útvonalat ebben a gráfban, amelyben az ellenfél nyereségét minimalizáljuk amellett, hogy feltételezzük: az ellenfél mindig a számára legoptimálisabb lépést fogja választani.
+Láthatjuk, hogy így egy játékmenet az irányított gráf egy útja lesz. A probléma pedig amit az algoritmussal meg szeretnénk oldani (vagy közelíteni) pedig az, hogy találjunk egy olyan útvonalat ebben a gráfban, amelyben az ellenfél nyereségét minimalizáljuk amellett, hogy feltételezzük: az ellenfél mindig a számára legoptimálisabb lépést fogja választani.
 
 A sakk nem más, mint egy körökre osztott két személyes táblás játék és a fenti analógia alkalmazható rá: Kezdetben van egy kezdőállapot. (Felállított bábúk a táblán, világos játékos kijelölve mint kezdőjátékos). Ezek után az állapotátmeneti függvény határozza meg a lehetséges lépések halmazát, amelyből egy irányt kiválasztva és követve egy új állapotba kerülünk, és így tovább. Ez lesz a játék \textbf{játékgráfja}.
 
@@ -329,7 +339,7 @@ Erről a gráfról semmi érdemlegeset nem állíthatunk, nem speciális, hiszen
 \end{figure}
 
 \subsubsection{Nem is kell feltétlenül fa}
-Tegyük fel, hogy van egy algoritmusunk, amely kiszámítja a saját és az ellenfél legmegfelelőbb lépéseit a játék végéig. Így megkapjuk az utat ami a mi győzelmünkhöz vagyis legalább az éppen legjobb elérhető eredményhez vezet. Ez nem feltétlen célravezető, hiszen mi történik akkor, ha az ellenfél végül nem azt a lépést lépi valamilyen okból? (Lehet, hogy az ő algoritmusa jobb vagy rosszabb, mint a mienk. Lehet, hogy más kiértékelőfüggvényt használ, stb.) Ekkor azt látjuk, hogy a sok munka, amellyel felépítettük az utat, kárba vész. Ezért nem érdemes az egész utat felépíteni, elég csak annyit elvárni tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása. Mivel nem fogjuk bejárni az egész fát csak egy adott mélységig, ezért a lépések száma véges lesz, így már nem probléma ha a gráf nem fa (azaz van benne kör), így a probléma nem is biztos, hogy létezik.
+Tegyük fel, hogy van egy algoritmusunk, amely kiszámítja a saját és az ellenfél legmegfelelőbb lépéseit a játék végéig. Így megkapjuk az utat ami a mi győzelmünkhöz vagy legalább az éppen legjobb elérhető eredményhez vezet. Ez nem feltétlen célravezető, hiszen mi történik akkor, ha az ellenfél végül nem azt a lépést lépi valamilyen okból? (Lehet, hogy az ő algoritmusa jobb vagy rosszabb, mint a mienk. Lehet, hogy más kiértékelőfüggvényt használ, stb.) Ekkor azt látjuk, hogy a sok munka, amellyel felépítettük az utat, kárba vész. Ezért nem érdemes az egész utat felépíteni, elég csak annyit elvárni tőle, hogy adjon egy javaslatot a következő lépésre. Természetesen a "hogyan" kérdésre a válasz lehet elég bonyolult is (minimax-, alfa-béta-, genetikus- és tanuló-algoritmusok trükkös heurisztikákkal), de a vége ugyanaz: egy lehetőleg legoptimálisabb lépés kiszámítása. Mivel nem fogjuk bejárni az egész fát csak egy adott mélységig, ezért a lépések száma véges lesz, így már nem probléma ha a gráf nem fa (azaz van benne kör), tehát a probléma nem is biztos, hogy létezik.
 
 \subsection{Infrastruktúra}
 A bevezetőben már volt róla szó: mivel kérés-válasz párokra épül maga az eredeti játék is, ezért egy RESTful szolgáltatás építése tünik a legmegfelelőbbnek amely JSON-ban kommunikál. Ez azért is lesz jó, mivel így bármilyen platformon viszonylag könnyű lesz hozzá klienst írni illetve mivel iparági-sztenderd, így könnyű hozzá könyvtárakat letölteni és használni.
@@ -340,13 +350,13 @@ A szerver rendelkezik egy felhasználói felülettel, ahol a regisztráció és 
 
 \subsubsection{Humán- és botkliens}
 A két fajta kliens nem tér el túlságosan, mindkettőben kell támogatni a beléptetést, nyomonkövetést, játékinformációk szinkronizációját. Amiben viszont eltérnek az, hogy mekkora önállóságuk van. A humánkliensnél a lépéseket az emberi felhasználó határozza meg, míg a botkliensnél egy algoritmus. Adódhat az ötlet, hogy a más felhasználók kihívását is automatizáljuk, de ezt előzetes próbálgatások alapján elég nehéz úgy beállítani, hogy ne árasszák el a botok játékkérésekkel a játékosokat, így ez a funkció is maradhat az emberi felhasználónál. A botkliensekből legyen lehetőség kézzel kihívni másokat, de ne tegye automatikusan. Természetesen emberi játékosok kihívhatják a botokat, azok onnantól kezdve automatikusan kell, hogy válaszoljanak a felkérésekre.
-Fontos kitétel a klienseknél, hogy nem szabad leállniuk egy-egy kérésnél. Minden folyamatnak aszinkron kell történnie.
-Másik fontos kitétel, hogy nem szabad a klienseknek kivételt dobniuk, hanem le kell tudniuk logolni.
+Fontos kitétel a klienseknél, hogy nem szabad leállniuk egy-egy kérésnél. Minden folyamatnak aszinkron kell történnie, illetve
+nem szabad a klienseknek kivételt dobniuk, hanem le kell tudniuk logolni.
 
 
 \newpage
 \section{Tervezés}
-\subsection{Játék-reprezentáció}
+\subsection{Reprezentáció}
 
 \subsubsection{Egy általános táblás játék reprezentációja}
 
@@ -371,10 +381,9 @@ A \texttt{Game} osztály a "játékmester", ő az, aki a szabályok szerint mód
 	\label{fig:boardGameAbstractClassDiagram}
 \end{figure}
 
-A \texttt{Generate()} függvény azért van kiszürkítve az ábrán, mert egy játék lehetséges lépései nem fetétlen diszkrét értékek egy véges halmaza. Szigorúan véve csak azt kell megkövetelni a \texttt{Game} osztálytól, hogy el tudja dönteni egy bejövő lépésről, hogy az érvényes-e. A lépések kigenerálása inkább csak a mesterséges intelligencia algoritmusának "jöhetne jól".
+A \texttt{Generate()} függvény azért van kiszürkítve az ábrán, mert egy játék lehetséges lépései nem feltétlen diszkrét értékek egy véges halmaza. Szigorúan véve csak azt kell megkövetelni a \texttt{Game} osztálytól, hogy el tudja dönteni egy bejövő lépésről, hogy az érvényes-e. A lépések kigenerálása inkább csak a mesterséges intelligencia algoritmusának "jöhetne jól".
 
 \subsubsection{Sakk reprezentáció}
-
 A sakk is két fő részből áll: reprezentáció és játékmechanika. Ezeket a \texttt{ChessBoard} és a \texttt{ChessGame} osztályok valósítják meg. (Lásd: \ref{fig:chessClassDiagram}. ábra.)
 
 \begin{figure}[htbp]
@@ -386,7 +395,7 @@ A sakk is két fő részből áll: reprezentáció és játékmechanika. Ezeket 
 
 A \texttt{ChessBoard} osztály önmagában csak reprezentál, minden \textit{property} írható és olvasható. Tartalmazza a játékosok listáját (fehér, fekete), a soronkövetkező játékost, az eddig megtett lépések listáját, illetve a tábla aktuális állapotát az előzőekben már említett jelzőkkel.
 
-A \texttt{ChessGame} osztály felelős a játék kezeléséért, betartja a szabályokat, segít a lehetséges lépések kigenerálásában, validációjában és végrehajtásában. Fontos, hogy a teljes szeparáltság miatt a \texttt{ChessGame} osztálynak kizárólag egy számára átadott \texttt{ChessBoard} osztályból tudnia kell a lehetséges lépéseket, a parti állását, stb.
+A \texttt{ChessGame} osztály felelős a játék kezeléséért, betartja a szabályokat, segít a lehetséges lépések kigenerálásában, validációjában és végrehajtásában. Fontos, hogy a teljes szeparáltság miatt a \texttt{ChessGame} osztálynak kizárólag egy számára átadott \texttt{ChessRepresentation} osztályból tudnia kell a lehetséges lépéseket, a parti állását, stb.
 
 Felmerülhet, hogy miért nincs egyben ez a két osztály. Ennek több oka van:
 
@@ -405,8 +414,90 @@ Felmerülhet, hogy miért nincs egyben ez a két osztály. Ennek több oka van:
 \end{itemize}
 
 \subsection{Algoritmusok}
-asdf
+Az algoritmus interfésze nem bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
+	\caption{Absztrakt algoritmus interface és függőségei}
+	\label{fig:algorithmAbstractDiagram}
+\end{figure}
+
+A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez három dolog kell:
+
+\begin{itemize}
+	\item \textbf{Lépés-generátor} \\
+	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell megadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. \footnote{Olyan is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése, vagy diszkrét, de végtelen számosságú lehetséges lépése létezhet, tehát nem kigenerálható az összes. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.}
+	
+	\item \textbf{Kiértékelő} \\
+	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
+	
+	
+	\item \textbf{Alkalmazó} \\
+	Ez az osztály hivatott módosítani a reprezentációt, valójában egy "wrapper" osztály a valódi "játékmester osztályhoz".
+\end{itemize}
+
+Ezek alapján már implementálhatóak az absztrakt algoritmusok. A dolgozatban öt algoritmus van implementálva:
+\begin{itemize}
+	\item Véletlen algoritmus
+	\item Mohó algoritmus
+	\item Minimax algoritmus
+	\item Átlagoló-minimax algoritmus
+	\item Alfa-béta algoritmus
+\end{itemize}
+
+Végül ezek közül fognak egyet-egyet alkalmazni a botok és fognak egymás és emberi-ellenfeleik ellen sakkozni. \textit{Tegyék meg tétjeiket, Uraim!}
+
+\subsubsection{A generátor interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza visszaadja a lehetséges lépések (egy) halmazát. Az implementációkor alkalmazható egy kis trükk, amely jól fog jönni az alfa-béta algoritmus alkalmazásakor: olyan sorrendbe adjuk vissza a lépéseket, hogy előre vesszük az ütéseket, aztán a tisztmozgásokat, végül az előrelépéseket és a végére hagyva a visszalépéseket. Ezáltal az alfa-béta algoritmus várhatóan jóval több vágást tud elvégezni, mintha össze-vissza, vagy pont fordított sorrendben vizsgálná a lépések hatásait. (Egy kedvező és egy kedvezőtlen esetet láthatunk a \ref{fig:alphabeta_examples} ábrán. Generátor interface: \ref{lst:algorithm_generator_code}. kódrészlet.)
+
+\begin{lstlisting}[caption=A generátor interface, label=lst:algorithm_generator_code]
+public interface IGenerator<TState, TMove>
+{
+	IEnumerable<TMove> Generate(TState state);
+}
+\end{lstlisting}
+
+
+\subsubsection{Az alkalmazó interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza a megadott lépést és visszaadja az új állapotot. (\ref{lst:algorithm_applier_code}. kódrészlet.)
+
+\begin{lstlisting}[caption=Az alkalmazó interface, label=lst:algorithm_applier_code]
+public interface IApplier<TState, TMove>
+{
+	TState Apply(TState state, TMove move);
+}
+\end{lstlisting}
+
+\subsubsection{A kiértékelő interface} egyetlen függvénnyel rendelkezik, a megadott állapotra ad egy pontértéket az aktuális játékos szemszögéből. Extremális elemek az \texttt{int.MaxValue} és az \texttt{int.MinValue}. (\ref{lst:algorithm_evaluator_code}. kódrészlet.)
+
+\begin{lstlisting}[caption=A kiértékelő interface, label=lst:algorithm_evaluator_code]
+public interface IEvaluator<TState>
+{
+	int Evaluate(TState state);
+}
+\end{lstlisting}
+
+
+
 \subsection{Infrastruktúra}
+\subsubsection{.NET Core}
+Az infrastruktúra (és az egész projekt) alapjául a .NET Core 2.1-es verzióját választottam. Ez azért tünt jó választásnak, mivel akár cross-platform is lehet, így például a szervert fel lehet telepíteni egy Linux-os környezetre is.
+
+\subsubsection{Adatbázis}
+Az adatbázis felhasználók regisztrációját és beléptetését kezelő része adott, hiszen része a Microsoft .NET Core MVC alapbeállításainak, így csak a hozzá kapcsolódó és magával a sakkal foglalkozó részt kell megtervezni. Ez EF Core használata miatt elég egyszerű, hiszen C# osztályokból épít sémát, amelyet ha módosítás történik, karban is tud tartani. A \ref{fig:dbdiagram} ábrán láthatók a táblák és kapcsolataik.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{img/dbdiagram.png}
+	\caption{Adatbázis diagram}
+	\label{fig:dbdiagram}
+\end{figure}
+
+A \texttt{ChessGame} tábla tartalmazza a partikat. Ehhez kapcsolódik a \texttt{ChessMoves} tábla, amely magukat a lépéseket tartalmazza.
+
+Az \texttt{AspNetUsers} tábla tartalmazza a regisztrált felhasználókat, illetve ide vannak bekötve a \texttt{ChessGame} tábla olyan mezői is, mint \texttt{Opponent}, \texttt{BlackPlayer}, \texttt{WhitePlayer} és az \texttt{InitiatedBy}.
+
+A kötések \texttt{FOREIGN KEY}-ek így biztosítják az adatbázis konzisztenciáját. (Nem lehet törölni egy entitást addig, amíg van rá hivatkozás.)
+
 \subsubsection{Kommunikáció a szerver és a kliensek között}
 A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
 
@@ -643,23 +734,23 @@ A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a 
 [Route("api/Health")]
 public class HealthController : Controller
 {
-/// <summary>
-/// Health check. Returns the version number of the service.
-/// </summary>
-/// <returns>The version information of the service.</returns>
-[ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-[HttpGet]
-public async Task<IActionResult> Get()
-{
-var version = Microsoft.Extensions
-.PlatformAbstractions
-.PlatformServices
-.Default
-.Application
-.ApplicationVersion;
+	/// <summary>
+	/// Health check. Returns the version number of the service.
+	/// </summary>
+	/// <returns>The version information of the service.</returns>
+	[ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+	[HttpGet]
+	public async Task<IActionResult> Get()
+	{
+		var version = Microsoft.Extensions
+						.PlatformAbstractions
+						.PlatformServices
+						.Default
+						.Application
+						.ApplicationVersion;
 
-return Ok(version);
-}
+		return Ok(version);
+	}
 }
 \end{lstlisting}
 
@@ -1127,7 +1218,7 @@ A terveken nincs kiemelve, de mindkét kliensben van egy \textbf{Log} és egy \t
 \newpage
 \section{Megvalósítás}
 
-\subsection{Játék-reprezentáció}
+\subsection{Reprezentáció}
 A sakktáblát reprezentáló \texttt{ChessBoard} osztály az előzőekben részletezett alapelveknek felel meg. (Lásd.: \ref{lst:chessboard_code} kódrészlet.)
 \begin{itemize}
 	\item \textbf{Reprezentálja a táblát.}
@@ -1330,73 +1421,84 @@ Az \texttt{ApplyMove} függvény végrehajtja a megfelelő módosításokat a t�
 
 \newpage
 \subsection{Algoritmusok}
-Ezért az algoritmus interfésze nem is bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
-	\caption{Absztrakt algoritmus interface és függőségei}
-	\label{fig:algorithmAbstractDiagram}
-\end{figure}
+\subsubsection{Véletlen algoritmus}
+A lehetséges lépések közül véletlenszerűen választ egyet. Kódja nagyon egyszerű, ezt mutatja a \ref{lst:random_code} kódrészlet. Igazából csak az elején hasznos, amikor sokat akarjuk tesztelni a koncepciónkat.
 
-A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez két dolog kell:
-
-\begin{itemize}
-	\item \textbf{Lépés-generátor} \\
-	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell megadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. \footnote{Olyan is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése, vagy diszkrét, de végtelen számosságú lehetséges lépése létezhet, tehát nem kigenerálható az összes. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.}
+\begin{lstlisting}[caption=Véletlen algoritmus, label=lst:random_code, float]
+public class RandomAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
+where TMove : class
+{
+	private readonly IGenerator<TState, TMove> _moveGenerator;
 	
-	\item \textbf{Kiértékelő} \\
-	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
-\end{itemize}
-
-Ezek alapján már implementálhatóak az absztrakt algoritmusok. A dolgozatban öt algoritmus van implementálva:
-\begin{itemize}
-	\item Random algoritmus
-	\item Minimax algoritmus
-	\item Alfa-béta algoritmus
-	\item Átlagoló-minimax algoritmus
-	\item Mohó algoritmus
-\end{itemize}
-
-Végül ezeket fogja egy-egy bot alkalmazni és ezeket felhasználva fognak egymás ellen sakkozni. \textit{Tegyék meg tétjeiket, Uraim!}
-
-\subsubsection{Előfeltételek}
-A \ref{fig:algorithmAbstractDiagram}. ábrán látott interfész elég egyszerű, de a megvalósítás szempontjából több kell. Például mindenképp kell egy generátor, amely kigenerálja a lehetséges lépéseket, és kell egy \textit{alkalmazó} osztály is, amely a megadott lépést alkalmazva az aktuális játékállásra kiad egy új, a szabályoknak és a lépésnek megfelelő új állapotot. Mivel az algoritmusokat a lehető legáltalánosabban akarjuk megírni, ezért ezek interface-ét is definiálni kell.
-
-\paragraph{A generátor interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza visszaadja a lehetséges lépések (egy) halmazát. Az implementációkor alkalmazható egy kis trükk, amely jól fog jönni az alfa-béta algoritmus alkalmazásakor: olyan sorrendbe adjuk vissza a lépéseket, hogy előre vesszük az ütéseket, aztán a tisztmozgásokat, végül az előrelépéseket és a végére hagyva a visszalépéseket. Ezáltal az alfa-béta algoritmus várhatóan jóval több vágást tud elvégezni, mintha össze-vissza, vagy pont fordított sorrendben vizsgálná a lépések hatásait. (\ref{lst:algorithm_generator_code}. kódrészlet.)
-
-\begin{lstlisting}[caption=A generátor interface, label=lst:algorithm_generator_code]
-public interface IGenerator<TState, TMove>
-{
-	IEnumerable<TMove> Generate(TState state);
+	public RandomAlgorithm(IGenerator<TState, TMove> moveGenerator)
+	{
+		_moveGenerator = moveGenerator;
+	}
+	
+	/// <inheritdoc />
+	public TMove Calculate(TState state)
+	{
+		var moves = _moveGenerator.Generate(state).ToList();
+		
+		if (!moves.Any())
+		{
+			return null;
+		}
+		
+		System.Random rnd = new System.Random();
+		var randomMove = moves.OrderBy(x => rnd.Next()).First();
+		
+		return randomMove;
+	}
 }
 \end{lstlisting}
 
+\subsubsection{Mohó algoritmus}
+A mohó algoritmus csupán egy mélységig lát: kiértékeli a következő lehetséges állapotokat és a legnagyobb nyereség irányába megy. Ettől elég agresszív, de csak pár lépésig előnyös, mert mindent feláldoz, akár egy királynőt egy gyalogért. Kódja viszont nagyon egyszerű, ezt mutatja a \ref{lst:greedy_code} kódrészlet.
 
-\paragraph{Az alkalmazó interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza a megadott lépést és visszaadja az új állapotot. (\ref{lst:algorithm_applier_code}. kódrészlet.)
-
-\begin{lstlisting}[caption=Az alkalmazó interface, label=lst:algorithm_applier_code]
-public interface IApplier<TState, TMove>
+\begin{lstlisting}[caption=Mohó algoritmus, label=lst:greedy_code, float]
+public class GreedyAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
+where TMove : class
 {
-	TState Apply(TState state, TMove move);
+	private readonly IEvaluator<TState> _evaluator;
+	private readonly IGenerator<TState, TMove> _moveGenerator;
+	private readonly IApplier<TState, TMove> _moveApplier;
+	
+	public GreedyAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+	{
+		_evaluator = evaluator;
+		_moveGenerator = moveGenerator;
+		_moveApplier = applier;
+	}
+	
+	/// <inheritdoc />
+	public TMove Calculate(TState state)
+	{
+		var moves = _moveGenerator.Generate(state).ToList();
+		
+		if (!moves.Any())
+		{
+			return null;
+		}
+		
+		var movesAndValues = moves.Select(move => new
+		{
+			Move = move,
+			Value = _evaluator.Evaluate(_moveApplier.Apply(state, move))
+		}).ToList();
+		
+		var min = movesAndValues.Min(x => x.Value);
+		
+		var result = movesAndValues.First(x => Equals(x.Value, min)).Move;
+		
+		return result;
+	}
 }
 \end{lstlisting}
-
-\paragraph{A kiértékelő interface} egyetlen függvénnyel rendelkezik, a megadott állapotra ad egy pontértéket az aktuális játékos szemszögéből. Extremális elemek az \texttt{int.MaxValue} és az \texttt{int.MinValue}. (\ref{lst:algorithm_evaluator_code}. kódrészlet.)
-
-\begin{lstlisting}[caption=A kiértékelő interface, label=lst:algorithm_evaluator_code]
-public interface IEvaluator<TState>
-{
-	int Evaluate(TState state);
-}
-\end{lstlisting}
-
-
-
-\subsection{Az algoritmusok}
 
 \subsubsection{A Minimax algoritmus}
-Ennek megfelelően implementálható a Minimax algoritmus, mely absztrakd UML diagramja \ref{fig:minimaxAbstractDiagram}. ábrán látható.
+Most nézzük a Minimax algoritmust, mely absztrakt UML diagramja \ref{fig:minimaxAbstractDiagram}. ábrán látható.
 
 \begin{figure}[htbp]
 	\centering
@@ -1405,79 +1507,106 @@ Ennek megfelelően implementálható a Minimax algoritmus, mely absztrakd UML di
 	\label{fig:minimaxAbstractDiagram}
 \end{figure}
 
-A minimax algoritmus implementációját a \ref{lst:minimax_code}. kódrészlet mutatja. Ez egyben egy példa is az előzőekben felvázolt \textit{kiértékelő}, \textit{alkalmazó}, és \textit{generátor} függőségek használatára is.
+A minimax algoritmus implementációjának lényegét a \ref{lst:minimax_code}. kódrészlet mutatja. Ez egyben egy példa is az előzőekben felvázolt \textit{kiértékelő}, \textit{alkalmazó}, és \textit{generátor} függőségek használatára is.
 
 \begin{lstlisting}[caption=Minimax (egszerűsített) kódja, label=lst:minimax_code, float]
-public class MinimaxAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
-	where TMove : class
-{
-	private int _maxDepth;
-	
-	protected readonly IEvaluator<TState> _evaluator;
-	protected readonly IGenerator<TState, TMove> _moveGenerator;
-	protected readonly IApplier<TState, TMove> _moveApplier;
-	
-	public MinimaxAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+	private MoveAndValue<TMove> MiniMaxEvaluate(TMove moveToNode, TState node, bool isMaximizingNode, int depth)
 	{
-		_evaluator = evaluator;
-		_moveGenerator = moveGenerator;
-		_moveApplier = applier;
-		_maxDepth = 3;
-	}
-	
-	public int MaxDepth { get; set; }
-	
-	public TMove Calculate(TState state)
-	{
-		var moves = _moveGenerator.Generate(state);
-	
-		if(!moves.Any())
+		var possibleMoves = _moveGenerator.Generate(node).ToArray();
+		var nodeIsLeaf = depth == MaxDepth || !possibleMoves.Any();
+
+		if (nodeIsLeaf)
 		{
-			return null;
+			var value = Evaluate(node, isMaximizingNode);
+			return new MoveAndValue<TMove>(moveToNode, value);
 		}
-		
-		var movesAndValues = moves.Select(move => new
+
+		if (isMaximizingNode)
 		{
-			Move = move,
-			Value = Calculate(_moveApplier.Apply(state, move), 1, false)
-		});
+			var value = new MoveAndValue<TMove>(null, int.MinValue);
 		
-		return movesAndValues.OrderByDescending(x => x.Value).First().Move;
-	}
-	
-	private int Calculate(TState state, int depth, bool maximize)
-	{
-		if (depth == MaxDepth)
-		{
-			return _evaluator.Evaluate(state);
+			foreach (var possibleMove in possibleMoves)
+			{
+				var nextNode = _moveApplier.Apply(node, possibleMove);
+				value = MoveAndValue<TMove>.Max(MiniMaxEvaluate(possibleMove, nextNode, false, depth + 1), value);
+			}
+		
+			return moveToNode == null ? value : new MoveAndValue<TMove>(moveToNode, value.Value);
 		}
-		
-		var nextMoves = _moveGenerator.Generate(state).ToList();
-		var isLeaf = !nextMoves.Any();
-		
-		if(isLeaf)
+
+		if (!isMaximizingNode)
 		{
-			return _evaluator.Evaluate(state);
+			var value = new MoveAndValue<TMove>(null, int.MaxValue);
+		
+			foreach (var possibleMove in possibleMoves)
+			{
+				var nextNode = _moveApplier.Apply(node, possibleMove);
+				value = MoveAndValue<TMove>.Min(MiniMaxEvaluate(possibleMove, nextNode, false, depth + 1), value);
+			}
+		
+			return moveToNode == null ? value : new MoveAndValue<TMove>(moveToNode, value.Value);
 		}
-		
-		var childrenValues = nextMoves.Select(x => _moveApplier.Apply(state, x))
-		.Select(x => Calculate(x, depth + 1, !maximize))
-		.ToList();
-		
-		return maximize
-		       ? childrenValues.Union(new[] { int.MinValue }).Max()
-               : childrenValues.Union(new[] { int.MaxValue }).Min();
+
+		return null;
 	}
 }
 \end{lstlisting}
 
+A lényeg az, hogy az első lépésben feljegyezzük, hogy mely irányba indult el az algoritmus, hiszen csak ez érdekel minket. Ezen irányokban "lefelé" továbbítjuk ezt az információt, és amikor elérünk a levelekhez, akkor az algoritmus alapján kiszámoljuk a maximumokat/minimumokat, és a legfelső csúcsba visszajutva láthatjuk, hogy mely irányba indulva volt jobb a választás.
+
+Ezt az összehasonlítást a \texttt{MoveAndValue<TMove>} tipus végzi el, amelynek kódját a \ref{lst:minimax_comparison} mutatja. 
+
+\begin{lstlisting}[caption=Minimax összehasonlítás, label=lst:minimax_comparison, float]
+internal class MoveAndValue<TMove> : IComparable<MoveAndValue<TMove>>, IComparable
+{
+	public static MoveAndValue<TMove> Max(params MoveAndValue<TMove>[] values)
+	{
+		return values.OrderByDescending(x => x).First();
+	}
+	
+	public static MoveAndValue<TMove> Min(params MoveAndValue<TMove>[] values)
+	{
+		return values.OrderBy(x => x).First();
+	}
+	/* ... */
+}
+\end{lstlisting}
+
+Amint látható, veszik az átadott értékek listáját és kiválasztja belőle a legnagyobbat/legkisebbet. Ezt az értéket használja végül az algoritmus, habár eldobja magát az irányt (a lépést), mivel csak az érték érdekli.
+
+\subsubsection{Átlagoló Minimax algoritmus}
+Ezzel szemben érdekes megnézni a Minimax-átlagoló eljárást, miben különbözik. (\ref{lst:minimax_avg_comparison} kódrészlet.)
+
+\begin{lstlisting}[caption=Minimax-átlagoló összehasonlítás, label=lst:minimax_avg_comparison, float]
+internal class MoveAndValue<TMove> : IComparable<MoveAndValue<TMove>>, IComparable
+{
+	public static MoveAndValue<TMove> MaxAverage(params MoveAndValue<TMove>[] values)
+	{
+		var average = values.Average(x => x.Value);
+		var move = values.OrderByDescending(x => x).First().Move;
+		return new MoveAndValue<TMove>(move, (int)Math.Round(average));
+	}
+	
+	public static MoveAndValue<TMove> MinAverage(params MoveAndValue<TMove>[] values)
+	{
+		var average = values.Average(x => x.Value);
+		var move = values.OrderBy(x => x).First().Move;
+		return new MoveAndValue<TMove>(move, (int)Math.Round(average));
+	}
+	
+	/* ... */
+}
+\end{lstlisting}
+
+Amint látható itt a kód a habár a legnagyobb/legkisebb értékkel rendelkező lépést adja vissza, de nem az ő értékét, hanem a megadott lépések átlagát. Magának az algoritmusnak is kicsit más a kódja a más függvénynevek miatt, de a váz ugyanaz.
+
 \subsubsection{Alfa-béta algoritmus}
-Az alfa-béta algoritmus felépítése nagyon hasonló a minimax kódjához, a különbséges a \ref{lst:alphabeta_code}. kódrészlet tartalmazza, Absztrakt UML diagramja \ref{fig:alphabetaAbstractDiagram}. ábrán látható.
+Az alfa-béta algoritmus felépítése nagyon hasonló a minimax kódjához, a különbségek a \ref{lst:alphabeta_code}. kódrészlet tartalmazza, Absztrakt UML diagramja \ref{fig:alphaBetaAbstractDiagram}. ábrán látható.
 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.7\textwidth]{img/alphabetaAbstractDiagram.png}
-	\caption{MinimaxAlgorithm osztály}
+	\caption{AlphaBetaAlgorithm osztály}
 	\label{fig:alphaBetaAbstractDiagram}
 \end{figure}
 
@@ -1554,83 +1683,109 @@ private int Calculate(TState state, int depth, int alpha, int beta, bool maximiz
 }
 \end{lstlisting}
 
-\subsubsection{Átlagoló Minimax algoritmus}
-\lipsum[1]
-\subsubsection{Mohó algoritmus}
-\lipsum[1]
-
-\subsection{Tesztelés}
-Unit-tesztekkel... \textbf{TODO: Esetek leírása.}
-\subsubsection{Minimax algoritmus}
-\lipsum[1]
-\subsubsection{Alfa-béta algoritmus}
-\lipsum[1]
-\subsubsection{Átlagoló Minimax algoritmus}
-\lipsum[1]
-\subsubsection{Mohó algoritmus}
-\lipsum[1]
-
-
-
-
-\newpage
-\section{Megvalósítás}
-adfasdfasdf
-
-
 
 
 \newpage
 \section{Tesztelés}
-\subsection{Sakk reprezentáció tesztelése}
+\subsection{Reprezentáció}
+A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Egy sakk-matt tesztelő példát láthatunk a \ref{lst:checkmate_test} kódrészletben.
 
+\begin{lstlisting}[caption=Sakk-matt detektálás teszt, label=lst:checkmate_test, float]
+[Fact]
+public void GameStateCheck_CheckMateTest_BlackWins()
+{
+	var expected = GameState.BlackWon;
+	
+	// Fool's mate
+	var game = new ChessRepresentationInitializer().Create();
+	var mechanism = new ChessMechanism();
+	var moves = new List<BaseMove>(4)
+	{
+		new ChessMove(ChessPlayer.White, Positions.G2, Positions.G4),
+		new ChessMove(ChessPlayer.Black, Positions.E7, Positions.E5),
+		new ChessMove(ChessPlayer.White, Positions.F2, Positions.F3),
+		new ChessMove(ChessPlayer.Black, Positions.D8, Positions.H4)
+	};
+	
+	foreach (var move in moves)
+	{
+		game = mechanism.ApplyMove(game, move);
+	}
+	
+	var actual = mechanism.GetGameState(game);
+	
+	Assert.Equal(expected, actual);
+}
+\end{lstlisting}
+
+\subsection{Külön vizsgálandó esetek}
+Főleg a különleges lépéseket kellett jól letesztelni. Például:
+\begin{itemize}
+	\item \textbf{Sáncolás} Nagyon szigorú szabályok vannak arra, mikor lehet sáncolni. Ezeket az eseteket végig kellett venni.
+	
+	\item \textbf{Sakk-matt} A tesztek között van két nevezetes sakk-matt szituáció: a suszter-matt és a bolond-matt. Egyiket a világos, a másikat a sötét játékos kaphatja.
+	
+	\item \textbf{Speciális lépések} Például Feladás, döntetlen felajánlása, stb.
+	
+	\item \textbf{En passant} En passant lépés tesztelése.
+	
+	\item \textbf{Promóció}Amikor a gyalog átér, akkor átváltozik egy tiszté.
+\end{itemize}
+
+\subsubsection{Visual Studio Visualizer}
+A unit-tesztek írása közben sok hiba jött elő és sokat közülük nehéz volt kijavítani, mert nagyon nehéz elképzelni, hogy mi is történik éppen. Ezért ki lett fejlesztve egy \textbf{Visualizer} a \texttt{ChessRepresentation} osztályhoz, amely beépül a Visual Studio-ba és ott ha debug közben rávisszük a kurzort az objektumra, akkor megnézhetjük vizuálisan is a sakktáblát, illetve oda-vissza lépkedhetünk a történetében is. Ez a projekt része, habár fordítás után be kell másolni a \texttt{C:\textbackslash Users\textbackslash FELHASZNÁLÓNÉV\textbackslash Documents\textbackslash Visual Studio 2017\textbackslash Visualizers\textbackslash} könyvtárba és egy VS újraindítás után már használható is. Ez látszik a \ref{fig:visualizer} ábrán.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/visualizer.png}
+	\caption{Visualizer működés közben, a súgó ablakával nyitva.}
+	\label{fig:visualizer}
+\end{figure}
+
+\subsubsection{Manuális tesztelés játék közben}
+Sok szituáció volt kipróbálva manuális játék közben is, ahol két klienst futtatva mindkettőbe bejelentkezve különböző szituációkat előidézbe teszteltem a játékot. Ezt end-to-end tesztnek is vehetjük, hiszen a játék-infrastruktúra minden elem le lett ezáltal tesztelve.
+
+\subsection{Algoritmusok}
+A tesztelés unit-teszteken keresztül történik, amelyben előre megadott adatokra azt kapjuk-e, amit elvárunk. Példa unit teszt látható a \ref{lst:greedy_test}. kódrészletben.
+
+\begin{lstlisting}[caption=Mohó-algoritmus teszt, label=lst:greedy_test, float]
+[Fact]
+public void Test1()
+{
+	var evaluator = new TestCase1.Evaluator();
+	var generator = new TestCase1.Generator();
+	var applier = new TestCase1.Applier();
+	var algorithm = new GreedyAlgorithm<TestCase1.State, TestCase1.Move>(evaluator, generator, applier);
+	
+	var initState = new TestCase1.State(0, 0);
+	
+	var move1 = algorithm.Calculate(initState);
+	var state2 = applier.Apply(initState, move1);
+	var move2 = algorithm.Calculate(state2);
+	
+	Assert.Equal('a', move1.Label);
+	Assert.Equal('d', move2.Label);
+}
+\end{lstlisting}
+
+Ezekkel a tesztekkel viszont az a probléma, hogy nagyon nehéz őket összeállítani: fel kell építeni egy reprezentációt, majd abban megírni egy kiértékelő osztályt, egy generátor osztályt. Rengeteg a hibalehetőség. Ezért inkább a manuális tesztek felé fordultam:
+Először a botokat eresztettem egymásnak és figyeltem, hogy lefagynak-e, rosszat lépnek-e, megeszik-e a memóriát és a CPU-t. Végül elkezdtem ellenük játszani és habár nem lettek túl jók, azért néha tudtak meglepetést okozni.
+
+\subsection{Infrastruktúra}
+Az infrastruktúra tesztelését manuális játékkal illetve a botok közötti játékkal oldottam meg. Erre volt jó például a véletlen-algoritmus és a mohó-algoritmus, hiszen nagyon gyorsak, így elég sok lépést meg tudnak tenni viszonylag rövid idő alatt.
+
+
+\subsubsection{API}
 A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
 
+\subsubsection{Szerver UI}
+A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
 
+\subsubsection{Humánkliens}
+A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
 
-
-
-
-
-
-
-
-
-\subsection{Megvalósítás}
-\subsubsection{Szerver}
-\lipsum[1]
-
-\subsubsection{Játékkliens}
-\lipsum[2]
-
-\subsubsection{Botok}
-\lipsum[3]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Tesztelés}
-
-\subsubsection{Szerver}
-\lipsum[1]
-
-\subsubsection{Játékkliens}
-\lipsum[2]
-
-\subsubsection{Botok}
-\lipsum[3]
-
+\subsubsection{Botkliens}
+A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Ehhez készült el egy visualizer...
 
 
 
@@ -1687,9 +1842,10 @@ A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szit
 \section{Kliensek}
 \subsection{Játékkliens}
 \lipsum[1-2]
-\subsection{Bot kliensek}
+\subsection{Bot kliens}
 \lipsum[1-2]
-
+\section{Hibakeresés}
+\lipsum[1-2]
 
 
 
