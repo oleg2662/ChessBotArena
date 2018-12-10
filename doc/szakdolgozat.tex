@@ -2201,10 +2201,6 @@ Ezután Deep Blue-t továbbfejlesztették és ekkor már 3,5–2,5-re verte Kasp
 
 \section{Az algoritmusokról}
 
-\subsection{A Véletlenszerű algoritmus}
-Ez a legegyszerűbb algoritmus, csak azért került be, hogy minél hamarabb lássunk egy egyszerű de működő példát és a koncepciókat a fejlesztés legelején ki lehessen próbálni.
-A kigenerált lépések közül választ egyet véletlenszerűen.
-
 \subsection{A mohó algoritmus}
 A mohó algoritmusban habár már van logika, az nem feltétlen célravezető. A lehetséges lépések közül azt választja, amelyik a legnagyobb veszteséget okozza a következő körben az ellenfél játékosának. A mohó algoritmus nagy hibája, hogy meg fog találni egy lokális maximumot, de nem feltétlen találja meg a globális maximumot. Ezt egyébként onnan is lehet látni, hogy meglepően agresszíven játszik. Ha lehetséges, üt. Ha lehetséges, sakkot ad, és nem érdekli, hogy utána esetleg veszít egy tisztet.
 (Példát lásd \ref{fig:greedyAlgorithmExampleDangerous}. ábra.)
@@ -2231,15 +2227,11 @@ A minimax algoritmus egy általánosítása. (Avagy a minimax algoritmus az átl
 \subsubsection{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
 
 \subsection{Az alfa-béta algoritmus}
-Az alfa-béta algoritmus a minimax egy továbbgondolása. Megpróbálja levágni azokat az ágakat, amelyeket nem érdemes már vizsgálni. Ez jól jön a számítási-igény csökkentésénél.
-
-\textbf{TODO: Algoritmus kicsit mélyebb elemzése!}
+Az alfa-béta algoritmus a minimax egy továbbgondolása. Megpróbálja levágni azokat az ágakat, amelyeket nem érdemes már vizsgálni. Ez jól jön a számítási-igény csökkentésénél. Az esetek túlnyomó többségében ugyanazt az eredményt kell adnia, mint a minimax-algoritmusnak.
 
 \subsubsection{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk.Ekkor a legrosszabb esetben, amikor nem tudunk vágni és ezért minden terminális csúcsot ki kell értékelni, az algoritmus műveletigénye megegyezik a minimax algoritmuséval: $ \mathcal{O}(x^d)$.
 Azonban legjobb esetben, ha minden egyes esetben a számítás szemszögéből legjobb csúccsal kezdjük a kiértékelést, ez a műveletigény lecsökken: $\mathcal{O}(\sqrt{x^d})$.
 A tapasztalat azt mutatja, hogy az alfa-béta algoritmus legtöbbször ugyanazt az eredményt adja rögzített mélység esetén, mint a minimax algoritmus. Viszont sokkal hatékonyabb, így ha a csúcsok a "megfelelő sorrendben érkeznek kiértékelésre", akkor a keresőfa mélysége akár meg is duplázható. \\ (Összehasonlító ábrát lásd: \ref{fig:alphabeta_examples}. ábra.)
-
-\textbf{TODO: Jobb példát találni erre!}
 
 \begin{figure}[htbp]
 	\centering
