@@ -6,8 +6,9 @@
 \usepackage{arabtex}
 \usepackage{utf8}
 \usepackage[utf8]{inputenc}
+\usepackage[OT2, T1]{fontenc}
 \usepackage{arabtex}
-\usepackage[magyar]{babel}
+\usepackage[russian, english, magyar]{babel}
 \usepackage{bookman}
 \usepackage{thesis-style}
 \usepackage{graphicx,wrapfig}
@@ -85,6 +86,7 @@
 \date{\THESISDEFENCEYEAR}
 
 \begin{document}
+
 \raggedbottom
 \frontmatter
 \pagestyle{empty}
@@ -105,6 +107,7 @@
 \null
 \cleardoublepage
 % table of contents
+\renewcommand{\contentsname}{Tartalomjegyzék}
 \tableofcontents
 
 \pagestyle{plain}
@@ -1487,17 +1490,21 @@ Harmadik lépésben sorrendiséget határozhat meg. Ez például jól jöhet az 
 Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
 Egyetlen függvénnyel rendelkezik, a megadott állapotra ad egy pontértéket az aktuális játékos szemszögéből.
 
-\subsection{Véletlen-algoritmus}
-\noindent(\texttt{RandomAlgorithm} osztály) \\
+\subsection{Véletlen-algoritmus (\texttt{RandomAlgorithm} osztály)}
 A lehetséges lépések közül véletlenszerűen választ egyet. Működése nagyon egyszerű: nem végez kiértékelést, csak a lehetséges lépések közül választ egyet. Néha szerencséje van.
 Használata akkor javasolt, amikor egy gyors algoritmusra van szükségünk egy-egy új koncepció teszteléséhez, vagy a szerver teherbírásának kipróbálásakor sok adat generálásánál.
 
-\subsection{Mohó-algoritmus}
-\noindent(\texttt{GreedyAlgorithm} osztály) \\
-A másik egyszerű mesterséges intelligencia algoritmus. Ő már használ kiértékelést, és mindig a legjobbat (avagy az ellenfél szemszögéből legrosszabbat) választja. Feltünően agresszív, ám emiatt látható is a lokális-maximum keresés problémája: nem érdeklik a következmények, ha ütni lehet, akkor üt, még ha utána el is veszíti a bábut. 
+\subsection{A mohó algoritmus (\texttt{GreedyAlgorithm} osztály)}
+A mohó algoritmusban habár már van logika, az nem feltétlen célravezető. A lehetséges lépések közül azt választja, amelyik a legnagyobb veszteséget okozza a következő körben az ellenfél játékosának. A mohó algoritmus nagy hibája, hogy meg fog találni egy lokális maximumot, de nem feltétlen találja meg a globális maximumot. Ezt egyébként onnan is lehet látni, hogy meglepően agresszíven játszik. Ha lehetséges, üt. Ha lehetséges, sakkot ad, és nem érdekli, hogy utána esetleg veszít egy tisztet.
+(Példát lásd \ref{fig:greedyAlgorithmExampleDangerous}. ábra.)
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/greedyAlgorithmExampleDangerous.png}
+	\caption{Mohó algoritmus működése és ahogy tévútra vezet a lokális maximum.}
+	\label{fig:greedyAlgorithmExampleDangerous}
+\end{figure}
 
-\subsection{A Minimax algoritmus}
-\noindent(\texttt{MinimaxAlgorithm} osztály) \\
+\subsection{A minimax-algoritmus(\texttt{MinimaxAlgorithm} osztály)}
 Most nézzük a Minimax algoritmust, mely absztrakt UML diagramja \ref{fig:minimaxAbstractDiagram}. ábrán látható.
 
 \begin{figure}[htbp]
@@ -1507,14 +1514,26 @@ Most nézzük a Minimax algoritmust, mely absztrakt UML diagramja \ref{fig:minim
 	\label{fig:minimaxAbstractDiagram}
 \end{figure}
 
-\subsection{Átlagoló-Minimax algoritmus}
-\noindent(\texttt{MinimaxAverageAlgorithm} osztály) \\
-Ezzel szemben érdekes megnézni az Átlagoló-Minimax algoritmust miben különbözik. Igazából nem más, mint a minimax kiterjesztése, avagy a minimax az átlagoló-minimax egy speciális esete.
+A minimax algoritmus lényege, hogy a maximum-mélységben kiértékeli az állásokat, és ezeknek a maximumát illetve minimumát viszi tovább attól függően, hogy melyik szinten van. Első szint a MAX szint, ahol a következő szinten levő csomópontok közül abba az irányba indulunk el, amelyik a legkisebb, ezzel próbálva minimalizálni az ellenfél nyereségét. Következő szint a MIN szint lesz, ahonnan a legnagyobb értékű csomópont felé indulunk el, hogy maximalizáljuk a nyereséget. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
+\subsubsection*{Hatékonyság} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
 
-...
+\subsection{Az átlagoló eljárás (\texttt{MinimaxAverageAlgorithm} osztály)}
+A minimax algoritmus egy általánosítása. \textit{Avagy a minimax algoritmus az átlagoló eljárás egy speciális esete.} A probléma a statikus kiértékelő-függvényekkel az, hogy lehetetlen olyat megadni, amely megbízhatóan értékeli ki az állásokat. Lehet, hogy egy nagyon jónak ígérkező állásról kiderül, hogy csak egy "csapda" volt és onnan nehezebb vagy lehetetlen megnyerni a meccset. Erre a problémára adhat egy jobb megoldást az átlagoló eljárás. Az ötlet mögötte az, hogy míg az eredeti Minimax algoritmus mindig az aktuális csúcsból elérhető csúcsok minimumát vagy maximumát veszi, addig az átlagoló eljárás a kiterjesztett csúcsok értékeinek MAX szinten az $m$ legnagyobb átlagát, MIN szintjén az $n$ legkisebb átlagát veszi. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
 
-\subsection{Alfa-Béta algoritmus}
-\noindent(\texttt{AlphaBetaAlgorithm} osztály) \\
+Tehát ha úgy vesszük, akkor a minimax algoritmus nem más, mint az átlagoló-minimax $m=1$ és $n=1$ esetén.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/minimaxVsAverageExample.png}
+	\caption{Minimax és Átlagoló eljárás összehasonlítása\cite{bevMiHu}}
+	\label{fig:minimaxVsAverageExample}
+\end{figure}
+\subsubsection*{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
+
+\subsubsection*{Egy implementációs hatékonysági kérdés}
+Adja magát, hogy vajon érdemes-e külön minimax és átlagoló-minimax osztályt létrehozni, vagy pedig a minimax származhatna az átlagoló-minimax-ból. Jelen dolgozatban én szétválasztottam, mert az átlagoló-minimax-ban az $m$ és $n$ által megadott "kiválasztok pár elemet és átlagolom" kicsit több lépésnek tünt, mintha csak külön minimumot és maximumot venne az algoritmus. Illetve másik szemszögből a kód talán egyszerűbb és jobb látni a "sima" minimax-ot egy külön osztályban és azon keresztül vizsgálni.
+
+\subsection{Az alfa-béta algoritmus (\texttt{AlphaBetaAlgorithm} osztály)}
 Az alfa-béta algoritmus felépítése nagyon hasonló a minimax-ok felépítéséhez. Absztrakt UML diagramja \ref{fig:alphaBetaAbstractDiagram}. ábrán látható.
 
 \begin{figure}[htbp]
@@ -1523,7 +1542,37 @@ Az alfa-béta algoritmus felépítése nagyon hasonló a minimax-ok felépítés
 	\caption{AlphaBetaAlgorithm osztály}
 	\label{fig:alphaBetaAbstractDiagram}
 \end{figure}
- 
+Az alfa-béta algoritmus a minimax egy továbbgondolása. Megpróbálja levágni azokat az ágakat, amelyeket nem érdemes már vizsgálni. Ez jól jön a számítási-igény csökkentésénél. Az esetek túlnyomó többségében ugyanazt az eredményt kell adnia, mint a minimax-algoritmusnak.
+
+\subsubsection*{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk.Ekkor a legrosszabb esetben, amikor nem tudunk vágni és ezért minden terminális csúcsot ki kell értékelni, az algoritmus műveletigénye megegyezik a minimax algoritmuséval: $ \mathcal{O}(x^d)$.
+Azonban legjobb esetben, ha minden egyes esetben a számítás szemszögéből legjobb csúccsal kezdjük a kiértékelést, ez a műveletigény lecsökken: $\mathcal{O}(\sqrt{x^d})$.
+A tapasztalat azt mutatja, hogy az alfa-béta algoritmus legtöbbször ugyanazt az eredményt adja rögzített mélység esetén, mint a minimax algoritmus. Viszont sokkal hatékonyabb, így ha a csúcsok a "megfelelő sorrendben érkeznek kiértékelésre", akkor a keresőfa mélysége akár meg is duplázható. \\ (Összehasonlító ábrát lásd: \ref{fig:alphabeta_examples}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{img/alphabeta_examples.png}
+	\caption{Alfa-béta algoritmus számítási-igény változása a bejövő adatok sorrendjének függvényében.}
+	\label{fig:alphabeta_examples}
+\end{figure}
+
+\subsection{Egy érdekes végtelen ciklus}
+Vigyázni kell, mert az azonos kezdeti feltételek kombinálva azonos algoritmussal, max-mélységgel és kiértékelő függvénnyel egy végtelen játszmába vezethet. Előfordulhat, hogy a botok elkezdenek oda-vissza lépni és onnantól csak ezt a négy lépést ismételgetni. Ez a probléma a determenisztikus algoritmusoknál jöhet elő, mint például egy minimax-nál, ahol ugyanarra a bemenetre ugyanazzal a kiértékelő függvénnyel és mélységgel ugyanaz az eredmény fog kijönni a végén. Probléma lehet még például ha az egyik oldalon egy minimax, a másikon egy alfa-béta algoritmus fut, hiszen az esetek nagy többségében ezek az algoritmusok ugyanazt az eredményt adják, az alfa-béta csak a minimax egy gyorsítása.
+
+Tehát adott 3 paraméter: algoritmus, mélység, kiértékelő függvény. Ekkor hogy elkerüljük, a végtelen-csapdát a következőket tehetjük:
+\begin{itemize}
+	\item \textbf{Különböző kiértékelő függvény} \\ 
+	Azonos algoritmus és mélység-beállítás esetén a két botnak különböző kiértékelő függvénye legyen
+	
+	\item \textbf{Különböző algoritmusok} \\
+	Azonos mélység-beállítás és kiértékelő függvény esetén a két botnak ne ekvivalensen determinisztikus algoritmusa legyen. (Például ne legyen minimax és alfa-béta párosítás, de például megy minimax-minimax átlagoló már működhet.)
+	
+	\item \textbf{Maximális mélység-beállítás legyen különböző} \\
+	Azonos algoritmus és kiértékelő függvény esetén a maximális mélység-beállítás legyen különböző
+	
+	\item \textbf{Nem-determinisztikussá tétel} \\
+	Ha mindhárom azonos, akkor pedig lehet egy kis véletlenszerűséget becsempészni akár az algoritmusba, akár a kiértékelő-függvénybe.
+\end{itemize}
+
 \section{A kiszolgáló (\texttt{Service} projekt)}
 A bevezetőben már volt róla szó: mivel kérés-válasz párokra épül maga az eredeti játék is, ezért egy RESTful szolgáltatás építése tünik a legmegfelelőbbnek amely JSON-ban kommunikál. Ez azért is lesz jó, mivel így bármilyen platformon viszonylag könnyű lesz hozzá klienst írni illetve mivel iparági-sztenderd, így könnyű hozzá könyvtárakat letölteni és használni. Például a \textit{Visual Studio}-ban pár kattintással létrehozhatunk egy teljesértékű szolgáltatást egy példa végponttal, illetve felhasználó-regisztrációval, beléptetéssel.
 
@@ -1559,16 +1608,7 @@ Az \texttt{AspNetUsers} tábla tartalmazza a regisztrált felhasználókat, ille
 A kötések \texttt{FOREIGN KEY}-ek így biztosítják az adatbázis konzisztenciáját. (Nem lehet törölni egy entitást addig, amíg van rá hivatkozás.)
 
 \subsection{Kommunikáció a szerver és a kliensek között}
-A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=1.0\textwidth]{img/clientServerCommunication.png}
-	\caption{Kliens - szerver közötti kommunikáció sémája}
-	\label{fig:clientServerCommunication}
-\end{figure}
-
-Sikeres bejelentkezés során a szerver küld egy \texttt{JWT Token}-t, amelyt minden kérésnél a kliensnek mellékelnie kell a kérés fejlécében.
+A kommunikáció \textbf{JSON} üzenetek formájában, HTTP verb-ekkel és HTTP status kódokkal történik, ahogy a \ref{fig:clientServerCommunication} ábrán látható. Sikeres bejelentkezés során a szerver küld egy \texttt{JWT Token}-t, amelyt minden kérésnél a kliensnek mellékelnie kell a kérés fejlécében.
 
 \subsubsection{A JWT-token (egy) problémája}
 A JWT-token tartalmazza az érvényességi idejét. Alapvetően ez befolyásolja, hogy meddig használható fel, ezért amíg le nem jár, addig a szerver el is fogja fogadni. Ezért néha meg kell újítani, illetve nem visszavonható és módosítható alapból. Tehát például abban az esetben, ha egy token a következő fél órában még érvényes de a hozzá tartozó felhasználót ki akarjuk tiltani a szerverről, akkor egy "visszavonási lista" nélkül (vagy valami hasonló megoldással) ezt nem tudjuk megtenni.
@@ -1615,29 +1655,26 @@ public class HealthController : Controller
 A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.
 
 \section{Kliens-könyvtárak (\texttt{ServiceClient} projekt)}
-asdf
-\subsection{Az \texttt{Osztály neve} osztály}
-asdf
-\subsection{Az \texttt{Osztály neve} osztály}
-asdf
+A \texttt{ServiceClient} projektben találhatók azok az osztályok, amelyek segíthetik a fejlesztőt egy kliens írásában. Két főbb osztály van implementálva, az egyik közelebb van az API-hoz, abban segít, hogy könnyű legyen összeállítani a kéréseket. Ez a \texttt{ChessServiceClient} osztály. A másik "business object"-ként segít: ezen keresztül lehet vizsgálni az aktuális állapotát a játékos partijainak. Ezt valósítja meg a \texttt{ServiceConnection} osztály.
 
 \section{Két példakliens}
-asdf
 \subsection{Sakktábla megjelenítése (\texttt{ChessBoardGamePanel})}
-asdf
+A \texttt{ChessBoardGamePanel}-en keresztül lehet látni a játék aktuális állapotát és ezen keresztül lehet kiválasztani a következő lépést. \texttt{OnValidMoveSelected} eseménye akkor aktiválódik, amikor egy lépés ki lett jelölve.
+
 \subsection{A játékkliens (\texttt{HumanClient} projekt)}
-asdf
+A \texttt{ServiceConnection} osztályon keresztül kommunikál a szerverrel. Bizonyos időközönként frissíti a háttérben az állapotát és ha történt változás, akkor megmutatja azt.
+
 \subsection{A botkliens (\texttt{BotClient} projekt)}
-asdf
+A \texttt{ServiceConnection} osztályon keresztül kommunikál a szerverrel. Bekapcsolás után folyamatosan frissíti az állapotát és ha talál olyan játékot, amelyre válaszolhat, akkor a megadott paraméterekkel kigenerálja a választ.
 
 \section{Egyéb segédkönyvtárak (\texttt{Tools} projekt)}
-asdf
+E könyvtár tartalmazza azokat a komponenseket és alkalmazásokat, amelyek segítségével ki lehetett próbálni egy-egy új funkcionalitást a még készülő szoftverben.
+
 \subsection{A \texttt{ChessboardVisualizer} osztály}
-asdf
-\subsection{A \texttt{ChessServiceTestApp} alkalmazás}
-asdf
-\subsection{Az \texttt{OfflineBotTester} alkalmazás}
-asdf
+Tartalmazza a kódot a Visual Studio visualizer-hez. Sokat segít debug-olás közben, hiszen a segítségével lehet látni a sakktáblát és lehet navigálni a lépések között is.
+
+\subsection{Algoritmus és API tesztelő alkalmazások}
+Az \texttt{AlgorithmOfflineTester} és a \texttt{ChessServiceTestApp} alkalmazások a fejlesztés elején segítettek abban, hogy kipróbálhassuk: mennyire működőképes egy-egy elgondolás. További információk a függelékben \ref{proofOfConcept}.
 
 \newpage
 \chapter{Tesztelés}
@@ -1754,11 +1791,8 @@ public void Test1()
 Ezekkel a tesztekkel viszont az a probléma, hogy nagyon nehéz őket összeállítani: fel kell építeni egy reprezentációt, majd abban megírni egy kiértékelő osztályt, egy generátor osztályt. Rengeteg a hibalehetőség. Ezért inkább a manuális tesztek felé fordultam:
 Először a botokat eresztettem egymásnak és figyeltem, hogy lefagynak-e, rosszat lépnek-e, megeszik-e a memóriát és a CPU-t. Végül elkezdtem ellenük játszani és habár nem lettek túl jók, azért néha tudtak meglepetést okozni.
 
-
-
-\subsection{Infrastruktúra}
+\subsection{Szolgáltatás}
 Az infrastruktúra tesztelését manuális játékkal illetve a botok közötti játékkal lehetett kvázi-automatikusan tesztelni. Erre volt jó például a véletlen-algoritmus és a mohó-algoritmus, hiszen nagyon gyorsak, így elég sok lépést meg tudnak tenni viszonylag rövid idő alatt.
-
 
 \subsection{API}
 POSTMAN használatával történt az API hívások tesztelése. Mivel HTTP-n keresztül, JSON-ben megy a kommunikáció, ezért könnyű volt a különböző eseteket összállítani és letesztelni minden esetet. (Bad request, autentikációs probléma, stb.) Később a botok egymás elleni játéka illetve emberi játékosok egymás és botok elleni játéka által is tesztelve volt az API és fel is derített néhány hibát.
@@ -1768,7 +1802,7 @@ A szerver oldalon minimális UI van, ezért nincs szükség túl sok manuális t
 \begin{itemize}
 	\item Mi történik, ha nem megfelelő a megadott jelszó?
 	\item Mi történik, ha regisztrációkor az egyik megadott adat nem megfelelő?
-	\item elérhetők-e a letölthető file-ok és a dokumentáció?
+	\item Elérhetők-e a letölthető file-ok és a dokumentáció?
 \end{itemize}
 
 \section{Játékkliens}
@@ -1781,7 +1815,6 @@ Elejétől a végéig manuális teszteléssel.
 	\item Mi történik, ha a szerver leterhelt és lelassul?
 \end{itemize}
 
-
 \section{Botkliens}
 Az infrastruktúra tesztelésekor önmagát is tesztelte. Ugyanazon aspektusokból kellett tesztelni, mint a játékklienst.
 \begin{itemize}
@@ -1793,9 +1826,16 @@ Az infrastruktúra tesztelésekor önmagát is tesztelte. Ugyanazon aspektusokb�
 \end{itemize}
 
 \section{Megfigyelések}
+\subsection{Algoritmusok sebességkülönbsége}
+Az alfa-béta algoritmus egy jelentős gyorsítása a minimax algoritmusnak. Megfigyelések alapján körülbelül fele annyi idő kellett neki, hogy kiszámolja ugyanazt a mélységű eredményt. 
+
+\subsection{Hamis biztonságérzet}
+Nem megfelelő unit-teszt lefedettség mellett ha a tesztelendő algoritmusaink bonyolultak, akkor az adhat egy hamis-biztonságérzetet, hogy "ad valamilyen eredményt". Ez nagyon veszélyes, hiszen ha nincsenek letesztelve a szélsőséges esetek, akkor előfordulhat, hogy az algoritmus nemhogy rossz, hanem semmilyen eredményt sem fog adni.
+
+\subsection{Erőforráshiány}
 Egy idő után lehetetlenné vált a tesztelés a lokális gépen, mert a sok bot kliens, a service, az adatbázis szerver illetve a Visual Studio együttesen már annyira leterhelte a gépet, hogy lehetetlenné vált minden a munka a gépen. Ezért lett a project publikálva egy külső szerverre.
 
-\section{Murphy törvénye}
+\subsection{Murphy törvénye}
 Ami elromolhat, az el is romlik. Nincs száz százalékos bizonyosság sosem. Hiába a rengeteg manuális vagy automatikus teszt, a program valamely része mindig akkor és ott romlik el, amikor és ahol a legkevésbé számítunk rá, főleg ha egy olyan bonyolult rendszerről van szó, mint egy mesterséges intelligencia algoritmusáról, amely működése kívülálló szemszögéből nem egyértelmű. Megfigyelt jelenség, hogy a betonbiztosan működő szoftver is általában a megrendelő számára tartott bemutató előtt összeomlik. Ezért mindig legyen B-tervünk. És egy C.
 
 
@@ -1871,16 +1911,16 @@ A Török Kempelen Farkas által 1769-ben alkotott legendás sakkozógép volt, 
 
 A gép titka nem egy zseniális korát meghaladó "mechanikus mesterséges intelligencia" volt, hanem egy benne elrejtőző emberi kezelő. Ez a gyanú többször is felvetődött, de Kempelen a játszmák előtt felnyitva a gépet mutatta be, hogy nincs senki a gépben. Valójában az eléggé apró termetű kezelő el tudott bújni, amíg elöl illetve hátul is kinyitották a szerkezetet, hogy belenézhessenek. A gépet végül 1857-ben leplezte le nyíltan a The Chess Monthly című amerikai sakklap.\cite{MechanicalTurkHu}\cite{MechanicalTurkEn}\cite{CsodakKonyveHu}
 
-\section{Kaissa}
-Az 1950-es évektől kezdődően egyre több, egyre erősebb sakkprogramot írtak. 1947-ben készült el a világ első sakk-komputer programja, amelyet Alan Turing írt. 1974-ben volt az első sakkprogram-világbajnokság, ahol a győztes a szovjet Kaissza nevű program volt, amely 1974 és 1977 között uralta a nemzetközi számítógépes sakkot.\cite{chessProgramsHu}
+\section{Kaissza}
+Az 1950-es évektől kezdődően egyre több, egyre erősebb sakkprogramot írtak. 1947-ben készült el a világ első sakk-komputer programja, amelyet Alan Turing írt. 1974-ben volt az első sakkprogram-világbajnokság, ahol a győztes a szovjet Kaissza(\foreignlanguage{russian}{Kaissa}) nevű program volt, amely 1974 és 1977 között uralta a nemzetközi számítógépes sakkot.\cite{chessProgramsHu}
 
 1990-ben elkészíteték PC-s verzióját, amely a londoni számítógépes olimpián negyedik helyezett lett.\cite{KaissaEn}
-
+\newline \\
 \section{Deep Blue}
-\begin{wrapfigure}{r}{4cm}
+\begin{wrapfigure}{r}{5cm}
 	\caption{Deep Blue}
 	\label{fig:deepblue}
-	\includegraphics[width=4.0cm]{img/deepblue.jpg}
+	\includegraphics[width=5.0cm]{img/deepblue.jpg}
 \end{wrapfigure}
 A Deep Blue az IBM által körülbelül 20 millió dolláros költséggel kifejlesztett számítógépe, amely sakkjátékban 1997-ben egy szabályszerű hatjátszmás páros mérkőzésen New Yorkban legyőzte Garri Kaszparovot, az emberi sakkozás akkori világbajnokát.
 
@@ -1888,108 +1928,38 @@ Első meccs-győzelmét 1996 február 10.-én érte el a világbajnok ellen, de 
 
 Ezután Deep Blue-t továbbfejlesztették és ekkor már 3,5–2,5-re verte Kasparov-ot 1997 májusában, és ezzel az első számítógépes rendszer lett, amely meg tudta verni az aktuális sakk-világbajnokot a sakkbajnokságokra jellemző időmegszorítás mellett. Kasparov csalást gyanított, és követelt egy visszavágót, ám ebbe az IBM nem ment bele. \cite{DeepBlueHu}\cite{DeepBlueEn}
 
-\chapter{Néhány érdekesség az algoritmusokról}
-\section{A mohó algoritmus}
-A mohó algoritmusban habár már van logika, az nem feltétlen célravezető. A lehetséges lépések közül azt választja, amelyik a legnagyobb veszteséget okozza a következő körben az ellenfél játékosának. A mohó algoritmus nagy hibája, hogy meg fog találni egy lokális maximumot, de nem feltétlen találja meg a globális maximumot. Ezt egyébként onnan is lehet látni, hogy meglepően agresszíven játszik. Ha lehetséges, üt. Ha lehetséges, sakkot ad, és nem érdekli, hogy utána esetleg veszít egy tisztet.
-(Példát lásd \ref{fig:greedyAlgorithmExampleDangerous}. ábra.)
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{img/greedyAlgorithmExampleDangerous.png}
-	\caption{Mohó algoritmus működése és ahogy tévútra vezet a lokális maximum.}
-	\label{fig:greedyAlgorithmExampleDangerous}
-\end{figure}
-
-\section{A minimax-algoritmus}
-A minimax algoritmus lényege, hogy a legalsó szinten kiértékeli az állásokat, és ezeknek a maximumát illetve minimumát viszi tovább attól függően, hogy melyik szinten van. Első szint a MAX szint, ahol a következő szinten levő csomópontok közül abba az irányba indulunk el, amelyik a legkisebb, ezzel próbálva minimalizálni az ellenfél nyereségét. Következő szint a MIN szint lesz, ahonnan a legnagyobb értékű csomópont felé indulunk el, hogy maximalizáljuk a nyereséget. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
-\subsection{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
-
-\section{Az átlagoló eljárás}
-A minimax algoritmus egy általánosítása. (Avagy a minimax algoritmus az átlagoló eljárás egy speciális esete.) A probléma a statikus kiértékelő-függvényekkel az, hogy lehetetlen olyat megadni, amely megbízhatóan értékeli ki az állásokat. Lehet, hogy egy nagyon jónak ígérkező állásról kiderül, hogy csak egy "csapda" volt és onnan nehezebb vagy lehetetlen megnyerni a meccset. Erre a problémára adhat egy jobb megoldást az átlagoló eljárás. Az ötlet mögötte az, hogy míg az eredeti Minimax algoritmus mindig az aktuális csúcsból elérhető csúcsok minimumát vagy maximumát veszi, addig az átlagoló eljárás a kiterjesztett csúcsok értékeinek MAX szinten az m legnagyobb átlagát, MIN szintjén az n legkisebb átlagát veszi. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
+\chapter{Egyéb segédprogramok}\label{proofOfConcept}
+\section{Az algoritmus-teszter}
+Az algoritmusok egymás elleni tesztjében lehet segítség egy egyszerű alkalmazás, amelyben az algoritmusokat különböző beállításokkal egymásnak lehet engedni a szerver kihagyásával. Az alkalmazás nagyon egyszerű és nem "prodution ready". A solution-ben \texttt{OfflineAlgorithmTester} néven található, \ref{fig:offlineAlgorithmTester}. ábrán látható a főképernyője.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=\textwidth]{img/minimaxVsAverageExample.png}
-	\caption{Minimax és Átlagoló eljárás összehasonlítása\cite{bevMiHu}}
-	\label{fig:minimaxVsAverageExample}
+	\includegraphics[width=1.0\textwidth]{img/offlineAlgorithmTester.png}
+	\caption{Algoritmusok tesztelése egymás ellen}
+	\label{fig:offlineAlgorithmTester}
 \end{figure}
-\subsection{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
 
-\section{Az alfa-béta algoritmus}
-Az alfa-béta algoritmus a minimax egy továbbgondolása. Megpróbálja levágni azokat az ágakat, amelyeket nem érdemes már vizsgálni. Ez jól jön a számítási-igény csökkentésénél. Az esetek túlnyomó többségében ugyanazt az eredményt kell adnia, mint a minimax-algoritmusnak.
-
-\subsection{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk.Ekkor a legrosszabb esetben, amikor nem tudunk vágni és ezért minden terminális csúcsot ki kell értékelni, az algoritmus műveletigénye megegyezik a minimax algoritmuséval: $ \mathcal{O}(x^d)$.
-Azonban legjobb esetben, ha minden egyes esetben a számítás szemszögéből legjobb csúccsal kezdjük a kiértékelést, ez a műveletigény lecsökken: $\mathcal{O}(\sqrt{x^d})$.
-A tapasztalat azt mutatja, hogy az alfa-béta algoritmus legtöbbször ugyanazt az eredményt adja rögzített mélység esetén, mint a minimax algoritmus. Viszont sokkal hatékonyabb, így ha a csúcsok a "megfelelő sorrendben érkeznek kiértékelésre", akkor a keresőfa mélysége akár meg is duplázható. \\ (Összehasonlító ábrát lásd: \ref{fig:alphabeta_examples}. ábra.)
+\section{Szolgáltatást tesztelő alkalmazás}
+Még a fejlesztés elején készült, hogy ki lehessen próbálni az API-hívásokat, illetve lehessen elemezni a sakkjátszmákat. Ez sem "production-ready", a kódminősége is mutatja: inkább csak amolyan "proof-of-concept". A solution-ben \texttt{ChessServiceTestApp} néven található, \ref{fig:chessClientTesterApp}. ábrán látható a főképernyője.
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=\textwidth]{img/alphabeta_examples.png}
-	\caption{Alfa-béta algoritmus számítási-igény változása a bejövő adatok sorrendjének függvényében.}
-	\label{fig:alphabeta_examples}
+	\includegraphics[width=1.0\textwidth]{img/chessClientTesterApp.png}
+	\caption{A szolgáltatást tesztelő alkalmazás}
+	\label{fig:chessClientTesterApp}
 \end{figure}
 
-\section{Egy érdekes végtelen ciklus}
-Vigyázni kell, mert az azonos kezdeti feltételek kombinálva azonos algoritmussal, max-mélységgel és kiértékelő függvénnyel egy végtelen játszmába vezethet. Előfordulhat, hogy a botok elkezdenek oda-vissza lépni és onnantól csak ezt a négy lépést ismételgetni. Ez a probléma a determenisztikus algoritmusoknál jöhet elő, mint például egy minimax-nál, ahol ugyanarra a bemenetre ugyanazzal a kiértékelő függvénnyel és mélységgel ugyanaz az eredmény fog kijönni a végén. Probléma lehet még például ha az egyik oldalon egy minimax, a másikon egy alfa-béta algoritmus fut, hiszen az esetek nagy többségében ezek az algoritmusok ugyanazt az eredményt adják, az alfa-béta csak a minimax egy gyorsítása.
-
-Tehát adott 3 paraméter: algoritmus, mélység, kiértékelő függvény. Ekkor hogy elkerüljük, a végtelen-csapdát a következőket tehetjük:
-\begin{itemize}
-	\item \textbf{Különböző kiértékelő függvény} \\ 
-	Azonos algoritmus és mélység-beállítás esetén a két botnak különböző kiértékelő függvénye legyen
-	
-	\item \textbf{Különböző algoritmusok} \\
-	Azonos mélység-beállítás és kiértékelő függvény esetén a két botnak ne ekvivalensen determinisztikus algoritmusa legyen. (Például ne legyen minimax és alfa-béta párosítás, de például megy minimax-minimax átlagoló már működhet.)
-	
-	\item \textbf{Maximális mélység-beállítás legyen különböző} \\
-	Azonos algoritmus és kiértékelő függvény esetén a maximális mélység-beállítás legyen különböző
-	
-	\item \textbf{Nem-determinisztikussá tétel} \\
-	Ha mindhárom azonos, akkor pedig lehet egy kis véletlenszerűséget becsempészni akár az algoritmusba, akár a kiértékelő-függvénybe.
-\end{itemize}
+\section{"Proof of Concept"}
+Ezen programok jellemzője, hogy csak belső használatra készültek a programcsomag fejlesztésének elején, hogy minél előbb látszódjon, ha egy koncepció működik, vagy nem működik. Ezt hívjuk "\textbf{proof of concept}"-nek, avagy röviden "\textbf{POC}"-nek. Ezekkel szemben nem elvárás a jó kódminőség vagy a felhasználóbarátság, bár nem is tiltott természetesen. Célja az, hogy be lehessen mutatni: amit kitaláltunk az egy működőképes koncepció. Általában új termékek vagy ötletek bevezetésénél szoktak ilyet írni nagyon rövid idő alatt, így minimalizálva a veszteséget abban az esetben, ha a POC azt mutatja, hogy mégsem működhet a koncepció vagy a megrendelőnek nem tetszik.
 
 \section{Fordított CAPTCHA}
-Felmerült egy érdekes probléma a tervezés során. Minden ilyen rendszer fejlesztésekor gondolni kell a rosszindulatú felhasználásra, jelen esetben például arra, mi van akkor és hogy szűrhető ki, ha valaki csalni akar. Többféle módja van a csalásnak, azonban van két eset, amely külön érdekes:
-\subsection{Rossz sakkozó, de erős programozó}
+Felmerült egy érdekes probléma a kliensprogramok tervezése során. Minden ilyen rendszer fejlesztésekor gondolni kell a rosszindulatú felhasználásra, jelen esetben például arra, mi van akkor és hogy szűrhető ki, ha valaki csalni akar. Többféle módja van a csalásnak, azonban van két eset, amely külön érdekes:
+\subsection*{Rossz sakkozó, de erős programozó}
 Az egyik az, ha valaki nem jó sakkozó, de tud jó programot írni. Ekkor felmerülhet az ötlet, hogy amikor egy másik játékos ellen játszik, akkor erre az esetre ír egy programot, amelyikbe betáplálva a lépéseket az egy olyan lépést mutat, amit esetleg a játékos magától nem lépett volna, ezáltal hozzásegítve egy jobb helyezés eléréséhez.
 
 Ez a probléma nem ismeretlen a levelezési-sakk világban, és igazából elfogadják. Megfigyelések szerint jelentősen nem befolyásolja a játékok kimenetelét, inkább csak a különbséget csökkenti a kezdő és haladó játékosok között. \cite{corrChessHelpHu} Kérdés, hogy ez mennyire teszi tönkre a játékélményt, de ez inkább morális kérdés, mint a dolgozathoz szorosan kötődő technológiai.
 
-\subsection{Jó sakkozó, de gyenge programozó}A másik - és számunkra érdekesebb eset, - hogy mi van akkor, ha valaki jó sakkozó, de nem tud jó programot írni. Ekkor lehetséges az, hogy regisztrál egy bot felhasználói fiókot és azon keresztül játszik. Mivel mindenki a neten otthonról játszik, ezért itt sem ellenőrizhető, hogy a lépést egy bot vagy egy ember találta-e ki. A válasz erre talán egy \textbf{fordított CAPTCHA} lenne, amellyel lehetne ellenőrizni, hogy a lépéseket tényleg egy gépi intelligencia hozta-e meg, vagy egy ember. Hívhatjuk \textbf{fordított Turing-tesztnek} is. Vajon lehet-e olyan programot írni, amely eldönti egy interakcióról, hogy az géptől jön-e. Lehet-e a kaotikus emberi viselkedést majdnem pontosan detektálni és a szuperkomplex gépi interakciótól megkülönböztetni? Felismerhető-e, ha egy ember megpróbálja imitálni egy bot viselkedését?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsection*{Jó sakkozó, de gyenge programozó}A másik - és számunkra érdekesebb eset, - hogy mi van akkor, ha valaki jó sakkozó, de nem tud jó programot írni. Ekkor lehetséges az, hogy regisztrál egy bot felhasználói fiókot és azon keresztül játszik. Mivel mindenki a neten otthonról játszik, ezért itt sem ellenőrizhető, hogy a lépést egy bot vagy egy ember találta-e ki. A válasz erre talán egy \textbf{fordított CAPTCHA} lenne, amellyel lehetne ellenőrizni, hogy a lépéseket tényleg egy gépi intelligencia hozta-e meg, vagy egy ember. Hívhatjuk \textbf{fordított Turing-tesztnek} is. Vajon lehet-e olyan programot írni, amely eldönti egy interakcióról, hogy az géptől jön-e. Lehet-e a kaotikus emberi viselkedést majdnem pontosan detektálni és a szuperkomplex gépi interakciótól megkülönböztetni? Felismerhető-e, ha egy ember megpróbálja imitálni egy bot viselkedését?
 
 
 
@@ -2000,6 +1970,7 @@ Ez a probléma nem ismeretlen a levelezési-sakk világban, és igazából elfog
 \backmatter
 \bibliographystyle{unsrt}
 %\part{\bibname}
+%\renewcommand{\bibname}{Irodalomjegyzék}
 \bibliography{szakdolgozat}
 %\addcontentsline{toc}{part}{\bibname}
 %\printbibliography[heading=none]
