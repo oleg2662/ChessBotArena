@@ -129,6 +129,11 @@ namespace BoardGame.Tools.Common
             get => _chessRepresentation;
             set
             {
+                if (_chessRepresentation.Equals(value))
+                {
+                    return;
+                }
+
                 _chessRepresentation = value;
                 ResetSelection();
                 Refresh();
