@@ -106,9 +106,6 @@
 \cleardoublepage
 % table of contents
 \tableofcontents
-%\listoffigures
-%\listoftables
-%\lstlistoflistings
 
 \pagestyle{plain}
 \setcounter{page}{1}
@@ -116,48 +113,10 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\mainmatter
-
 % ============================================================================================================
 % === ÖSSZEFOGLALÁS ==========================================================================================
 % ============================================================================================================
+\mainmatter
 \newpage
 \part{Bevezető}
 \chapter{A dolgozatról}
@@ -172,44 +131,6 @@ A dolgozat "mellékterméke" egy olyan \textit{API interface}, melyhez kapcsoló
 A dolgozat három fő részből áll: jelen bevezető, a fejlesztői és a felhasználói dokumentáció.
 A fejlesztői dokumentáció négy fő részre tagozódik: \textbf{"elemzés"}, \textbf{"tervezés"}, \textbf{"megvalósítás"} és \textbf{"tesztelés"} - míg a felhasználói dokumentáció a programcsomag alkalmazásai mentén van szétvágva, és mindegyiknél szót ejt a \textbf{telepítésről}, \textbf{használatról} illetve a \textbf{karbantartásról}.
 A dolgozat végén kiegészítésként a függelék tartalmaz néhány a megértést segítő információt a dolgozattal kapcsolatban, illetve néhány érdekességet, tapasztalatokat.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -264,16 +185,6 @@ Ha minden jól megy, akkor a böngészőben meg kell jelennie a frontend-nek: \\
 	\item IISRESET futtatása adminisztátori parancssorban
 	\item Windows Event Viewer tartalmazhat információt a hiba forrásáról
 \end{itemize}
-
-
-%\begin{figure}[htbp]
-%	\centering
-%	\includegraphics[width=1.0\textwidth]{img/server_dev_run_1.png}
-%	\caption{Service startup projektként beállítása.}
-%	\label{fig:server_dev_run_1}
-%\end{figure}
-
-
 
 \subsection{Távoli szerverre}
 \noindent \textbf{1.} Solution megnyitása Visual Studio-ban \\
@@ -360,43 +271,6 @@ A "With Installer" verzió tartalmazza a telepítőt, amely installálja a .NET 
 	\item Néha a szerver leáll ha sokáig nem érkezett kérés. Ekkor az első kérés eltarthat egy ideig. A kliensnek le kell kezelnie ezt a problémát. Ha mégsem sikerül, akkor később újra probálkozik a frissítéssel.
 	\item Ha végképp nem érkezik válasz, akkor érdemes megnyitni a szerver weboldalát. Ha az nem megy, akkor maga a szolgáltatás is áll.
 \end{itemize}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 % ============================================================================================================
 % === FEJLESZTŐI DOKUMENTÁCIÓ ================================================================================
@@ -1097,45 +971,6 @@ Második ilyen példa a kevésbé ismert "\textit{en passant}" ütés. Ez akkor 
 
 Harmadik érdekes szabály az, hogy ha többször fordul elő ugyanaz az állapot, akkor a játékosok felajánlhatnak döntetlent a másiknak. Ehhez viszont ismerni kell az előző lépéseket, a táblára "simán csak ránézve" ezt a szabályt sem lehet alkalmazni. Ebben az esetben a cimkézés már nem elég, ehhez a szabályhoz már kell az előtörténet ismerete is.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \newpage
 \chapter{Tervezés}
 Az előzőekből látható, hogy két nagy részre bontható programcsomagról van szó. Az egyik a \textbf{kliens} oldal a másik a \textbf{szolgáltatást nyújtó} oldal. Erre egy sima szerver-kliens architektúra alkalmazása megfelelőnek tünik: (\ref{fig:highLevelArchitecture} ábra.)
@@ -1458,204 +1293,6 @@ Ezek alapján összegezzük a leendő programcsomag szerkezetét és különböz
 	\end{itemize}
 \end{itemize}
 
-
-
-
-
-
-
-
-
-
-
-\section{RÉGIIIIIReprezentáció}
-
-
-
-
-\subsection{Sakk reprezentáció}
-
-A \texttt{ChessBoard} osztály önmagában csak reprezentál, minden \textit{property} írható és olvasható. Tartalmazza a játékosok listáját (fehér, fekete), a soronkövetkező játékost, az eddig megtett lépések listáját, illetve a tábla aktuális állapotát az előzőekben már említett jelzőkkel.
-
-A \texttt{ChessGame} osztály felelős a játék kezeléséért, betartja a szabályokat, segít a lehetséges lépések kigenerálásában, validációjában és végrehajtásában. Fontos, hogy a teljes szeparáltság miatt a \texttt{ChessGame} osztálynak kizárólag egy számára átadott \texttt{ChessRepresentation} osztályból tudnia kell a lehetséges lépéseket, a parti állását, stb.
-
-Felmerülhet, hogy miért nincs egyben ez a két osztály. Ennek több oka van:
-
-\begin{itemize}
-	\item \textbf{Egy felelősség alapelve} \textit{(Single responsibility principle)}\cite{SingleResponsibilityHu}~\cite{SingleResponsibilityEn}~\cite{SOLID}~ \\
-	Ha egy osztály lenne, az túl bonyolulttá tenné ezt az osztályt: több felelősséget rakna rá és így megsértené a \textit{single responsibility} elvét.
-	
-	\item \textbf{Könnyebb felhasználhatóság} \\
-	A mesterséges intelligencia algoritmusoknak külön érdekes csak a reprezentáció, hiszen ebből tudnak "állást számolni". Így az aktuális állás osztályozásához nem kell egy mindent tudó objektumot minden egyes lépésben létrehozni, elég csak a reprezentációt átadni a megfelelő kiértékelő függvénynek.
-	
-	\item \textbf{Jövőbeli továbbfejleszthetőség} \\
-	Sokféle sakkjáték ismeretes, így csak a \texttt{ChessGame} osztály kicserélésével egy másik játékot tudunk készíteni. (Például francia sakk.)
-	
-	\item \textbf{Tesztelhetőség} \\
-	Ha tiszták és minél egyszerűbbek a különböző részei a játékreprezentációnak, annál könnyebb fókuszált \textit{unit-teszteket} írni ezekre.
-\end{itemize}
-
-\section{Algoritmusok}
-Az algoritmus interfésze nem bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-reprezentációt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
-	\caption{Absztrakt algoritmus interface és függőségei}
-	\label{fig:algorithmAbstractDiagram}
-\end{figure}
-
-A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez három dolog kell:
-
-\begin{itemize}
-	\item \textbf{Lépés-generátor} \\
-	Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről kell megadni neki. Ez lehet a sakkhoz készült sima generátor osztály, amely egy adott állapotra kigenerálja az összes lehetséges lépést, vagy pedig egy ennek specializált változata, amely egy megfelelő heurisztika alapján csak azokat a lépéseket generálja ki, amelyeket érdemes megvizsgálni, ezzel is csökkentve az algoritmus futási idejét és erőforrásigényét. \footnote{Olyan is lehetséges, hogy egy játéknak "folytonos" sokaságú lépése, vagy diszkrét, de végtelen számosságú lehetséges lépése létezhet, tehát nem kigenerálható az összes. Ez esetben jöhet jól egy olyan generátor-osztály, amely "diszkrét és véges mennyiségű" lehetséges lépést generál.}
-	
-	\item \textbf{Kiértékelő} \\
-	Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
-	
-	
-	\item \textbf{Alkalmazó} \\
-	Ez az osztály hivatott módosítani a reprezentációt, valójában egy "wrapper" osztály a valódi "játékmester osztályhoz".
-\end{itemize}
-
-Ezek alapján már implementálhatóak az absztrakt algoritmusok. A dolgozatban öt algoritmus van implementálva:
-\begin{itemize}
-	\item Véletlen algoritmus
-	\item Mohó algoritmus
-	\item Minimax algoritmus
-	\item Átlagoló-minimax algoritmus
-	\item Alfa-béta algoritmus
-\end{itemize}
-
-Végül ezek közül fognak egyet-egyet alkalmazni a botok és fognak egymás és emberi-ellenfeleik ellen sakkozni. \textit{Tegyék meg tétjeiket, Uraim!}
-
-\subsection{A generátor interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza visszaadja a lehetséges lépések (egy) halmazát. Az implementációkor alkalmazható egy kis trükk, amely jól fog jönni az alfa-béta algoritmus alkalmazásakor: olyan sorrendbe adjuk vissza a lépéseket, hogy előre vesszük az ütéseket, aztán a tisztmozgásokat, végül az előrelépéseket és a végére hagyva a visszalépéseket. Ezáltal az alfa-béta algoritmus várhatóan jóval több vágást tud elvégezni, mintha össze-vissza, vagy pont fordított sorrendben vizsgálná a lépések hatásait. (Egy kedvező és egy kedvezőtlen esetet láthatunk a \ref{fig:alphabeta_examples} ábrán. Generátor interface: \ref{lst:algorithm_generator_code}. kódrészlet.)
-
-\begin{lstlisting}[caption=A generátor interface, label=lst:algorithm_generator_code]
-public interface IGenerator<TState, TMove>
-{
-	IEnumerable<TMove> Generate(TState state);
-}
-\end{lstlisting}
-
-
-\subsection{Az alkalmazó interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza a megadott lépést és visszaadja az új állapotot. (\ref{lst:algorithm_applier_code}. kódrészlet.)
-
-\begin{lstlisting}[caption=Az alkalmazó interface, label=lst:algorithm_applier_code]
-public interface IApplier<TState, TMove>
-{
-	TState Apply(TState state, TMove move);
-}
-\end{lstlisting}
-
-\subsection{A kiértékelő interface} egyetlen függvénnyel rendelkezik, a megadott állapotra ad egy pontértéket az aktuális játékos szemszögéből. Extremális elemek az \texttt{int.MaxValue} és az \texttt{int.MinValue}. (\ref{lst:algorithm_evaluator_code}. kódrészlet.)
-
-\begin{lstlisting}[caption=A kiértékelő interface, label=lst:algorithm_evaluator_code]
-public interface IEvaluator<TState>
-{
-	int Evaluate(TState state);
-}
-\end{lstlisting}
-
-
-
-
-
-\subsection{Publikus API}
-A RESTful szolgáltatások mintáját követve minden végpont egy-egy entitásra vonatkozó műveleteket végezhet el:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Dokumentáció}
-A később részletezett open-API dokumentációját a swagger nevű generátorral oldjuk meg, amely felépítését mutatja a \ref{fig:serverUiDocumentation}. ábra.
-
-Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
-
-A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
-
-\begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
-/// <summary>
-/// The health controller. Only used to return the version information.
-/// (Can only respond when the service is up and running.)
-/// </summary>
-[Route("api/Health")]
-public class HealthController : Controller
-{
-	/// <summary>
-	/// Health check. Returns the version number of the service.
-	/// </summary>
-	/// <returns>The version information of the service.</returns>
-	[ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-	[HttpGet]
-	public async Task<IActionResult> Get()
-	{
-		var version = Microsoft.Extensions
-						.PlatformAbstractions
-						.PlatformServices
-						.Default
-						.Application
-						.ApplicationVersion;
-
-		return Ok(version);
-	}
-}
-\end{lstlisting}
-
-A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \newpage
 \chapter{Megvalósítás}
 \noindent A projekt fontosabb részeinek felépítését lásd: \ref{fig:solutionStructure}. ábra.
@@ -1713,52 +1350,51 @@ Ezeken kívül - kissé lazábban kapcsolódva a szigorúan vett feladathoz - im
 \begin{lstlisting}[caption=Pozíciók segédfüggvényes - PositionExtensions osztály, label=lst:chessboardpositionextensions_code, float,floatplacement=H]]
 public static class PositionExtensions
 {
-public static Position ParsePostal(this string postalNotation) { /* ... */ }
+	public static Position ParsePostal(this string postalNotation) { /* ... */ }
 
-public static Position North(this Position position, int number = 1) { /* ... */ }
-public static Position South(this Position position, int number = 1) { /* ... */ }
-public static Position West(this Position position, int number = 1) { /* ... */ }
-public static Position East(this Position position, int number = 1) { /* ... */ }
-public static Position NorthEast(this Position position, int number = 1) { /* ... */ }
+	public static Position North(this Position position, int number = 1) { /* ... */ }
+	public static Position South(this Position position, int number = 1) { /* ... */ }
+	public static Position West(this Position position, int number = 1) { /* ... */ }
+	public static Position East(this Position position, int number = 1) { /* ... */ }
+	public static Position NorthEast(this Position position, int number = 1) { /* ... */ }
+	
+	/* ... */
 
-/* ... */
+	public static Position KnightNorthEast(this Position position)
+	{
+		var newPosition = position.North(2).East(1);
+		return newPosition;
+	}
 
-public static Position KnightNorthEast(this Position position)
-{
-var newPosition = position.North(2).East(1);
-return newPosition;
+	public static Position KnightNorthWest(this Position position) { /* ... */ }
+
+	/* ... */
+
+	public static IEnumerable<Position> KnightMoves(this Position position)
+	{
+		var possibleMoves = new []
+		{
+			position.KnightSouthWest(),
+			position.KnightSouthEast(),
+			position.KnightWestSouth(),
+			position.KnightWestNorth(),
+			position.KnightEastSouth(),
+			position.KnightEastNorth(),
+			position.KnightNorthWest(),
+			position.KnightNorthEast()
+		}.Where(x => x != null);
+		
+		return possibleMoves;
+	}
+
+	public static IEnumerable<Position> Northwards(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
+
+	/* ... */
+
+	public static IEnumerable<Position> StraightMoves(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
+	public static IEnumerable<Position> DiagonalMoves(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
+	public static IEnumerable<Position> AllDirectionsMove(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
 }
-
-public static Position KnightNorthWest(this Position position) { /* ... */ }
-
-/* ... */
-
-public static IEnumerable<Position> KnightMoves(this Position position)
-{
-var possibleMoves = new []
-{
-position.KnightSouthWest(),
-position.KnightSouthEast(),
-position.KnightWestSouth(),
-position.KnightWestNorth(),
-position.KnightEastSouth(),
-position.KnightEastNorth(),
-position.KnightNorthWest(),
-position.KnightNorthEast()
-}.Where(x => x != null);
-
-return possibleMoves;
-}
-
-public static IEnumerable<Position> Northwards(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
-
-/* ... */
-
-public static IEnumerable<Position> StraightMoves(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
-public static IEnumerable<Position> DiagonalMoves(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
-public static IEnumerable<Position> AllDirectionsMove(this Position position, int maxRadius = int.MaxValue) { /* ... */ }
-}
-
 \end{lstlisting}
 
 A kiterjesztési függvények segítségével szép láncolt kifejezéseket lehet szerkeszteni, példa erre a \texttt{KnightNorthEast} függvény, ahol könnyen leolvasható miből is áll egy észak-keleti irányba lépő huszár: "kettőt északra, egyet keletre".
@@ -1813,11 +1449,44 @@ A \texttt{GetGameState} függvény hivatott kiszámolni, hogy mi a játék aktu�
 \subsubsection{ApplyMove()}
 Az \texttt{ApplyMove} függvény végrehajtja a megfelelő módosításokat a táblán és a lépést "lejegyzi". Kimenete a módosítás utáni reprezentáció. Ha a lépés nem megengedett \texttt{null}-lal tér vissza.
 
-
 \section{MI algoritmusok (\texttt{Algorithms} projekt)}
-asdf
 \subsection{Algoritmusok absztakt interface-e}
-asdf
+Az algoritmusok interfésze nem bonyolult: egyetlen függvénye van, a \texttt{TMove Calculate(TState state)}, amely paraméterként kap egy aktuális állapotot (játék-modellt) és visszatér egy lépéssel. (Lásd: \ref{fig:algorithmAbstractDiagram}. ábra.)
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{img/algorithmAbstractDiagram.png}
+	\caption{Absztrakt algoritmus interface és függőségei}
+	\label{fig:algorithmAbstractDiagram}
+\end{figure}
+
+A konkrét megvalósításhoz kellhet egy kis segítség. Az algoritmusnak sok lehetséges lépésből kell kiválasztania a legmegfelelőbbet. Ehhez három dolog kell:
+
+\begin{itemize}
+	\item \textbf{Lépés-generátor} \\
+	Segédkezik a lehetséges lépések kigenerálásában.
+	
+	\item \textbf{Kiértékelő} \\
+	A kiértékelő osztály mondja meg egy állapotról, hogy az "mennyire jó".
+
+	\item \textbf{Alkalmazó} \\
+	Ez az osztály hivatott módosítani a reprezentációt, valójában egy "wrapper" osztály a valódi "játékmester osztályhoz".
+\end{itemize}
+
+\subsubsection{A generátor interface} Az algoritmus nem tud semmit a sakkról és nem is kell neki. Azt, hogy milyen lépések lehetségesek, kívülről megadott függőségek fogják megadni. Így a megvalósítás lehet a játékhoz készült generátor osztály köré rakott wrapper vagy proxy-osztály, de lehet több felelőssége is. Egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazva visszaadja a lehetséges lépések (egy) halmazát. Lehet egyszerű és elég bonyolult is. A következő lépéseket tartalmazhatja:
+
+Első lépésben diszkretizálhat: például ha a játék lehetséges lépéseinek száma egy adott állapotban végtelen, ekkor véges számú lépéseket gyárt és azt adja vissza. Ha - mint például a sakkban - minden állapotból csak véges sok lépés lehetséges, akkor azokat adja vissza.
+
+Második lépésben szűrhet. Például egy heurisztika alapján az első lépésben megkapott listát leszűrheti az alapján, hogy mit van értelme megvizsgálni és mit nem.
+
+Harmadik lépésben sorrendiséget határozhat meg. Ez például jól jöhet az alfa-béta algoritmusnál, ahol a bejövő lehetséges lépések sorrendjének az eredményre bár nincs hatása, de a futási időre már annál inkább lehet. Ha a lépések pont "rossz sorrendben" jönnek be, akkor az alfa-béte lefutása nem lesz jobb a minimax lefutásánál. Ha viszont "jó sorrendben" jönnek a lépések vizsgálatra, akkor drasztikus sebességnövekedést lehet elérni az alfa-béta algoritmussal. (Egy kedvező és egy kedvezőtlen esetet láthatunk a \ref{fig:alphabeta_examples} ábrán.)
+
+\subsubsection{Az alkalmazó interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza a megadott lépést és visszaadja az új állapotot. Legtöbbször egy wrapper a játékot kezelő osztály körül.
+
+\subsubsection{A kiértékelő interface}
+Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
+Egyetlen függvénnyel rendelkezik, a megadott állapotra ad egy pontértéket az aktuális játékos szemszögéből.
+
 \subsection{Véletlen-algoritmus}
 \noindent(\texttt{RandomAlgorithm} osztály) \\
 A lehetséges lépések közül véletlenszerűen választ egyet. Működése nagyon egyszerű: nem végez kiértékelést, csak a lehetséges lépések közül választ egyet. Néha szerencséje van.
@@ -1908,6 +1577,43 @@ Továbbá általában tartalmazza a felhasználó jogait is. Ha például egy fe
 
 További információ a JWT token-ekről elérhető a \href{https://jwt.io/}{JWT.io} oldalon.
 
+\subsection{Dokumentáció}
+A később részletezett open-API dokumentációját a swagger nevű generátorral oldjuk meg, amely felépítését mutatja a \ref{fig:serverUiDocumentation}. ábra.
+
+Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kód, az annotációk és '\textit{summary}' tag-ek alapján.
+
+A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
+
+\begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
+/// <summary>
+/// The health controller. Only used to return the version information.
+/// (Can only respond when the service is up and running.)
+/// </summary>
+[Route("api/Health")]
+public class HealthController : Controller
+{
+	/// <summary>
+	/// Health check. Returns the version number of the service.
+	/// </summary>
+	/// <returns>The version information of the service.</returns>
+	[ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+	[HttpGet]
+	public async Task<IActionResult> Get()
+	{
+		var version = Microsoft.Extensions
+						.PlatformAbstractions
+						.PlatformServices
+						.Default
+						.Application
+						.ApplicationVersion;
+
+		return Ok(version);
+	}
+}
+\end{lstlisting}
+
+A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.
+
 \section{Kliens-könyvtárak (\texttt{ServiceClient} projekt)}
 asdf
 \subsection{Az \texttt{Osztály neve} osztály}
@@ -1932,39 +1638,6 @@ asdf
 asdf
 \subsection{Az \texttt{OfflineBotTester} alkalmazás}
 asdf
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\section{Sakk-modell megvalósítása}
-
-
-\subsection{A sakk implementációja}
-
-
-
-
-
 
 \newpage
 \chapter{Tesztelés}
@@ -2081,8 +1754,6 @@ public void Test1()
 Ezekkel a tesztekkel viszont az a probléma, hogy nagyon nehéz őket összeállítani: fel kell építeni egy reprezentációt, majd abban megírni egy kiértékelő osztályt, egy generátor osztályt. Rengeteg a hibalehetőség. Ezért inkább a manuális tesztek felé fordultam:
 Először a botokat eresztettem egymásnak és figyeltem, hogy lefagynak-e, rosszat lépnek-e, megeszik-e a memóriát és a CPU-t. Végül elkezdtem ellenük játszani és habár nem lettek túl jók, azért néha tudtak meglepetést okozni.
 
-\subsection{Murphy törvénye}
-Rengeteg tesztet lefuttatva eddig nem jelentkezett hiba az algoritmusok körül, viszont az utolsó pillanatban előállt egy olyan probléma, hogy az alfa-béta algoritmus bizonyos körülmények között nem talál egy lépést sem, pedg létezik. Így az algoritmus használható, viszont a végjátékban előfordul, hogy hibázik. Ez később javításra szorul.
 
 
 \subsection{Infrastruktúra}
@@ -2124,82 +1795,8 @@ Az infrastruktúra tesztelésekor önmagát is tesztelte. Ugyanazon aspektusokb�
 \section{Megfigyelések}
 Egy idő után lehetetlenné vált a tesztelés a lokális gépen, mert a sok bot kliens, a service, az adatbázis szerver illetve a Visual Studio együttesen már annyira leterhelte a gépet, hogy lehetetlenné vált minden a munka a gépen. Ezért lett a project publikálva egy külső szerverre.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\section{Murphy törvénye}
+Ami elromolhat, az el is romlik. Nincs száz százalékos bizonyosság sosem. Hiába a rengeteg manuális vagy automatikus teszt, a program valamely része mindig akkor és ott romlik el, amikor és ahol a legkevésbé számítunk rá, főleg ha egy olyan bonyolult rendszerről van szó, mint egy mesterséges intelligencia algoritmusáról, amely működése kívülálló szemszögéből nem egyértelmű. Megfigyelt jelenség, hogy a betonbiztosan működő szoftver is általában a megrendelő számára tartott bemutató előtt összeomlik. Ezért mindig legyen B-tervünk. És egy C.
 
 
 
