@@ -40,7 +40,6 @@
             this.panelSidebar = new System.Windows.Forms.Panel();
             this.panelMatches = new System.Windows.Forms.Panel();
             this.labelMatchPreviewStatus = new System.Windows.Forms.Label();
-            this.chessBoardPreview = new BoardGame.Tools.Common.ChessBoardVisualizerPanel();
             this.panelPlayers = new System.Windows.Forms.Panel();
             this.btnChallenge = new System.Windows.Forms.Button();
             this.panelRefresh = new System.Windows.Forms.Panel();
@@ -76,6 +75,7 @@
             this.tabPageReadme = new System.Windows.Forms.TabPage();
             this.textboxReadme = new System.Windows.Forms.RichTextBox();
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
+            this.chessBoardPreview = new BoardGame.Tools.Common.ChessBoardVisualizerPanel();
             this.statusStrip1.SuspendLayout();
             this.tableLayoutPanelMultiplayer.SuspendLayout();
             this.panelSidebar.SuspendLayout();
@@ -162,7 +162,7 @@
             this.tableLayoutPanelMultiplayer.Name = "tableLayoutPanelMultiplayer";
             this.tableLayoutPanelMultiplayer.RowCount = 1;
             this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 651F));
+            this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 510F));
             this.tableLayoutPanelMultiplayer.Size = new System.Drawing.Size(985, 510);
             this.tableLayoutPanelMultiplayer.TabIndex = 5;
             // 
@@ -202,19 +202,6 @@
             this.labelMatchPreviewStatus.TabIndex = 1;
             this.labelMatchPreviewStatus.Text = "STATUS";
             this.labelMatchPreviewStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // chessBoardPreview
-            // 
-            this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
-            this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
-            this.chessBoardPreview.ChessRepresentation = ((BoardGame.Game.Chess.ChessRepresentation)(resources.GetObject("chessBoardPreview.ChessRepresentation")));
-            this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
-            this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
-            this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
-            this.chessBoardPreview.Name = "chessBoardPreview";
-            this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
-            this.chessBoardPreview.TabIndex = 0;
-            this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // panelPlayers
             // 
@@ -482,7 +469,7 @@
             this.tabPagePlayers.Location = new System.Drawing.Point(4, 22);
             this.tabPagePlayers.Name = "tabPagePlayers";
             this.tabPagePlayers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePlayers.Size = new System.Drawing.Size(868, 568);
+            this.tabPagePlayers.Size = new System.Drawing.Size(771, 478);
             this.tabPagePlayers.TabIndex = 0;
             this.tabPagePlayers.Text = "Players";
             this.tabPagePlayers.UseVisualStyleBackColor = true;
@@ -501,7 +488,7 @@
             this.listViewPlayers.Location = new System.Drawing.Point(3, 3);
             this.listViewPlayers.MultiSelect = false;
             this.listViewPlayers.Name = "listViewPlayers";
-            this.listViewPlayers.Size = new System.Drawing.Size(862, 562);
+            this.listViewPlayers.Size = new System.Drawing.Size(765, 472);
             this.listViewPlayers.SmallImageList = this.imageListPlayers;
             this.listViewPlayers.TabIndex = 0;
             this.listViewPlayers.UseCompatibleStateImageBehavior = false;
@@ -518,7 +505,7 @@
             this.tabPageMatches.Location = new System.Drawing.Point(4, 22);
             this.tabPageMatches.Name = "tabPageMatches";
             this.tabPageMatches.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMatches.Size = new System.Drawing.Size(868, 568);
+            this.tabPageMatches.Size = new System.Drawing.Size(771, 478);
             this.tabPageMatches.TabIndex = 1;
             this.tabPageMatches.Text = "Matches";
             this.tabPageMatches.UseVisualStyleBackColor = true;
@@ -537,7 +524,7 @@
             this.listViewMatches.Location = new System.Drawing.Point(3, 3);
             this.listViewMatches.MultiSelect = false;
             this.listViewMatches.Name = "listViewMatches";
-            this.listViewMatches.Size = new System.Drawing.Size(862, 562);
+            this.listViewMatches.Size = new System.Drawing.Size(765, 472);
             this.listViewMatches.SmallImageList = this.imageListMatchStatuses;
             this.listViewMatches.TabIndex = 1;
             this.listViewMatches.UseCompatibleStateImageBehavior = false;
@@ -564,7 +551,7 @@
             // 
             this.textboxBotLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textboxBotLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textboxBotLog.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textboxBotLog.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textboxBotLog.Location = new System.Drawing.Point(3, 3);
             this.textboxBotLog.Name = "textboxBotLog";
             this.textboxBotLog.ReadOnly = true;
@@ -579,7 +566,7 @@
             this.tabPageLog.Location = new System.Drawing.Point(4, 22);
             this.tabPageLog.Name = "tabPageLog";
             this.tabPageLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLog.Size = new System.Drawing.Size(868, 568);
+            this.tabPageLog.Size = new System.Drawing.Size(771, 478);
             this.tabPageLog.TabIndex = 4;
             this.tabPageLog.Text = "Log";
             this.tabPageLog.UseVisualStyleBackColor = true;
@@ -593,7 +580,7 @@
             this.textboxLog.Name = "textboxLog";
             this.textboxLog.ReadOnly = true;
             this.textboxLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.textboxLog.Size = new System.Drawing.Size(862, 562);
+            this.textboxLog.Size = new System.Drawing.Size(765, 472);
             this.textboxLog.TabIndex = 0;
             this.textboxLog.Text = "";
             // 
@@ -603,7 +590,7 @@
             this.tabPageReadme.Location = new System.Drawing.Point(4, 22);
             this.tabPageReadme.Name = "tabPageReadme";
             this.tabPageReadme.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageReadme.Size = new System.Drawing.Size(868, 568);
+            this.tabPageReadme.Size = new System.Drawing.Size(771, 478);
             this.tabPageReadme.TabIndex = 5;
             this.tabPageReadme.Text = "Read Me!";
             this.tabPageReadme.UseVisualStyleBackColor = true;
@@ -613,7 +600,7 @@
             this.textboxReadme.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textboxReadme.Location = new System.Drawing.Point(3, 3);
             this.textboxReadme.Name = "textboxReadme";
-            this.textboxReadme.Size = new System.Drawing.Size(862, 562);
+            this.textboxReadme.Size = new System.Drawing.Size(765, 472);
             this.textboxReadme.TabIndex = 0;
             this.textboxReadme.Text = resources.GetString("textboxReadme.Text");
             // 
@@ -621,6 +608,19 @@
             // 
             this.timerRefresh.Interval = 15000;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
+            // 
+            // chessBoardPreview
+            // 
+            this.chessBoardPreview.Bevel = System.Drawing.Color.Brown;
+            this.chessBoardPreview.BlackSquare = System.Drawing.Color.SandyBrown;
+            this.chessBoardPreview.ChessRepresentation = ((BoardGame.Game.Chess.ChessRepresentation)(resources.GetObject("chessBoardPreview.ChessRepresentation")));
+            this.chessBoardPreview.Dock = System.Windows.Forms.DockStyle.Top;
+            this.chessBoardPreview.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+            this.chessBoardPreview.Location = new System.Drawing.Point(4, 4);
+            this.chessBoardPreview.Name = "chessBoardPreview";
+            this.chessBoardPreview.Size = new System.Drawing.Size(186, 186);
+            this.chessBoardPreview.TabIndex = 0;
+            this.chessBoardPreview.WhiteSquare = System.Drawing.Color.BlanchedAlmond;
             // 
             // MainForm
             // 
@@ -630,6 +630,7 @@
             this.Controls.Add(this.tableLayoutPanelMultiplayer);
             this.Controls.Add(this.statusStrip1);
             this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MaximizeBox = false;
