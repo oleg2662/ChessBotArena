@@ -1623,6 +1623,7 @@ Az API dokumentációt a \textit{swagger}\cite{swaggerHomepage} generálja a kó
 
 A swagger generál egy az API-t leíró sémafile-t is, amelyet felhasználva a swagger oldalán generáltathatunk egy kliens a legtöbb nyelvre.
 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[caption=Health-check példakód 'summary' tag-ekkel., label=lst:healtcheck]
 /// <summary>
 /// The health controller. Only used to return the version information.
@@ -1650,7 +1651,8 @@ public class HealthController : Controller
 	}
 }
 \end{lstlisting}
-
+\end{minipage}
+	
 A fenti kódban a \texttt{Get()} függvény \textit{summary} szövege lesz az API végpont dokumentációjában, a \texttt{ProducesResponseType} attribute class-szal pedig jelezhetjük, hogy milyen HTTP státuszjelzés mellett milyen modell jön vissza a szervertől. Például: '200 OK' mellett visszajön egy várt komplex objektum, de mondjuk '500 ERROR' mellett visszajön egy komplex hibaobjektum, nem csak maga a hibakód és az esetleges hibaüzenet.
 
 \section{Kliens-könyvtárak (\texttt{ServiceClient} projekt)}
