@@ -219,7 +219,7 @@ Az alkalmazást nem lehet regisztráció nélkül használni. Regisztráció lé
 \noindent \textbf{1.} Register gombra kattintás, majd adatok megadása \\
 \includegraphics[width=1.0\textwidth]{img/service_register.png} \\
 A jelszónak tartalmaznia kell kis és nagy betűt, egy számot és valamilyen jelet.\\
-A "Bot account" alatti checkbox akkor használandó, ha egy olyan felhasználót akarunk regisztrálni, amely botként lesz használva. A jelszónak tartalmaznia kell kis és nagy betűt, egy számot és valamilyen jelet. \\
+A "Bot account" alatti checkbox akkor használandó, ha egy olyan felhasználót akarunk regisztrálni, amely botként lesz nyílvántartva. \\
 Ha minden rendben volt, akkor a rendszer bejelentkezteti az új felhasználót és a saját adatainak oldalára visz: \\
 \includegraphics[width=1.0\textwidth]{img/service_account.png} \\
 Ezen a képernyőn lehet módosítani a jelszót, e-mail címet, illetve azt, hogy a felhasználó robot-e.
@@ -233,13 +233,13 @@ A "With Installer" verzió tartalmazza a telepítőt, amely installálja a .NET 
 \section{Használat}
 \noindent \textbf{1.} Játékot elindítva a fő ablakba érkezünk, ahol be tudunk jelentkezni, majd a sikeres bejelentkezés után láthatjuk a játékosok listáját: \\
 \includegraphics[width=1.0\textwidth]{img/chessClient_1.png} \\
-
+\newpage
 \noindent \textbf{2.} A második tabra átkattintva láthatjuk a meccseink listáját. Ezekre rákattintva a jobb oldalon egy kis előnézeti ablakban láthatjuk az ottani állást, illetve ezzel aktiválunk egy meccset arra, hogy a következő tabon megnézzük vagy esetleg lépjünk: \\
 \includegraphics[width=1.0\textwidth]{img/chessClient_2.png} \\
-
+\newpage
 \noindent \textbf{3.} A harmadik oldal maga a játéktér. Először kiválasztjuk azt a bábut, amivel lépni szeretnénk, majd a megfelelő mezőre kattintva adjuk meg a lépést. A képernyő jobb oldalán látható lista tartalmazza az elmúlt lépéseket, illetve felette a speciális parancsokat.: \\
 \includegraphics[width=1.0\textwidth]{img/chessClient_3.png} \\
-
+\newpage
 \noindent \textbf{4.}A negyedik oldalon látható az eddigi toplista. Csak azok látszódnak, akiknek már van befejezett játékuk. Ez a képernyő elérhető bejelentkezés nélkül is: \\
 \includegraphics[width=1.0\textwidth]{img/chessClient_4.png} \\
 \section{Hibaelhárítás}
@@ -260,10 +260,10 @@ A "With Installer" verzió tartalmazza a telepítőt, amely installálja a .NET 
 \section{Használat}
 \noindent \textbf{1.} Játékot elindítva a fő ablakba érkezünk, ahol be tudunk jelentkezni, majd a sikeres bejelentkezés után láthatjuk a játékosok listáját: \\
 \includegraphics[width=1.0\textwidth]{img/botClient_1.png} \\
-
+\newpage
 \noindent \textbf{2.} A második tabra átkattintva láthatjuk a bot meccseinek listáját. Ezekre rákattintva a jobb oldalon egy kis előnézeti ablakban láthatjuk az ottani állást \\
 \includegraphics[width=1.0\textwidth]{img/botClient_2.png} \\
-
+\newpage
 \noindent \textbf{3.} A harmadik oldal maga a bot vezérlőpultja. Itt állítható be, hogy milyen algoritmus, mely kiértékelő függvénnyel és milyen maximum mélységgel fusson. A tér nagy részét a bot üzeneteinek fenntartott szövegmező foglalja el. Itt látható, hogy épp mit csinál a bot. 15 másodpercenként lekéri a legfrisebb állást, majd azon meccseken, ahol ő következik és léphet, kigenerál egy lépést és elküldi. A Start/Stop gombbal indíthatjuk el / állíthatjuk le a botot. \\
 \includegraphics[width=1.0\textwidth]{img/botClient_3.png} \\
 
@@ -281,7 +281,7 @@ A "With Installer" verzió tartalmazza a telepítőt, amely installálja a .NET 
 \newpage
 \part{Fejlesztői Dokumentáció}
 \chapter{Elemzés}
-A megoldandó feladat egy interneten keresztül játszható sakkprogram elkészítése, melyen keresztül a játékosok egymás, illetve olyan gépi ellenfelek ("botok") ellen játszhatnak, amelyeket más játékosok készítettek. Emiatt fontos elvárás a programmal szemben, hogy emberek áltak könnyen használható legyen és a bot-készítő játékosok számára minden lehetséges segítség és dokumentáció a rendelkezésre álljon a feladathoz.
+A megoldandó feladat egy interneten keresztül játszható sakkprogram elkészítése, melyen keresztül a játékosok egymás, illetve olyan gépi ellenfelek ("botok") ellen játszhatnak, amelyeket más játékosok készítettek. Emiatt fontos elvárás a programmal szemben, hogy emberek által könnyen használható legyen és a bot-készítő játékosok számára minden lehetséges segítség és dokumentáció a rendelkezésre álljon a feladathoz.
 
 \section{A program felhasználási módjai}
 A programcsomag felhasználási módja alapján két csoportba osztható:
@@ -291,12 +291,12 @@ A programcsomag felhasználási módja alapján két csoportba osztható:
 	\item \textbf{Bot-készítés.} Amikor a játékosok egy botot szeretnének kifejleszteni és azt megmérettetni más emberi és gépi ellenfelek ellen is.
 \end{itemize}
 
-Ezen két felhasználási-módnak különböző követelményei vannak:
-
+Ezen két felhasználási-módnak különböző követelményei vannak.
+\newpage
 \section{Felhasználói esetek}
 \subsection{A sakk-szolgáltatás működésével kapcsolatos elvárások}
 Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjátékos szemszögéből) a következők a követelmények:
-\paragraph{Kliens funkcionalitása}
+\subsubsection{Kliens funkcionalitása}
 \begin{itemize}
 	\item \textbf{Levelezési sakk.} A program működésének hasonlítania kell a levelezési sakkhoz. Nem kell teljesen valósidejűnek lennie, de bármikor le tudja tölteni az épp aktuális állást, tudjon rá reagálni és elküldeni.
 	
@@ -308,7 +308,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 	
 	\item \textbf{Partik listázása.} A játékosoknak lehetőséget kell biztosítani, hogy láthassák az eddigi játszmáikat, azok állapotát, és ki tudják választani, hogy melyikre akarnak válaszolni.
 	
-	\item \textbf{Sakkjátszma.} A játékosoknak az előbbiekben kijelölt sakkjátszmához lehetőséget kell biztosítani, hogy kiválaszthassa a kívánt lépést és elküldhesse. A programnak le kell ellenőriznie, hogy a lépés megfelel-e a szabályoknak.
+	\item \textbf{Sakkjátszma.} A játékosoknak az előbbiekben kijelölt sakkjátszmához lehetőséget kell biztosítani, hogy kiválaszthassák a kívánt lépést és elküldhessék. A programnak le kell ellenőriznie, hogy a lépés megfelel-e a szabályoknak.
 	
 	\item \textbf{Toplista.} A játékosok szeretnék látni az eddigi játszmák alapján előálló toplistát, lehetőség szerint csoportosítva: emberi játékosok, botok, vagy a kettő együtt.
 \end{itemize}
@@ -602,6 +602,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 	\label{userStories:client:parties}\\
 \end{longtable}
 
+\newpage
 % ------------------------------------------------------------------------------------------------------------
 % -- Kliens - játékfelület
 % ------------------------------------------------------------------------------------------------------------
@@ -744,7 +745,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 	\label{userStories:client:gameScreen}\\
 \end{longtable}
 
-\paragraph{Szolgáltatás-oldal funkcionalitása}
+\subsubsection{Szolgáltatás-oldal funkcionalitása}
 
 % --------------------------------------------------------------------------------------------------------
 % -- Szerver - felhasználói fiókok
@@ -950,7 +951,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 	\label{userStories:server:api}\\
 \end{longtable} 
 
-\subsection{Bot-készítés}
+\subsubsection{Bot-készítés}
 A bot elkészítésének segítéséhez magas fokú \textbf{dokumentáltáság} és a lehető legtöbb segítség megadása szükséges a programozók számára könnyen felhasznáéható könyvtárak illetve példák formájában:
 \begin{itemize}
 	\item \textbf{Dokumentáció} a szolgáltatás és a könyvtárak használatáról.
@@ -1038,7 +1039,7 @@ Az automatikusan generált, a fejlesztést segítő dokumentáció tervét mutat
 
 
 \section{Játék- és botkliensek}
-A klienseket ketté lehet bontani az alapján, hogy ki hozza a döntéseket. Ezek szerint lesz az \textbf{játékkliensek}, ahol emberi játékosok tudnak játszani, illetve lesznek a \textbf{botkliensek}, melyek minimális vagy semmilyen emberi beavatkozással tudnak válaszolni a bejövő kérésekre.
+A klienseket ketté lehet bontani az alapján, hogy ki hozza a döntéseket. Ezek szerint lesznek \textbf{játékkliensek}, ahol emberi játékosok tudnak játszani, illetve lesznek a \textbf{botkliensek}, melyek minimális vagy semmilyen emberi beavatkozással tudnak válaszolni a bejövő kérésekre.
 
 A két fajta kliens nem tér el túlságosan, mindkettőben kell támogatni a beléptetést, nyomonkövetést, játékinformációk szinkronizációját.
 
@@ -1192,7 +1193,7 @@ A sakk modellezésénél két fontos dolgot kell figyelembe venni:
 
 Ebből két dolog látszik: az egyik az, hogy a játszma aktuális állapotának modelljét el kell választani a szabályoktól, hiszen ugyanazokkal a bábukkal más játékot is lehet játszani.
 
-A másik dolog pedig az, hogy nem elég a táblán lévő bábukra hagyatkozni, be kell vezetni később jelzéseket a bábukra, illetve az eddigi lépéseket is tárolni kell. Így látszik, hogy a játék-modell két komponensből kell, hogy álljon: a \textbf{modellből} és a modell konzisztenciáját fenntartó \textbf{játékmechanikára}, amely egyedülálló módon módosíthatja a modellt a sakk szabályai alapján.
+A másik dolog pedig az, hogy nem elég a táblán lévő bábukra hagyatkozni, be kell vezetni később jelzéseket a bábukra, illetve az eddigi lépéseket is tárolni kell. Így látszik, hogy a játék-modell két komponensből kell, hogy álljon: a \textbf{modellből} és a modell konzisztenciáját fenntartó \textbf{játékmechanikára}, amely kizárólagos módon módosíthatja a modellt a sakk szabályai alapján.
 
 Ebből kell kialakulnia majd egy könyvtárnak, amely a sakkot modellezi és a sakkjátszmákat vezeti le.
 
@@ -1344,7 +1345,7 @@ Illetve az előzőekben megtárgyaltuk, hogy hogyan is lehet érdemes modellezni
 
 A sakktáblát reprezentáló \texttt{ChessBoard} osztály az előzőekben részletezett alapelveknek felel meg. Legfontosabb művelete a \texttt{Move(from, to)} függvény, amely elvégzi a módosításokat a táblán, ám a \texttt{History}-ba nem írja be, az majd a "játékmester" feladata lesz. Továbbá a \texttt{Move()} függvény visszatérési értéke a "leütött" bábu, vagy \texttt{null} ha üres volt.
 
-A sakktáblát egy egydimenziós tömb tárolja, amin a tájékozódás kissé nehézkés, ezért a sakkhoz jobban illő \texttt{Position} tipuson keresztül lesz ez megkönnyítve, amely az \textit{algebrai lejegyzést} használja. (Lásd \ref{lst:chessboardposition_code}. kódrészlet.)
+A sakktáblát egy egydimenziós tömb tárolja, amin a tájékozódás kissé nehézkés, ezért a sakkhoz jobban illő \texttt{Position} tipuson keresztül lesz ez megkönnyítve, amely az \textit{algebrai lejegyzést} használja.
 
 A későbbi fejlesztések segítéséhez az osztály tartalmaz konvertereket (array index és pozíció között oda-vissza) és egyenlőségvizsgálatot is, hogy írhassuk: \texttt{p1 == p2} vagy \texttt{p1.Equals(p2)}.
 
@@ -1433,7 +1434,7 @@ A lépések kigenerálásának két lépése van: a naív kigenerálás és az i
 \textit{A sáncolás kiszámításánál futhatunk bele egy trükkös rekurzióba. A feltételek ellenőrzésének része, hogy megállapítsuk: a megfelelő mezők és bábuk támadva vannak-e. Ehhez meg kell állapítani az éppen az ellenfél által veszélyeztetett mezőket. Ehhez ki kell generálnunk az aktuális helyzettől függő ellenfél lépéseit, amelynek viszont része a sáncolás is. Így egy végtelen rekurzióhoz jutunk. Ezt úgy lehet megszüntetni, hogy a veszélyeztetett mezők kiszámításánál nem vesszük figyelembe az ellenfél sáncolását, hiszen az semmilyen esetben nem lehet hatással a mi sáncolásunkra.}
 
 \subsubsection{ValidateMove()} \mbox{}
-Ennél a játéknál szerencsénk van: ha a \texttt{GenerateMoves()} függvény implementálható (azaz a következő lehetséges lépések halmaza véges és diszkrét elemekből áll) akkor nincs más dolgunk, mint megállapítani: a beérkezett lépés benne van-e a kigenerált lehetséges lépések között. Ez látható is a \ref{lst:chessgame_code}. kódrészletben.
+Ennél a játéknál szerencsénk van: ha a \texttt{GenerateMoves()} függvény implementálható (azaz a következő lehetséges lépések halmaza véges és diszkrét elemekből áll) akkor nincs más dolgunk, mint megállapítani: a beérkezett lépés benne van-e a kigenerált lehetséges lépések között.
 
 \subsubsection{GetGameState()}
 A \texttt{GetGameState} függvény hivatott kiszámolni, hogy mi a játék aktuális állapota? Ha van még lehetséges normál lépés, akkor jelzi, hogy lehet még lépni, ha bármilyen módon vége van (valaki feladta, mattot adott vagy patt-helyzet alakult ki) akkor azt jelzi. Ehhez az utolsó lépést vizsgálva és a \texttt{GenerateMoves} függvényt meghívva számolja ki a kimenetet:
@@ -1484,7 +1485,7 @@ Második lépésben szűrhet. Például egy heurisztika alapján az első lépé
 
 Harmadik lépésben sorrendiséget határozhat meg. Ez például jól jöhet az alfa-béta algoritmusnál, ahol a bejövő lehetséges lépések sorrendjének az eredményre bár nincs hatása, de a futási időre már annál inkább lehet. Ha a lépések pont "rossz sorrendben" jönnek be, akkor az alfa-béte lefutása nem lesz jobb a minimax lefutásánál. Ha viszont "jó sorrendben" jönnek a lépések vizsgálatra, akkor drasztikus sebességnövekedést lehet elérni az alfa-béta algoritmussal. (Egy kedvező és egy kedvezőtlen esetet láthatunk a \ref{fig:alphabeta_examples} ábrán.)
 
-\subsubsection{Az alkalmazó interface} egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza a megadott lépést és visszaadja az új állapotot. Legtöbbször egy wrapper a játékot kezelő osztály körül.
+\subsubsection{Az alkalmazó interface} Egyetlen függvénnyel rendelkezik, egy megadott állapotra alkalmazza a megadott lépést és visszaadja az új állapotot. Legtöbbször egy wrapper a játékot kezelő osztály körül.
 
 \subsubsection{A kiértékelő interface}
 Kell egy kiértékelő-osztály is, amely eldönti az újonnan előállt állapotról annak értékét az aktuális játékos szemszögéből. Erre jelen esetben az \texttt{integer} megfelelő választás lesz, maximum és minimum értékét (\texttt{int.MaxValue} és \texttt{int.MinValue}) extremális elemként használva. A minimum érték jelentse a $-\infty$-t, a maximum érték pedig jelentse a $+\infty$-t.\footnote{Megjegyzendő, hogy a visszaadott érték nem feltétlen kell, hogy egy sima természetes vagy valós szám legyen, de fontos, hogy az \texttt{TResult Evaulate(TState state)} függvénynek a \texttt{TResult} típusérték-halmazának legalább részben-rendezett halmaznak kell lennie.}
@@ -1515,7 +1516,7 @@ Most nézzük a Minimax algoritmust, mely absztrakt UML diagramja \ref{fig:minim
 \end{figure}
 
 A minimax algoritmus lényege, hogy a maximum-mélységben kiértékeli az állásokat, és ezeknek a maximumát illetve minimumát viszi tovább attól függően, hogy melyik szinten van. Első szint a MAX szint, ahol a következő szinten levő csomópontok közül abba az irányba indulunk el, amelyik a legkisebb, ezzel próbálva minimalizálni az ellenfél nyereségét. Következő szint a MIN szint lesz, ahonnan a legnagyobb értékű csomópont felé indulunk el, hogy maximalizáljuk a nyereséget. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
-\subsubsection*{Hatékonyság} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
+\subsubsection*{Hatékonyság} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.\cite{alfaBetaPruneHu}
 
 \subsection{Az átlagoló eljárás (\texttt{MinimaxAverageAlgorithm} osztály)}
 A minimax algoritmus egy általánosítása. \textit{Avagy a minimax algoritmus az átlagoló eljárás egy speciális esete.} A probléma a statikus kiértékelő-függvényekkel az, hogy lehetetlen olyat megadni, amely megbízhatóan értékeli ki az állásokat. Lehet, hogy egy nagyon jónak ígérkező állásról kiderül, hogy csak egy "csapda" volt és onnan nehezebb vagy lehetetlen megnyerni a meccset. Erre a problémára adhat egy jobb megoldást az átlagoló eljárás. Az ötlet mögötte az, hogy míg az eredeti Minimax algoritmus mindig az aktuális csúcsból elérhető csúcsok minimumát vagy maximumát veszi, addig az átlagoló eljárás a kiterjesztett csúcsok értékeinek MAX szinten az $m$ legnagyobb átlagát, MIN szintjén az $n$ legkisebb átlagát veszi. (Példát lásd \ref{fig:minimaxVsAverageExample}. ábra.)\cite{bevMiHu}
@@ -1528,7 +1529,7 @@ Tehát ha úgy vesszük, akkor a minimax algoritmus nem más, mint az átlagoló
 	\caption{Minimax és Átlagoló eljárás összehasonlítása\cite{bevMiHu}}
 	\label{fig:minimaxVsAverageExample}
 \end{figure}
-\subsubsection*{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.
+\subsubsection*{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.\cite{alfaBetaPruneHu}
 
 \subsubsection*{Egy implementációs hatékonysági kérdés}
 Adja magát, hogy vajon érdemes-e külön minimax és átlagoló-minimax osztályt létrehozni, vagy pedig a minimax származhatna az átlagoló-minimax-ból. Jelen dolgozatban én szétválasztottam, mert az átlagoló-minimax-ban az $m$ és $n$ által megadott "kiválasztok pár elemet és átlagolom" kicsit több lépésnek tünt, mintha csak külön minimumot és maximumot venne az algoritmus. Illetve másik szemszögből a kód talán egyszerűbb és jobb látni a "sima" minimax-ot egy külön osztályban és azon keresztül vizsgálni.
@@ -1545,7 +1546,8 @@ Az alfa-béta algoritmus felépítése nagyon hasonló a minimax-ok felépítés
 Az alfa-béta algoritmus a minimax egy továbbgondolása. Megpróbálja levágni azokat az ágakat, amelyeket nem érdemes már vizsgálni. Ez jól jön a számítási-igény csökkentésénél. Az esetek túlnyomó többségében ugyanazt az eredményt kell adnia, mint a minimax-algoritmusnak.
 
 \subsubsection*{Hatékonyság.} Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk.Ekkor a legrosszabb esetben, amikor nem tudunk vágni és ezért minden terminális csúcsot ki kell értékelni, az algoritmus műveletigénye megegyezik a minimax algoritmuséval: $ \mathcal{O}(x^d)$.
-Azonban legjobb esetben, ha minden egyes esetben a számítás szemszögéből legjobb csúccsal kezdjük a kiértékelést, ez a műveletigény lecsökken: $\mathcal{O}(\sqrt{x^d})$.
+Azonban legjobb esetben, ha minden egyes esetben a számítás szemszögéből legjobb csúccsal kezdjük a kiértékelést, ez a műveletigény lecsökken: $\mathcal{O}(\sqrt{x^d})$.\cite{alfaBetaPruneHu}
+
 A tapasztalat azt mutatja, hogy az alfa-béta algoritmus legtöbbször ugyanazt az eredményt adja rögzített mélység esetén, mint a minimax algoritmus. Viszont sokkal hatékonyabb, így ha a csúcsok a "megfelelő sorrendben érkeznek kiértékelésre", akkor a keresőfa mélysége akár meg is duplázható. \\ (Összehasonlító ábrát lásd: \ref{fig:alphabeta_examples}. ábra.)
 
 \begin{figure}[htbp]
@@ -1661,6 +1663,8 @@ A \texttt{ServiceClient} projektben találhatók azok az osztályok, amelyek seg
 \subsection{Sakktábla megjelenítése (\texttt{ChessBoardGamePanel})}
 A \texttt{ChessBoardGamePanel}-en keresztül lehet látni a játék aktuális állapotát és ezen keresztül lehet kiválasztani a következő lépést. \texttt{OnValidMoveSelected} eseménye akkor aktiválódik, amikor egy lépés ki lett jelölve.
 
+Az elemzés részben megemlítettük, hogy jelöléseket ragaszthatunk a bábukra, hogy gyorsítsuk egy-egy algoritmusunkat. A megjelenítéskor látható "mvd" és "ep" szavak pont ezek a jelzések. Az "mvd" jelentése "moved", azaz már elmozdult az eredeti helyéről, illetve az "ep" azt jelenti, hogy a gyalog "en passant üthető".
+
 \subsection{A játékkliens (\texttt{HumanClient} projekt)}
 A \texttt{ServiceConnection} osztályon keresztül kommunikál a szerverrel. Bizonyos időközönként frissíti a háttérben az állapotát és ha történt változás, akkor megmutatja azt.
 
@@ -1689,11 +1693,14 @@ A tesztelésnek különböző szintjei vannak:
 	\item \textbf{API tesztek} \\
 	Ettől a szinttől felfelé már a helyesség is fontos. A kiajánlott API tesztelésekor a publikus API felületet hívjuk meg előre definiált adatokkal és figyeljük a működést.
 	
-	\item \textbf{GUI tesztek}Ezek lehetnek automatikus vagy manuális tesztek. Többnyire utóbbit szokták választani, mert egy gyorsan változó környezetben nagyon nehéz a teszteket módosítani és validálni.
+	\item \textbf{GUI tesztek} \\
+	Ezek lehetnek automatikus vagy manuális tesztek. Többnyire utóbbit szokták választani, mert egy gyorsan változó környezetben nagyon nehéz a teszteket módosítani és validálni.
 	
-	\item \textbf{Teljesítmény-teszt}Automatikus teszt, ahol a rendszert hatalmas bejövő adatnak teszik ki és figyelik a viselkedését, különösképpen arra, hogy leáll-e, elfogy-e a CPU vagy a memória, esetleg megjelennek-e deadlock-ok, illetve okoz-e anomáliákat a többi rendszerben.
+	\item \textbf{Teljesítmény-teszt} \\
+	Automatikus teszt, ahol a rendszert hatalmas bejövő adatnak teszik ki és figyelik a viselkedését, különösképpen arra, hogy leáll-e, elfogy-e a CPU vagy a memória, esetleg megjelennek-e deadlock-ok, illetve okoz-e anomáliákat a többi rendszerben.
 	
-	\item \textbf{Rendszerteszt}Manuális teszt, ahol felállítanak egy tesztkörnyezetet és megpróbálják szimulálni a mindennapos használatot.
+	\item \textbf{Rendszerteszt} \\
+	Manuális teszt, ahol felállítanak egy tesztkörnyezetet és megpróbálják szimulálni a mindennapos használatot.
 	
 \end{itemize}
 
@@ -1788,8 +1795,8 @@ public void Test1()
 }
 \end{lstlisting}
 
-Ezekkel a tesztekkel viszont az a probléma, hogy nagyon nehéz őket összeállítani: fel kell építeni egy reprezentációt, majd abban megírni egy kiértékelő osztályt, egy generátor osztályt. Rengeteg a hibalehetőség. Ezért inkább a manuális tesztek felé fordultam:
-Először a botokat eresztettem egymásnak és figyeltem, hogy lefagynak-e, rosszat lépnek-e, megeszik-e a memóriát és a CPU-t. Végül elkezdtem ellenük játszani és habár nem lettek túl jók, azért néha tudtak meglepetést okozni.
+Ezekkel a tesztekkel az a probléma, hogy nagyon nehéz őket összeállítani: fel kell építeni egy reprezentációt, majd abban megírni egy kiértékelő osztályt, egy generátor osztályt. Rengeteg a hibalehetőség. Ezért inkább a manuális tesztek felé fordultam:
+Először a botokat játszattam egymással és figyeltem, hogy lefagynak-e, rosszat lépnek-e, mekkora a memória és CPU igényük. Végül elkezdtem ellenük játszani.
 
 \subsection{Szolgáltatás}
 Az infrastruktúra tesztelését manuális játékkal illetve a botok közötti játékkal lehetett kvázi-automatikusan tesztelni. Erre volt jó például a véletlen-algoritmus és a mohó-algoritmus, hiszen nagyon gyorsak, így elég sok lépést meg tudnak tenni viszonylag rövid idő alatt.
@@ -1834,9 +1841,6 @@ Nem megfelelő unit-teszt lefedettség mellett ha a tesztelendő algoritmusaink 
 
 \subsection{Erőforráshiány}
 Egy idő után lehetetlenné vált a tesztelés a lokális gépen, mert a sok bot kliens, a service, az adatbázis szerver illetve a Visual Studio együttesen már annyira leterhelte a gépet, hogy lehetetlenné vált minden a munka a gépen. Ezért lett a project publikálva egy külső szerverre.
-
-\subsection{Murphy törvénye}
-Ami elromolhat, az el is romlik. Nincs száz százalékos bizonyosság sosem. Hiába a rengeteg manuális vagy automatikus teszt, a program valamely része mindig akkor és ott romlik el, amikor és ahol a legkevésbé számítunk rá, főleg ha egy olyan bonyolult rendszerről van szó, mint egy mesterséges intelligencia algoritmusáról, amely működése kívülálló szemszögéből nem egyértelmű. Megfigyelt jelenség, hogy a betonbiztosan működő szoftver is általában a megrendelő számára tartott bemutató előtt összeomlik. Ezért mindig legyen B-tervünk. És egy C.
 
 
 
@@ -1951,6 +1955,9 @@ Még a fejlesztés elején készült, hogy ki lehessen próbálni az API-hívás
 
 \section{"Proof of Concept"}
 Ezen programok jellemzője, hogy csak belső használatra készültek a programcsomag fejlesztésének elején, hogy minél előbb látszódjon, ha egy koncepció működik, vagy nem működik. Ezt hívjuk "\textbf{proof of concept}"-nek, avagy röviden "\textbf{POC}"-nek. Ezekkel szemben nem elvárás a jó kódminőség vagy a felhasználóbarátság, bár nem is tiltott természetesen. Célja az, hogy be lehessen mutatni: amit kitaláltunk az egy működőképes koncepció. Általában új termékek vagy ötletek bevezetésénél szoktak ilyet írni nagyon rövid idő alatt, így minimalizálva a veszteséget abban az esetben, ha a POC azt mutatja, hogy mégsem működhet a koncepció vagy a megrendelőnek nem tetszik.
+
+\subsection*{Murphy törvénye}
+Ami elromolhat, az el is romlik. Nincs száz százalékos bizonyosság sosem. Hiába a rengeteg manuális vagy automatikus teszt, a program valamely része mindig akkor és ott romlik el, amikor és ahol a legkevésbé számítunk rá, főleg ha egy olyan bonyolult rendszerről van szó, mint egy mesterséges intelligencia algoritmusáról, amely működése kívülálló szemszögéből nem egyértelmű. Megfigyelt jelenség, hogy a betonbiztosan működő szoftver is általában a megrendelő számára tartott bemutató előtt összeomlik. Ezért mindig legyen B-tervünk. És egy C.
 
 \section{Fordított CAPTCHA}
 Felmerült egy érdekes probléma a kliensprogramok tervezése során. Minden ilyen rendszer fejlesztésekor gondolni kell a rosszindulatú felhasználásra, jelen esetben például arra, mi van akkor és hogy szűrhető ki, ha valaki csalni akar. Többféle módja van a csalásnak, azonban van két eset, amely külön érdekes:
