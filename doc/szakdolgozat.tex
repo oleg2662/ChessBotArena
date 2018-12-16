@@ -1531,9 +1531,6 @@ Tehát ha úgy vesszük, akkor a minimax algoritmus nem más, mint az átlagoló
 \end{figure}
 \subsubsection*{Hatékonyság.} Ugyanaz, mint a minimax algoritmus esetében. Tegyük fel, hogy minden csomópontból $x$ a lehetséges lépések száma és $d$ a maximum mélység amit vizsgálunk. Ekkor az algoritmus műveletigénye: $ \mathcal{O}(x^d)$.\cite{alfaBetaPruneHu}
 
-\subsubsection*{Egy implementációs hatékonysági kérdés}
-Adja magát, hogy vajon érdemes-e külön minimax és átlagoló-minimax osztályt létrehozni, vagy pedig a minimax származhatna az átlagoló-minimax-ból. Jelen dolgozatban én szétválasztottam, mert az átlagoló-minimax-ban az $m$ és $n$ által megadott "kiválasztok pár elemet és átlagolom" kicsit több lépésnek tünt, mintha csak külön minimumot és maximumot venne az algoritmus. Illetve másik szemszögből a kód talán egyszerűbb és jobb látni a "sima" minimax-ot egy külön osztályban és azon keresztül vizsgálni.
-
 \subsection{Az alfa-béta algoritmus (\texttt{AlphaBetaAlgorithm} osztály)}
 Az alfa-béta algoritmus felépítése nagyon hasonló a minimax-ok felépítéséhez. Absztrakt UML diagramja \ref{fig:alphaBetaAbstractDiagram}. ábrán látható.
 
