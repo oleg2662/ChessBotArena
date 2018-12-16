@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace BoardGame.HumanClient
+namespace BoardGame.Clients.HumanClient
 {
     static class Program
     {

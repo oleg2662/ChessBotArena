@@ -6,7 +6,7 @@ using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.ChessGamesControllerModels;
 using BoardGame.ServiceClient;
 
-namespace BoardGame.ChessServiceTestApp
+namespace BoardGame.Tools.ChessServiceTestApp
 {
     public partial class MainForm : Form
     {
@@ -15,7 +15,7 @@ namespace BoardGame.ChessServiceTestApp
         private string _jwtToken;
 
 #if DEBUG
-        private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
+        private readonly string _baseUrl = "http://localhost/BoardGame.Service";
 #else
         private readonly string _baseUrl = "http://poseen-001-site1.gtempurl.com";
 #endif

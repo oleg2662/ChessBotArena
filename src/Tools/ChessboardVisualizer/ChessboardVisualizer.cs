@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using BoardGame.ChessboardVisualizer;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
+using BoardGame.Tools.ChessboardVisualizer;
 using BoardGame.Tools.Common;
 using Microsoft.VisualStudio.DebuggerVisualizers;
 
 [assembly: System.Diagnostics.DebuggerVisualizer(typeof(ChessboardVisualizer), typeof(Microsoft.VisualStudio.DebuggerVisualizers.VisualizerObjectSource), Target = typeof(ChessRepresentation), Description = "Chessboard visualizer")]
-namespace BoardGame.ChessboardVisualizer
+namespace BoardGame.Tools.ChessboardVisualizer
 {
     /// <summary>
     /// Visualizer for the chessboard. 

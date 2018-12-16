@@ -5,7 +5,7 @@ using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Pieces;
 
-namespace BoardGame.AlgorithmOfflineTester
+namespace BoardGame.Tools.AlgorithmOfflineTester
 {
     internal class Evaluator : IEvaluator<ChessRepresentation>
     {

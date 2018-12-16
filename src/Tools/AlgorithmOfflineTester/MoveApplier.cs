@@ -2,7 +2,7 @@
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 
-namespace BoardGame.AlgorithmOfflineTester
+namespace BoardGame.Tools.AlgorithmOfflineTester
 {
     internal class MoveApplier : IApplier<ChessRepresentation, BaseMove>
     {

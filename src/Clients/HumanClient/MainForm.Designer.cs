@@ -1,6 +1,6 @@
 ﻿using BoardGame.Tools.Common;
 
-namespace BoardGame.HumanClient
+namespace BoardGame.Clients.HumanClient
 {
     partial class MainForm
     {

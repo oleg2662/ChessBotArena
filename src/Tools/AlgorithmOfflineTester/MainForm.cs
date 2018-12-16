@@ -12,7 +12,7 @@ using BoardGame.Algorithms.Random;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 
-namespace BoardGame.AlgorithmOfflineTester
+namespace BoardGame.Tools.AlgorithmOfflineTester
 {
     public partial class MainForm : Form
     {
@@ -68,8 +68,8 @@ namespace BoardGame.AlgorithmOfflineTester
 
             InvokeIfRequired(listboxAlgorithmsRight, () => selectedAlgorithmRight = (Algorithms)listboxAlgorithmsRight.SelectedItem);
             InvokeIfRequired(numericMaxDepthRight, () => maxDepthRight = (int)numericMaxDepthRight.Value);
-            InvokeIfRequired(listboxAlgorithmsLeft, () => selectedAlgorithmLeft = (Algorithms)listboxAlgorithmsRight.SelectedItem);
-            InvokeIfRequired(numericMaxDepthRight, () => maxDepthLeft = (int)numericMaxDepthLeft.Value);
+            InvokeIfRequired(listboxAlgorithmsLeft, () => selectedAlgorithmLeft = (Algorithms)listboxAlgorithmsLeft.SelectedItem);
+            InvokeIfRequired(numericMaxDepthLeft, () => maxDepthLeft = (int)numericMaxDepthLeft.Value);
 
             _algorithmLeft = CreateAlgorithm(selectedAlgorithmLeft, maxDepthLeft);
             _algorithmRight = CreateAlgorithm(selectedAlgorithmRight, maxDepthRight);
@@ -175,7 +175,7 @@ namespace BoardGame.AlgorithmOfflineTester
             listboxAlgorithmsLeft.Items.Add(Algorithms.AlphaBeta);
             listboxAlgorithmsLeft.Items.Add(Algorithms.Greedy);
             listboxAlgorithmsLeft.Items.Add(Algorithms.Random);
-            listboxAlgorithmsLeft.SelectedIndex = Randomizer.Next(0, listboxAlgorithmsRight.Items.Count - 1);
+            listboxAlgorithmsLeft.SelectedIndex = Randomizer.Next(0, listboxAlgorithmsLeft.Items.Count - 1);
 
             chessBoardVisualizerPanel1.ChessRepresentation = game;
             chessBoardVisualizerPanel1.Refresh();
@@ -189,7 +189,7 @@ namespace BoardGame.AlgorithmOfflineTester
             switch (player)
             {
                 case ChessPlayer.White:
-                    InvokeIfRequired(progressbarAlgorithmLeft, () => progressbarAlgorithmRight.MarqueeAnimationSpeed = start ? 10 : 0);
+                    InvokeIfRequired(progressbarAlgorithmLeft, () => progressbarAlgorithmLeft.MarqueeAnimationSpeed = start ? 10 : 0);
                     break;
                 case ChessPlayer.Black:
                     InvokeIfRequired(progressbarAlgorithmRight, () => progressbarAlgorithmRight.MarqueeAnimationSpeed = start ? 10 : 0);

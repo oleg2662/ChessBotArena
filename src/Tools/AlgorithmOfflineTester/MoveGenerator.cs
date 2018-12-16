@@ -5,7 +5,7 @@ using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 
-namespace BoardGame.AlgorithmOfflineTester
+namespace BoardGame.Tools.AlgorithmOfflineTester
 {
     internal class MoveGenerator : IGenerator<ChessRepresentation, BaseMove>
     {

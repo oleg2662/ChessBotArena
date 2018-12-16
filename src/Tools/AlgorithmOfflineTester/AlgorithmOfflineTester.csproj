@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D35AE76A-573B-46DD-BB84-2FA2D81E727B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BoardGame.AlgorithmOfflineTester</RootNamespace>
-    <AssemblyName>BoardGame.AlgorithmOfflineTester</AssemblyName>
+    <RootNamespace>BoardGame.Tools.AlgorithmOfflineTester</RootNamespace>
+    <AssemblyName>BoardGame.Tools.AlgorithmOfflineTester</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -23,7 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\BoardGame.AlgorithmOfflineTester.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\BoardGame.Tools.AlgorithmOfflineTester.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -34,7 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\BoardGame.AlgorithmOfflineTester.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\BoardGame.Tools.AlgorithmOfflineTester.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

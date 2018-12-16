@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BoardGame.AlgorithmOfflineTester.Properties {
+namespace BoardGame.Tools.AlgorithmOfflineTester.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace BoardGame.AlgorithmOfflineTester.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoardGame.AlgorithmOfflineTester.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoardGame.Tools.AlgorithmOfflineTester.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

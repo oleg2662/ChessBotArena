@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BoardGame.BotClient
+namespace BoardGame.Clients.BotClient
 {
     public class EvaluatorItem
     {

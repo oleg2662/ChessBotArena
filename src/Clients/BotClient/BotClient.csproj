@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FBB51580-E79A-43F7-8BE8-22BEB0B5C123}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BoardGame.BotClient</RootNamespace>
-    <AssemblyName>BoardGame.BotClient</AssemblyName>
+    <RootNamespace>BoardGame.Clients.BotClient</RootNamespace>
+    <AssemblyName>BoardGame.Clients.BotClient</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -39,7 +39,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\BoardGame.BotClient.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\BoardGame.Clients.BotClient.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -148,9 +148,9 @@
       <Project>{357b1da4-2aa0-49bb-9ee1-b7a4c2ee112f}</Project>
       <Name>ServiceClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Tools\Tools.Common\Tools.Common.csproj">
+    <ProjectReference Include="..\..\Tools\Tools.Common\Common.csproj">
       <Project>{dd94b1ca-e09a-4ac1-ad01-50c0db0a27b5}</Project>
-      <Name>Tools.Common</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

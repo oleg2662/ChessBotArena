@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace BoardGame.AlgorithmOfflineTester
+namespace BoardGame.Tools.AlgorithmOfflineTester
 {
     internal static class Program
     {

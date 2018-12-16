@@ -25,7 +25,7 @@ namespace BoardGame.ChessboardVisualizer.TestApp
             board = manager.ApplyMove(board, step4);
             board = manager.ApplyMove(board, step5);
 
-            ChessboardVisualizer.TestShowVisualizer(board);
+            Tools.ChessboardVisualizer.ChessboardVisualizer.TestShowVisualizer(board);
         }
     }
 }

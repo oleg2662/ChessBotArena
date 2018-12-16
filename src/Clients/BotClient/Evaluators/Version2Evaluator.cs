@@ -5,7 +5,7 @@ using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Pieces;
 
-namespace BoardGame.BotClient.Evaluators
+namespace BoardGame.Clients.BotClient.Evaluators
 {
     internal class Version2Evaluator : IEvaluator<ChessRepresentation>
     {

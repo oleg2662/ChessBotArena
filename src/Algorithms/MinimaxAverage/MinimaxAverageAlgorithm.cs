@@ -14,28 +14,45 @@ namespace BoardGame.Algorithms.MinimaxAverage
     public class MinimaxAverageAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
         where TMove : class
     {
-        private int _maxDepth;
-        private int _maxLevelAverageDepth = 2;
-        private int _minLevelAverageDepth = 2;
+        /// <summary>
+        /// Inner value of the maximum depth.
+        /// </summary>
+        protected int MaxDepthInnerValue;
 
-        private readonly IEvaluator<TState> _evaluator;
-        private readonly IGenerator<TState, TMove> _moveGenerator;
-        private readonly IApplier<TState, TMove> _moveApplier;
+        /// <summary>
+        /// Inner value of the maximum number of nodes calculated in the average calculation.
+        /// </summary>
+        protected int MaxLevelAverageDepthInnerValue = 2;
 
+        /// <summary>
+        /// Inner value of the minimum number of nodes calculated in the average calculation.
+        /// </summary>
+        protected int MinLevelAverageDepthInnerValue = 2;
+
+        protected readonly IEvaluator<TState> Evaluator;
+        protected readonly IGenerator<TState, TMove> MoveGenerator;
+        protected readonly IApplier<TState, TMove> MoveApplier;
+
+        /// <summary>
+        /// Creates a minimax average algorithm object.
+        /// </summary>
+        /// <param name="evaluator">The evaluator for the nodes.</param>
+        /// <param name="moveGenerator">The move generator for the nodes.</param>
+        /// <param name="applier">The move applier for the moves.</param>
         public MinimaxAverageAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
         {
-            _evaluator = evaluator;
-            _moveGenerator = moveGenerator;
-            _moveApplier = applier;
-            _maxDepth = 3;
+            Evaluator = evaluator;
+            MoveGenerator = moveGenerator;
+            MoveApplier = applier;
+            MaxDepthInnerValue = 3;
         }
 
         /// <summary>
-        /// Gets or sets the maximum number of minimum elements for average calculation.
+        /// Gets or sets the number of minimum elements for average calculation.
         /// </summary>
-        public int MinLevelAverageDepth
+        public virtual int MinLevelAverageDepth
         {
-            get => _minLevelAverageDepth;
+            get => MinLevelAverageDepthInnerValue;
 
             set
             {
@@ -44,16 +61,16 @@ namespace BoardGame.Algorithms.MinimaxAverage
                     throw new ArgumentOutOfRangeException(nameof(MinLevelAverageDepth));
                 }
 
-                _minLevelAverageDepth = value;
+                MinLevelAverageDepthInnerValue = value;
             }
         }
 
         /// <summary>
-        /// Gets or sets the maximum number of maximum elements for average calculation.
+        /// Gets or sets the number of maximum elements for average calculation.
         /// </summary>
-        public int MaxLevelAverageDepth
+        public virtual int MaxLevelAverageDepth
         {
-            get => _maxLevelAverageDepth;
+            get => MaxLevelAverageDepthInnerValue;
 
             set
             {
@@ -62,7 +79,7 @@ namespace BoardGame.Algorithms.MinimaxAverage
                     throw new ArgumentOutOfRangeException(nameof(MaxLevelAverageDepth));
                 }
 
-                _maxLevelAverageDepth = value;
+                MaxLevelAverageDepthInnerValue = value;
             }
         }
 
@@ -71,7 +88,7 @@ namespace BoardGame.Algorithms.MinimaxAverage
         /// </summary>
         public int MaxDepth
         {
-            get => _maxDepth;
+            get => MaxDepthInnerValue;
 
             set
             {
@@ -80,7 +97,7 @@ namespace BoardGame.Algorithms.MinimaxAverage
                     throw new MinimaxMaxDepthInvalidException();
                 }
 
-                _maxDepth = value;
+                MaxDepthInnerValue = value;
             }
         }
 
@@ -93,31 +110,29 @@ namespace BoardGame.Algorithms.MinimaxAverage
 
         private TMove MiniMax(TState initialState)
         {
-            var firstSteps = _moveGenerator.Generate(initialState);
+            var firstSteps = MoveGenerator.Generate(initialState);
             var firstLevelValues = firstSteps.Select(x => new
             {
                 SelectedMove = x,
-                Value = MiniMaxEvaluate(_moveApplier.Apply(initialState, x), false, 2)
+                Value = MiniMaxEvaluate(MoveApplier.Apply(initialState, x), false, 1)
             });
 
             return firstLevelValues.OrderByDescending(x => x.Value).FirstOrDefault()?.SelectedMove;
         }
 
-        private int Evaluate(TState state, bool isMaximizingNode)
-        {
-            var value = _evaluator.Evaluate(state);
-            return isMaximizingNode ? value : -1 * value;
-        }
-
         private int MiniMaxEvaluate(TState node, bool isMaximizingNode, int depth)
         {
-            var possibleMoves = _moveGenerator.Generate(node).ToArray();
-            var nodeIsLeaf = depth == MaxDepth || !possibleMoves.Any();
+            if (depth >= MaxDepth)
+            {
+                return Evaluator.Evaluate(node);
+            }
+
+            var possibleMoves = MoveGenerator.Generate(node).ToArray();
+            var nodeIsLeaf =!possibleMoves.Any();
 
             if (nodeIsLeaf)
             {
-                var value = Evaluate(node, isMaximizingNode);
-                return value;
+                return Evaluator.Evaluate(node);
             }
 
             if (isMaximizingNode)
@@ -127,7 +142,7 @@ namespace BoardGame.Algorithms.MinimaxAverage
 
                 foreach (var possibleMove in possibleMoves)
                 {
-                    var nextNode = _moveApplier.Apply(node, possibleMove);
+                    var nextNode = MoveApplier.Apply(node, possibleMove);
                     values.Add(MiniMaxEvaluate(nextNode, false, depth + 1));
                 }
 
@@ -142,7 +157,7 @@ namespace BoardGame.Algorithms.MinimaxAverage
 
                 foreach (var possibleMove in possibleMoves)
                 {
-                    var nextNode = _moveApplier.Apply(node, possibleMove);
+                    var nextNode = MoveApplier.Apply(node, possibleMove);
                     values.Add(MiniMaxEvaluate(nextNode, true, depth + 1));
                 }
 
@@ -151,6 +166,5 @@ namespace BoardGame.Algorithms.MinimaxAverage
                 return (int) Math.Min(value, newValue);
             }
         }
-
     }
 }

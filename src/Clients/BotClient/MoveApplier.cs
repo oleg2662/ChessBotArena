@@ -2,7 +2,7 @@
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 
-namespace BoardGame.BotClient
+namespace BoardGame.Clients.BotClient
 {
     internal class MoveApplier : IApplier<ChessRepresentation, BaseMove>
     {

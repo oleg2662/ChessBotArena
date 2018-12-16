@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Algorithms.Minimax.Exceptions;
 
@@ -54,66 +55,66 @@ namespace BoardGame.Algorithms.AlphaBeta
 
         private TMove AlphaBeta(TState initialState)
         {
-            var alpha = new MoveAndValue<TMove>(null, int.MinValue);
-            var beta = new MoveAndValue<TMove>(null, int.MaxValue);
+            var firstSteps = _moveGenerator.Generate(initialState);
+            var firstLevelValues = firstSteps.Select(x => new
+            {
+                SelectedMove = x,
+                Value = AlphaBetaEvaluate(_moveApplier.Apply(initialState, x), int.MinValue, int.MaxValue, false, 1)
+            });
 
-            var result = AlphaBetaEvaluate(null, initialState, alpha, beta, true, 1);
-
-            return result?.Move;
+            return firstLevelValues.OrderByDescending(x => x.Value).FirstOrDefault()?.SelectedMove;
         }
 
-        private int Evaluate(TState state, bool isMaximizingNode)
+        private int AlphaBetaEvaluate(TState node, int alpha, int beta, bool isMaximizingNode, int depth)
         {
-            var value = _evaluator.Evaluate(state);
+            if (depth >= MaxDepth)
+            {
+                return _evaluator.Evaluate(node);
+            }
 
-            return isMaximizingNode ? value : -1 * value;
-        }
-
-        private MoveAndValue<TMove> AlphaBetaEvaluate(TMove moveToNode, TState node, MoveAndValue<TMove> alpha, MoveAndValue<TMove> beta, bool isMaximizingNode, int depth)
-        {
             var possibleMoves = _moveGenerator.Generate(node).ToArray();
-            var nodeIsLeaf = depth == MaxDepth || !possibleMoves.Any();
+            var nodeIsLeaf = !possibleMoves.Any();
+            int value;
 
             if (nodeIsLeaf)
             {
-                var value = Evaluate(node, isMaximizingNode);
-                return new MoveAndValue<TMove>(moveToNode, value);
+                return _evaluator.Evaluate(node);
             }
 
             if (isMaximizingNode)
             {
+                value = int.MinValue;
                 foreach (var possibleMove in possibleMoves)
                 {
                     var nextNode = _moveApplier.Apply(node, possibleMove);
-                    var value = AlphaBetaEvaluate(possibleMove, nextNode, alpha, beta, false, depth + 1);
-                    alpha = MoveAndValue<TMove>.Max(alpha, value);
-                    if (beta <= alpha)
+                    value = Math.Max(value, AlphaBetaEvaluate(nextNode, alpha, beta, false, depth + 1));
+                    alpha = Math.Max(alpha, value);
+                    if (alpha >= beta)
                     {
+                        // beta cut-off
                         break;
                     }
                 }
 
-                return moveToNode == null ? alpha : new MoveAndValue<TMove>(moveToNode, alpha.Value);
+                return value;
             }
-
-            if (!isMaximizingNode)
+            else
             {
+                value = int.MaxValue;
                 foreach (var possibleMove in possibleMoves)
                 {
                     var nextNode = _moveApplier.Apply(node, possibleMove);
-                    var value = AlphaBetaEvaluate(possibleMove, nextNode, alpha, beta, true, depth + 1);
-                    beta = MoveAndValue<TMove>.Min(beta, value);
-                    if (beta <= alpha)
+                    value = Math.Min(value, AlphaBetaEvaluate(nextNode, alpha, beta, true, depth + 1));
+                    beta = Math.Min(beta, value);
+                    if (alpha >= beta)
                     {
+                        // alpha cut-off
                         break;
                     }
                 }
 
-                //return beta;
-                return moveToNode == null ? beta : new MoveAndValue<TMove>(moveToNode, beta.Value);
+                return value;
             }
-
-            return null;
         }
     }
 }

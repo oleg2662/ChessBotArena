@@ -1,4 +1,4 @@
-﻿namespace BoardGame.BotClient
+﻿namespace BoardGame.Clients.BotClient
 {
     partial class MainForm
     {

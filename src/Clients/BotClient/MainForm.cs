@@ -10,14 +10,14 @@ using BoardGame.Algorithms.Greedy;
 using BoardGame.Algorithms.Minimax;
 using BoardGame.Algorithms.MinimaxAverage;
 using BoardGame.Algorithms.Random;
-using BoardGame.BotClient.Evaluators;
+using BoardGame.Clients.BotClient.Evaluators;
 using BoardGame.Game.Chess;
 using BoardGame.Game.Chess.Moves;
 using BoardGame.Model.Api.ChessGamesControllerModels;
 using BoardGame.ServiceClient;
 using BoardGame.Tools.Common;
 
-namespace BoardGame.BotClient
+namespace BoardGame.Clients.BotClient
 {
     public partial class MainForm : Form
     {

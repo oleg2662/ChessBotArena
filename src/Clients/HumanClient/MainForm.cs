@@ -12,7 +12,7 @@ using BoardGame.Model.Api.LadderControllerModels;
 using BoardGame.ServiceClient;
 using BoardGame.Tools.Common;
 
-namespace BoardGame.HumanClient
+namespace BoardGame.Clients.HumanClient
 {
     /// <summary>
     /// The main form's UI logic.

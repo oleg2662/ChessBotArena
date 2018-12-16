@@ -7,8 +7,8 @@
     <ProjectGuid>{BBE55737-6EC8-40DE-9C67-253ACCA5CE76}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BoardGame.ChessboardVisualizer</RootNamespace>
-    <AssemblyName>BoardGame.ChessboardVisualizer</AssemblyName>
+    <RootNamespace>BoardGame.Tools.ChessboardVisualizer</RootNamespace>
+    <AssemblyName>BoardGame.Tools.ChessboardVisualizer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\BoardGame.ChessboardVisualizer.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\BoardGame.Tools.ChessboardVisualizer.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\BoardGame.ChessboardVisualizer.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\BoardGame.Tools.ChessboardVisualizer.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.DebuggerVisualizers, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -56,9 +56,9 @@
       <Project>{eee35af3-b5eb-421e-bd42-f978f9541124}</Project>
       <Name>Game</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tools.Common\Tools.Common.csproj">
+    <ProjectReference Include="..\Tools.Common\Common.csproj">
       <Project>{dd94b1ca-e09a-4ac1-ad01-50c0db0a27b5}</Project>
-      <Name>Tools.Common</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -84,11 +84,11 @@
 
 setlocal EnableDelayedExpansion 
 
-set VisualizersDir="%25USERPROFILE%25\Documents\Visual Studio 2017\Visualizers\BoardGame.ChessboardVisualizer.dll"
+set VisualizersDir="%25USERPROFILE%25\Documents\Visual Studio 2017\Visualizers\BoardGame.Tools.ChessboardVisualizer.dll"
 
 :build
 echo Using visualizer dir: %25VisualizersDir%25
 
-"$(SolutionDir)ILMerge\ILMerge.exe" /ndebug /copyattrs /targetplatform:4.0 /out:%25VisualizersDir%25 "$(TargetDir)BoardGame.ChessboardVisualizer.dll" "$(TargetDir)Microsoft.Extensions.Caching.Abstractions.dll" "$(TargetDir)Microsoft.Extensions.Caching.Memory.dll" "$(TargetDir)Microsoft.Extensions.Options.dll" "$(TargetDir)BoardGame.Tools.Common.dll"</PostBuildEvent>
+"$(SolutionDir)ILMerge\ILMerge.exe" /ndebug /copyattrs /targetplatform:4.0 /out:%25VisualizersDir%25 "$(TargetDir)BoardGame.Tools.ChessboardVisualizer.dll" "$(TargetDir)Microsoft.Extensions.Caching.Abstractions.dll" "$(TargetDir)Microsoft.Extensions.Caching.Memory.dll" "$(TargetDir)Microsoft.Extensions.Options.dll" "$(TargetDir)BoardGame.Tools.Common.dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>

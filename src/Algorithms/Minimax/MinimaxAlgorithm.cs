@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Algorithms.Minimax.Exceptions;
+using BoardGame.Algorithms.MinimaxAverage;
 
 namespace BoardGame.Algorithms.Minimax
 {
@@ -10,101 +12,27 @@ namespace BoardGame.Algorithms.Minimax
     /// </summary>
     /// <typeparam name="TState">The type of the states which have to be evaluated.</typeparam>
     /// <typeparam name="TMove">The type of the moves between states.</typeparam>
-    public class MinimaxAlgorithm<TState, TMove> : IAlgorithm<TState, TMove>
+    public class MinimaxAlgorithm<TState, TMove> : MinimaxAverageAlgorithm<TState, TMove>
         where TMove : class
     {
-        private int _maxDepth;
-
-        private readonly IEvaluator<TState> _evaluator;
-        private readonly IGenerator<TState, TMove> _moveGenerator;
-        private readonly IApplier<TState, TMove> _moveApplier;
-
-        public MinimaxAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
-        {
-            _evaluator = evaluator;
-            _moveGenerator = moveGenerator;
-            _moveApplier = applier;
-            _maxDepth = 3;
-        }
-
         /// <summary>
-        /// Gets or sets the maximum depth (number of transitions) the algorithm is checking.
+        /// Creates a minimax algorithm object.
+        /// (Which is the same as hte minimax average with the number of nodes average calculations set to 1.
         /// </summary>
-        public int MaxDepth
+        /// <param name="evaluator">The evaluator for the nodes.</param>
+        /// <param name="moveGenerator">The move generator for the nodes.</param>
+        /// <param name="applier">The move applier for the moves.</param>
+        public MinimaxAlgorithm(IEvaluator<TState> evaluator, IGenerator<TState, TMove> moveGenerator, IApplier<TState, TMove> applier)
+        : base(evaluator, moveGenerator, applier)
         {
-            get => _maxDepth;
-
-            set
-            {
-                if(value < 1)
-                {
-                    throw new MinimaxMaxDepthInvalidException();
-                }
-
-                _maxDepth = value;
-            }
+            MaxLevelAverageDepthInnerValue = 1;
+            MinLevelAverageDepthInnerValue = 1;
         }
 
         /// <inheritdoc />
-        public TMove Calculate(TState state)
-        {
-            var result = MiniMax(state);
-            return result;
-        }
+        public override int MaxLevelAverageDepth => MaxLevelAverageDepthInnerValue;
 
-        private TMove MiniMax(TState initialState)
-        {
-            var firstSteps = _moveGenerator.Generate(initialState);
-            var firstLevelValues = firstSteps.Select(x => new
-            {
-                SelectedMove = x,
-                Value = MiniMaxEvaluate(_moveApplier.Apply(initialState, x), false, 2)
-            });
-
-            return firstLevelValues.OrderByDescending(x => x.Value).FirstOrDefault()?.SelectedMove;
-        }
-
-        private int Evaluate(TState state, bool isMaximizingNode)
-        {
-            var value = _evaluator.Evaluate(state);
-            return isMaximizingNode ? value : -1 * value;
-        }
-
-        private int MiniMaxEvaluate(TState node, bool isMaximizingNode, int depth)
-        {
-            var possibleMoves = _moveGenerator.Generate(node).ToArray();
-            var nodeIsLeaf = depth == MaxDepth || !possibleMoves.Any();
-
-            if (nodeIsLeaf)
-            {
-                var value = Evaluate(node, isMaximizingNode);
-                return value;
-            }
-
-            if (isMaximizingNode)
-            {
-                var value = int.MinValue;
-
-                foreach (var possibleMove in possibleMoves)
-                {
-                    var nextNode = _moveApplier.Apply(node, possibleMove);
-                    value = (int) Math.Max(value, MiniMaxEvaluate(nextNode, false, depth + 1));
-                }
-
-                return value;
-            }
-            else
-            {
-                var value = int.MaxValue;
-
-                foreach (var possibleMove in possibleMoves)
-                {
-                    var nextNode = _moveApplier.Apply(node, possibleMove);
-                    value = Math.Min(value, MiniMaxEvaluate(nextNode, true, depth + 1));
-                }
-
-                return value;
-            }
-        }
+        /// <inheritdoc />
+        public override int MinLevelAverageDepth => MinLevelAverageDepthInnerValue;
     }
 }

@@ -64,9 +64,9 @@
       <Project>{bbe55737-6ec8-40de-9c67-253acca5ce76}</Project>
       <Name>ChessboardVisualizer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Tools.Common\Tools.Common.csproj">
+    <ProjectReference Include="..\Tools.Common\Common.csproj">
       <Project>{dd94b1ca-e09a-4ac1-ad01-50c0db0a27b5}</Project>
-      <Name>Tools.Common</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

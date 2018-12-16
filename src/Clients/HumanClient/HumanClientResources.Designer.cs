@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BoardGame.HumanClient {
+namespace BoardGame.Clients.HumanClient {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace BoardGame.HumanClient {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoardGame.HumanClient.HumanClientResources", typeof(HumanClientResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoardGame.Clients.HumanClient.HumanClientResources", typeof(HumanClientResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,8 +61,8 @@ namespace BoardGame.HumanClient {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {\rtf1\adeflang1025\ansi\ansicpg1252\uc1\adeff31507\deff0\stshfdbch31506\stshfloch31506\stshfhich31506\stshfbi31507\deflang2057\deflangfe2057\themelang2057\themelangfe0\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f4\fbidi \fswiss\fcharset0\fprq2{\*\panose 020b0604020202020204}Helvetica;}
-        ///{\f34\fbidi \froman\fcharset0\fprq2{\*\panose 02040503050406030204}Cambria Math;}{\f37\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0502020204030204}Calibri;}{\f [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to {\rtf1\adeflang1025\ansi\ansicpg1252\uc1\adeff0\deff0\stshfdbch0\stshfloch31506\stshfhich31506\stshfbi31506\deflang2057\deflangfe2057\themelang2057\themelangfe0\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f4\fbidi \fswiss\fcharset0\fprq2{\*\panose 020b0604020202020204}Helvetica;}
+        ///{\f34\fbidi \froman\fcharset0\fprq2{\*\panose 02040503050406030204}Cambria Math;}{\f37\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0502020204030204}Calibri;}{\f38\fbidi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HumanClientDoc {
             get {

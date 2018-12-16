@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BoardGame.AlgorithmOfflineTester.Properties {
+namespace BoardGame.Tools.AlgorithmOfflineTester.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

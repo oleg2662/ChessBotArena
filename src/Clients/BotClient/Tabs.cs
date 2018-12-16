@@ -1,4 +1,4 @@
-﻿namespace BoardGame.BotClient
+﻿namespace BoardGame.Clients.BotClient
 {
     internal enum Tabs
     {

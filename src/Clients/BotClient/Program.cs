@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace BoardGame.BotClient
+namespace BoardGame.Clients.BotClient
 {
     static class Program
     {

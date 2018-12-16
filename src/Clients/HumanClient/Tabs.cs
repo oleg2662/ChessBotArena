@@ -1,4 +1,4 @@
-﻿namespace BoardGame.HumanClient
+﻿namespace BoardGame.Clients.HumanClient
 {
     internal enum Tabs
     {

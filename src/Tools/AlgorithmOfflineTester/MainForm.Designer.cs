@@ -1,4 +1,4 @@
-﻿namespace BoardGame.AlgorithmOfflineTester
+﻿namespace BoardGame.Tools.AlgorithmOfflineTester
 {
     partial class MainForm
     {
