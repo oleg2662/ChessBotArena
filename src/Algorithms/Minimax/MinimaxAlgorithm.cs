@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using BoardGame.Algorithms.Abstractions.Interfaces;
 using BoardGame.Algorithms.Minimax.Exceptions;
 
@@ -53,8 +54,14 @@ namespace BoardGame.Algorithms.Minimax
 
         private TMove MiniMax(TState initialState)
         {
-            var result = MiniMaxEvaluate(null, initialState, true, 1);
-            return result?.Move;
+            var firstSteps = _moveGenerator.Generate(initialState);
+            var firstLevelValues = firstSteps.Select(x => new
+            {
+                SelectedMove = x,
+                Value = MiniMaxEvaluate(_moveApplier.Apply(initialState, x), false, 2)
+            });
+
+            return firstLevelValues.OrderByDescending(x => x.Value).FirstOrDefault()?.SelectedMove;
         }
 
         private int Evaluate(TState state, bool isMaximizingNode)
@@ -63,7 +70,7 @@ namespace BoardGame.Algorithms.Minimax
             return isMaximizingNode ? value : -1 * value;
         }
 
-        private MoveAndValue<TMove> MiniMaxEvaluate(TMove moveToNode, TState node, bool isMaximizingNode, int depth)
+        private int MiniMaxEvaluate(TState node, bool isMaximizingNode, int depth)
         {
             var possibleMoves = _moveGenerator.Generate(node).ToArray();
             var nodeIsLeaf = depth == MaxDepth || !possibleMoves.Any();
@@ -71,36 +78,33 @@ namespace BoardGame.Algorithms.Minimax
             if (nodeIsLeaf)
             {
                 var value = Evaluate(node, isMaximizingNode);
-                return new MoveAndValue<TMove>(moveToNode, value);
+                return value;
             }
 
             if (isMaximizingNode)
             {
-                var value = new MoveAndValue<TMove>(null, int.MinValue);
+                var value = int.MinValue;
 
                 foreach (var possibleMove in possibleMoves)
                 {
                     var nextNode = _moveApplier.Apply(node, possibleMove);
-                    value = MoveAndValue<TMove>.Max(MiniMaxEvaluate(possibleMove, nextNode, false, depth + 1), value);
+                    value = (int) Math.Max(value, MiniMaxEvaluate(nextNode, false, depth + 1));
                 }
 
-                return moveToNode == null ? value : new MoveAndValue<TMove>(moveToNode, value.Value);
+                return value;
             }
-
-            if (!isMaximizingNode)
+            else
             {
-                var value = new MoveAndValue<TMove>(null, int.MaxValue);
+                var value = int.MaxValue;
 
                 foreach (var possibleMove in possibleMoves)
                 {
                     var nextNode = _moveApplier.Apply(node, possibleMove);
-                    value = MoveAndValue<TMove>.Min(MiniMaxEvaluate(possibleMove, nextNode, false, depth + 1), value);
+                    value = Math.Min(value, MiniMaxEvaluate(nextNode, true, depth + 1));
                 }
 
-                return moveToNode == null ? value : new MoveAndValue<TMove>(moveToNode, value.Value);
+                return value;
             }
-
-            return null;
         }
     }
 }
