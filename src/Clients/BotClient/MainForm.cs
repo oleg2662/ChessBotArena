@@ -663,9 +663,18 @@ namespace BoardGame.Clients.BotClient
 
             if (RefreshSemaphore.CurrentCount > 0)
             {
-                btnCalculate.Text = "Stop";
-                btnCalculate.Enabled = true;
-                timerRefresh.Enabled = true;
+                if (timerRefresh.Enabled)
+                {
+                    btnCalculate.Text = "Start";
+                    btnCalculate.Enabled = true;
+                    timerRefresh.Enabled = false;
+                }
+                else
+                {
+                    btnCalculate.Text = "Stop";
+                    btnCalculate.Enabled = true;
+                    timerRefresh.Enabled = true;
+                }
             }
             else
             {

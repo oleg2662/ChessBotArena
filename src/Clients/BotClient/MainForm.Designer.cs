@@ -116,9 +116,9 @@
             this.toolStripProgressBar1,
             this.toolStripStatusLabel1,
             this.toolStripSplitButton1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 600);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 510);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1082, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(985, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip1_ItemClicked);
@@ -134,7 +134,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(1046, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(949, 17);
             this.toolStripStatusLabel1.Spring = true;
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -163,7 +163,7 @@
             this.tableLayoutPanelMultiplayer.RowCount = 1;
             this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanelMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 651F));
-            this.tableLayoutPanelMultiplayer.Size = new System.Drawing.Size(1082, 600);
+            this.tableLayoutPanelMultiplayer.Size = new System.Drawing.Size(985, 510);
             this.tableLayoutPanelMultiplayer.TabIndex = 5;
             // 
             // panelSidebar
@@ -175,9 +175,9 @@
             this.panelSidebar.Controls.Add(this.panelLogout);
             this.panelSidebar.Controls.Add(this.panelLogin);
             this.panelSidebar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSidebar.Location = new System.Drawing.Point(885, 3);
+            this.panelSidebar.Location = new System.Drawing.Point(788, 3);
             this.panelSidebar.Name = "panelSidebar";
-            this.panelSidebar.Size = new System.Drawing.Size(194, 594);
+            this.panelSidebar.Size = new System.Drawing.Size(194, 504);
             this.panelSidebar.TabIndex = 1;
             // 
             // panelMatches
@@ -241,7 +241,7 @@
             // panelRefresh
             // 
             this.panelRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelRefresh.Location = new System.Drawing.Point(0, 549);
+            this.panelRefresh.Location = new System.Drawing.Point(0, 459);
             this.panelRefresh.Name = "panelRefresh";
             this.panelRefresh.Padding = new System.Windows.Forms.Padding(4);
             this.panelRefresh.Size = new System.Drawing.Size(194, 45);
@@ -472,7 +472,7 @@
             this.tabMain.Location = new System.Drawing.Point(3, 3);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(876, 594);
+            this.tabMain.Size = new System.Drawing.Size(779, 504);
             this.tabMain.TabIndex = 0;
             this.tabMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabMain_Selected);
             // 
@@ -555,7 +555,7 @@
             this.tabPageGame.Location = new System.Drawing.Point(4, 22);
             this.tabPageGame.Name = "tabPageGame";
             this.tabPageGame.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGame.Size = new System.Drawing.Size(868, 568);
+            this.tabPageGame.Size = new System.Drawing.Size(771, 478);
             this.tabPageGame.TabIndex = 2;
             this.tabPageGame.Text = "Game";
             this.tabPageGame.UseVisualStyleBackColor = true;
@@ -569,7 +569,7 @@
             this.textboxBotLog.Name = "textboxBotLog";
             this.textboxBotLog.ReadOnly = true;
             this.textboxBotLog.ShowSelectionMargin = true;
-            this.textboxBotLog.Size = new System.Drawing.Size(862, 562);
+            this.textboxBotLog.Size = new System.Drawing.Size(765, 472);
             this.textboxBotLog.TabIndex = 1;
             this.textboxBotLog.Text = "";
             // 
@@ -626,7 +626,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1082, 622);
+            this.ClientSize = new System.Drawing.Size(985, 532);
             this.Controls.Add(this.tableLayoutPanelMultiplayer);
             this.Controls.Add(this.statusStrip1);
             this.DoubleBuffered = true;
