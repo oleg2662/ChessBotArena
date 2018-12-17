@@ -2,7 +2,7 @@
 % === PREAMBLE ================================================================================================
 % =============================================================================================================
 
-\documentclass[twoside, a4paper, 12pt]{book}
+\documentclass[10pt]{book}
 \usepackage{arabtex}
 \usepackage{utf8}
 \usepackage[utf8]{inputenc}
@@ -10,7 +10,9 @@
 \usepackage{arabtex}
 \usepackage[russian, english, magyar]{babel}
 \usepackage{bookman}
-\usepackage{thesis-style}
+\usepackage{thesis-kindle-style}
+\usepackage[scaled]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
 \usepackage{graphicx,wrapfig}
 \usepackage{cite}
 \usepackage{url}
@@ -23,7 +25,7 @@
 	pdfauthor={Virágh, Tibor},
 	pdftitle={Sakk-bot Verseny},
 	pdfsubject={Sakk-bot Verseny},
-	pdfkeywords={sakk, bot, verseny, programozás, mi, mesterséges intelligencia, szakdolgozat, alfa-béta, minimax, REST, API, chess, AI, alpha-beta, algorithm, thesis, ELTE},
+	pdfkeywords={sakk, bot, verseny, szakdolgozat, programozás, mi, mesterséges intelligencia, alfa-béta, minimax, REST, API, chess, AI, alpha-beta, algorithm, thesis, ELTE},
 	pdfproducer={Latex with hyperref, or other system},
 	pdfcreator={pdflatex, or other tool}]{hyperref}
 
@@ -50,31 +52,6 @@
 \definecolor{green}{rgb}{0,0.8,0}
 \definecolor{cyan}{rgb}{0.0,0.6,0.6}
 
-\lstloadlanguages{[Sharp]C}
-
-\lstset{
-	language={[Sharp]C},
-	basicstyle=\color{black}\ttfamily\scriptsize, 
-	tabsize=2, 
-	extendedchars=true, 
-	breaklines=true, 
-	stringstyle=\color{blue}\ttfamily\scriptsize, 
-	showspaces=false, 
-	showtabs=false, 
-	xleftmargin=5pt,
-	framexleftmargin=5pt,
-	framexrightmargin=2pt,
-	framexbottommargin=2pt,
-	commentstyle=\color{green}\ttfamily\scriptsize,
-	showstringspaces=false, 
-	keywordstyle=\color{cyan}\ttfamily\scriptsize,
-	morekeywords={ abstract, event, new, struct, as, explicit, null, switch, base, extern, object, this, bool, false, operator, throw, break, finally, out, true, byte, fixed, override, try, case, float, params, typeof, catch, for, private, uint, char, foreach, protected, ulong, checked, goto, public, unchecked, class, if, readonly, unsafe, const, implicit, ref, ushort, continue, in, return, using, decimal, int, sbyte, virtual, default, interface, sealed, volatile, delegate, internal, short, void, do, is, sizeof, while, double, lock, stackalloc, else, long, static, enum, namespace, string },
-	sensitive=true,
-	morecomment=[l]{//},
-	morecomment=[s]{/*}{*/},
-	morestring=[b]"
-}
-
 %\usepackage{caption}
 %\DeclareCaptionFont{white}{\color{white}}
 %\DeclareCaptionFormat{listing}{\colorbox{blue}{\parbox{\textwidth}{\hspace{15pt}#1#2#3}}} %changed \colorbox{8} to \colorbox{blue} cause 8 is not a color!
@@ -97,7 +74,7 @@
 \frontmatter
 \pagestyle{empty}
 
-\include{meta/coverpage}
+\include{meta/coverpage_kindle}
 \cleardoublepage
 
 %place of the thesis subject registration form
@@ -114,7 +91,7 @@
 \cleardoublepage
 % table of contents
 \renewcommand{\contentsname}{Tartalomjegyzék}
-\tableofcontents
+%\tableofcontents
 
 \pagestyle{plain}
 \setcounter{page}{1}
@@ -323,7 +300,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 % -- Kliens - indulás 
 % ------------------------------------------------------------------------------------------------------------
 
-\begin{longtable}[c]{|c|p{14cm}|}
+\begin{longtable}[c]{|c|p{7cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens indítása}}} \\ \hline
@@ -371,7 +348,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 % -- Kliens - lobbi
 % ------------------------------------------------------------------------------------------------------------
 
-\begin{longtable}[c]{|c|p{14cm}|}
+\begin{longtable}[c]{|c|p{7cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Hitelesítési (al)felület}}} \\ \hline
@@ -456,7 +433,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 % -- Kliens - lobbi
 % ------------------------------------------------------------------------------------------------------------
 
-\begin{longtable}[c]{|c|p{14cm}|}
+\begin{longtable}[c]{|c|p{7cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Lobbi}}} \\ \hline
@@ -545,7 +522,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 % -- Kliens - partik listája
 % ------------------------------------------------------------------------------------------------------------
 
-\begin{longtable}[c]{|c|p{14cm}|}
+\begin{longtable}[c]{|c|p{7cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - Partik listája}}} \\ \hline
@@ -613,7 +590,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 % -- Kliens - játékfelület
 % ------------------------------------------------------------------------------------------------------------
 
-\begin{longtable}[c]{|c|p{14cm}|}
+\begin{longtable}[c]{|c|p{7cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - játékfelület}}} \\ \hline
@@ -684,7 +661,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 % -- Kliens - játékfelület
 % ------------------------------------------------------------------------------------------------------------
 
-\begin{longtable}[c]{|c|p{14cm}|}
+\begin{longtable}[c]{|c|p{7cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Kliens - toplista}}} \\ \hline
@@ -748,7 +725,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 	%
 	
 	\caption{Kliens alapfunkciói - toplista}
-	\label{userStories:client:topScores}\\
+	\label{userStories:client:gameScreen}\\
 \end{longtable}
 
 \subsubsection{Szolgáltatás-oldal funkcionalitása}
@@ -756,7 +733,7 @@ Ebben a felhasználási helyzetben (vagy máshogy fogalmazva: a sima sakkjáték
 % --------------------------------------------------------------------------------------------------------
 % -- Szerver - felhasználói fiókok
 % --------------------------------------------------------------------------------------------------------
-\begin{longtable}[c]{|c|p{14cm}|}
+\begin{longtable}[c]{|c|p{7cm}|}
 	\hline
 	\rowcolor[HTML]{6665CD}
 	\multicolumn{2}{|l|}{\cellcolor[HTML]{6665CD}{\color[HTML]{FFFFFF} \textbf{Szolgáltatás funkciói}}} \\ \hline
