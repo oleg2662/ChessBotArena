@@ -992,6 +992,67 @@ Az előzőekből látható, hogy két nagy részre bontható programcsomagról v
 	\label{fig:highLevelArchitecture}
 \end{figure}
 
+Továbbá a szolgáltatást használó kliensek, illetve a kliens-fejlesztést megkönnyítő könyvtárak fogják a szofvercsomag részét képezni a következő módon:
+
+\section{A programcsomag felépítése}
+\begin{itemize}
+	\item \textbf{Játék-modell} (könyvtár)
+	\begin{itemize}
+		\item Megvalósítja a játéktér modelljét
+		\item Ezen játéktérhez megvalósítja a sakk szabályait
+	\end{itemize}
+	
+	\item \textbf{Algoritmusok} (könyvtár)
+	\begin{itemize}
+		\item Definiál egy interface-t
+		\item Tartalmazza néhány algoritmus általános megvalósítását:
+		\begin{itemize}
+			\item Minimax, átlagoló minimax
+			\item Alfa-béta
+			\item Egyéb egyszerűbb példák teszteléshez (random, mohó)
+		\end{itemize}
+		\item Könnyen használható és kiterjeszthető más alkalmazásokban.
+	\end{itemize}
+	
+	\item \textbf{Architektúra}
+	\begin{itemize}
+		\item \textbf{Szerver}
+		\begin{itemize}
+			\item Felhasználó regisztrációja / hitelesítése / nyomonkövetése.
+			\item Ellenőrzi a kliensektől jövő lépések érvényességét.
+			\item Közvetíti a kliensek felé a partik alakulását.
+		\end{itemize}
+		
+		\item \textbf{Kliens (humán vagy MI kliens)}
+		\begin{itemize}
+			\item Felhasználó beléptetése, nyomonkövetése.
+			\item Közvetíti a felhasználó felé a partik alakulását.
+			\item A játékos döntéseit közvetíti a szerver felé.
+			\item Példakliensek implementálása:
+			\begin{itemize}
+				\item Játékkliens
+				\item Botkliens
+			\end{itemize}
+		\end{itemize}
+		\item \textbf{Kliens-közeli könyvtárak}
+		\begin{itemize}
+			\item \textbf{Szerverközeli klienskönyvtár}
+			\begin{itemize}
+				\item Könnyen kezelhető interfészt ad
+				\item Összeállítja a kéréseket
+				\item Visszajövő válaszokat a kliensfejlesztő számára könnyen feldolgozható modellé alakítja
+			\end{itemize}
+			\item \textbf{Játék munkamenet-könyvtár}
+			\begin{itemize}
+				\item Egy egyszerű interface-t ad
+				\item A szerverközeli klienskönyvtárra épül
+				\item Szinkronizációs feladata van
+				\item "Business object"-ként funkcionál
+			\end{itemize}
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
 \section{A szerver}
 
 A szerver a következő funkciókat megvalósító végpontokkal fog rendelkezni:
@@ -1240,68 +1301,6 @@ Tegyük fel, hogy van egy algoritmusunk, amely kiszámítja a saját és az elle
 
 \subsection{Mesterséges Intelligencia Algoritmusok könyvtára}
 Érdemes definiálni egy mesterséges intelligencia általános algoritmusokat megvalósító könyvtárat is, ezzel nyújtva további segítséget a jövőbeli fejlesztőknek. Ez azért is hasznos, mert az algoritmusok nem változnak, a nagy különbség a játékállapotot kiértékelő implementációban van, így elég, ha a programozó arra koncentrál.
-
-\section{Összefoglalás}
-Ezek alapján összegezzük a leendő programcsomag szerkezetét és különböző elemeinek feladatát:
-
-\begin{itemize}
-	
-	\item \textbf{Játék-modell} (könyvtár)
-	\begin{itemize}
-		\item Megvalósítja a játéktér modelljét
-		\item Ezen játéktérhez megvalósítja a sakk szabályait
-	\end{itemize}
-	
-	\item \textbf{Algoritmusok} (könyvtár)
-	\begin{itemize}
-		\item Definiál egy interface-t
-		\item Tartalmazza néhány algoritmus általános megvalósítását:
-		\begin{itemize}
-			\item Minimax, átlagoló minimax
-			\item Alfa-béta
-			\item Egyéb egyszerűbb példák teszteléshez (random, mohó)
-		\end{itemize}
-		\item Könnyen használható és kiterjeszthető más alkalmazásokban.
-	\end{itemize}
-	
-	\item \textbf{Architektúra}
-	\begin{itemize}
-		\item \textbf{Szerver}
-		\begin{itemize}
-			\item Felhasználó regisztrációja / hitelesítése / nyomonkövetése.
-			\item Ellenőrzi a kliensektől jövő lépések érvényességét.
-			\item Közvetíti a kliensek felé a partik alakulását.
-		\end{itemize}
-		
-		\item \textbf{Kliens (humán vagy MI kliens)}
-		\begin{itemize}
-			\item Felhasználó beléptetése, nyomonkövetése.
-			\item Közvetíti a felhasználó felé a partik alakulását.
-			\item A játékos döntéseit közvetíti a szerver felé.
-			\item Példakliensek implementálása:
-			\begin{itemize}
-				\item Játékkliens
-				\item Botkliens
-			\end{itemize}
-		\end{itemize}
-	\item \textbf{Kliens-közeli könyvtárak}
-	\begin{itemize}
-		\item \textbf{Szerverközeli klienskönyvtár}
-		\begin{itemize}
-			\item Könnyen kezelhető interfészt ad
-			\item Összeállítja a kéréseket
-			\item Visszajövő válaszokat a kliensfejlesztő számára könnyen feldolgozható modellé alakítja
-		\end{itemize}
-		\item \textbf{Játék munkamenet-könyvtár}
-		\begin{itemize}
-			\item Egy egyszerű interface-t ad
-			\item A szerverközeli klienskönyvtárra épül
-			\item Szinkronizációs feladata van
-			\item "Business object"-ként funkcionál
-		\end{itemize}
-	\end{itemize}
-	\end{itemize}
-\end{itemize}
 
 \newpage
 \chapter{Megvalósítás}
@@ -1710,6 +1709,12 @@ A tesztelésnek különböző szintjei vannak:
 \end{itemize}
 
 Felülről lefelé haladva nő ezen tesztek ára és komplexitása. Jelen dolgozatban időhiány miatt csak unit és manuális tesztek vannak, de az automatikusan válaszoló botokkal a rendszert így is meg lehetett tesztelni (integrációs-, teljesítmény- és API teszt), amely fel is fedett jó néhány hibát.
+
+A legfontosabb részekre unit-tesztek vigyáznak, úgy mint a modell és a sakk-mechanizmus, illetve az algoritmusok. (\texttt{Game.Tests.Unit} és \texttt{Algorithms.Tests.Unit} projektek.)
+
+Az API-t először POSTMAN-ből manuális kérések összeállításával, később a véletlenszerű- és a mohó-algoritmussal a szerver megbízhatóságát és teljesítményét teszteltem.
+
+A játékkliensek teszteji teljesen manuálisak voltak, valódi emberek játszottak egymással és a botok ellen.
 
 \section{Reprezentáció}
 A tesztelés unit-teszteken keresztül történik, amelyben előre megadott szituációkat mutatva a kódnak megvizsgáljuk, hogy a lehetséges lépéseket kapjuk-e meg vagy sem, illetve manuálisan végignézve állásokat megállapítjuk, hogy jók-e az állások. Egy sakk-matt tesztelő példát láthatunk a \ref{lst:checkmate_test} kódrészletben.
